@@ -1,7 +1,8 @@
 Waffle - Issues:  
-[![Stories in Ready](https://badge.waffle.io/woym/timetable.png?label=ready&title=Ready)](https://waffle.io/woym/timetable)  
+[![Stories in Ready](https://badge.waffle.io/woym/timetable.svg?label=ready&title=Geschlossen)](https://waffle.io/woym/timetable)  
+[![Stories in Ready](https://badge.waffle.io/woym/timetable.svg?label=ready%20for%20development&title=Offen)](https://waffle.io/woym/timetable) 
 
-Travis CI - Status:  
+Travis CI - Status (Branch: Master):  
 [![Build Status](https://travis-ci.org/WOYM/timetable.svg?branch=master)](https://travis-ci.org/WOYM/timetable)  
 
 Timetable
