@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+
+<!-- Beachte die "h:"-Tags. Diese werden oben als JSF-Namespace deklariert und erweitern die Standard-Komponenten von HTML -->
+<h:head>
+	<!-- Erste Verwendung der EL. Zieht die Headline aus der Bean. Beachte: headline ist private, die getHeadline() wird automatisch verwendet -->
+	<title>#{indexController.headline}</title>
+</h:head>
+
+<!-- Auch der Körper ist eine JSF-Komponente -->
+<h:body>
+    <!-- "p:"-Tags sind PrimeFaces-Komponenten, die wiederrum die JSF-Komponenten erweitern und auch in Attributen kann die EL verwendet werden.-->
+    <p:panel header="#{indexController.headline}">
+        <!-- Dieses Element ist nur sichtbar, wenn der Nutzer bereits einen Namen gesetzt hat -->
+        <h:panelGroup rendered="#{not empty indexController.name}">
+            <!-- Ein Outputtext gibt schlicht den Wert des Attributs aus -->
+            Name: <h:outputText value="#{indexController.name}" />
+        </h:panelGroup>
+        <!-- Natürlich können trotzdem Komponenten wie Überschriften verwendet werden -->
+        <h1>#{indexController.headline}</h1>
+        
+        <!-- Eine Form ist eine immens wichtige Komponente. Sie funktionieren wie die Forms in normalem HTML und sind zum Versenden von Daten da -->
+        <h:form rendered="#{empty indexController.name}">
+            Dein Name lautet: <br />
+            <!-- Eingabefeld für den Nutzer. Mit jeder Eingabe ändert sich der Wert in der Bean, ein extra Absenden ist nicht notwendig. -->
+            <p:inputText id="nameInput" value="#{indexController.name}" />
+        </h:form>
+    </p:panel>
+</h:body>
+</html>
