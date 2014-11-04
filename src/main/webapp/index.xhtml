@@ -7,30 +7,55 @@
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:p="http://primefaces.org/ui">
 
-<!-- Beachte die "h:"-Tags. Diese werden oben als JSF-Namespace deklariert und erweitern die Standard-Komponenten von HTML -->
 <h:head>
-	<!-- Erste Verwendung der EL. Zieht die Headline aus der Bean. Beachte: headline ist private, die getHeadline() wird automatisch verwendet -->
-	<title>#{indexController.headline}</title>
+	<title>Timetable</title>
 </h:head>
 
-<!-- Auch der Körper ist eine JSF-Komponente -->
 <h:body>
-    <!-- "p:"-Tags sind PrimeFaces-Komponenten, die wiederrum die JSF-Komponenten erweitern und auch in Attributen kann die EL verwendet werden.-->
-    <p:panel header="#{indexController.headline}">
-        <!-- Dieses Element ist nur sichtbar, wenn der Nutzer bereits einen Namen gesetzt hat -->
-        <h:panelGroup rendered="#{not empty indexController.name}">
-            <!-- Ein Outputtext gibt schlicht den Wert des Attributs aus -->
-            Name: <h:outputText value="#{indexController.name}" />
-        </h:panelGroup>
-        <!-- Natürlich können trotzdem Komponenten wie Überschriften verwendet werden -->
-        <h1>#{indexController.headline}</h1>
-        
-        <!-- Eine Form ist eine immens wichtige Komponente. Sie funktionieren wie die Forms in normalem HTML und sind zum Versenden von Daten da -->
-        <h:form rendered="#{empty indexController.name}">
-            Dein Name lautet: <br />
-            <!-- Eingabefeld für den Nutzer. Mit jeder Eingabe ändert sich der Wert in der Bean, ein extra Absenden ist nicht notwendig. -->
-            <p:inputText id="nameInput" value="#{indexController.name}" />
-        </h:form>
-    </p:panel>
+	<h:form>
+		<p:outputPanel>
+			<h1>
+				<h:outputText value="timetable by WoyM" />
+			</h1>
+			<h2>
+				<h:outputText value="Willkommen!" />
+			</h2>
+			<p:panel header="Einrichtung">
+				<p:outputPanel>
+					<h:outputText
+						value="In diesem Bereich wird das grundsätzliche System eingerichtet. Dazu gehört z.B. das Verwalten des Personals, der Klassen und der Räumlichkeiten." />
+				</p:outputPanel>
+				<p:spacer style="height:100px;" />
+				<p:outputPanel style="float:right;">
+				    <p:spacer style="height:80px;" />
+					<p:commandButton value="Einrichtung" action="manageTeachers" />
+				</p:outputPanel>
+			</p:panel>
+			<p:spacer style="height:30px;" />
+			<p:panel header="Planung">
+                <p:outputPanel>
+                    <h:outputText
+                        value="Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua." />
+                </p:outputPanel>
+                <p:spacer style="height:100px;" />
+                <p:outputPanel style="float:right;">
+                    <p:spacer style="height:80px;" />
+                    <p:commandButton value="Planung" />
+                </p:outputPanel>
+            </p:panel>
+            <p:spacer style="height:30px;" />
+            <p:panel header="Ausgabe">
+                <p:outputPanel>
+                    <h:outputText
+                        value="Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua." />
+                </p:outputPanel>
+                <p:spacer style="height:100px;" />
+                <p:outputPanel style="float:right;">
+                    <p:spacer style="height:80px;" />
+                    <p:commandButton value="Ausgabe" />
+                </p:outputPanel>
+            </p:panel>
+		</p:outputPanel>
+	</h:form>
 </h:body>
 </html>

@@ -12,44 +12,68 @@
 
 <h:body>
 	<h:form>
-	   <p:growl id="growl" />
-	
-		<p:outputPanel>
-			<h1>
-				<h:outputText value="Lehrkraftverwaltung" />
-			</h1>
-			<h:outputText
-				value="In dieser Ansicht werden Lehrkräfte und pädagogisches Personal verwaltet." />
-		</p:outputPanel>
+		<p:growl id="growl" />
 
-		<p:spacer style="height:50px;" />
+		<h:panelGrid columns="3">
+			<p:outputPanel>
+				<p:menu style="width:300px">
+                    <p:submenu label="Personal">
+                        <p:menuitem value="Lehrkräfte" ajax="false" icon="ui-icon-person" />
+                        <p:menuitem value="Pädagogische Mitarbeiter" ajax="false"
+                            icon="ui-icon-person" />
+                    </p:submenu>
+                    <p:submenu label="Schüler/innen">
+                        <p:menuitem value="Jahrgänge" ajax="false"
+                            icon="ui-icon-calculator" />
+                        <p:menuitem value="Klassen" ajax="false" icon="ui-icon-calculator" />
+                    </p:submenu>
+                    <p:submenu label="Unterricht">
+                        <p:menuitem value="Fächer" ajax="false" icon="ui-icon-tag" />
+                    </p:submenu>
+				</p:menu>
+			</p:outputPanel>
+			<p:spacer style="width:30px" />
+			<p:outputPanel>
 
-		<p:outputPanel style="float:right">
-			<p:commandButton value="Hinzufügen" icon="fa fa-plus"
-				actionListener="#{teacherController.addTeacherDialog()}">
-				<p:ajax event="dialogReturn" listener="#{teacherController.onTeacherAdded}"
-					update="@form" />
-			</p:commandButton>
-		</p:outputPanel>
+				<p:outputPanel>
+					<h1>
+						<h:outputText value="Lehrkraftverwaltung" />
+					</h1>
+					<h:outputText
+						value="In dieser Ansicht werden Lehrkräfte und pädagogisches Personal verwaltet." />
+				</p:outputPanel>
 
-		<!-- Existierende Lehrkräfte -->
-		<p:dataTable var="teacher" value="#{teacherController.getTeachers()}">
-			<p:column headerText="Name">
-				<h:outputText value="#{teacher.name}" />
-			</p:column>
-			<p:column headerText="Kürzel">
-                <h:outputText value="#{teacher.symbol}" />
-            </p:column>
-            <p:column headerText="Wochenstunden">
-                <h:outputText value="#{teacher.weekhours}" />
-            </p:column>
-			<p:column headerText="Optionen">
-			<p:commandButton value="Bearbeiten" icon="fa-edit"
-                actionListener="#{teacherController.editTeacherDialog()}">
-            </p:commandButton>
-				<p:commandButton value="Löschen" />
-			</p:column>
-		</p:dataTable>
+				<p:spacer style="height:50px;" />
+
+				<p:outputPanel style="float:right">
+					<p:commandButton value="Hinzufügen" icon="fa fa-plus"
+						actionListener="#{teacherController.addTeacherDialog()}">
+						<p:ajax event="dialogReturn"
+							listener="#{teacherController.onTeacherAdded}" update="@form" />
+					</p:commandButton>
+				</p:outputPanel>
+
+				<!-- Existierende Lehrkräfte -->
+				<p:dataTable var="teacher"
+					value="#{teacherController.getTeachers()}">
+					<p:column headerText="Name">
+						<h:outputText value="#{teacher.name}" />
+					</p:column>
+					<p:column headerText="Kürzel">
+						<h:outputText value="#{teacher.symbol}" />
+					</p:column>
+					<p:column headerText="Wochenstunden">
+						<h:outputText value="#{teacher.weekhours}" />
+					</p:column>
+					<p:column headerText="Optionen">
+						<p:commandButton value="Bearbeiten" icon="fa-edit"
+							actionListener="#{teacherController.editTeacherDialog()}">
+						</p:commandButton>
+						<p:commandButton value="Löschen" actionListener="#{teacherController.deleteTeacher(teacher)}" update="@form"/>
+					</p:column>
+				</p:dataTable>
+			</p:outputPanel>
+		</h:panelGrid>
 	</h:form>
 </h:body>
 </html>

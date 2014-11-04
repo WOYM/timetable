@@ -54,20 +54,21 @@ public class TeacherController implements Serializable {
         options.put("modal", true);
         options.put("draggable", false);
         options.put("resizable", false);
-        options.put("contentHeight", 300);
+        options.put("contentHeight", 400);
+        options.put("contentWidth", 600);
 		
 		RequestContext rc = RequestContext.getCurrentInstance();
 		rc.openDialog("manageTeachersDialog", options, null);
 	}
 	
-	public void editTeacherDialog(Teacher teacher) {
+	public void editTeacherDialog() {
 		
         Map<String,Object> options = new HashMap<String, Object>();
         options.put("modal", true);
         options.put("draggable", false);
         options.put("resizable", false);
         options.put("contentHeight", 400);
-        options.put("contentWidth", 800);
+        options.put("contentWidth", 600);
 		
 		RequestContext rc = RequestContext.getCurrentInstance();
 		rc.openDialog("editTeacherDialog", options, null);
@@ -89,5 +90,11 @@ public class TeacherController implements Serializable {
 		
         FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "Lehrer hinzugefügt", "");
         FacesContext.getCurrentInstance().addMessage(null, message);
+	}
+	
+	public void deleteTeacher(Teacher teacher) {
+		if(teachers.contains(teacher)) {
+			teachers.remove(teacher);
+		}
 	}
 }

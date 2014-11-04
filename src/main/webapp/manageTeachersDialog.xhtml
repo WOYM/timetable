@@ -7,12 +7,12 @@
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:p="http://primefaces.org/ui">
 <h:head>
-        <title>Lehrkraft hinzufügen</title>
-                <style type="text/css">
-            .ui-widget {
-                font-size: 90%;
-            }
-        </style>
+	<title>Lehrkraft hinzufügen</title>
+	<style type="text/css">
+.ui-widget {
+	font-size: 90%;
+}
+</style>
 </h:head>
 
 <h:body>
@@ -28,24 +28,29 @@
 		<p:spacer style="height:10px;" />
 
 		<p:separator />
-		
+
 		<p:spacer style="height:10px;" />
 
 		<p:outputPanel>
 			<h:panelGrid columns="3">
 				<p:outputLabel for="name" value="Name:" />
-				<p:inputText id="name" required="true" value="#{addTeacherController.name}" />
+				<p:inputText id="name" required="true"
+					value="#{addTeacherController.name}" />
 				<p:message for="name" />
-                <p:outputLabel for="symbol" value="Kürzel:" />
-                <p:inputText id="symbol" required="true" value="#{addTeacherController.symbol}" />
-                <p:message for="symbol" />
-                <p:outputLabel for="weekhours" value="Wochenstunden:" />
-                <p:spinner id="weekhours" min="0" max="100" value="#{addTeacherController.weekhours}" />
-                <p:message for="weekhours" />
-                <p:spacer />
-                <p:outputPanel style="float:right">
-                    <p:commandButton value="Submit" actionListener="#{addTeacherController.addTeacherFromDialog()}" update="@form"/>
-                </p:outputPanel>
+				<p:outputLabel for="symbol" value="Kürzel:" />
+				<p:inputText id="symbol" required="true"
+					value="#{addTeacherController.symbol}" />
+				<p:message for="symbol" />
+				<p:outputLabel for="weekhours" value="Wochenstunden:" />
+				<p:spinner id="weekhours" min="0" max="100"
+					value="#{addTeacherController.weekhours}" />
+				<p:message for="weekhours" />
+				<p:spacer />
+				<p:outputPanel style="float:right">
+					<p:commandButton value="Submit"
+						actionListener="#{addTeacherController.addTeacherFromDialog()}"
+						update="@form" />
+				</p:outputPanel>
 			</h:panelGrid>
 		</p:outputPanel>
 	</h:form>
