@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui">
+<h:head>
+        <title>Lehrkraft bearbeiten</title>
+                <style type="text/css">
+            .ui-widget {
+                font-size: 90%;
+            }
+        </style>
+</h:head>
+
+<h:body>
+    <h:form>
+        <p:outputPanel>
+            <h1>
+                <h:outputText value="Bearbeiten von Lehrkräften" />
+            </h1>
+            <h:outputText
+                value="In dieser Ansicht können Lehrkräfte bearbeitet werden." />
+        </p:outputPanel>
+
+        <p:spacer style="height:10px;" />
+
+        <p:separator />
+        
+        <p:spacer style="height:10px;" />
+
+        <p:outputPanel>
+            <h:panelGrid columns="3">
+                <p:outputLabel for="name" value="Name:" />
+                <p:inputText id="name" required="true" value="#{addTeacherController.name}" />
+                <p:message for="name" />
+                <p:outputLabel for="symbol" value="Kürzel:" />
+                <p:inputText id="symbol" required="true" value="#{addTeacherController.symbol}" />
+                <p:message for="symbol" />
+                <p:outputLabel for="weekhours" value="Wochenstunden:" />
+                <p:spinner id="weekhours" min="0" max="100" value="#{addTeacherController.weekhours}" />
+                <p:message for="weekhours" />
+                <p:spacer />
+                <p:outputPanel style="float:right">
+                    <p:commandButton value="Submit" actionListener="#{addTeacherController.addTeacherFromDialog()}" update="@form"/>
+                </p:outputPanel>
+            </h:panelGrid>
+        </p:outputPanel>
+    </h:form>
+</h:body>
+</html>
