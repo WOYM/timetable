@@ -17,6 +17,7 @@
 	<!-- Encoding -->
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<project.build.outputEncoding>UTF-8</project.build.outputEncoding>
 	</properties>
 
 	<!-- JARs -->
@@ -76,19 +77,31 @@
 			<artifactId>primefaces</artifactId>
 			<version>5.0</version>
 		</dependency>
-		<!-- PostgreSQL -->
-		<dependency>
-			<groupId>postgresql</groupId>
-			<artifactId>postgresql</artifactId>
-			<version>9.1-901-1.jdbc4</version>
-		</dependency>
         <!-- Spring -->
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-context</artifactId>
 			<version>4.1.1.RELEASE</version>
 		</dependency>
-
+		<!-- Eclipselink -->
+		<dependency>
+			<groupId>org.eclipse.persistence</groupId>
+			<artifactId>eclipselink</artifactId>
+			<version>2.5.2</version>
+			<scope>compile</scope>
+		</dependency>
+		<!-- JPA -->
+		<dependency>
+			<groupId>org.eclipse.persistence</groupId>
+			<artifactId>javax.persistence</artifactId>
+			<version>2.1.0</version>
+		</dependency>
+		<!-- Derby -->
+		<dependency>
+			<groupId>org.apache.derby</groupId>
+			<artifactId>derby</artifactId>
+			<version>10.11.1.1</version>
+		</dependency>
 	</dependencies>
 	<!-- Build-Process -->
 	<build>
