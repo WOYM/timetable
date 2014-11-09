@@ -5,7 +5,7 @@
 	<!-- General -->
 	<groupId>com.woym</groupId>
 	<artifactId>timetable</artifactId>
-	<version>0.0.1</version>
+	<version>0.0.2</version>
 
 	<!-- Packaging -->
 	<packaging>war</packaging>
