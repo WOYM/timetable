@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+<h:head>
+	<title>Timetable - Planung</title>
+	<h:outputStylesheet name="style.css" library="css" />
+</h:head>
+
+<h:body>
+	<h:form>
+		<p:menubar>
+			<p:menuitem value="Zurück" icon="ui-icon-arrowreturnthick-1-w"
+				action="/index" />
+		</p:menubar>
+		<p:spacer style="height:20px" />
+		<p:tabView>
+			<p:tab title="Lehrer">
+				<h:outputText value="Suche nach Kürzel" />
+				<h:panelGrid columns="3">
+					<p:outputLabel for="symbol" value="Kürzel:" />
+					<p:inputText id="symbol" required="true" value="MUE" />
+					<p:message for="symbol" />
+					<p:spacer />
+					<p:outputPanel style="float:right">
+						<p:commandButton value="Suche" icon="ui-icon-search" />
+					</p:outputPanel>
+				</h:panelGrid>
+			</p:tab>
+
+			<p:tab title="Klassen">
+
+			</p:tab>
+		</p:tabView>
+		<p:spacer style="height:20px" />
+		<p:panelGrid columns="6" style="width:100%" styleClass="topAlignedPanelGrid">
+			<p:column>
+				<h:outputText value="Zeit/Tag" />
+			</p:column>
+			<p:column>
+				<h:outputText value="Montag" />
+			</p:column>
+			<p:column>
+				<h:outputText value="Dienstag" />
+			</p:column>
+			<p:column>
+				<h:outputText value="Mittwoch" />
+			</p:column>
+			<p:column>
+				<h:outputText value="Donnerstag" />
+			</p:column>
+			<p:column>
+				<h:outputText value="Freitag" />
+			</p:column>
+
+			<p:column>
+				<div style="height: 50px">
+					<h:outputText value="08:00" />
+				</div>
+				<div style="height: 50px">
+					<h:outputText value="10:00" />
+				</div>
+				<div style="height: 50px">
+					<h:outputText value="12:00" />
+				</div>
+			</p:column>
+
+			<p:column>
+				<div style="height: 100px; background-color:red; margin-top:200px" class="ui-corner-all">
+					<h:outputText value="Mathematik" />
+				</div>
+			</p:column>
+		</p:panelGrid>
+	</h:form>
+</h:body>
+</html>
