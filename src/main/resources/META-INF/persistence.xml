@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<persistence version="2.0"
+	xmlns="http://java.sun.com/xml/ns/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/persistence http://java.sun.com/xml/ns/persistence/persistence_2_0.xsd">
+	<persistence-unit name="timetable" transaction-type="RESOURCE_LOCAL">
+		<class>com.woym.objects.Teacher</class>
+		
+		<properties>
+			<property name="eclipselink.jdbc.batch-writing" value="JDBC" />
+			<property name="javax.persistence.jdbc.driver" value="org.apache.derby.jdbc.EmbeddedDriver" />
+			<property name="javax.persistence.jdbc.url" value="jdbc:derby:timetable.db;create=true" />
+			<property name="javax.persistence.jdbc.user" value="timetable" />
+			<property name="javax.persistence.jdbc.password" value="timetable" />
+			<property name="eclipselink.jdbc.exclusive-connection.mode"
+				value="Transactional" />
+			<property name="eclipselink.target-database" value="Derby" />
+			<!-- <property name="eclipselink.ddl-generation" value="drop-and-create-tables" 
+				/> -->
+			<property name="eclipselink.ddl-generation" value="create-tables" />
+			<property name="eclipselink.debug" value="ALL" />
+			<property name="eclipselink.weaving" value="static" />
+			<property name="eclipselink.logging.level" value="WARNING" />
+		</properties>
+	</persistence-unit>
+</persistence>

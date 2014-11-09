@@ -13,6 +13,9 @@
 
 <h:body>
 	<h:form>
+		<f:metadata>
+   		<f:event listener="#{dataBase.setUp}" type="preRenderView"></f:event>
+		</f:metadata>
 		<p:outputPanel style="margin-left:30px;">
 			<h1>
 				<h:outputText value="timetable by WoyM" />
@@ -29,7 +32,7 @@
 				</p:outputPanel>
 				<p:spacer style="height:10px;" />
 				<p:outputPanel>
-				    <h:outputText value="Lehrkräfte: #{teacherController.amountOfTeachers}" />
+				    <h:outputText value="Lehrkräfte: x" />
 				</p:outputPanel>
 				<p:spacer style="height:80px;" />
 				<p:outputPanel style="float:right;">
