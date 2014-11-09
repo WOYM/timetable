@@ -6,7 +6,7 @@ import com.woym.exceptions.DatasetException;
 
 public abstract class DataHandler<E> {
 
-	 EntityManager entityManager = DataBase.entityManager;
+	protected EntityManager entityManager = DataBase.getEntityManager();
 
 	public void persistObject(final E pObject) throws DatasetException {
 		if (pObject == null) {

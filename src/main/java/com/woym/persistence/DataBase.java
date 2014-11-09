@@ -11,20 +11,24 @@ import javax.persistence.PersistenceException;
 @ManagedBean
 @SessionScoped
 public class DataBase {
-
-	static EntityManager entityManager;
-
+	
+	private static EntityManager ENTITY_MANAGER;
+	
 	public void setUp(ComponentSystemEvent event) {
-		if (entityManager == null) {
+		if (ENTITY_MANAGER == null) {
 			try {
 				EntityManagerFactory factory;
 				factory = Persistence.createEntityManagerFactory("timetable");
-				entityManager = factory.createEntityManager();
+				ENTITY_MANAGER = factory.createEntityManager();
 			} catch (Exception e) {
 				throw new PersistenceException(
 						"Could not initialize persistence component: "
 								+ e.getMessage());
 			}
 		}
+	}
+
+	public static EntityManager getEntityManager() {
+		return ENTITY_MANAGER;
 	}
 }
