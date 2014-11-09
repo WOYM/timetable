@@ -1,5 +1,7 @@
 package com.woym.persistence;
 
+import java.io.Serializable;
+
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
 import javax.faces.event.ComponentSystemEvent;
@@ -10,7 +12,9 @@ import javax.persistence.PersistenceException;
 
 @ManagedBean
 @SessionScoped
-public class DataBase {
+public class DataBase implements Serializable {
+	
+	private static final long serialVersionUID = 7717982039237763919L;
 	
 	private static EntityManager ENTITY_MANAGER;
 	

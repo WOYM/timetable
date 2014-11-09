@@ -7,6 +7,7 @@
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:p="http://primefaces.org/ui">
 <h:head>
+    <title>Timetable - Systemverwaltung</title>
 	<h:outputStylesheet name="style.css" library="css" />
 </h:head>
 
@@ -14,13 +15,16 @@
 	<h:panelGrid columns="3" styleClass="topAlignedPanelGrid">
 		<h:form>
 			<p:menubar>
-					<p:menuitem value="Zurück" icon="ui-icon-arrowreturnthick-1-w" action="index" />
+				<p:menuitem value="Zurück" icon="ui-icon-arrowreturnthick-1-w"
+					action="index" />
 			</p:menubar>
-            <p:spacer style="height:20px" />
+			<p:spacer style="height:20px" />
 			<p:menu style="width:300px; top:0px; position:relative">
 				<p:submenu label="Personal">
-					<p:menuitem value="Lehrkräfte" ajax="false" icon="ui-icon-person" />
-					<p:menuitem value="Pädagogische Mitarbeiter" ajax="false"
+					<p:menuitem value="Lehrkräfte" icon="ui-icon-person"
+						action="#{GUIController.setPage('manageTeachers')}" update="@all" />
+					<p:menuitem value="Pädagogische Mitarbeiter"
+						action="#{GUIController.setPage('manageTeachers')}" update="@all"
 						icon="ui-icon-person" />
 				</p:submenu>
 				<p:submenu label="Schüler/innen">

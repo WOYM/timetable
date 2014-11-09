@@ -18,6 +18,14 @@ import com.woym.exceptions.DatasetException;
 import com.woym.objects.Teacher;
 import com.woym.persistence.TeacherDataHandler;
 
+/**
+ * <h1>TeacherController</h1>
+ * <p>
+ * Dieser Controller ist für die allgemeine Lehrkraftverwaltung zuständig.
+ * 
+ * @author Tim Hansen (tihansen)
+ *
+ */
 @SessionScoped
 @ManagedBean(name = "teacherController")
 public class TeacherController implements Serializable {
@@ -73,7 +81,8 @@ public class TeacherController implements Serializable {
 		try {
 			db.persistObject(teacher);
 			FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO,
-					"Lehrer hinzugefügt", "");
+					"Lehrer hinzugefügt", teacher.getName() + " ("
+							+ teacher.getSymbol() + ")");
 			FacesContext.getCurrentInstance().addMessage(null, message);
 		} catch (DatasetException e) {
 			FacesMessage message = new FacesMessage(
@@ -87,6 +96,11 @@ public class TeacherController implements Serializable {
 		if (selectedTeacher != null) {
 			try {
 				db.deleteObject(selectedTeacher);
+				FacesMessage message = new FacesMessage(
+						FacesMessage.SEVERITY_INFO, "Lehrer gelöscht",
+						selectedTeacher.getName() + " ("
+								+ selectedTeacher.getSymbol() + ")");
+				FacesContext.getCurrentInstance().addMessage(null, message);
 			} catch (DatasetException e) {
 				FacesMessage message = new FacesMessage(
 						FacesMessage.SEVERITY_ERROR,
