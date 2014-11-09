@@ -27,10 +27,14 @@
 					<h:outputText
 						value="In diesem Bereich wird das grundsätzliche System eingerichtet. Dazu gehört z.B. das Verwalten des Personals, der Klassen und der Räumlichkeiten." />
 				</p:outputPanel>
-				<p:spacer style="height:100px;" />
+				<p:spacer style="height:10px;" />
+				<p:outputPanel>
+				    <h:outputText value="Lehrkräfte: #{teacherController.amountOfTeachers}" />
+				</p:outputPanel>
+				<p:spacer style="height:80px;" />
 				<p:outputPanel style="float:right;">
-					<p:spacer style="height:80px;" />
-					<p:commandButton value="Einrichtung" action="manageTeachers" />
+					<p:spacer style="height:60px;" />
+					<p:commandButton value="Einrichtung" action="setupTimetable" />
 				</p:outputPanel>
 			</p:panel>
 			<p:spacer style="height:30px;" />

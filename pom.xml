@@ -88,8 +88,8 @@
 			<artifactId>spring-context</artifactId>
 			<version>4.1.1.RELEASE</version>
 		</dependency>
-
 	</dependencies>
+	
 	<!-- Build-Process -->
 	<build>
 		<finalName>timetable-${project.version}</finalName>

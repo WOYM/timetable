@@ -1,9 +1,8 @@
-package com.woym.controller;
+package com.woym.controller.manage;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import javax.annotation.PostConstruct;
@@ -26,6 +25,9 @@ public class TeacherController implements Serializable {
 
 	private Teacher selectedTeacher;
 
+	/**
+	 * Enthält nur Testdaten
+	 */
 	@PostConstruct
 	public void init() {
 		Teacher teacher1 = new Teacher();
@@ -85,7 +87,7 @@ public class TeacherController implements Serializable {
 			if (currentTeacher.getSymbol().equals(teacher.getSymbol())) {
 				FacesMessage message = new FacesMessage(
 						FacesMessage.SEVERITY_ERROR,
-						"Lehrer existiert bereits", "");
+						"Lehrer existiert bereits", null);
 				FacesContext.getCurrentInstance().addMessage(null, message);
 				return;
 			}
@@ -94,7 +96,7 @@ public class TeacherController implements Serializable {
 		teachers.add(teacher);
 
 		FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO,
-				"Lehrer hinzugefügt", "");
+				"Lehrer hinzugefügt", teacher.getName() + " (" + teacher.getSymbol() + ")");
 		FacesContext.getCurrentInstance().addMessage(null, message);
 	}
 
@@ -102,6 +104,10 @@ public class TeacherController implements Serializable {
 		if (selectedTeacher != null) {
 			if (teachers.contains(selectedTeacher)) {
 				teachers.remove(selectedTeacher);
+				
+				FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO,
+						"Lehrer entfernt", selectedTeacher.getName() + " (" + selectedTeacher.getSymbol() + ")");
+				FacesContext.getCurrentInstance().addMessage(null, message);
 			}
 		}
 	}
@@ -112,5 +118,9 @@ public class TeacherController implements Serializable {
 
 	public void setSelectedTeacher(Teacher selectedTeacher) {
 		this.selectedTeacher = selectedTeacher;
+	}
+	
+	public int getAmountOfTeachers() {
+		return teachers.size();
 	}
 }
