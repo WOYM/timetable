@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+<h:head>
+    <title>Timetable - Systemverwaltung</title>
+	<h:outputStylesheet name="style.css" library="css" />
+</h:head>
+
+<h:body>
+	<h:panelGrid columns="3" styleClass="topAlignedPanelGrid">
+		<h:form>
+			<p:menubar>
+				<p:menuitem value="Zurück" icon="ui-icon-arrowreturnthick-1-w"
+					action="index" />
+			</p:menubar>
+			<p:spacer style="height:20px" />
+			<p:menu style="width:300px; top:0px; position:relative">
+				<p:submenu label="Personal">
+					<p:menuitem value="Lehrkräfte" icon="ui-icon-person"
+						action="#{GUIController.setPage('manageTeachers')}" update="@all" />
+					<p:menuitem value="Pädagogische Mitarbeiter"
+						action="#{GUIController.setPage('manageTeachers')}" update="@all"
+						icon="ui-icon-person" />
+				</p:submenu>
+				<p:submenu label="Schüler/innen">
+					<p:menuitem value="Jahrgänge" ajax="false"
+						icon="ui-icon-calculator" />
+					<p:menuitem value="Klassen" ajax="false" icon="ui-icon-calculator" />
+				</p:submenu>
+				<p:submenu label="Unterricht">
+					<p:menuitem value="Fächer" ajax="false" icon="ui-icon-tag" />
+				</p:submenu>
+			</p:menu>
+		</h:form>
+		<p:spacer style="width:30px" />
+		<p:outputPanel>
+			<ui:include src="#{GUIController.page}.xhtml" />
+		</p:outputPanel>
+	</h:panelGrid>
+</h:body>
+</html>

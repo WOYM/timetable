@@ -8,11 +8,6 @@
 	xmlns:p="http://primefaces.org/ui">
 <h:head>
 	<title>Lehrkraft hinzufügen</title>
-	<style type="text/css">
-.ui-widget {
-	font-size: 90%;
-}
-</style>
 </h:head>
 
 <h:body>
@@ -48,7 +43,7 @@
 				<p:spacer />
 				<p:outputPanel style="float:right">
 					<p:commandButton value="Submit"
-						actionListener="#{addTeacherController.addTeacherFromDialog()}"
+						actionListener="#{addTeacherController.addTeacherFromDialog}"
 						update="@form" />
 				</p:outputPanel>
 			</h:panelGrid>

@@ -1,4 +1,4 @@
-package com.woym.controller;
+package com.woym.controller.manage;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -18,33 +18,23 @@ import com.woym.exceptions.DatasetException;
 import com.woym.objects.Teacher;
 import com.woym.persistence.TeacherDataHandler;
 
+/**
+ * <h1>TeacherController</h1>
+ * <p>
+ * Dieser Controller ist für die allgemeine Lehrkraftverwaltung zuständig.
+ * 
+ * @author Tim Hansen (tihansen)
+ *
+ */
 @SessionScoped
 @ManagedBean(name = "teacherController")
 public class TeacherController implements Serializable {
 
 	private static final long serialVersionUID = -2341971622906815080L;
 
-	// ArrayList<Teacher> teachers = new ArrayList<>();
-
 	private TeacherDataHandler db = new TeacherDataHandler();
 
 	private Teacher selectedTeacher;
-
-	/*
-	 * @PostConstruct public void init() { Teacher teacher1 = new Teacher();
-	 * teacher1.setName("Herr Meyer"); teacher1.setSymbol("MEY");
-	 * teacher1.setWeekhours(40); teachers.add(teacher1);
-	 * 
-	 * Teacher teacher2 = new Teacher(); teacher2.setName("Herr Schulz");
-	 * teacher2.setSymbol("SCH"); teacher2.setWeekhours(40);
-	 * teachers.add(teacher2);
-	 * 
-	 * Teacher teacher3 = new Teacher(); teacher3.setName("Herr Müller");
-	 * teacher3.setSymbol("MUE"); teacher3.setWeekhours(40);
-	 * teachers.add(teacher3); }
-	 * 
-	 * public ArrayList<Teacher> getTeachers() { return teachers; }
-	 */
 
 	public List<Teacher> getTeachers() {
 		try {
@@ -91,7 +81,8 @@ public class TeacherController implements Serializable {
 		try {
 			db.persistObject(teacher);
 			FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO,
-					"Lehrer hinzugefügt", "");
+					"Lehrer hinzugefügt", teacher.getName() + " ("
+							+ teacher.getSymbol() + ")");
 			FacesContext.getCurrentInstance().addMessage(null, message);
 		} catch (DatasetException e) {
 			FacesMessage message = new FacesMessage(
@@ -105,6 +96,11 @@ public class TeacherController implements Serializable {
 		if (selectedTeacher != null) {
 			try {
 				db.deleteObject(selectedTeacher);
+				FacesMessage message = new FacesMessage(
+						FacesMessage.SEVERITY_INFO, "Lehrer gelöscht",
+						selectedTeacher.getName() + " ("
+								+ selectedTeacher.getSymbol() + ")");
+				FacesContext.getCurrentInstance().addMessage(null, message);
 			} catch (DatasetException e) {
 				FacesMessage message = new FacesMessage(
 						FacesMessage.SEVERITY_ERROR,

@@ -1,4 +1,4 @@
-package com.woym.controller;
+package com.woym.controller.manage;
 
 import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
