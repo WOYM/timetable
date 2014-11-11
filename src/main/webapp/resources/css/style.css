@@ -1,3 +1,7 @@
 .topAlignedPanelGrid>tbody>tr>td {
     vertical-align: top;
 }
+
+div[id$="searchTeacherTable"]>div>table>thead {
+	display:none; 
+}

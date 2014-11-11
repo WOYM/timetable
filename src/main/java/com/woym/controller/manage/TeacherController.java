@@ -35,6 +35,9 @@ public class TeacherController implements Serializable {
 	private TeacherDataHandler db = new TeacherDataHandler();
 
 	private Teacher selectedTeacher;
+	private Teacher selectedTeacherForSearch;
+	
+	private String searchSymbol;
 
 	public List<Teacher> getTeachers() {
 		try {
@@ -110,11 +113,59 @@ public class TeacherController implements Serializable {
 		}
 	}
 
+	public ArrayList<Teacher> getTeachersForSearch() {
+		
+		ArrayList<Teacher> tempList = new ArrayList<>();
+		
+		if(searchSymbol == null || "".equals(searchSymbol)) {
+			for(Teacher teacher : getTeachers()) {
+				tempList.add(teacher);
+				
+				if(tempList.size() >= 5) {
+					return tempList;
+				}
+
+			}
+			
+			return tempList;
+		}
+		
+		for(Teacher teacher : getTeachers()) {
+			
+			if(teacher.getSymbol().contains(searchSymbol)) {
+				
+				tempList.add(teacher);
+				
+				if(tempList.size() >= 5) {
+					return tempList;
+				}
+			}
+		}
+		
+		return tempList;
+	}
+	
 	public Teacher getSelectedTeacher() {
 		return selectedTeacher;
 	}
 
 	public void setSelectedTeacher(Teacher selectedTeacher) {
 		this.selectedTeacher = selectedTeacher;
+	}
+	
+	public String getSearchSymbol() {
+		return searchSymbol;
+	}
+
+	public void setSearchSymbol(String searchSymbol) {
+		this.searchSymbol = searchSymbol;
+	}
+
+	public Teacher getSelectedTeacherForSearch() {
+		return selectedTeacherForSearch;
+	}
+
+	public void setSelectedTeacherForSearch(Teacher selectedTeacherForSearch) {
+		this.selectedTeacherForSearch = selectedTeacherForSearch;
 	}
 }
