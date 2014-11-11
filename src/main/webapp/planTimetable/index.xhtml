@@ -1,0 +1,230 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+<h:head>
+	<title>Timetable - Planung</title>
+	<h:outputStylesheet name="style.css" library="css" />
+</h:head>
+
+<h:body>
+	<h:form id="planningForm">
+		<p:menubar>
+			<p:menuitem value="Zurück" icon="ui-icon-arrowreturnthick-1-w"
+				action="/index" />
+		</p:menubar>
+		<p:spacer style="height:20px" />
+		<p:tabView>
+			<p:tab title="Lehrer" id="planningTeacherTab">
+				<h:outputText value="Suche nach Kürzel" />
+				<h:panelGrid columns="3">
+					<p:outputLabel for="symbol" value="Kürzel:" />
+					<p:inputText id="symbol" required="true"
+						value="#{teacherController.searchSymbol}">
+						<p:ajax event="keyup" update="searchTeacherTable" />
+					</p:inputText>
+					<p:message for="symbol" />
+					<p:spacer />
+					<p:outputPanel style="float:right">
+						<p:commandButton value="Suche" icon="ui-icon-search" />
+					</p:outputPanel>
+				</h:panelGrid>
+
+				<!-- Existierende Lehrkräfte -->
+				<p:contextMenu for="searchTeacherTable">
+					<p:menuitem value="Bearbeiten"
+						actionListener="#{teacherController.editTeacherDialog()}"
+						icon="ui-icon-pencil" />
+				</p:contextMenu>
+				<p:dataTable id="searchTeacherTable" var="teacher"
+					value="#{teacherController.getTeachersForSearch()}"
+					selection="#{teacherController.selectedTeacherForSearch}"
+					selectionMode="single" rowKey="#{teacher.symbol}"
+					emptyMessage="Keine Lehrer mit diesem Kürzel">
+					<p:ajax event="rowSelect" update="@form" />
+					<p:column headerText="Name">
+						<h:outputText value="#{teacher.name}" />
+					</p:column>
+					<p:column headerText="Kürzel">
+						<h:outputText value="#{teacher.symbol}" />
+					</p:column>
+				</p:dataTable>
+			</p:tab>
+
+			<p:tab title="Klassen">
+
+			</p:tab>
+		</p:tabView>
+		<p:outputPanel>
+			<p:spacer style="height:60px" />
+			<p:outputPanel style="float:right; padding:10px">
+				<p:commandButton value="Hinzufügen" />
+			</p:outputPanel>
+		</p:outputPanel>
+		<p:panelGrid id="plan" columns="6" style="width:100%"
+			styleClass="topAlignedPanelGrid"
+			rendered="#{teacherController.selectedTeacherForSearch != null}">
+			<p:column>
+				<h:outputText value="Zeit/Tag" />
+				<p:separator />
+				<div style="height: 100px">
+					<h:outputText value="06:00" />
+				</div>
+				<div style="height: 100px">
+					<h:outputText value="08:00" />
+				</div>
+				<div style="height: 100px">
+					<h:outputText value="10:00" />
+				</div>
+				<div style="height: 100px">
+					<h:outputText value="12:00" />
+				</div>
+				<div style="height: 100px">
+					<h:outputText value="14:00" />
+				</div>
+				<div style="height: 100px">
+					<h:outputText value="16:00" />
+				</div>
+				<div style="height: 100px">
+					<h:outputText value="18:00" />
+				</div>
+
+			</p:column>
+			<p:column>
+				<h:outputText value="Montag" />
+				<p:separator />
+				<div
+					style="height: 100px; background-color: gray; margin-top: 0px; opacity: 0.7">
+				</div>
+				<div
+					style="height: 100px; background-color: red; margin-top: 0px; padding: 5px;"
+					class="ui-corner-all">
+					<h:outputText value="Mathematik" />
+					<br /> <br />
+					<h:outputText value="Klasse 3a" />
+					<br />
+					<h:outputText value="Raum 0123" />
+					<br />
+				</div>
+				<div
+					style="height: 100px; background-color: gray; margin-top: 400px; opacity: 0.7">
+				</div>
+			</p:column>
+			<p:column>
+				<h:outputText value="Dienstag" />
+				<p:separator />
+				<div
+					style="height: 100px; background-color: gray; margin-top: 0px; opacity: 0.7">
+				</div>
+				<div
+					style="height: 100px; background-color: blue; margin-top: 0px; padding: 5px;"
+					class="ui-corner-all">
+					<h:outputText value="Deutsch" />
+					<br /> <br />
+					<h:outputText value="Klasse 2a" />
+					<br />
+					<h:outputText value="Raum 2345" />
+					<br />
+				</div>
+
+				<div
+					style="height: 100px; background-color: red; margin-top: 50px; padding: 5px;"
+					class="ui-corner-all">
+					<h:outputText value="Mathematik" />
+					<br /> <br />
+					<h:outputText value="Klasse 3a" />
+					<br />
+					<h:outputText value="Raum 0123" />
+					<br />
+				</div>
+				<div
+					style="height: 100px; background-color: gray; margin-top: 250px; opacity: 0.7">
+				</div>
+			</p:column>
+			<p:column>
+				<h:outputText value="Mittwoch" />
+				<p:separator />
+				<div
+					style="height: 100px; background-color: gray; margin-top: 0px; opacity: 0.7">
+				</div>
+				<div
+					style="height: 400px; background-color: yellow; margin-top: 100px; padding: 5px;"
+					class="ui-corner-all">
+					<h:outputText value="Projekt" />
+					<br /> <br />
+					<h:outputText value="Klasse 3a" />
+					<br />
+					<h:outputText value="Klasse 3b" />
+					<br />
+					<h:outputText value="Klasse 4a" />
+					<br /> <br />
+					<h:outputText value="Raum 0100" />
+					<br />
+				</div>
+				<div
+					style="height: 100px; background-color: gray; margin-top: 0px; opacity: 0.7">
+				</div>
+			</p:column>
+			<p:column>
+				<h:outputText value="Donnerstag" />
+				<p:separator />
+				<div
+					style="height: 100px; background-color: gray; margin-top: 0px; opacity: 0.7">
+				</div>
+				<div
+					style="height: 100px; background-color: green; margin-top: 0px; padding: 5px;"
+					class="ui-corner-all">
+					<h:outputText value="Englisch" />
+					<br /> <br />
+					<h:outputText value="Klasse 2c" />
+					<br />
+					<h:outputText value="Raum 1234" />
+					<br />
+				</div>
+
+				<div
+					style="height: 100px; background-color: red; margin-top: 150px; padding: 5px;"
+					class="ui-corner-all">
+					<h:outputText value="Mathematik" />
+					<br /> <br />
+					<h:outputText value="Klasse 3c" />
+					<br />
+					<h:outputText value="Raum 0325" />
+					<br />
+				</div>
+				<div
+					style="height: 100px; background-color: gray; margin-top: 150px; opacity: 0.7">
+				</div>
+			</p:column>
+			<p:column>
+				<h:outputText value="Freitag" />
+				<p:separator />
+				<div
+					style="height: 100px; background-color: gray; margin-top: 0px; opacity: 0.7">
+				</div>
+				<div
+					style="height: 400px; background-color: orange; margin-top: 0px; padding: 5px;"
+					class="ui-corner-all">
+					<h:outputText value="Projekt" />
+					<br /> <br />
+					<h:outputText value="Klasse 2b" />
+					<br />
+					<h:outputText value="Klasse 2c" />
+					<br />
+					<h:outputText value="Klasse 3a" />
+					<br /> <br />
+					<h:outputText value="Raum 0150" />
+					<br />
+				</div>
+				<div
+					style="height: 100px; background-color: gray; margin-top: 100px; opacity: 0.7">
+				</div>
+			</p:column>
+		</p:panelGrid>
+	</h:form>
+</h:body>
+</html>
