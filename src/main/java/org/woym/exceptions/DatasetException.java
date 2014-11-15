@@ -1,4 +1,4 @@
-package com.woym.exceptions;
+package org.woym.exceptions;
 
 public class DatasetException extends Exception {
 
