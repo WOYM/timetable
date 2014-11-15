@@ -1,11 +1,10 @@
-package com.woym.controller.manage;
+package org.woym.controller.manage;
 
 import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
 
 import org.primefaces.context.RequestContext;
-
-import com.woym.objects.Teacher;
+import org.woym.objects.Teacher;
 
 @ManagedBean(name="addTeacherController")
 public class AddTeacherController {

@@ -1,4 +1,4 @@
-package com.woym.objects;
+package org.woym.objects;
 
 import java.io.Serializable;
 

@@ -1,4 +1,4 @@
-package com.woym.controller;
+package org.woym.controller;
 
 import java.io.Serializable;
 

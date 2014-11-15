@@ -1,13 +1,30 @@
-package com.woym.persistence;
+package org.woym.persistence;
 
 import javax.persistence.EntityManager;
 
-import com.woym.exceptions.DatasetException;
+import org.woym.exceptions.DatasetException;
+import org.woym.spec.persistence.IAbstractDAO;
 
-public abstract class DataHandler<E> {
+/**
+ * Eine konkrete Implementierung von {@linkplain IAbstractDataHandler} als abstrakte
+ * Klasse, die als Superklasse für alle anderen Handler dient.
+ * 
+ * @author Adrian
+ *
+ * @param <E>
+ *            - generische Klasse
+ */
+public abstract class AbstractDAO<E> implements IAbstractDAO<E> {
 
-	protected EntityManager entityManager = DataBase.getEntityManager();
+	/**
+	 * Eine Instanz des EntityManagers von {@linkplain DataBase}, die in den
+	 * Subklassen verwendet werden kann.
+	 */
+	protected final EntityManager entityManager = DataBase.getEntityManager();
 
+	/**
+	 * {@inheritDoc}
+	 */
 	public void persistObject(final E pObject) throws DatasetException {
 		if (pObject == null) {
 			throw new IllegalArgumentException("Parameter is null.");
@@ -22,6 +39,9 @@ public abstract class DataHandler<E> {
 		}
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	public void updateObject(final E pObject) throws DatasetException {
 		if (pObject == null) {
 			throw new IllegalArgumentException("Parameter is null.");
@@ -36,6 +56,9 @@ public abstract class DataHandler<E> {
 		}
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	public void deleteObject(final E pObject) throws DatasetException {
 		if (pObject == null) {
 			throw new IllegalArgumentException("Parameter is null.");
