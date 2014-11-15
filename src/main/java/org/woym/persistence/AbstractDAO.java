@@ -3,18 +3,17 @@ package org.woym.persistence;
 import javax.persistence.EntityManager;
 
 import org.woym.exceptions.DatasetException;
-import org.woym.spec.persistence.IAbstractDAO;
 
 /**
- * Eine konkrete Implementierung von {@linkplain IAbstractDataHandler} als abstrakte
- * Klasse, die als Superklasse für alle anderen Handler dient.
+ * Eine abstrakte generische Klasse, die als Superklasse für alle anderen
+ * Handler dient.
  * 
  * @author Adrian
  *
  * @param <E>
  *            - generische Klasse
  */
-public abstract class AbstractDAO<E> implements IAbstractDAO<E> {
+public abstract class AbstractDAO<E> {
 
 	/**
 	 * Eine Instanz des EntityManagers von {@linkplain DataBase}, die in den
@@ -23,7 +22,11 @@ public abstract class AbstractDAO<E> implements IAbstractDAO<E> {
 	protected final EntityManager entityManager = DataBase.getEntityManager();
 
 	/**
-	 * {@inheritDoc}
+	 * Persistiert das übergebene Objekt in der Datenbank. Tritt dabei ein
+	 * Fehler auf, wird eine {@linkplain DatasetException} geworfen.
+	 * 
+	 * @param pObject
+	 *            - das zu persistierende Objekt
 	 */
 	public void persistObject(final E pObject) throws DatasetException {
 		if (pObject == null) {
@@ -40,7 +43,14 @@ public abstract class AbstractDAO<E> implements IAbstractDAO<E> {
 	}
 
 	/**
-	 * {@inheritDoc}
+	 * Aktualisiert das Objekt in der Datenbank, welches dem dem übergebenen
+	 * entspricht. Tritt beim Merge ein Fehler auf, wird eine
+	 * {@linkplain DatasetException} geworfen.
+	 * 
+	 * @param pObject
+	 *            - das im System bereits aktualisierte, in der Datenbank zu
+	 *            persistierende Objekt
+	 * @throws DatasetException
 	 */
 	public void updateObject(final E pObject) throws DatasetException {
 		if (pObject == null) {
@@ -57,7 +67,13 @@ public abstract class AbstractDAO<E> implements IAbstractDAO<E> {
 	}
 
 	/**
-	 * {@inheritDoc}
+	 * Löscht das Objekt aus der Datenbank, das dem übergebenen entspricht.
+	 * Tritt beim Löschen ein Fehler auf, wird eine
+	 * {@linkplain DatasetException} geworfen.
+	 * 
+	 * @param pObject
+	 *            - das zu löschende Objekt
+	 * @throws DatasetException
 	 */
 	public void deleteObject(final E pObject) throws DatasetException {
 		if (pObject == null) {
