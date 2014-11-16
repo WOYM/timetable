@@ -9,13 +9,15 @@ import javax.persistence.Persistence;
 import javax.persistence.PersistenceException;
 
 import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;/**
- * Diese Klasse initialisiert den EntityManager, welcher für alle
+import org.apache.logging.log4j.Logger;
+/**
+ * Diese Klasse initialisiert den EntityManager, welcher fÃ¼r alle
  * Datenbanktransaktionen verwendet wird.
  * 
  * @author Adrian
  *
- */@ManagedBean
+ */
+ @ManagedBean
 @SessionScoped
 public class DataBase {
 
@@ -50,7 +52,7 @@ public class DataBase {
 	}
 
 	/**
-	 * Gibt die Instanz von {@linkplain EntityManager} zurück.
+	 * Gibt die Instanz von {@linkplain EntityManager} zurÃ¼ck.
 	 * @return {@linkplain EntityManager} - Instanz des EntityManager
 	 */
 	public static EntityManager getEntityManager() {
