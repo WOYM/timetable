@@ -23,8 +23,7 @@
 				<h:outputText value="Suche nach Kürzel" />
 				<h:panelGrid columns="3">
 					<p:outputLabel for="symbol" value="Kürzel:" />
-					<p:inputText id="symbol" required="true"
-						value="#{teacherController.searchSymbol}">
+					<p:inputText id="symbol" value="#{teacherController.searchSymbol}">
 						<p:ajax event="keyup" update="searchTeacherTable" />
 					</p:inputText>
 					<p:message for="symbol" />
@@ -65,7 +64,7 @@
 				<p:commandButton value="Hinzufügen" />
 			</p:outputPanel>
 		</p:outputPanel>
-		<p:panelGrid id="plan" columns="6" style="width:100%"
+		<p:panelGrid id="plan" columns="6" style="width:100%; font-size:small"
 			styleClass="topAlignedPanelGrid"
 			rendered="#{teacherController.selectedTeacherForSearch != null}">
 			<p:column>
@@ -98,11 +97,11 @@
 				<h:outputText value="Montag" />
 				<p:separator />
 				<div
-					style="height: 100px; background-color: gray; margin-top: 0px; opacity: 0.7">
+					style="height: 100px; margin-top: 0px; opacity: 0.7" class="grayActivity">
 				</div>
 				<div
-					style="height: 100px; background-color: red; margin-top: 0px; padding: 5px;"
-					class="ui-corner-all">
+					style="height: 100px; margin-top: 0px; padding: 5px; padding-left: 20px; padding-top: 20px;"
+                    class="ui-corner-all ui-widget-content redActivity activity">
 					<h:outputText value="Mathematik" />
 					<br /> <br />
 					<h:outputText value="Klasse 3a" />
@@ -111,18 +110,18 @@
 					<br />
 				</div>
 				<div
-					style="height: 100px; background-color: gray; margin-top: 400px; opacity: 0.7">
+					style="height: 100px; margin-top: 400px; opacity: 0.7" class="grayActivity">
 				</div>
 			</p:column>
 			<p:column>
 				<h:outputText value="Dienstag" />
 				<p:separator />
 				<div
-					style="height: 100px; background-color: gray; margin-top: 0px; opacity: 0.7">
+					style="height: 100px; margin-top: 0px; opacity: 0.7" class="grayActivity">
 				</div>
 				<div
-					style="height: 100px; background-color: blue; margin-top: 0px; padding: 5px;"
-					class="ui-corner-all">
+					style="height: 100px; margin-top: 0px; padding: 10px;"
+					class="ui-corner-all ui-widget-content blueActivity activity">
 					<h:outputText value="Deutsch" />
 					<br /> <br />
 					<h:outputText value="Klasse 2a" />
@@ -132,8 +131,8 @@
 				</div>
 
 				<div
-					style="height: 100px; background-color: red; margin-top: 50px; padding: 5px;"
-					class="ui-corner-all">
+					style="height: 100px; margin-top: 50px; padding: 10px;"
+					class="ui-corner-all ui-widget-content redActivity activity">
 					<h:outputText value="Mathematik" />
 					<br /> <br />
 					<h:outputText value="Klasse 3a" />
@@ -142,18 +141,18 @@
 					<br />
 				</div>
 				<div
-					style="height: 100px; background-color: gray; margin-top: 250px; opacity: 0.7">
+					style="height: 100px; margin-top: 250px; opacity: 0.7" class="grayActivity activity">
 				</div>
 			</p:column>
 			<p:column>
 				<h:outputText value="Mittwoch" />
 				<p:separator />
 				<div
-					style="height: 100px; background-color: gray; margin-top: 0px; opacity: 0.7">
+					style="height: 100px; margin-top: 0px; opacity: 0.7" class="grayActivity activity">
 				</div>
 				<div
-					style="height: 400px; background-color: yellow; margin-top: 100px; padding: 5px;"
-					class="ui-corner-all">
+					style="height: 400px; margin-top: 100px; padding: 10px;"
+					class="ui-corner-all ui-widget-content yellowActivity activity">
 					<h:outputText value="Projekt" />
 					<br /> <br />
 					<h:outputText value="Klasse 3a" />
@@ -166,18 +165,18 @@
 					<br />
 				</div>
 				<div
-					style="height: 100px; background-color: gray; margin-top: 0px; opacity: 0.7">
+					style="height: 100px; margin-top: 0px; opacity: 0.7" class="grayActivity activity">
 				</div>
 			</p:column>
 			<p:column>
 				<h:outputText value="Donnerstag" />
 				<p:separator />
 				<div
-					style="height: 100px; background-color: gray; margin-top: 0px; opacity: 0.7">
+					style="height: 100px; margin-top: 0px; opacity: 0.7" class="grayActivity acitivty">
 				</div>
 				<div
-					style="height: 100px; background-color: green; margin-top: 0px; padding: 5px;"
-					class="ui-corner-all">
+					style="height: 100px;margin-top: 0px; padding: 10px;"
+					class="ui-corner-all ui-widget-content greenActivity activity">
 					<h:outputText value="Englisch" />
 					<br /> <br />
 					<h:outputText value="Klasse 2c" />
@@ -187,8 +186,8 @@
 				</div>
 
 				<div
-					style="height: 100px; background-color: red; margin-top: 150px; padding: 5px;"
-					class="ui-corner-all">
+					style="height: 100px; margin-top: 150px; padding: 10px;"
+					class="ui-corner-all ui-widget-content redActivity activity">
 					<h:outputText value="Mathematik" />
 					<br /> <br />
 					<h:outputText value="Klasse 3c" />
@@ -197,18 +196,18 @@
 					<br />
 				</div>
 				<div
-					style="height: 100px; background-color: gray; margin-top: 150px; opacity: 0.7">
+					style="height: 100px; margin-top: 150px; opacity: 0.7" class="grayActivity activity">
 				</div>
 			</p:column>
 			<p:column>
 				<h:outputText value="Freitag" />
 				<p:separator />
 				<div
-					style="height: 100px; background-color: gray; margin-top: 0px; opacity: 0.7">
+					style="height: 100px; margin-top: 0px; opacity: 0.7" class="grayActivity">
 				</div>
 				<div
-					style="height: 400px; background-color: orange; margin-top: 0px; padding: 5px;"
-					class="ui-corner-all">
+					style="height: 400px; margin-top: 0px; padding: 10px;"
+					class="ui-corner-all ui-widget-content yellowActivity activity">
 					<h:outputText value="Projekt" />
 					<br /> <br />
 					<h:outputText value="Klasse 2b" />
@@ -221,7 +220,7 @@
 					<br />
 				</div>
 				<div
-					style="height: 100px; background-color: gray; margin-top: 100px; opacity: 0.7">
+					style="height: 100px; margin-top: 100px; opacity: 0.7" class="grayActivity activity">
 				</div>
 			</p:column>
 		</p:panelGrid>
