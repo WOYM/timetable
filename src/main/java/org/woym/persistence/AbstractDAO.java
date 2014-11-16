@@ -1,5 +1,7 @@
 package org.woym.persistence;
 
+import java.util.List;
+
 import javax.persistence.EntityManager;
 
 import org.woym.exceptions.DatasetException;
@@ -84,8 +86,35 @@ public abstract class AbstractDAO<E> {
 			entityManager.remove(pObject);
 			entityManager.getTransaction().commit();
 		} catch (Exception e) {
-			throw new DatasetException("Error while updating objects: "
+			throw new DatasetException("Error while deleting objects: "
 					+ e.getMessage());
 		}
 	}
+
+	/**
+	 * Gibt eine Liste aller in der Datenbank vorhandenen Objekte vom Typ E
+	 * zurück. Tritt dabei ein Fehler auf, wird eine
+	 * {@linkplain DatasetException} geworfen.
+	 * 
+	 * @return List&lt;E&gt; - Liste aller Objekte vom Typ E, kann auch leer
+	 *         sein
+	 * 
+	 * @throws DatasetException
+	 */
+	public abstract List<E> getAll() throws DatasetException;
+
+	/**
+	 * Gibt eine Liste mit Objekten vom Typ E zurück. Ist ein Objekt mit der ID
+	 * vorhanden, wird eine Liste mit diesem Objekt zurückgegeben. Ist kein
+	 * Objekt mit der ID vorhanden, wird eine leere Liste zurückgegeben. Tritt
+	 * bei der Datenbankanfrage ein Fehler auf, wird eine
+	 * {@linkplain DatasetException} geworfen.
+	 * 
+	 * @param pId
+	 *            - ID des gesuchten Elementes
+	 * @return List&lt;E&gt;, leere Liste, falls kein Objekt mit der übergebenen
+	 *         ID vorhanden ist, ansonsten eine Liste mit einem Element
+	 * @throws DatasetException
+	 */
+	public abstract List<E> getById(final Long pId) throws DatasetException;
 }
