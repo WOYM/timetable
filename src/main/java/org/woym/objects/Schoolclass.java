@@ -2,7 +2,6 @@ package org.woym.objects;
 
 import java.io.Serializable;
 import java.util.HashMap;
-import java.util.Map;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -37,7 +36,7 @@ public class Schoolclass implements Serializable {
 	/**
 	 * Die Unterrichtsbedarfe dieser Klasse.
 	 */
-	private Map<Subject, Integer> subjectDemands = new HashMap<Subject, Integer>();
+	private HashMap<Subject, Integer> subjectDemands = new HashMap<Subject, Integer>();
 
 	public Schoolclass() {
 	}
