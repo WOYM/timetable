@@ -4,6 +4,8 @@ import java.util.List;
 
 import javax.persistence.EntityManager;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.woym.exceptions.DatasetException;
 
 /**
@@ -23,22 +25,28 @@ public abstract class AbstractDAO<E> {
 	 */
 	protected final EntityManager entityManager = DataBase.getEntityManager();
 
+	protected static Logger LOGGER = LogManager.getLogger("Persistence");
+
 	/**
 	 * Persistiert das übergebene Objekt in der Datenbank. Tritt dabei ein
 	 * Fehler auf, wird eine {@linkplain DatasetException} geworfen.
 	 * 
-	 * @param pObject
+	 * @param object
 	 *            - das zu persistierende Objekt
 	 */
-	public void persistObject(final E pObject) throws DatasetException {
-		if (pObject == null) {
+	public void persistObject(final E object) throws DatasetException {
+		if (object == null) {
 			throw new IllegalArgumentException("Parameter is null.");
 		}
 		try {
 			entityManager.getTransaction().begin();
-			entityManager.persist(pObject);
+			entityManager.persist(object);
 			entityManager.getTransaction().commit();
+			LOGGER.debug(String.format("%s %s persisted.", object.getClass()
+					.getSimpleName(), object));
 		} catch (Exception e) {
+			LOGGER.error(String.format("Exception while persisting %s: ",
+					object.getClass().getSimpleName()), e);
 			throw new DatasetException("Error while persisting object: "
 					+ e.getMessage());
 		}
@@ -49,20 +57,24 @@ public abstract class AbstractDAO<E> {
 	 * entspricht. Tritt beim Merge ein Fehler auf, wird eine
 	 * {@linkplain DatasetException} geworfen.
 	 * 
-	 * @param pObject
+	 * @param object
 	 *            - das im System bereits aktualisierte, in der Datenbank zu
 	 *            persistierende Objekt
 	 * @throws DatasetException
 	 */
-	public void updateObject(final E pObject) throws DatasetException {
-		if (pObject == null) {
+	public void updateObject(final E object) throws DatasetException {
+		if (object == null) {
 			throw new IllegalArgumentException("Parameter is null.");
 		}
 		try {
 			entityManager.getTransaction().begin();
-			entityManager.merge(pObject);
+			entityManager.merge(object);
 			entityManager.getTransaction().commit();
+			LOGGER.debug(String.format("%s %s updated.", object.getClass()
+					.getSimpleName(), object));
 		} catch (Exception e) {
+			LOGGER.error(String.format("Exception while updating %s: ",
+					object.getClass().getSimpleName()), e);
 			throw new DatasetException("Error while updating object: "
 					+ e.getMessage());
 		}
@@ -73,19 +85,23 @@ public abstract class AbstractDAO<E> {
 	 * Tritt beim Löschen ein Fehler auf, wird eine
 	 * {@linkplain DatasetException} geworfen.
 	 * 
-	 * @param pObject
+	 * @param object
 	 *            - das zu löschende Objekt
 	 * @throws DatasetException
 	 */
-	public void deleteObject(final E pObject) throws DatasetException {
-		if (pObject == null) {
+	public void deleteObject(final E object) throws DatasetException {
+		if (object == null) {
 			throw new IllegalArgumentException("Parameter is null.");
 		}
 		try {
 			entityManager.getTransaction().begin();
-			entityManager.remove(pObject);
+			entityManager.remove(object);
 			entityManager.getTransaction().commit();
+			LOGGER.debug(String.format("%s %s deleted.", object.getClass()
+					.getSimpleName(), object));
 		} catch (Exception e) {
+			LOGGER.error(String.format("Exception while deleting %s: ",
+					object.getClass().getSimpleName()), e);
 			throw new DatasetException("Error while deleting objects: "
 					+ e.getMessage());
 		}
@@ -116,5 +132,5 @@ public abstract class AbstractDAO<E> {
 	 *         ID vorhanden ist, ansonsten eine Liste mit einem Element
 	 * @throws DatasetException
 	 */
-	public abstract List<E> getById(final Long pId) throws DatasetException;
+	public abstract List<E> getById(final Long id) throws DatasetException;
 }

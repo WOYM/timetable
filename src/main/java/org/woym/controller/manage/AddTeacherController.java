@@ -1,5 +1,7 @@
 package org.woym.controller.manage;
 
+import java.math.BigDecimal;
+
 import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
 
@@ -55,9 +57,9 @@ public class AddTeacherController {
 	}
 	
     public void addTeacherFromDialog() {
-    	teacher.setName(name);
+    	teacher.setFirstName(name);
     	teacher.setSymbol(symbol);
-    	teacher.setWeekhours(weekhours);
+    	teacher.setHoursPerWeek(new BigDecimal(weekhours));
         RequestContext.getCurrentInstance().closeDialog(teacher);
     }
 	
