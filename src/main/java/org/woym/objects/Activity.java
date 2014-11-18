@@ -2,16 +2,21 @@ package org.woym.objects;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.persistence.CascadeType;
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
+import javax.persistence.MapKeyJoinColumn;
+import javax.persistence.OneToMany;
 
 /**
  * Diese Klasse repräsentiert eine Aktivität des Personals.
@@ -62,7 +67,12 @@ public class Activity implements Serializable {
 	 * Die an der Aktivität teilnehmenden Lehrer über
 	 * {@linkplain TeacherParticipitions} einem Zeitraum zugeordnet.
 	 */
-	private TeacherParticipitions teachers;
+	@OneToMany
+	@JoinTable(name="ACTIVITY_EMPLOYEES",
+	joinColumns=@JoinColumn(name="ACTIVITY"),
+	inverseJoinColumns=@JoinColumn(name="EMPLOYEETIMEPERIODS"))
+	@MapKeyJoinColumn(name="EMPLOYEE")
+	private Map<Employee, EmployeeTimePeriods> employees = new HashMap<>();
 
 	public Activity() {
 	}
@@ -103,12 +113,12 @@ public class Activity implements Serializable {
 		return schoolclasses;
 	}
 	
-	public TeacherParticipitions getTeachers() {
-		return teachers;
+	public Collection<Employee> getEmployees() {
+		return employees.keySet();
 	}
 
-	public void setTeachers(TeacherParticipitions teachers) {
-		this.teachers = teachers;
+	public EmployeeTimePeriods getEmployeeTimePeriods(final Employee employee){
+		return employees.get(employee);
 	}
 	
 	/**

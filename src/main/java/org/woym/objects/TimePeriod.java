@@ -36,14 +36,14 @@ public class TimePeriod implements Serializable{
 	 */
 	@Temporal(TemporalType.TIME)
 	@Column(nullable = false)
-	private Date start;
+	private Date startTime;
 	
 	/**
 	 * Der Endzeitpunkt des Zeitraumes.
 	 */
 	@Temporal(TemporalType.TIME)
 	@Column(nullable = false)
-	private Date end;
+	private Date endTime;
 	
 	/**
 	 * Die Dauer des Zeitraumes in Minuten.
@@ -79,26 +79,26 @@ public class TimePeriod implements Serializable{
 
 
 
-	public Date getStart() {
-		return start;
+	public Date getStartTime() {
+		return startTime;
 	}
 
 
 
-	public void setStart(Date start) {
-		this.start = start;
+	public void setStartTime(Date startTime) {
+		this.startTime = startTime;
 	}
 
 
 
-	public Date getEnd() {
-		return end;
+	public Date getEndTime() {
+		return endTime;
 	}
 
 
 
-	public void setEnd(Date end) {
-		this.end = end;
+	public void setEndTime(Date endTime) {
+		this.endTime = endTime;
 	}
 
 

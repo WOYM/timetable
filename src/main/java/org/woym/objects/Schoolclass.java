@@ -1,12 +1,18 @@
 package org.woym.objects;
 
 import java.io.Serializable;
+import java.util.HashMap;
+import java.util.Map;
 
+import javax.persistence.CollectionTable;
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.MapKeyJoinColumn;
 
 /**
  * Diese Klasse repräsentiert eine Schulklasse.
@@ -37,8 +43,14 @@ public class Schoolclass implements Serializable {
 	/**
 	 * Die Unterrichtsbedarfe dieser Klasse.
 	 */
-	private SubjectDemands subjectDemands;
-
+	@ElementCollection
+	@CollectionTable(name="SCHOOLCLASS_SUBJECTDEMANDS",
+	joinColumns=@JoinColumn(name="SCHOOLCLASS"))
+	@Column(name="DEMAND")
+	@MapKeyJoinColumn(name="SUBJECT", referencedColumnName="ID")
+	private Map<Subject, Integer> subjectDemands = new HashMap<>(); 
+	
+	
 	public Schoolclass() {
 	}
 	
@@ -58,11 +70,8 @@ public class Schoolclass implements Serializable {
 		this.identifier = identifier;
 	}
 	
-	public SubjectDemands getSubjectDemands() {
+	public Map<Subject, Integer> getSubjectDemands() {
 		return subjectDemands;
 	}
 
-	public void setSubjectDemands(SubjectDemands subjectDemands) {
-		this.subjectDemands = subjectDemands;
-	}
 }
