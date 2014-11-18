@@ -22,7 +22,7 @@ import javax.persistence.OneToMany;
  */
 @Entity
 @Inheritance
-public abstract class Staff {
+public abstract class Employee {
 
 	/**
 	 * Rechengenauigkeit der verwendeten Kommazahlen.
@@ -50,7 +50,8 @@ public abstract class Staff {
 	/**
 	 * Der Nachname. Darf in der Datenbank nicht null sein.
 	 */
-	//@Column(nullable = false)
+	//TODO: Ändern.
+	// @Column(nullable = false)
 	private String lastName;
 
 	/**
@@ -96,9 +97,9 @@ public abstract class Staff {
 	@ManyToMany(cascade = CascadeType.ALL)
 	private List<ActivityType> possibleActivityTypes = new ArrayList<ActivityType>();
 
-	public Staff() {
+	public Employee() {
 	}
-	
+
 	public long getId() {
 		return id;
 	}
@@ -145,6 +146,22 @@ public abstract class Staff {
 
 	public void setAllocatedHours(BigDecimal allocatedHours) {
 		this.allocatedHours = allocatedHours;
+	}
+
+	public List<ChargeableCompensation> getCompensations() {
+		return compensations;
+	}
+
+	public List<AcademicYear> getGuidedAcademicYears() {
+		return guidedAcademicYears;
+	}
+
+	public List<Schoolclass> getGuidedSchoolclasses() {
+		return guidedSchoolclasses;
+	}
+
+	public List<ActivityType> getPossibleActivityTypes() {
+		return possibleActivityTypes;
 	}
 
 	public String getName() {
@@ -334,9 +351,4 @@ public abstract class Staff {
 	public boolean containsActivityType(final ActivityType activityType) {
 		return possibleActivityTypes.contains(activityType);
 	}
-
-	protected List<ActivityType> getPossibleActivityTypes() {
-		return possibleActivityTypes;
-	}
-
 }

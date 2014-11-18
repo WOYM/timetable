@@ -8,7 +8,7 @@ import javax.persistence.Query;
 
 import org.woym.exceptions.DatasetException;
 import org.woym.objects.Teacher;
-import org.woym.spec.persistence.IStaffDAO;
+import org.woym.spec.persistence.IEmployeeDAO;
 
 /**
  * Diese Klasse erweitert die abstrakte Klasse {@linkplain DataHandler} und
@@ -18,7 +18,7 @@ import org.woym.spec.persistence.IStaffDAO;
  *
  */
 public class TeacherDAO extends AbstractDAO<Teacher> implements
-		IStaffDAO<Teacher>, Serializable{
+		IEmployeeDAO<Teacher>, Serializable{
 
 	/**
 	 * 

@@ -3,7 +3,7 @@ package org.woym.spec.persistence;
 import java.util.List;
 
 import org.woym.exceptions.DatasetException;
-import org.woym.objects.Staff;
+import org.woym.objects.Employee;
 
 /**
  * Diese Schnittstelle spezifiziert Methoden für ein Teacher Data Access Object.
@@ -11,7 +11,7 @@ import org.woym.objects.Staff;
  * @author Adrian
  *
  */
-public interface IStaffDAO<E extends Staff> {
+public interface IEmployeeDAO<E extends Employee> {
 
 	/**
 	 * Führt eine Datenbankanfrage aus, die nach einem Lehrer sucht, der exakt

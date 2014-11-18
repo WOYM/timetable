@@ -14,6 +14,7 @@ import javax.persistence.OneToMany;
 
 /**
  * Diese Klasse repräsentiert einen Standort.
+ * 
  * @author Adrian
  *
  */
@@ -46,7 +47,7 @@ public class Location implements Serializable {
 
 	public Location() {
 	}
-	
+
 	public Long getId() {
 		return id;
 	}
@@ -61,6 +62,10 @@ public class Location implements Serializable {
 
 	public void setName(String name) {
 		this.name = name;
+	}
+
+	public List<Room> getRooms() {
+		return rooms;
 	}
 
 	public boolean addRoom(final Room room) {

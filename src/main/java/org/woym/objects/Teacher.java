@@ -10,7 +10,7 @@ import javax.persistence.Entity;
  *
  */
 @Entity
-public class Teacher extends Staff implements Serializable {
+public class Teacher extends Employee implements Serializable {
 
 	private static final long serialVersionUID = -2846205796145565740L;
 

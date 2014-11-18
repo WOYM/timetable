@@ -10,7 +10,7 @@ import javax.persistence.Entity;
  *
  */
 @Entity
-public class PedagogicAssistant extends Staff implements Serializable{
+public class PedagogicAssistant extends Employee implements Serializable{
 
 	/**
 	 * 

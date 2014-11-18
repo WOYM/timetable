@@ -15,6 +15,7 @@ public class Subject extends ActivityType{
 	 */
 	private static final long serialVersionUID = 2876347057241150863L;
 
+	
 	public Subject() {
 	}
 }

@@ -56,7 +56,7 @@ public abstract class ActivityType implements Serializable {
 
 	public ActivityType() {
 	}
-	
+
 	public Long getId() {
 		return id;
 	}
@@ -81,5 +81,51 @@ public abstract class ActivityType implements Serializable {
 		this.typicalDuration = typicalDuration;
 	}
 
-	// TODO: Methoden um Räume hinzuzufügen, löschen, etc.
+	public List<Room> getLocation() {
+		return location;
+	}
+
+	/**
+	 * Fügt das übergebenene {@linkplain Room}-Objekt der entsprechenden Liste
+	 * hinzu, sofern es noch nicht darin vorhanden ist.
+	 * 
+	 * @param room
+	 *            - das hinzuzufügende Objekt
+	 * @return {@code true}, wenn das Objekt sich noch nicht in der Liste
+	 *         befindet und hinzugefügt wurde, ansonsten {@code false}
+	 */
+	public boolean addLocation(final Room room) {
+		if (!location.contains(room)) {
+			location.add(room);
+			return true;
+		}
+		return false;
+	}
+
+	/**
+	 * Entfernt das übergebene {@linkplain Room}-Objekt aus der entsprechenden
+	 * Liste.
+	 * 
+	 * @param room
+	 *            - das zu entfernden Objekt
+	 * @return {@code true}, wenn das Objekt entfernt wurde, ansonsten
+	 *         {@code false}
+	 */
+	public boolean removeRoom(final Room room) {
+		return location.remove(room);
+	}
+
+	/**
+	 * Gibt {@code true} zurück, wenn sich das übergebene {@linkplain Room}
+	 * -Objekt in der Liste befindet, ansonsten {@code false}.
+	 * 
+	 * @param room
+	 *            - das Objekt, für das geprüft werden soll, ob es sich in der
+	 *            Liste befindet
+	 * @return {@code true}, wenn das Objekt sich in der Liste befindet,
+	 *         ansonsten {@code false}
+	 */
+	public boolean containsRoom(final Room room) {
+		return location.contains(room);
+	}
 }

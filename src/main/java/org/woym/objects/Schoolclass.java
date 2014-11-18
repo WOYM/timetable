@@ -2,6 +2,7 @@ package org.woym.objects;
 
 import java.io.Serializable;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -30,9 +31,13 @@ public class Schoolclass implements Serializable {
 	/**
 	 * Character unter dem die Klasse identifziert werden kann.
 	 */
+	@Column(nullable = false)
 	private char identifier;
 
-	//TODO: Lösung für Unterrichtsbedarfe hier einfügen	
+	/**
+	 * Die Unterrichtsbedarfe dieser Klasse.
+	 */
+	private SubjectDemands subjectDemands;
 
 	public Schoolclass() {
 	}
@@ -51,5 +56,13 @@ public class Schoolclass implements Serializable {
 
 	public void setIdentifier(char identifier) {
 		this.identifier = identifier;
+	}
+	
+	public SubjectDemands getSubjectDemands() {
+		return subjectDemands;
+	}
+
+	public void setSubjectDemands(SubjectDemands subjectDemands) {
+		this.subjectDemands = subjectDemands;
 	}
 }
