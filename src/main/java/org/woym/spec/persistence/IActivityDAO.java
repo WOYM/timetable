@@ -1,5 +1,7 @@
 package org.woym.spec.persistence;
 
-public interface IActivityDAO {
+import org.woym.objects.Activity;
+
+public interface IActivityDAO extends IAbstractDAO<Activity>{
 
 }

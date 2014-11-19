@@ -1,10 +1,11 @@
 package org.woym.spec.persistence;
 
+import java.io.Serializable;
 import java.util.List;
 
 import org.woym.exceptions.DatasetException;
 
-public interface IAbstractDAO<E> {
+public interface IAbstractDAO<E> extends Serializable {
 
 	/**
 	 * Persistiert das übergebene Objekt in der Datenbank. Tritt dabei ein
