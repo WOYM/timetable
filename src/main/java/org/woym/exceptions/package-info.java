@@ -5,4 +5,4 @@
  * @author Adrian
  *
  */
-package com.woym.persistence;
+package org.woym.exceptions;

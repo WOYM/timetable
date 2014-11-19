@@ -45,13 +45,13 @@
 			selection="#{teacherController.selectedTeacher}"
 			selectionMode="single" rowKey="#{teacher.symbol}">
 			<p:column headerText="Name">
-				<h:outputText value="#{teacher.name}" />
+				<h:outputText value="#{teacher.firstName}" />
 			</p:column>
 			<p:column headerText="Kürzel">
 				<h:outputText value="#{teacher.symbol}" />
 			</p:column>
 			<p:column headerText="Wochenstunden">
-				<h:outputText value="#{teacher.weekhours}" />
+				<h:outputText value="#{teacher.hoursPerWeek}" />
 			</p:column>
 		</p:dataTable>
 	</h:form>

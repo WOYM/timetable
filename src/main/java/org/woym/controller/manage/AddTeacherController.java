@@ -1,11 +1,12 @@
-package com.woym.controller.manage;
+package org.woym.controller.manage;
+
+import java.math.BigDecimal;
 
 import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
 
 import org.primefaces.context.RequestContext;
-
-import com.woym.objects.Teacher;
+import org.woym.objects.Teacher;
 
 @ManagedBean(name="addTeacherController")
 public class AddTeacherController {
@@ -56,9 +57,9 @@ public class AddTeacherController {
 	}
 	
     public void addTeacherFromDialog() {
-    	teacher.setName(name);
+    	teacher.setFirstName(name);
     	teacher.setSymbol(symbol);
-    	teacher.setWeekhours(weekhours);
+    	teacher.setHoursPerWeek(new BigDecimal(weekhours));
         RequestContext.getCurrentInstance().closeDialog(teacher);
     }
 	

@@ -1,4 +1,4 @@
-package com.woym.controller.manage;
+package org.woym.controller.manage;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -13,10 +13,9 @@ import javax.faces.context.FacesContext;
 
 import org.primefaces.context.RequestContext;
 import org.primefaces.event.SelectEvent;
-
-import com.woym.exceptions.DatasetException;
-import com.woym.objects.Teacher;
-import com.woym.persistence.TeacherDataHandler;
+import org.woym.exceptions.DatasetException;
+import org.woym.objects.Teacher;
+import org.woym.persistence.TeacherDAO;
 
 /**
  * <h1>TeacherController</h1>
@@ -32,7 +31,7 @@ public class TeacherController implements Serializable {
 
 	private static final long serialVersionUID = -2341971622906815080L;
 
-	private TeacherDataHandler db = new TeacherDataHandler();
+	private TeacherDAO db = new TeacherDAO();
 
 	private Teacher selectedTeacher;
 	private Teacher selectedTeacherForSearch;
@@ -41,7 +40,7 @@ public class TeacherController implements Serializable {
 
 	public List<Teacher> getTeachers() {
 		try {
-			return db.getTeachers();
+			return db.getAll();
 		} catch (DatasetException e) {
 			FacesMessage message = new FacesMessage(
 					FacesMessage.SEVERITY_ERROR,
