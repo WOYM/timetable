@@ -1,5 +1,7 @@
 package org.woym.persistence;
 
+import java.io.Serializable;
+
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
 import javax.faces.event.ComponentSystemEvent;
@@ -10,6 +12,7 @@ import javax.persistence.PersistenceException;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
 /**
  * Diese Klasse initialisiert den EntityManager, welcher für alle
  * Datenbanktransaktionen verwendet wird.
@@ -17,15 +20,23 @@ import org.apache.logging.log4j.Logger;
  * @author Adrian
  *
  */
- @ManagedBean
+@ManagedBean
 @SessionScoped
-public class DataBase {
+public class DataBase implements Serializable{
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 6237080407072299976L;
+
+	/**
+	 * Der Logger.
+	 */
+	private static Logger LOGGER = LogManager.getLogger("DataBase");
+	
 	/**
 	 * Der EntityManager.
 	 */
-	private static Logger logger = LogManager.getLogger("DataBase");
-	
 	private static EntityManager ENTITY_MANAGER;
 
 	/**
@@ -37,12 +48,12 @@ public class DataBase {
 	 */
 	public void setUp(ComponentSystemEvent event) {
 		if (ENTITY_MANAGER == null) {
-			logger.info("Establishing database-connection...");
+			LOGGER.info("Establishing database-connection...");
 			try {
 				EntityManagerFactory factory;
 				factory = Persistence.createEntityManagerFactory("timetable");
 				ENTITY_MANAGER = factory.createEntityManager();
-				logger.info("Connection established.");
+				LOGGER.info("Connection established.");
 			} catch (Exception e) {
 				throw new PersistenceException(
 						"Could not initialize persistence component: "

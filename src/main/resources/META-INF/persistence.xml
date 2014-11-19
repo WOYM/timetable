@@ -3,9 +3,22 @@
 	xmlns="http://java.sun.com/xml/ns/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://java.sun.com/xml/ns/persistence http://java.sun.com/xml/ns/persistence/persistence_2_0.xsd">
 	<persistence-unit name="timetable" transaction-type="RESOURCE_LOCAL">
-		<class>org.woym.objects.Staff</class>
-		<class>org.woym.objects.Teacher</class>
+		<provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
+		<class>org.woym.objects.AcademicYear</class>
+		<class>org.woym.objects.Activity</class>
+		<class>org.woym.objects.ActivityType</class>
+		<class>org.woym.objects.ChargeableCompensation</class>
+		<class>org.woym.objects.EmployeeTimePeriods</class>
+		<class>org.woym.objects.Location</class>
 		<class>org.woym.objects.PedagogicAssistant</class>
+		<class>org.woym.objects.Project</class>
+		<class>org.woym.objects.Room</class>
+		<class>org.woym.objects.Schoolclass</class>
+		<class>org.woym.objects.Employee</class>
+		<class>org.woym.objects.Subject</class>
+		<class>org.woym.objects.Teacher</class>
+		<class>org.woym.objects.TimePeriod</class>
+
 		
 		<properties>
 			<property name="eclipselink.jdbc.batch-writing" value="JDBC" />
