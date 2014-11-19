@@ -30,20 +30,20 @@
             <h:panelGrid columns="3">
                 <p:outputLabel for="name" value="Name:" />
                 <p:inputText id="name" required="true"
-                    value="#{addTeacherController.name}" />
+                    value="#{teacherController.selectedTeacher.name}" />
                 <p:message for="name" />
                 <p:outputLabel for="symbol" value="Kürzel:" />
                 <p:inputText id="symbol" required="true"
-                    value="#{addTeacherController.symbol}" />
+                    value="#{teacherController.selectedTeacher.symbol}" />
                 <p:message for="symbol" />
                 <p:outputLabel for="weekhours" value="Wochenstunden:" />
                 <p:spinner id="weekhours" min="0" max="100"
-                    value="#{addTeacherController.weekhours}" />
+                    value="#{teacherController.selectedTeacher.weekhours}" />
                 <p:message for="weekhours" />
                 <p:spacer />
                 <p:outputPanel style="float:right">
                     <p:commandButton value="Hinzufügen"
-                        actionListener="#{addTeacherController.addTeacherFromDialog()}"
+                        actionListener="#{teacherController.editTeacher()}"
                         update="@form" />
                 </p:outputPanel>
             </h:panelGrid>

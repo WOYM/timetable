@@ -11,6 +11,8 @@ import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
 import javax.faces.context.FacesContext;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.primefaces.context.RequestContext;
 import org.primefaces.event.SelectEvent;
 import org.woym.exceptions.DatasetException;
@@ -30,6 +32,8 @@ import org.woym.persistence.TeacherDAO;
 public class TeacherController implements Serializable {
 
 	private static final long serialVersionUID = -2341971622906815080L;
+	
+	private static Logger logger = LogManager.getLogger("teacherController");
 
 	private TeacherDAO db = new TeacherDAO();
 
@@ -94,6 +98,14 @@ public class TeacherController implements Serializable {
 		}
 	}
 
+	public void editTeacher() {
+		try {
+			db.persistObject(selectedTeacher);
+		} catch (DatasetException e) {
+			logger.error(e);
+		}
+	}
+	
 	public void deleteTeacher() {
 		if (selectedTeacher != null) {
 			try {
