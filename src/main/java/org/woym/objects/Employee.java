@@ -82,19 +82,19 @@ public abstract class Employee {
 	/**
 	 * Die von dieser Person des Personals betreuten Jahrgänge.
 	 */
-	@ManyToMany(cascade = CascadeType.ALL)
+	@ManyToMany
 	private List<AcademicYear> guidedAcademicYears = new ArrayList<AcademicYear>();
 
 	/**
 	 * Die von dieser Person des Personals betreuten Schulklassen.
 	 */
-	@ManyToMany(cascade = CascadeType.ALL)
+	@ManyToMany
 	private List<Schoolclass> guidedSchoolclasses = new ArrayList<Schoolclass>();
 
 	/**
 	 * Die möglichen Stundeninhalte dieser Person des Personals.
 	 */
-	@ManyToMany(cascade = CascadeType.ALL)
+	@ManyToMany
 	private List<ActivityType> possibleActivityTypes = new ArrayList<ActivityType>();
 
 	public Employee() {

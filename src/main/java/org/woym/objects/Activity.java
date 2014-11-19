@@ -7,7 +7,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -60,7 +59,7 @@ public class Activity implements Serializable {
 	/**
 	 * Die an der Aktivität teilnehmenden Schulklasse.
 	 */
-	@ManyToMany(cascade = CascadeType.ALL)
+	@ManyToMany
 	private List<Schoolclass> schoolclasses = new ArrayList<>();
 
 	/**

@@ -4,7 +4,6 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -41,7 +40,7 @@ public class AcademicYear implements Serializable{
 	/**
 	 * Die zu diesem Jahrgang gehörigen Schulklassen.
 	 */
-	@OneToMany(cascade = CascadeType.ALL)
+	@OneToMany
 	private List<Schoolclass> schoolclasses = new ArrayList<>();
 
 	public AcademicYear(){

@@ -4,7 +4,6 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -51,7 +50,7 @@ public abstract class ActivityType implements Serializable {
 	 * Eine Liste der Räume, an welchen diese Aktivität typischerweise
 	 * abgehalten werden kann.
 	 */
-	@ManyToMany(cascade = CascadeType.ALL)
+	@ManyToMany
 	private List<Room> location = new ArrayList<Room>();
 
 	public ActivityType() {

@@ -36,7 +36,7 @@ public class Room implements Serializable{
 	/**
 	 * Funktion des Raumes.
 	 */
-	private String function;
+	private String purpose;
 	
 	/**
 	 * Zusätzliche Informationen zu dem Raum.
@@ -62,12 +62,12 @@ public class Room implements Serializable{
 		this.name = name;
 	}
 
-	public String getFunction() {
-		return function;
+	public String getPurpose() {
+		return purpose;
 	}
 
-	public void setFunction(String function) {
-		this.function = function;
+	public void setPurpose(String purpose) {
+		this.purpose = purpose;
 	}
 
 	public String getAdditionalInformation() {
