@@ -1,6 +1,5 @@
 package org.woym.persistence;
 
-import java.io.Serializable;
 import java.util.List;
 
 import javax.activation.DataHandler;
@@ -18,12 +17,7 @@ import org.woym.spec.persistence.IEmployeeDAO;
  *
  */
 public class TeacherDAO extends AbstractDAO<Teacher> implements
-		IEmployeeDAO<Teacher>, Serializable {
-
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = -6895052561483060606L;
+		IEmployeeDAO<Teacher> {
 
 	private static final String SELECT = "SELECT t FROM Teacher t";
 
@@ -47,18 +41,13 @@ public class TeacherDAO extends AbstractDAO<Teacher> implements
 	/**
 	 * {@inheritDoc}
 	 */
-	@SuppressWarnings("unchecked")
 	@Override
-	public List<Teacher> getById(Long id) throws DatasetException {
+	public Teacher getById(Long id) throws DatasetException {
 		if (id == null) {
 			throw new IllegalArgumentException();
 		}
 		try {
-			final Query query = entityManager.createQuery(SELECT
-					+ " WHERE t.id = ?1");
-			query.setParameter(1, id);
-			List<Teacher> teachers = query.getResultList();
-			return teachers;
+			return entityManager.find(Teacher.class, id);
 		} catch (Exception e) {
 			LOGGER.error("Exception while getting teacher by id " + id, e);
 			throw new DatasetException("Error while getting teacher by id: "

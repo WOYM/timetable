@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -40,8 +41,14 @@ public class AcademicYear implements Serializable{
 	/**
 	 * Die zu diesem Jahrgang gehörigen Schulklassen.
 	 */
-	@OneToMany
+	@OneToMany(mappedBy = "academicYear")
 	private List<Schoolclass> schoolclasses = new ArrayList<>();
+	
+	/**
+	 * Die Unterrichtsbedarfe für diesen Jahrgang.
+	 */
+	@OneToMany(cascade = CascadeType.ALL)
+	private List<SubjectDemand> subjectDemands = new ArrayList<>();
 
 	public AcademicYear(){
 	}
@@ -62,6 +69,22 @@ public class AcademicYear implements Serializable{
 		this.academicYear = academicYear;
 	}
 	
+	public List<Schoolclass> getSchoolclasses() {
+		return schoolclasses;
+	}
+
+	public void setSchoolclasses(List<Schoolclass> schoolclasses) {
+		this.schoolclasses = schoolclasses;
+	}
+
+	public List<SubjectDemand> getSubjectDemands() {
+		return subjectDemands;
+	}
+
+	public void setSubjectDemands(List<SubjectDemand> subjectDemands) {
+		this.subjectDemands = subjectDemands;
+	}
+
 	/**
 	 * Fügt das übergebenene {@linkplain Schoolclass}-Objekt der entsprechenden
 	 * Liste hinzu, sofern es noch nicht darin vorhanden ist.
@@ -105,5 +128,50 @@ public class AcademicYear implements Serializable{
 	 */
 	public boolean containsSchoolclass(final Schoolclass schoolclass) {
 		return schoolclasses.contains(schoolclass);
+	}
+	
+	/**
+	 * Fügt das übergebenene {@linkplain SubjectDemand}-Objekt der entsprechenden
+	 * Liste hinzu, sofern es noch nicht darin vorhanden ist.
+	 * 
+	 * @param subjectDemand
+	 *            - das hinzuzufügende Objekt
+	 * @return {@code true}, wenn das Objekt sich noch nicht in der Liste
+	 *         befindet und hinzugefügt wurde, ansonsten {@code false}
+	 */
+	public boolean addSubjectDemand(final SubjectDemand subjectDemand) {
+		if (!subjectDemands.contains(subjectDemand)) {
+			subjectDemands.add(subjectDemand);
+			return true;
+		}
+		return false;
+	}
+
+	/**
+	 * Entfernt das übergebene {@linkplain SubjectDemand}-Objekt aus der
+	 * entsprechenden Liste.
+	 * 
+	 * @param subjectDemand
+	 *            - das zu entfernden Objekt
+	 * @return {@code true}, wenn das Objekt entfernt wurde, ansonsten
+	 *         {@code false}
+	 */
+	public boolean removeSubjectDemand(final SubjectDemand subjectDemand) {
+		return subjectDemands.remove(subjectDemand);
+	}
+
+	/**
+	 * Gibt {@code true} zurück, wenn sich das übergebene
+	 * {@linkplain SubjectDemand}-Objekt in der Liste befindet, ansonsten
+	 * {@code false}.
+	 * 
+	 * @param subjectDemand
+	 *            - das Objekt, für das geprüft werden soll, ob es sich in der
+	 *            Liste befindet
+	 * @return {@code true}, wenn das Objekt sich in der Liste befindet,
+	 *         ansonsten {@code false}
+	 */
+	public boolean containsSubjectDemand(final SubjectDemand subjectDemand) {
+		return subjectDemands.contains(subjectDemand);
 	}
 }

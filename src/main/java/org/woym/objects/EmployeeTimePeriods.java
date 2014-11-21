@@ -12,8 +12,8 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 
 /**
- * Eine Klasse die eine Liste von TimePeriod-Objekten hält, damit die HashMap in
- * {@linkplain Activity} persistiert werden kann.
+ * Diese Klasse ordnet einem {@link Employee}-Objekt eine Liste von
+ * {@link TimePeriod}-Objekten zu.
  * 
  * @author Adrian
  *
@@ -33,14 +33,46 @@ public class EmployeeTimePeriods implements Serializable {
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Long id;
 
+	/**
+	 * Der Mitarbeiter, welchem eine Liste von {@link TimePeriod}-Objekten
+	 * zugeordnet werden soll.
+	 */
+	private Employee employee;
+
+	/**
+	 * Die Liste von zuzuordnenden {@link TimePeriod}-Objekten.
+	 */
 	@OneToMany(cascade = CascadeType.ALL)
 	private List<TimePeriod> timePeriods = new ArrayList<>();
+
+	public EmployeeTimePeriods() {
+	}
+	
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
+	}
+
+	public Employee getEmployee() {
+		return employee;
+	}
+
+	public void setEmployee(Employee employee) {
+		this.employee = employee;
+	}
 
 	public List<TimePeriod> getTimePeriods() {
 		return timePeriods;
 	}
+	
+	public void setTimePeriods(List<TimePeriod> timePeriods) {
+		this.timePeriods = timePeriods;
+	}
 
-	public boolean add(final TimePeriod timePeriod) {
+	public boolean addTimePeriod(final TimePeriod timePeriod) {
 		if (!timePeriods.contains(timePeriod)) {
 			timePeriods.add(timePeriod);
 			return true;
@@ -48,11 +80,11 @@ public class EmployeeTimePeriods implements Serializable {
 		return false;
 	}
 
-	public boolean remove(final TimePeriod timePeriod) {
+	public boolean removeTimePeriod(final TimePeriod timePeriod) {
 		return timePeriods.remove(timePeriod);
 	}
 
-	public boolean contains(final TimePeriod timePeriod) {
+	public boolean containsTimePeriod(final TimePeriod timePeriod) {
 		return timePeriods.contains(timePeriod);
 	}
 }

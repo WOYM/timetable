@@ -2,20 +2,17 @@ package org.woym.objects;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
-import javax.persistence.MapKeyJoinColumn;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 
 /**
  * Diese Klasse repräsentiert eine Aktivität des Personals.
@@ -47,7 +44,7 @@ public class Activity implements Serializable {
 	/**
 	 * Der Zeitraum, in welchem diese Aktivität stattfindet.
 	 */
-	@JoinColumn(nullable = false)
+	@OneToOne(cascade = CascadeType.ALL)
 	private TimePeriod time;
 
 	/**
@@ -63,15 +60,11 @@ public class Activity implements Serializable {
 	private List<Schoolclass> schoolclasses = new ArrayList<>();
 
 	/**
-	 * Die an der Aktivität teilnehmenden Lehrer über
-	 * {@linkplain TeacherParticipitions} einem Zeitraum zugeordnet.
+	 * Eine Liste von {@link EmployeeTimePeriods}-Objekten, um die teilnehmenden
+	 * Lehrer und Zeiträume zu mappen.
 	 */
-	@OneToMany
-	@JoinTable(name="ACTIVITY_EMPLOYEES",
-	joinColumns=@JoinColumn(name="ACTIVITY"),
-	inverseJoinColumns=@JoinColumn(name="EMPLOYEETIMEPERIODS"))
-	@MapKeyJoinColumn(name="EMPLOYEE")
-	private Map<Employee, EmployeeTimePeriods> employees = new HashMap<>();
+	@OneToMany(cascade = CascadeType.ALL)
+	private List<EmployeeTimePeriods> employees = new ArrayList<>();
 
 	public Activity() {
 	}
@@ -107,19 +100,23 @@ public class Activity implements Serializable {
 	public void setRoom(Room room) {
 		this.room = room;
 	}
-	
-	public List<Schoolclass> getSchoolclasses(){
+
+	public List<Schoolclass> getSchoolclasses() {
 		return schoolclasses;
 	}
+
+	public void setSchoolclasses(List<Schoolclass> schoolclasses) {
+		this.schoolclasses = schoolclasses;
+	}
 	
-	public Collection<Employee> getEmployees() {
-		return employees.keySet();
+	public List<EmployeeTimePeriods> getEmployees() {
+		return employees;
 	}
 
-	public EmployeeTimePeriods getEmployeeTimePeriods(final Employee employee){
-		return employees.get(employee);
+	public void setEmployees(List<EmployeeTimePeriods> employees) {
+		this.employees = employees;
 	}
-	
+
 	/**
 	 * Fügt das übergebenene {@linkplain Schoolclass}-Objekt der entsprechenden
 	 * Liste hinzu, sofern es noch nicht darin vorhanden ist.
@@ -164,4 +161,6 @@ public class Activity implements Serializable {
 	public boolean containsSchoolclass(final Schoolclass schoolclass) {
 		return schoolclasses.contains(schoolclass);
 	}
+	
+	//TODO: Methoden für employees-Liste.
 }

@@ -21,11 +21,6 @@ import org.woym.spec.persistence.IAbstractDAO;
 public abstract class AbstractDAO<E> implements IAbstractDAO<E>{
 
 	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 8940653543591382931L;
-
-	/**
 	 * Eine Instanz des EntityManagers von {@linkplain DataBase}, die in den
 	 * Subklassen verwendet werden kann.
 	 */
@@ -104,5 +99,5 @@ public abstract class AbstractDAO<E> implements IAbstractDAO<E>{
 	/**
 	 * {@inheritDoc}
 	 */
-	public abstract List<E> getById(final Long id) throws DatasetException;
+	public abstract E getById(final Long id) throws DatasetException;
 }

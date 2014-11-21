@@ -51,7 +51,7 @@ public abstract class ActivityType implements Serializable {
 	 * abgehalten werden kann.
 	 */
 	@ManyToMany
-	private List<Room> location = new ArrayList<Room>();
+	private List<Room> rooms = new ArrayList<Room>();
 
 	public ActivityType() {
 	}
@@ -80,8 +80,12 @@ public abstract class ActivityType implements Serializable {
 		this.typicalDuration = typicalDuration;
 	}
 
-	public List<Room> getLocation() {
-		return location;
+	public List<Room> getRooms() {
+		return rooms;
+	}
+	
+	public void setRooms(List<Room> rooms) {
+		this.rooms = rooms;
 	}
 
 	/**
@@ -93,9 +97,9 @@ public abstract class ActivityType implements Serializable {
 	 * @return {@code true}, wenn das Objekt sich noch nicht in der Liste
 	 *         befindet und hinzugefügt wurde, ansonsten {@code false}
 	 */
-	public boolean addLocation(final Room room) {
-		if (!location.contains(room)) {
-			location.add(room);
+	public boolean addRoom(final Room room) {
+		if (!rooms.contains(room)) {
+			rooms.add(room);
 			return true;
 		}
 		return false;
@@ -111,7 +115,7 @@ public abstract class ActivityType implements Serializable {
 	 *         {@code false}
 	 */
 	public boolean removeRoom(final Room room) {
-		return location.remove(room);
+		return rooms.remove(room);
 	}
 
 	/**
@@ -125,6 +129,6 @@ public abstract class ActivityType implements Serializable {
 	 *         ansonsten {@code false}
 	 */
 	public boolean containsRoom(final Room room) {
-		return location.contains(room);
+		return rooms.contains(room);
 	}
 }

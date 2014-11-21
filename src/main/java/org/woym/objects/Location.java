@@ -68,6 +68,10 @@ public class Location implements Serializable {
 		return rooms;
 	}
 
+	public void setRooms(List<Room> rooms) {
+		this.rooms = rooms;
+	}
+
 	public boolean addRoom(final Room room) {
 		if (!rooms.contains(room)) {
 			rooms.add(room);

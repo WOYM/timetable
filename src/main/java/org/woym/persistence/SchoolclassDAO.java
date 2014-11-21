@@ -1,6 +1,5 @@
 package org.woym.persistence;
 
-import java.io.Serializable;
 import java.util.List;
 
 import javax.persistence.Query;
@@ -10,12 +9,7 @@ import org.woym.objects.Schoolclass;
 import org.woym.spec.persistence.ISchoolclassDAO;
 
 public class SchoolclassDAO extends AbstractDAO<Schoolclass> implements
-		ISchoolclassDAO, Serializable {
-
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = -3975349764322792900L;
+		ISchoolclassDAO {
 	
 	
 	private static final String SELECT = "SELECT s FROM Schoolclass s";
@@ -42,17 +36,12 @@ public class SchoolclassDAO extends AbstractDAO<Schoolclass> implements
 	 * {@inheritDoc}
 	 */
 	@Override
-	@SuppressWarnings("unchecked")
-	public List<Schoolclass> getById(Long id) throws DatasetException {
+	public Schoolclass getById(Long id) throws DatasetException {
 		if (id == null) {
 			throw new IllegalArgumentException();
 		}
 		try {
-			final Query query = entityManager.createQuery(SELECT
-					+ " WHERE s.id = ?1");
-			query.setParameter(1, id);
-			List<Schoolclass> schoolclasses = query.getResultList();
-			return schoolclasses;
+			return entityManager.find(Schoolclass.class, id);
 		} catch (Exception e) {
 			LOGGER.error("Exception while getting schoolclass by id " + id, e);
 			throw new DatasetException("Error while getting schoolclass by id: "

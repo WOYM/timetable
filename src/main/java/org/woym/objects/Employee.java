@@ -1,5 +1,6 @@
 package org.woym.objects;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
@@ -22,7 +23,12 @@ import javax.persistence.OneToMany;
  */
 @Entity
 @Inheritance
-public abstract class Employee {
+public abstract class Employee implements Serializable{
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 9008279410416213060L;
 
 	/**
 	 * Rechengenauigkeit der verwendeten Kommazahlen.
@@ -50,7 +56,7 @@ public abstract class Employee {
 	/**
 	 * Der Nachname. Darf in der Datenbank nicht null sein.
 	 */
-	//TODO: Ändern.
+	// TODO: Ändern.
 	// @Column(nullable = false)
 	private String lastName;
 
@@ -97,6 +103,13 @@ public abstract class Employee {
 	@ManyToMany
 	private List<ActivityType> possibleActivityTypes = new ArrayList<ActivityType>();
 
+	/**
+	 * Eine Liste von {@link TimePeriod}-Objekten, welche die Zeitwünsche des
+	 * Lehrers darstellen.
+	 */
+	@OneToMany(cascade = CascadeType.ALL)
+	private List<TimePeriod> timeWishes = new ArrayList<>();
+
 	public Employee() {
 	}
 
@@ -104,7 +117,7 @@ public abstract class Employee {
 		return id;
 	}
 
-	public void setId(long id) {
+	public void setId(Long id) {
 		this.id = id;
 	}
 
@@ -152,16 +165,40 @@ public abstract class Employee {
 		return compensations;
 	}
 
+	public void setCompensations(List<ChargeableCompensation> compensations) {
+		this.compensations = compensations;
+	}
+
 	public List<AcademicYear> getGuidedAcademicYears() {
 		return guidedAcademicYears;
+	}
+
+	public void setGuidedAcademicYears(List<AcademicYear> guidedAcademicYears) {
+		this.guidedAcademicYears = guidedAcademicYears;
 	}
 
 	public List<Schoolclass> getGuidedSchoolclasses() {
 		return guidedSchoolclasses;
 	}
 
+	public void setGuidedSchoolclasses(List<Schoolclass> guidedSchoolclasses) {
+		this.guidedSchoolclasses = guidedSchoolclasses;
+	}
+
 	public List<ActivityType> getPossibleActivityTypes() {
 		return possibleActivityTypes;
+	}
+
+	public void setPossibleActivityTypes(List<ActivityType> possibleActivityTypes) {
+		this.possibleActivityTypes = possibleActivityTypes;
+	}
+
+	public List<TimePeriod> getTimeWishes() {
+		return timeWishes;
+	}
+
+	public void setTimeWishes(List<TimePeriod> timeWishes) {
+		this.timeWishes = timeWishes;
 	}
 
 	public String getName() {
@@ -350,5 +387,50 @@ public abstract class Employee {
 	 */
 	public boolean containsActivityType(final ActivityType activityType) {
 		return possibleActivityTypes.contains(activityType);
+	}
+	
+	/**
+	 * Fügt das übergebenene {@linkplain TimePeriod}-Objekt der entsprechenden
+	 * Liste hinzu, sofern es noch nicht darin vorhanden ist.
+	 * 
+	 * @param timePeriod
+	 *            - das hinzuzufügende Objekt
+	 * @return {@code true}, wenn das Objekt sich noch nicht in der Liste
+	 *         befindet und hinzugefügt wurde, ansonsten {@code false}
+	 */
+	public boolean addTimeWish(final TimePeriod timePeriod) {
+		if (!timeWishes.contains(timePeriod)) {
+			timeWishes.add(timePeriod);
+			return true;
+		}
+		return false;
+	}
+
+	/**
+	 * Entfernt das übergebene {@linkplain TimePeriod}-Objekt aus der
+	 * entsprechenden Liste.
+	 * 
+	 * @param timePeriod
+	 *            - das zu entfernden Objekt
+	 * @return {@code true}, wenn das Objekt entfernt wurde, ansonsten
+	 *         {@code false}
+	 */
+	public boolean removeTimeWish(final TimePeriod timePeriod) {
+		return timeWishes.remove(timePeriod);
+	}
+
+	/**
+	 * Gibt {@code true} zurück, wenn sich das übergebene
+	 * {@linkplain TimePeriod}-Objekt in der Liste befindet, ansonsten
+	 * {@code false}.
+	 * 
+	 * @param timePeriod
+	 *            - das Objekt, für das geprüft werden soll, ob es sich in der
+	 *            Liste befindet
+	 * @return {@code true}, wenn das Objekt sich in der Liste befindet,
+	 *         ansonsten {@code false}
+	 */
+	public boolean containsTimeWish(final TimePeriod timePeriod) {
+		return timeWishes.contains(timePeriod);
 	}
 }
