@@ -194,8 +194,19 @@ public class DataBase implements Serializable {
 		}
 	}
 
-	private boolean checkZip(String zipFile) throws IOException {
-		File zip = new File(zipFile);
+	/**
+	 * Überprüft, es sich bei dem übergebenen Dateipfad, um einen Pfad zu einem
+	 * gültigen Backup handelt.
+	 * 
+	 * @param zipFile
+	 *            - der zu prüfende Pfad
+	 * @return {@code true}, wenn es sich um einen gültigen Pfad handelt,
+	 *         ansonsten {@code false}
+	 * @throws IOException
+	 *             wenn ein Fehler beim Lesen der Datei auftritt
+	 */
+	private boolean checkZip(String filePath) throws IOException {
+		File zip = new File(filePath);
 		if (!zip.canRead()) {
 			throw new IllegalArgumentException();
 		}
@@ -215,17 +226,25 @@ public class DataBase implements Serializable {
 		return check;
 	}
 
+	/**
+	 * Löscht den übergebenen Ordner.
+	 * 
+	 * @param folder
+	 *            - der zu löschende Ordner
+	 */
 	private void deleteFolder(File folder) {
-		File[] files = folder.listFiles();
-		if (files != null) {
-			for (File f : files) {
-				if (f.isDirectory()) {
-					deleteFolder(f);
-				} else {
-					f.delete();
+		if (folder.exists()) {
+			File[] files = folder.listFiles();
+			if (files != null) {
+				for (File f : files) {
+					if (f.isDirectory()) {
+						deleteFolder(f);
+					} else {
+						f.delete();
+					}
 				}
+				folder.delete();
 			}
-			folder.delete();
 		}
 	}
 }
