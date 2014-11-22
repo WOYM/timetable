@@ -35,13 +35,13 @@ public class AcademicYear implements Serializable{
 	/**
 	 * Der Jahrgang als Zahl.
 	 */
-	@Column(nullable = false)
+	@Column(nullable = false, unique = true)
 	private int academicYear;
 	
 	/**
 	 * Die zu diesem Jahrgang gehörigen Schulklassen.
 	 */
-	@OneToMany(mappedBy = "academicYear")
+	@OneToMany(cascade = CascadeType.ALL)
 	private List<Schoolclass> schoolclasses = new ArrayList<>();
 	
 	/**

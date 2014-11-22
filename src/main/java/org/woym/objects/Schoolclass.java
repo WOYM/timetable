@@ -9,8 +9,6 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
 /**
@@ -33,13 +31,6 @@ public class Schoolclass implements Serializable {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Long id;
-
-	/**
-	 * Der Jahrgang, zu welchem diese Klasse gehört.
-	 */
-	@ManyToOne
-	@JoinColumn(nullable = false)
-	private AcademicYear academicYear;
 
 	/**
 	 * Character unter dem die Klasse identifziert werden kann.
@@ -71,14 +62,6 @@ public class Schoolclass implements Serializable {
 
 	public void setIdentifier(char identifier) {
 		this.identifier = identifier;
-	}
-	
-	public AcademicYear getAcademicYear() {
-		return academicYear;
-	}
-
-	public void setAcademicYear(AcademicYear academicYear) {
-		this.academicYear = academicYear;
 	}
 
 	public List<SubjectDemand> getSubjectDemands() {
