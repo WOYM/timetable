@@ -3,6 +3,7 @@ package org.woym.objects;
 import java.io.Serializable;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -10,6 +11,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 
 /**
  * Diese Klasse repräsentiert eine Schulklasse.
@@ -36,8 +38,7 @@ public class Schoolclass implements Serializable {
 	 * Der Jahrgang, zu welchem diese Klasse gehört.
 	 */
 	@ManyToOne
-	@JoinColumn
-	@Column(nullable = false)
+	@JoinColumn(nullable = false)
 	private AcademicYear academicYear;
 
 	/**
@@ -50,6 +51,7 @@ public class Schoolclass implements Serializable {
 	 * Die Unterrichtsbedarfe dieser Klasse. Können angepasst sein oder
 	 * entsprechen denen des Jahrgangs ({@linkplain AcademicYear}).
 	 */
+	@OneToMany(cascade = CascadeType.ALL)
 	private List<SubjectDemand> subjectDemands;
 
 	public Schoolclass() {
