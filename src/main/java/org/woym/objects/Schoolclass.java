@@ -1,15 +1,18 @@
 package org.woym.objects;
 
 import java.io.Serializable;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
-import javax.persistence.CascadeType;
+import javax.persistence.CollectionTable;
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.OneToMany;
+import javax.persistence.JoinColumn;
+import javax.persistence.MapKeyJoinColumn;
 
 /**
  * Diese Klasse repräsentiert eine Schulklasse.
@@ -39,11 +42,15 @@ public class Schoolclass implements Serializable {
 	private char identifier;
 
 	/**
-	 * Die Unterrichtsbedarfe dieser Klasse. Können angepasst sein oder
-	 * entsprechen denen des Jahrgangs ({@linkplain AcademicYear}).
+	 * Die Unterrichtsbedarfe dieser Klasse. Können angepasst werden,
+	 * entsprechend sonst denen des Jahrgangs ({@linkplain AcademicYear}), zu
+	 * dem diese Klasse gehört.
 	 */
-	@OneToMany(cascade = CascadeType.ALL)
-	private List<SubjectDemand> subjectDemands;
+	@ElementCollection
+	@CollectionTable(name = "SCHOOLCLASS_SUBJECTDEMANDS", joinColumns = @JoinColumn(name = "SCHOOLCLASS"))
+	@Column(name = "DEMAND")
+	@MapKeyJoinColumn(name = "SUBJECT", referencedColumnName = "ID")
+	private Map<Subject, Integer> subjectDemands = new HashMap<>();
 
 	public Schoolclass() {
 	}
@@ -64,14 +71,59 @@ public class Schoolclass implements Serializable {
 		this.identifier = identifier;
 	}
 
-	public List<SubjectDemand> getSubjectDemands() {
+	public Map<Subject, Integer> getSubjectDemands() {
 		return subjectDemands;
 	}
 
-	public void setSubjectDemands(List<SubjectDemand> subjectDemands) {
+	public void setSubjectDemands(Map<Subject, Integer> subjectDemands) {
 		this.subjectDemands = subjectDemands;
 	}
 	
-	//TODO: Listenoperationen für subjectDemands.
+	/**
+	 * Fügt ein Mapping für das übergebene Subject mit dem übergebenen int-Wert
+	 * ein. Ist bereits ein Mapping für das übergebene Subject vorhanden, wird
+	 * dieses nicht überschrieben und die Methode gibt {@code false} zurück.
+	 * Ansonsten wird das Mapping eingefügt und {@code true} zurückgegeben.
+	 * 
+	 * @param subject
+	 *            - das Schulfach
+	 * @param demand
+	 *            - der zu mappende Bedarf
+	 * @return {@code true}, wenn noch kein Mapping vorhanden war und eins
+	 *         hinzugefügt wurde, ansonsten {@code false}
+	 */
+	public boolean addSubjectDemand(final Subject subject, int demand) {
+		if (!subjectDemands.containsKey(subject)) {
+			subjectDemands.put(subject, demand);
+			return true;
+		}
+		return false;
+	}
 
+	/**
+	 * Entfernt das Mapping für das übergebene {@linkplain Subject}-Objekt.
+	 * 
+	 * @param subject
+	 *            - das Unterrichtsfache, für welches das Mapping entfernt
+	 *            werden soll
+	 * @return Integer (Value), wenn ein Mapping bestand, ansonsten {@code null}
+	 */
+	public Integer removeSubjectDemand(final Subject subject) {
+		return subjectDemands.remove(subject);
+	}
+
+	/**
+	 * Gibt {@code true} zurück, wenn ein Mapping für das übergebene
+	 * {@linkplain Subject}-Objekt vorhanden ist, ansonsten {@code false}.
+	 * 
+	 * @param subject
+	 *            - das Schulfach, für das geprüft werden soll, ob ein Mapping
+	 *            vorhanden ist
+	 * @return {@code true}, wenn ein Mapping vorhanden ist, ansonsten
+	 *         {@code false}
+	 */
+	public boolean containsSubjectDemand(final Subject subject) {
+		return subjectDemands.containsKey(subject);
+	}
 }
+

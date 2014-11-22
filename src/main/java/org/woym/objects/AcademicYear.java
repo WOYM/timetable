@@ -2,23 +2,30 @@ package org.woym.objects;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.persistence.CascadeType;
+import javax.persistence.CollectionTable;
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.MapKeyJoinColumn;
 import javax.persistence.OneToMany;
 
 /**
  * Diese Klasse repräsentiert einen Jahrgang.
+ * 
  * @author Adrian
  *
  */
 @Entity
-public class AcademicYear implements Serializable{
+public class AcademicYear implements Serializable {
 
 	/**
 	 * 
@@ -31,28 +38,31 @@ public class AcademicYear implements Serializable{
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Long id;
-	
+
 	/**
 	 * Der Jahrgang als Zahl.
 	 */
 	@Column(nullable = false, unique = true)
 	private int academicYear;
-	
+
 	/**
 	 * Die zu diesem Jahrgang gehörigen Schulklassen.
 	 */
 	@OneToMany(cascade = CascadeType.ALL)
 	private List<Schoolclass> schoolclasses = new ArrayList<>();
-	
-	/**
-	 * Die Unterrichtsbedarfe für diesen Jahrgang.
-	 */
-	@OneToMany(cascade = CascadeType.ALL)
-	private List<SubjectDemand> subjectDemands = new ArrayList<>();
 
-	public AcademicYear(){
+	/**
+	 * Die Unterrichtsbedarfe diesen Jahrgang.
+	 */
+	@ElementCollection
+	@CollectionTable(name = "ACADEMICYEAR_SUBJECTDEMANDS", joinColumns = @JoinColumn(name = "ACADEMICYEAR"))
+	@Column(name = "DEMAND")
+	@MapKeyJoinColumn(name = "SUBJECT", referencedColumnName = "ID")
+	private Map<Subject, Integer> subjectDemands = new HashMap<>();
+
+	public AcademicYear() {
 	}
-	
+
 	public Long getId() {
 		return id;
 	}
@@ -68,7 +78,7 @@ public class AcademicYear implements Serializable{
 	public void setAcademicYear(int academicYear) {
 		this.academicYear = academicYear;
 	}
-	
+
 	public List<Schoolclass> getSchoolclasses() {
 		return schoolclasses;
 	}
@@ -77,11 +87,11 @@ public class AcademicYear implements Serializable{
 		this.schoolclasses = schoolclasses;
 	}
 
-	public List<SubjectDemand> getSubjectDemands() {
+	public Map<Subject, Integer> getSubjectDemands() {
 		return subjectDemands;
 	}
 
-	public void setSubjectDemands(List<SubjectDemand> subjectDemands) {
+	public void setSubjectDemands(Map<Subject, Integer> subjectDemands) {
 		this.subjectDemands = subjectDemands;
 	}
 
@@ -129,49 +139,51 @@ public class AcademicYear implements Serializable{
 	public boolean containsSchoolclass(final Schoolclass schoolclass) {
 		return schoolclasses.contains(schoolclass);
 	}
-	
+
 	/**
-	 * Fügt das übergebenene {@linkplain SubjectDemand}-Objekt der entsprechenden
-	 * Liste hinzu, sofern es noch nicht darin vorhanden ist.
+	 * Fügt ein Mapping für das übergebene Subject mit dem übergebenen int-Wert
+	 * ein. Ist bereits ein Mapping für das übergebene Subject vorhanden, wird
+	 * dieses nicht überschrieben und die Methode gibt {@code false} zurück.
+	 * Ansonsten wird das Mapping eingefügt und {@code true} zurückgegeben.
 	 * 
-	 * @param subjectDemand
-	 *            - das hinzuzufügende Objekt
-	 * @return {@code true}, wenn das Objekt sich noch nicht in der Liste
-	 *         befindet und hinzugefügt wurde, ansonsten {@code false}
+	 * @param subject
+	 *            - das Schulfach
+	 * @param demand
+	 *            - der zu mappende Bedarf
+	 * @return {@code true}, wenn noch kein Mapping vorhanden war und eins
+	 *         hinzugefügt wurde, ansonsten {@code false}
 	 */
-	public boolean addSubjectDemand(final SubjectDemand subjectDemand) {
-		if (!subjectDemands.contains(subjectDemand)) {
-			subjectDemands.add(subjectDemand);
+	public boolean addSubjectDemand(final Subject subject, int demand) {
+		if (!subjectDemands.containsKey(subject)) {
+			subjectDemands.put(subject, demand);
 			return true;
 		}
 		return false;
 	}
 
 	/**
-	 * Entfernt das übergebene {@linkplain SubjectDemand}-Objekt aus der
-	 * entsprechenden Liste.
+	 * Entfernt das Mapping für das übergebene {@linkplain Subject}-Objekt.
 	 * 
-	 * @param subjectDemand
-	 *            - das zu entfernden Objekt
-	 * @return {@code true}, wenn das Objekt entfernt wurde, ansonsten
-	 *         {@code false}
+	 * @param subject
+	 *            - das Unterrichtsfache, für welches das Mapping entfernt
+	 *            werden soll
+	 * @return Integer (Value), wenn ein Mapping bestand, ansonsten {@code null}
 	 */
-	public boolean removeSubjectDemand(final SubjectDemand subjectDemand) {
-		return subjectDemands.remove(subjectDemand);
+	public Integer removeSubjectDemand(final Subject subject) {
+		return subjectDemands.remove(subject);
 	}
 
 	/**
-	 * Gibt {@code true} zurück, wenn sich das übergebene
-	 * {@linkplain SubjectDemand}-Objekt in der Liste befindet, ansonsten
-	 * {@code false}.
+	 * Gibt {@code true} zurück, wenn ein Mapping für das übergebene
+	 * {@linkplain Subject}-Objekt vorhanden ist, ansonsten {@code false}.
 	 * 
-	 * @param subjectDemand
-	 *            - das Objekt, für das geprüft werden soll, ob es sich in der
-	 *            Liste befindet
-	 * @return {@code true}, wenn das Objekt sich in der Liste befindet,
-	 *         ansonsten {@code false}
+	 * @param subject
+	 *            - das Schulfach, für das geprüft werden soll, ob ein Mapping
+	 *            vorhanden ist
+	 * @return {@code true}, wenn ein Mapping vorhanden ist, ansonsten
+	 *         {@code false}
 	 */
-	public boolean containsSubjectDemand(final SubjectDemand subjectDemand) {
-		return subjectDemands.contains(subjectDemand);
+	public boolean containsSubjectDemand(final Subject subject) {
+		return subjectDemands.containsKey(subject);
 	}
 }

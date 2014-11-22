@@ -18,7 +18,6 @@
 		<class>org.woym.objects.Room</class>
 		<class>org.woym.objects.Schoolclass</class>
 		<class>org.woym.objects.Subject</class>
-		<class>org.woym.objects.SubjectDemand</class>
 		<class>org.woym.objects.Teacher</class>
 		<class>org.woym.objects.TimePeriod</class>
 

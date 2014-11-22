@@ -2,7 +2,9 @@ package org.woym.objects;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -10,7 +12,9 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
+import javax.persistence.MapKeyJoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 
@@ -60,11 +64,13 @@ public class Activity implements Serializable {
 	private List<Schoolclass> schoolclasses = new ArrayList<>();
 
 	/**
-	 * Eine Liste von {@link EmployeeTimePeriods}-Objekten, um die teilnehmenden
-	 * Lehrer und Zeiträume zu mappen.
+	 * Die an der Aktivität teilnehmenden Lehrer über
+	 * {@linkplain EmployeeTimePeriods} Zeiträumen zugeordnet.
 	 */
-	@OneToMany(cascade = CascadeType.ALL)
-	private List<EmployeeTimePeriods> employees = new ArrayList<>();
+	@OneToMany
+	@JoinTable(name = "ACTIVITY_EMPLOYEES", joinColumns = @JoinColumn(name = "ACTIVITY"), inverseJoinColumns = @JoinColumn(name = "EMPLOYEETIMEPERIODS"))
+	@MapKeyJoinColumn(name = "EMPLOYEE")
+	private Map<Employee, EmployeeTimePeriods> employees = new HashMap<>();
 
 	public Activity() {
 	}
@@ -108,12 +114,12 @@ public class Activity implements Serializable {
 	public void setSchoolclasses(List<Schoolclass> schoolclasses) {
 		this.schoolclasses = schoolclasses;
 	}
-	
-	public List<EmployeeTimePeriods> getEmployees() {
+
+	public Map<Employee, EmployeeTimePeriods> getEmployees() {
 		return employees;
 	}
 
-	public void setEmployees(List<EmployeeTimePeriods> employees) {
+	public void setEmployees(Map<Employee, EmployeeTimePeriods> employees) {
 		this.employees = employees;
 	}
 
@@ -161,6 +167,52 @@ public class Activity implements Serializable {
 	public boolean containsSchoolclass(final Schoolclass schoolclass) {
 		return schoolclasses.contains(schoolclass);
 	}
-	
-	//TODO: Methoden für employees-Liste.
+
+	/**
+	 * Fügt ein Mapping für den übergebenen Lehrer mit dem übergebenen
+	 * {@linkplain EmployeeTimePeriods}-Objekt ein. ein. Ist bereits ein Mapping
+	 * für den übergebenen {@link Employee} vorhanden, wird dieses nicht
+	 * überschrieben und die Methode gibt {@code false} zurück. Ansonsten wird
+	 * das Mapping eingefügt und {@code true} zurückgegeben.
+	 * 
+	 * @param employee
+	 *            - der Mitarbeiter
+	 * @param employeeTimePeriods
+	 *            - das zu mappende {@link EmployeeTimePeriods}-Objekt
+	 * @return {@code true}, wenn noch kein Mapping vorhanden war und eins
+	 *         hinzugefügt wurde, ansonsten {@code false}
+	 */
+	public boolean addSubjectDemand(final Employee employee,
+			EmployeeTimePeriods employeeTimePeriods) {
+		if (!employees.containsKey(employee)) {
+			employees.put(employee, employeeTimePeriods);
+			return true;
+		}
+		return false;
+	}
+
+	/**
+	 * Entfernt das Mapping für das übergebene {@linkplain Employee}-Objekt.
+	 * 
+	 * @param employee
+	 *            - der Mitarbeiter, für welchen das Mapping entfernt werden soll
+	 * @return EmployeeTimePeriods (Value), wenn ein Mapping bestand, ansonsten {@code null}
+	 */
+	public EmployeeTimePeriods removeSubjectDemand(final Employee employee) {
+		return employees.remove(employee);
+	}
+
+	/**
+	 * Gibt {@code true} zurück, wenn ein Mapping für das übergebene
+	 * {@linkplain Teacher}-Objekt vorhanden ist, ansonsten {@code false}.
+	 * 
+	 * @param employee
+	 *            - der Mitarbeiter, für den eprüft werden soll, ob ein Mapping
+	 *            vorhanden ist
+	 * @return {@code true}, wenn ein Mapping vorhanden ist, ansonsten
+	 *         {@code false}
+	 */
+	public boolean containsSubjectDemand(final Employee employee) {
+		return employees.containsKey(employee);
+	}
 }
