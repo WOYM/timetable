@@ -34,10 +34,10 @@ public class ChargeableCompensation implements Serializable{
 	@Column(nullable = false)
 	private int value;
 	
-	@Column(nullable = false)
 	/**
 	 * Eine Beschreibung der anrechenbaren Ersatzleistung.
 	 */
+	@Column(nullable = false)
 	private String description;
 	
 	public ChargeableCompensation() {
