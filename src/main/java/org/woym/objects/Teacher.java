@@ -2,6 +2,7 @@ package org.woym.objects;
 
 import java.io.Serializable;
 
+import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 
 /**
@@ -10,6 +11,7 @@ import javax.persistence.Entity;
  *
  */
 @Entity
+@DiscriminatorValue("Teacher")
 public class Teacher extends Employee implements Serializable {
 
 	private static final long serialVersionUID = -2846205796145565740L;

@@ -213,17 +213,16 @@ public class DataBase implements Serializable {
 		ZipInputStream zis = new ZipInputStream(new FileInputStream(zip));
 		ZipEntry ze = zis.getNextEntry();
 
-		boolean check = false;
-
 		while (ze != null) {
 			String fileName = ze.getName();
 			if (fileName.equals("script.sql")) {
-				check = true;
+				zis.close();
+				return true;
 			}
 			ze = zis.getNextEntry();
 		}
 		zis.close();
-		return check;
+		return false;
 	}
 
 	/**

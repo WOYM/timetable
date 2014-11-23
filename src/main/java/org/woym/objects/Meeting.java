@@ -1,5 +1,6 @@
 package org.woym.objects;
 
+import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 
 /**
@@ -9,6 +10,7 @@ import javax.persistence.Entity;
  *
  */
 @Entity
+@DiscriminatorValue("Meeting")
 public class Meeting extends ActivityType {
 
 	/**
