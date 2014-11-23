@@ -31,7 +31,7 @@ public abstract class AbstractDAO<E> implements IAbstractDAO<E>{
 	/**
 	 * {@inheritDoc}
 	 */
-	public void persistObject(final E object) throws DatasetException {
+	public final void persistObject(final E object) throws DatasetException {
 		if (object == null) {
 			throw new IllegalArgumentException("Parameter is null.");
 		}
@@ -52,7 +52,7 @@ public abstract class AbstractDAO<E> implements IAbstractDAO<E>{
 	/**
 	 * {@inheritDoc}
 	 */
-	public void updateObject(final E object) throws DatasetException {
+	public final void updateObject(final E object) throws DatasetException {
 		if (object == null) {
 			throw new IllegalArgumentException("Parameter is null.");
 		}
@@ -73,7 +73,7 @@ public abstract class AbstractDAO<E> implements IAbstractDAO<E>{
 	/**
 	 * {@inheritDoc}
 	 */
-	public void deleteObject(final E object) throws DatasetException {
+	public final void deleteObject(final E object) throws DatasetException {
 		if (object == null) {
 			throw new IllegalArgumentException("Parameter is null.");
 		}
