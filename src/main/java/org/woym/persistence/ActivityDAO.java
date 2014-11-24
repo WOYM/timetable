@@ -10,6 +10,12 @@ import org.woym.spec.persistence.IActivityDAO;
 
 public class ActivityDAO extends AbstractDAO<Activity> implements IActivityDAO{
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -6350936698404223039L;
+	
+	
 	private static final String SELECT = "SELECT a FROM Activity a";
 	
 	/**

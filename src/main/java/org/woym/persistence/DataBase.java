@@ -12,9 +12,6 @@ import java.util.Calendar;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
-import javax.faces.bean.ManagedBean;
-import javax.faces.bean.SessionScoped;
-import javax.faces.event.ComponentSystemEvent;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
@@ -32,24 +29,22 @@ import org.woym.exceptions.InvalidFileException;
  * @author Adrian
  *
  */
-@ManagedBean
-@SessionScoped
-public class DataBase implements Serializable {
+public abstract class DataBase implements Serializable {
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 6237080407072299976L;
 
-	private static final String DB_URL = "jdbc:h2:~/WOYM/timetable.db/timetable";
+	public static final String DB_URL = "jdbc:h2:~/WOYM/timetable.db/timetable";
 
-	private static final String DB_LOCATION_PATH = System
+	public static final String DB_LOCATION_PATH = System
 			.getProperty("user.home")
 			+ File.separator
 			+ "WOYM"
 			+ File.separator + "timetable.db";
 
-	private static final String DB_BACKUP_LOCATION = System
+	public static final String DB_BACKUP_LOCATION = System
 			.getProperty("user.home")
 			+ File.separator
 			+ "WOYM"
@@ -79,26 +74,13 @@ public class DataBase implements Serializable {
 	}
 
 	/**
-	 * Initialisiert den EntityManager, sofern dieser noch nicht initialisiert
-	 * wurde, also null ist.
-	 * 
-	 * @param event
-	 *            - JSF Event
-	 * @throws PersistenceException
-	 *             wenn beim Initialisieren ein Fehler auftritt
-	 */
-	public void setUp(ComponentSystemEvent event) throws DatasetException {
-		init();
-	}
-
-	/**
 	 * Erzeugt ein Backup der Datenbank. Im Home-Verzeichnis im Ordner WOYM. Das
 	 * Backup trägt das aktuelle Datum plus Uhrzeit als Namen. Tritt beim Backup
 	 * ein Fehler auf, wird eine {@linkplain DatasetException} geworfen.
 	 * 
 	 * @throws DatasetException
 	 */
-	public void backup() throws DatasetException {
+	public static void backup() throws DatasetException {
 		try {
 			DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd_HHmmss");
 			Calendar cal = Calendar.getInstance();
@@ -137,7 +119,7 @@ public class DataBase implements Serializable {
 	 * @throws DatasetException
 	 *             wenn ein anderweitiger Fehler auftritt
 	 */
-	public void restore(String filePath) throws IOException,
+	public static void restore(String filePath) throws IOException,
 			InvalidFileException, DatasetException {
 		try {
 			if (!filePath.endsWith(".zip") || !checkZip(filePath)) {
@@ -148,7 +130,7 @@ public class DataBase implements Serializable {
 			Statement stm = DriverManager.getConnection(DB_URL, USER, PASSWORD)
 					.createStatement();
 			stm.execute("SHUTDOWN");
-			LOGGER.info("Shut down database.");
+			LOGGER.info("Shut down database for backup restoration.");
 
 			File dbLocation = new File(DB_LOCATION_PATH);
 			deleteFolder(dbLocation);
@@ -159,7 +141,7 @@ public class DataBase implements Serializable {
 			stm.execute("RUNSCRIPT FROM '" + filePath + "'  COMPRESSION ZIP");
 			LOGGER.info("Backup " + filePath + " restored.");
 			ENTITY_MANAGER = null;
-			init();
+			setUp();
 		} catch (IOException e) {
 			LOGGER.error("Error while checking backup file: ", e);
 			throw new IOException();
@@ -170,7 +152,7 @@ public class DataBase implements Serializable {
 							+ e.getMessage());
 		}
 	}
-
+	
 	/**
 	 * Initialisiert den EntityManager, sofern dieser noch nicht initialisiert
 	 * wurde, also null ist.
@@ -178,7 +160,7 @@ public class DataBase implements Serializable {
 	 * @throws PersistenceException
 	 *             wenn beim Initialisieren ein Fehler auftritt
 	 */
-	private void init() {
+	static void setUp() throws PersistenceException{
 		if (ENTITY_MANAGER == null) {
 			LOGGER.info("Establishing database-connection...");
 			try {
@@ -187,6 +169,7 @@ public class DataBase implements Serializable {
 				ENTITY_MANAGER = factory.createEntityManager();
 				LOGGER.info("Connection established.");
 			} catch (Exception e) {
+				LOGGER.error("Exception while establishing database connection.");
 				throw new PersistenceException(
 						"Could not initialize persistence component: "
 								+ e.getMessage());
@@ -205,7 +188,7 @@ public class DataBase implements Serializable {
 	 * @throws IOException
 	 *             wenn ein Fehler beim Lesen der Datei auftritt
 	 */
-	private boolean checkZip(String filePath) throws IOException {
+	private static boolean checkZip(String filePath) throws IOException {
 		File zip = new File(filePath);
 		if (!zip.canRead()) {
 			throw new IllegalArgumentException();
@@ -231,7 +214,7 @@ public class DataBase implements Serializable {
 	 * @param folder
 	 *            - der zu löschende Ordner
 	 */
-	private void deleteFolder(File folder) {
+	private static void deleteFolder(File folder) {
 		if (folder.exists()) {
 			File[] files = folder.listFiles();
 			if (files != null) {

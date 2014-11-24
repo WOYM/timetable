@@ -11,6 +11,12 @@ import org.woym.spec.persistence.IEmployeeDAO;
 public class PedagogicAssistantDAO extends AbstractDAO<PedagogicAssistant>
 		implements IEmployeeDAO<PedagogicAssistant> {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -5199039948607112974L;
+	
+	
 	private final static String SELECT = "SELECT p FROM PedagogicAssistant p";
 	
 	/**

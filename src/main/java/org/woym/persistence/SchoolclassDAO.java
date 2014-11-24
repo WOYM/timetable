@@ -12,6 +12,12 @@ public class SchoolclassDAO extends AbstractDAO<Schoolclass> implements
 		ISchoolclassDAO {
 	
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 6987428883976412402L;
+	
+	
 	private static final String SELECT = "SELECT s FROM Schoolclass s";
 	
 	/**

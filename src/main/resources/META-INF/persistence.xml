@@ -25,7 +25,7 @@
 		<properties>
 			<property name="eclipselink.jdbc.batch-writing" value="JDBC" />
 			<property name="javax.persistence.jdbc.driver" value="org.h2.Driver" />
-			<property name="javax.persistence.jdbc.url" value="jdbc:h2:~/WOYM/timetable.db/timetable" />
+			<property name="javax.persistence.jdbc.url" value="jdbc:h2:~/WOYM/timetable.db/timetable;TRACE_LEVEL_SYSTEM_OUT=1" />
 			<property name="javax.persistence.jdbc.user" value="timetable" />
 			<property name="javax.persistence.jdbc.password" value="timetable" />
 			<property name="eclipselink.jdbc.exclusive-connection.mode"
