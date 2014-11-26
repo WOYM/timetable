@@ -15,7 +15,8 @@ import org.primefaces.context.RequestContext;
 import org.primefaces.event.SelectEvent;
 import org.woym.exceptions.DatasetException;
 import org.woym.objects.Teacher;
-import org.woym.persistence.TeacherDAO;
+import org.woym.persistence.EmployeeDAO;
+import org.woym.persistence.GenericDAO;
 
 /**
  * <h1>TeacherController</h1>
@@ -29,9 +30,7 @@ import org.woym.persistence.TeacherDAO;
 @ManagedBean(name = "teacherController")
 public class TeacherController implements Serializable {
 
-	private static final long serialVersionUID = -2341971622906815080L;
-
-	private TeacherDAO db = new TeacherDAO();
+	private static final long serialVersionUID = -2341971622906815080L;;
 
 	private Teacher selectedTeacher;
 	private Teacher selectedTeacherForSearch;
@@ -40,7 +39,7 @@ public class TeacherController implements Serializable {
 
 	public List<Teacher> getTeachers() {
 		try {
-			return db.getAll();
+			return EmployeeDAO.getInstance().getAllTeachers();
 		} catch (DatasetException e) {
 			FacesMessage message = new FacesMessage(
 					FacesMessage.SEVERITY_ERROR,
@@ -81,7 +80,7 @@ public class TeacherController implements Serializable {
 		Teacher teacher = (Teacher) event.getObject();
 
 		try {
-			db.persistObject(teacher);
+			GenericDAO.getInstance().persist(teacher);
 			FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO,
 					"Lehrer hinzugefügt", teacher.getName() + " ("
 							+ teacher.getSymbol() + ")");
@@ -97,7 +96,7 @@ public class TeacherController implements Serializable {
 	public void deleteTeacher() {
 		if (selectedTeacher != null) {
 			try {
-				db.deleteObject(selectedTeacher);
+				GenericDAO.getInstance().delete(selectedTeacher);
 				FacesMessage message = new FacesMessage(
 						FacesMessage.SEVERITY_INFO, "Lehrer gelöscht",
 						selectedTeacher.getName() + " ("

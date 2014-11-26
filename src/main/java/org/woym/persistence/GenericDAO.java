@@ -1,49 +1,49 @@
 package org.woym.persistence;
 
-import java.util.List;
-
 import javax.persistence.EntityManager;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.woym.exceptions.DatasetException;
-import org.woym.spec.persistence.IAbstractDAO;
+import org.woym.spec.persistence.IGenericDAO;
 
-/**
- * Eine abstrakte generische Klasse, die als Superklasse für alle anderen
- * Handler dient.
- * 
- * @author Adrian
- *
- * @param <E>
- *            - generische Klasse
- */
-public abstract class AbstractDAO<E> implements IAbstractDAO<E>{
+public class GenericDAO implements IGenericDAO {
 
 	/**
+	 * Die Singleton-Instanz dieser Klasse.
+	 */
+	private static final GenericDAO INSTANCE = new GenericDAO();
+
+	/**
+	 * Der Logger dieser Klasse.
+	 */
+	private static final Logger LOGGER = LogManager.getLogger("Persistence");
+
+	private GenericDAO() {
+	}
+
+	/**
+	 * Gibt die Singleton-Instanz zurück.
 	 * 
+	 * @return GenericDAO - die Singleton-Instanz
 	 */
-	private static final long serialVersionUID = 6227028896810022346L;
-
-	/**
-	 * Eine Instanz des EntityManagers von {@linkplain DataBase}, die in den
-	 * Subklassen verwendet werden kann.
-	 */
-	protected final EntityManager entityManager = DataBase.getEntityManager();
-
-	protected static Logger LOGGER = LogManager.getLogger("Persistence");
+	public static GenericDAO getInstance() {
+		return INSTANCE;
+	}
 
 	/**
 	 * {@inheritDoc}
 	 */
-	public final void persistObject(final E object) throws DatasetException {
+	@Override
+	public void persist(Object object) throws DatasetException {
 		if (object == null) {
 			throw new IllegalArgumentException("Parameter is null.");
 		}
 		try {
-			entityManager.getTransaction().begin();
-			entityManager.persist(object);
-			entityManager.getTransaction().commit();
+			EntityManager em = DataBase.getEntityManager();
+			em.getTransaction().begin();
+			em.persist(object);
+			em.getTransaction().commit();
 			LOGGER.debug(String.format("%s %s persisted.", object.getClass()
 					.getSimpleName(), object));
 		} catch (Exception e) {
@@ -52,19 +52,22 @@ public abstract class AbstractDAO<E> implements IAbstractDAO<E>{
 			throw new DatasetException("Error while persisting object: "
 					+ e.getMessage());
 		}
+
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
-	public final void updateObject(final E object) throws DatasetException {
+	@Override
+	public void merge(Object object) throws DatasetException {
 		if (object == null) {
 			throw new IllegalArgumentException("Parameter is null.");
 		}
 		try {
-			entityManager.getTransaction().begin();
-			entityManager.merge(object);
-			entityManager.getTransaction().commit();
+			EntityManager em = DataBase.getEntityManager();
+			em.getTransaction().begin();
+			em.merge(object);
+			em.getTransaction().commit();
 			LOGGER.debug(String.format("%s %s updated.", object.getClass()
 					.getSimpleName(), object));
 		} catch (Exception e) {
@@ -78,14 +81,16 @@ public abstract class AbstractDAO<E> implements IAbstractDAO<E>{
 	/**
 	 * {@inheritDoc}
 	 */
-	public final void deleteObject(final E object) throws DatasetException {
+	@Override
+	public void delete(Object object) throws DatasetException {
 		if (object == null) {
 			throw new IllegalArgumentException("Parameter is null.");
 		}
 		try {
-			entityManager.getTransaction().begin();
-			entityManager.remove(object);
-			entityManager.getTransaction().commit();
+			EntityManager em = DataBase.getEntityManager();
+			em.getTransaction().begin();
+			em.remove(object);
+			em.getTransaction().commit();
 			LOGGER.debug(String.format("%s %s deleted.", object.getClass()
 					.getSimpleName(), object));
 		} catch (Exception e) {
@@ -96,13 +101,4 @@ public abstract class AbstractDAO<E> implements IAbstractDAO<E>{
 		}
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
-	public abstract List<E> getAll() throws DatasetException;
-
-	/**
-	 * {@inheritDoc}
-	 */
-	public abstract E getById(final Long id) throws DatasetException;
 }
