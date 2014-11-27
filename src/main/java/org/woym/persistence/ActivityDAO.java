@@ -1,13 +1,5 @@
 package org.woym.persistence;
 
-import java.util.List;
-
-import javax.persistence.EntityManager;
-import javax.persistence.Query;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.woym.exceptions.DatasetException;
 import org.woym.objects.Activity;
 import org.woym.spec.persistence.IActivityDAO;
 
@@ -35,6 +27,8 @@ public class ActivityDAO extends AbstractGenericDAO<Activity> implements IActivi
 	 * Der private Konstruktor.
 	 */
 	private ActivityDAO() {
+		DataBase.getInstance().addObserver(this);
+		setClazz(Activity.class);
 	}
 
 	public static ActivityDAO getInstance() {

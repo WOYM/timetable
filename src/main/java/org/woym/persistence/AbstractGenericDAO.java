@@ -23,8 +23,16 @@ public class AbstractGenericDAO<E extends Serializable> implements
 
 	protected EntityManager em = DataBase.getInstance().getEntityManager();
 
-	protected Class<E> clazz;
-
+	private Class<E> clazz;
+	
+	protected Class<E> getClazz(){
+		return clazz;
+	}
+	
+	protected void setClazz(Class<E> clazz){
+		this.clazz = clazz;
+	}
+	
 	/**
 	 * {@inheritDoc}
 	 */
@@ -96,7 +104,7 @@ public class AbstractGenericDAO<E extends Serializable> implements
 	public List<E> getAll() throws DatasetException{
 		try {
 			final Query query = em.createQuery("SELECT x FROM "
-					+ clazz.getSimpleName() + "x");
+					+ clazz.getSimpleName() + " x");
 			List<E> objects = query.getResultList();
 			return objects;
 		} catch (Exception e) {

@@ -20,7 +20,7 @@ public abstract class AbstractEmployeeDAO<E extends Employee> extends AbstractGe
 			throw new IllegalArgumentException();
 		}
 		try {
-			final Query query = em.createQuery("SELECT x FROM " + clazz.getSimpleName() + " x WHERE x.symbol = ?1");
+			final Query query = em.createQuery("SELECT x FROM " + getClazz().getSimpleName() + " x WHERE x.symbol = ?1");
 			query.setParameter(1, symbol);
 			List<E> employees = query.getResultList();
 			if (employees.isEmpty()) {
@@ -28,10 +28,10 @@ public abstract class AbstractEmployeeDAO<E extends Employee> extends AbstractGe
 			}
 			return employees.get(0);
 		} catch (Exception e) {
-			LOGGER.error(String.format("Exception while getting %s with symbol ", clazz.getSimpleName())
+			LOGGER.error(String.format("Exception while getting %s with symbol ", getClazz().getSimpleName())
 					+ symbol, e);
 			throw new DatasetException(
-					String.format("Error while getting %s for symbol %s: ", clazz.getSimpleName(), symbol) 
+					String.format("Error while getting %s for symbol %s: ", getClazz().getSimpleName(), symbol) 
 							+ e.getMessage());
 		}
 	}
@@ -47,14 +47,14 @@ public abstract class AbstractEmployeeDAO<E extends Employee> extends AbstractGe
 			throw new IllegalArgumentException();
 		}
 		try {
-			final Query query = em.createQuery("SELECT x FROM " + clazz.getSimpleName() + " x WHERE x.symbol LIKE '%?1%'");
+			final Query query = em.createQuery("SELECT x FROM " + getClazz().getSimpleName() + " x WHERE x.symbol LIKE '%?1%'");
 			query.setParameter(1, searchSymbol);
 			return (List<E>)query.getResultList();
 		} catch (Exception e) {
-			LOGGER.error(String.format("Exception while getting %s whose symbol contains %s", clazz.getSimpleName() + "s", searchSymbol)
+			LOGGER.error(String.format("Exception while getting %s whose symbol contains %s", getClazz().getSimpleName() + "s", searchSymbol)
 					+ searchSymbol, e);
 			throw new DatasetException(
-					String.format("Error while getting %s for symbol %s: ", clazz.getSimpleName() + "s", searchSymbol) 
+					String.format("Error while getting %s for symbol %s: ", getClazz().getSimpleName() + "s", searchSymbol) 
 							+ e.getMessage());
 		}
 	}

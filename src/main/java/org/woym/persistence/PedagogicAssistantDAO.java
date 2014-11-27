@@ -8,6 +8,7 @@ public class PedagogicAssistantDAO extends AbstractEmployeeDAO<PedagogicAssistan
 	
 	private PedagogicAssistantDAO(){
 		DataBase.getInstance().addObserver(this);
+		setClazz(PedagogicAssistant.class);
 	}
 	
 	public static PedagogicAssistantDAO getInstance(){

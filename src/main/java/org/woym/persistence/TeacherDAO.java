@@ -8,6 +8,7 @@ public class TeacherDAO extends AbstractEmployeeDAO<Teacher> {
 
 	private TeacherDAO() {
 		DataBase.getInstance().addObserver(this);
+		setClazz(Teacher.class);
 	}
 
 	public static TeacherDAO getInstance() {
