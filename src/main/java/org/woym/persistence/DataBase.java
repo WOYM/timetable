@@ -9,6 +9,7 @@ import java.sql.Statement;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Observable;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
@@ -29,12 +30,14 @@ import org.woym.exceptions.InvalidFileException;
  * @author Adrian
  *
  */
-public abstract class DataBase implements Serializable {
+public class DataBase extends Observable implements Serializable {
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 6237080407072299976L;
+
+	private static final DataBase INSTANCE = new DataBase();
 
 	public static final String DB_URL = "jdbc:h2:~/WOYM/timetable.db/timetable";
 
@@ -64,12 +67,19 @@ public abstract class DataBase implements Serializable {
 	 */
 	private static EntityManager ENTITY_MANAGER;
 
+	private DataBase() {
+	}
+
+	public static DataBase getInstance() {
+		return INSTANCE;
+	}
+
 	/**
 	 * Gibt die Instanz von {@linkplain EntityManager} zurück.
 	 * 
 	 * @return {@linkplain EntityManager} - Instanz des EntityManager
 	 */
-	public static EntityManager getEntityManager() {
+	public EntityManager getEntityManager() {
 		return ENTITY_MANAGER;
 	}
 
@@ -80,13 +90,12 @@ public abstract class DataBase implements Serializable {
 	 * 
 	 * @throws DatasetException
 	 */
-	public static void backup() throws DatasetException {
+	public void backup() throws DatasetException {
 		try {
 			DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd_HHmmss");
 			Calendar cal = Calendar.getInstance();
 			String time = dateFormat.format(cal.getTime());
-			Statement stm = DriverManager.getConnection(
-					"jdbc:h2:~/WOYM/timetable.db/timetable", USER, PASSWORD)
+			Statement stm = DriverManager.getConnection(DB_URL, USER, PASSWORD)
 					.createStatement();
 			stm.execute("SCRIPT TO '" + DB_BACKUP_LOCATION + time
 					+ ".zip' COMPRESSION ZIP");
@@ -110,7 +119,7 @@ public abstract class DataBase implements Serializable {
 	 * wird eine {@link DatasetException} geworfen.
 	 * 
 	 * @param filePath
-	 *            - der Pfad zum wiederherzustellenden Backup
+	 *            - der absolute Pfad zum wiederherzustellenden Backup
 	 * @throws IOException
 	 *             wenn ein Fehler beim Überprüfen des Dateipfades auftritt
 	 * @throws InvalidFileException
@@ -119,7 +128,7 @@ public abstract class DataBase implements Serializable {
 	 * @throws DatasetException
 	 *             wenn ein anderweitiger Fehler auftritt
 	 */
-	public static void restore(String filePath) throws IOException,
+	public void restore(String filePath) throws IOException,
 			InvalidFileException, DatasetException {
 		try {
 			if (!filePath.endsWith(".zip") || !checkZip(filePath)) {
@@ -142,6 +151,8 @@ public abstract class DataBase implements Serializable {
 			LOGGER.info("Backup " + filePath + " restored.");
 			ENTITY_MANAGER = null;
 			setUp();
+			setChanged();
+			notifyObservers();
 		} catch (IOException e) {
 			LOGGER.error("Error while checking backup file: ", e);
 			throw new IOException();
@@ -152,7 +163,7 @@ public abstract class DataBase implements Serializable {
 							+ e.getMessage());
 		}
 	}
-	
+
 	/**
 	 * Initialisiert den EntityManager, sofern dieser noch nicht initialisiert
 	 * wurde, also null ist.
@@ -160,7 +171,7 @@ public abstract class DataBase implements Serializable {
 	 * @throws PersistenceException
 	 *             wenn beim Initialisieren ein Fehler auftritt
 	 */
-	static void setUp() throws PersistenceException{
+	void setUp() throws PersistenceException {
 		if (ENTITY_MANAGER == null) {
 			LOGGER.info("Establishing database-connection...");
 			try {
@@ -188,10 +199,10 @@ public abstract class DataBase implements Serializable {
 	 * @throws IOException
 	 *             wenn ein Fehler beim Lesen der Datei auftritt
 	 */
-	private static boolean checkZip(String filePath) throws IOException {
+	private boolean checkZip(String filePath) throws IOException {
 		File zip = new File(filePath);
 		if (!zip.canRead()) {
-			throw new IllegalArgumentException();
+			return false;
 		}
 		ZipInputStream zis = new ZipInputStream(new FileInputStream(zip));
 		ZipEntry ze = zis.getNextEntry();
@@ -214,7 +225,7 @@ public abstract class DataBase implements Serializable {
 	 * @param folder
 	 *            - der zu löschende Ordner
 	 */
-	private static void deleteFolder(File folder) {
+	private void deleteFolder(File folder) {
 		if (folder.exists()) {
 			File[] files = folder.listFiles();
 			if (files != null) {

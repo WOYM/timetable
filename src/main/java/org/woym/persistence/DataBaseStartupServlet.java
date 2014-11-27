@@ -12,7 +12,7 @@ public class DataBaseStartupServlet extends HttpServlet {
 
 	@Override
 	public void init(ServletConfig servletConfig) {
-		DataBase.setUp();
+		DataBase.getInstance().setUp();
 	}
 
 	@Override
