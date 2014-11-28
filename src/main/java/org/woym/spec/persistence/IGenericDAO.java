@@ -5,21 +5,27 @@ import java.util.List;
 
 import org.woym.exceptions.DatasetException;
 
+/**
+ * Diese Schnittstelle beschreibt Methoden, die eine generische DAO-Klasse
+ * implementieren muss.
+ * 
+ * @author Adrian
+ *
+ * @param &lt;E>
+ *            - die generische Klasse. Muss {@linkplain Serializable} implementieren.
+ */
 public interface IGenericDAO<E extends Serializable> {
 
+	
 	/**
-	 * Persistiert das übergebene Objekt in der Datenbank oder aktualisiert es,
-	 * falls es bereits in der Datenbank vorhanden ist. Diese Methode sollte nur
-	 * zur Aktualisierung benutzt werden, wenn Beziehungen mit
-	 * {@link CascadeType#ALL} oder {@link CascadeType#PERSIST} aktualisiert
-	 * wurden. Tritt dabei ein Fehler auf, wird eine
-	 * {@linkplain DatasetException} geworfen.
+	 * Persistiert das übergebene Objekt in der Datenbank. Tritt dabei ein
+	 * Fehler auf, wird eine {@linkplain DatasetException} geworfen.
 	 * 
 	 * @param object
 	 *            - das zu persistierende Objekt
 	 */
 	public void persist(E object) throws DatasetException;
-	
+
 	/**
 	 * Aktualisiert das Objekt in der Datenbank, welches dem dem übergebenen
 	 * entspricht. Tritt beim Merge ein Fehler auf, wird eine
@@ -31,8 +37,7 @@ public interface IGenericDAO<E extends Serializable> {
 	 * @throws DatasetException
 	 */
 	public void update(E object) throws DatasetException;
-	
-	
+
 	/**
 	 * Löscht das Objekt aus der Datenbank, das dem übergebenen entspricht.
 	 * Tritt beim Löschen ein Fehler auf, wird eine
@@ -43,12 +48,10 @@ public interface IGenericDAO<E extends Serializable> {
 	 * @throws DatasetException
 	 */
 	public void delete(E object) throws DatasetException;
-	
-	
-	
+
 	/**
 	 * Gibt eine Liste aller in der Datenbank vorhandenen Objekte vom Typ E
-	 * zurück. Tritt dabei ein Fehler auf, wird eine {@link DatasetException}
+	 * zurück. Tritt dabei ein Fehler auf, wird eine {@linkplain DatasetException}
 	 * geworfen.
 	 * 
 	 * @return Liste mit allen vorhanden Objekten vom Typ E oder leere Liste

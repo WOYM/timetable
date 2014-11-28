@@ -13,6 +13,17 @@ import org.apache.logging.log4j.Logger;
 import org.woym.exceptions.DatasetException;
 import org.woym.spec.persistence.IGenericDAO;
 
+/**
+ * Diese abstrakte Klasse realisiert die durch das Interface
+ * {@linkplain IGenericDAO} beschriebenen generischen Methoden für DAO-Objekte.
+ * Sie implementiert außerdem das Interface {@linkplain Observer}, da alle
+ * DAO-Objekte {@linkplain DataBase} beobachten müssen.
+ * 
+ * @author Adrian
+ *
+ * @param <E>
+ *            die generische Klasse
+ */
 public class AbstractGenericDAO<E extends Serializable> implements
 		IGenericDAO<E>, Observer {
 
@@ -21,18 +32,28 @@ public class AbstractGenericDAO<E extends Serializable> implements
 	 */
 	protected static final Logger LOGGER = LogManager.getLogger("Persistence");
 
-	protected EntityManager em = DataBase.getInstance().getEntityManager();
+	/**
+	 * Der verwendete EntityManager.
+	 */
+	private EntityManager em = DataBase.getInstance().getEntityManager();
 
+	/**
+	 * Die Klasse, für welche das DAO geschrieben wurde.
+	 */
 	private Class<E> clazz;
+
+	protected EntityManager getEm(){
+		return em;
+	}
 	
-	protected Class<E> getClazz(){
+	protected Class<E> getClazz() {
 		return clazz;
 	}
-	
-	protected void setClazz(Class<E> clazz){
+
+	protected void setClazz(Class<E> clazz) {
 		this.clazz = clazz;
 	}
-	
+
 	/**
 	 * {@inheritDoc}
 	 */
@@ -48,7 +69,7 @@ public class AbstractGenericDAO<E extends Serializable> implements
 			LOGGER.debug(String.format("%s %s persisted.", object.getClass()
 					.getSimpleName(), object));
 		} catch (Exception e) {
-			LOGGER.error(String.format("Exception while persisting %s: ",
+			LOGGER.error(String.format("Exception while persisting %s.",
 					object.getClass().getSimpleName()), e);
 			throw new DatasetException("Error while persisting object: "
 					+ e.getMessage());
@@ -71,7 +92,7 @@ public class AbstractGenericDAO<E extends Serializable> implements
 			LOGGER.debug(String.format("%s %s updated.", object.getClass()
 					.getSimpleName(), object));
 		} catch (Exception e) {
-			LOGGER.error(String.format("Exception while updating %s: ", object
+			LOGGER.error(String.format("Exception while updating %s.", object
 					.getClass().getSimpleName()), e);
 			throw new DatasetException("Error while updating object: "
 					+ e.getMessage());
@@ -93,15 +114,19 @@ public class AbstractGenericDAO<E extends Serializable> implements
 			LOGGER.debug(String.format("%s %s deleted.", object.getClass()
 					.getSimpleName(), object));
 		} catch (Exception e) {
-			LOGGER.error(String.format("Exception while deleting %s: ", object
+			LOGGER.error(String.format("Exception while deleting %s.", object
 					.getClass().getSimpleName()), e);
 			throw new DatasetException("Error while deleting objects: "
 					+ e.getMessage());
 		}
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@SuppressWarnings("unchecked")
-	public List<E> getAll() throws DatasetException{
+	@Override
+	public List<E> getAll() throws DatasetException {
 		try {
 			final Query query = em.createQuery("SELECT x FROM "
 					+ clazz.getSimpleName() + " x");
@@ -109,13 +134,18 @@ public class AbstractGenericDAO<E extends Serializable> implements
 			return objects;
 		} catch (Exception e) {
 			LOGGER.error(String.format(
-					"Exception while getting all objects of %s ",
+					"Exception while getting all objects of %s.",
 					clazz.getSimpleName()), e);
-			throw new DatasetException(String.format("Error while getting all objects of %s: ", clazz.getSimpleName())
+			throw new DatasetException(String.format(
+					"Error while getting all objects of %s: ",
+					clazz.getSimpleName())
 					+ e.getMessage());
 		}
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public E getById(Long id) throws DatasetException {
 		if (id == null) {
@@ -125,7 +155,7 @@ public class AbstractGenericDAO<E extends Serializable> implements
 			return em.find(clazz, id);
 		} catch (Exception e) {
 			LOGGER.error(
-					String.format("Exception while getting %s by id %s ",
+					String.format("Exception while getting %s by id %s.",
 							clazz.getSimpleName(), id), e);
 			throw new DatasetException(String.format(
 					"Error while getting %s by id: ", clazz.getSimpleName())
@@ -133,6 +163,9 @@ public class AbstractGenericDAO<E extends Serializable> implements
 		}
 	}
 
+	/**
+	 * Holt den neuen {@linkplain EntityManager} von {@linkplain DataBase}.
+	 */
 	@Override
 	public void update(Observable o, Object arg) {
 		em = DataBase.getInstance().getEntityManager();
