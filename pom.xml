@@ -138,6 +138,10 @@
 		                </execution>
 		            </executions>
 	        	</plugin>
+	        	
+	        	<!--  Führt zu einem Fehler mit JDK 8, daher werden die Dateien nur einmal erzeugt und 
+	        			dann von /target/generated-sources/meta-model/org/woym/objects nach 
+	        			src/main/java/org/woym/objects kopiert.
 	        	 <plugin>
 				    <groupId>org.codehaus.mojo</groupId>
 				    <artifactId>build-helper-maven-plugin</artifactId>
@@ -183,7 +187,7 @@
 		                    <version>2.5.2</version>
 		                </dependency>
 		            </dependencies>
-		        </plugin>
+		        </plugin>-->
 	        </plugins>			
 	</build>
 </project>
