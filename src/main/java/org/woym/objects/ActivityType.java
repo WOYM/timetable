@@ -13,6 +13,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.ManyToMany;
+import javax.persistence.OrderBy;
 
 /**
  * Diese abstrakte Klasse dient als Superklasse für konkrete Aktivitätstypen.
@@ -54,6 +55,7 @@ public abstract class ActivityType implements Serializable {
 	 * abgehalten werden kann.
 	 */
 	@ManyToMany
+	@OrderBy("name")
 	private List<Room> rooms = new ArrayList<Room>();
 
 	public ActivityType() {

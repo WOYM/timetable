@@ -3,10 +3,14 @@ package org.woym.persistence;
 import java.util.List;
 import java.util.Observer;
 
-import javax.persistence.Query;
+import javax.persistence.TypedQuery;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
 
 import org.woym.exceptions.DatasetException;
 import org.woym.objects.AcademicYear;
+import org.woym.objects.AcademicYear_;
 import org.woym.spec.persistence.IAcademicYearDAO;
 
 /**
@@ -24,11 +28,6 @@ public class AcademicYearDAO extends AbstractGenericDAO<AcademicYear> implements
 	 * Die Singleton-Instanz dieser Klasse.
 	 */
 	private static final AcademicYearDAO INSTANCE = new AcademicYearDAO();
-
-	/**
-	 * Die Select-Abfrage für AcademicYear ohne Bedingungen.
-	 */
-	private static final String SELECT = "SELECT x FROM AcademicYear x";
 
 	/**
 	 * Der private Konstruktor. Fügt die Instanz {@linkplain DataBase} als
@@ -53,18 +52,19 @@ public class AcademicYearDAO extends AbstractGenericDAO<AcademicYear> implements
 	/**
 	 * {@inheritDoc}
 	 */
-	@SuppressWarnings("unchecked")
 	@Override
 	public AcademicYear getByYear(int year) throws DatasetException {
 		try {
-			final Query query = getEm().createQuery(
-					SELECT + " WHERE x.academicYear = ?1");
-			query.setParameter(1, year);
-			List<AcademicYear> result = query.getResultList();
-			if (result.isEmpty()) {
+			CriteriaBuilder cb = getEm().getCriteriaBuilder();
+			CriteriaQuery<AcademicYear> cq = cb.createQuery(AcademicYear.class);
+			Root<AcademicYear> root = cq.from(AcademicYear.class);
+			cq.where(cb.equal(root.get(AcademicYear_.academicYear), year));
+			TypedQuery<AcademicYear> query = getEm().createQuery(cq);
+			List<AcademicYear> years = query.getResultList();
+			if(years.isEmpty()){
 				return null;
 			}
-			return result.get(0);
+			return years.get(0);
 		} catch (Exception e) {
 			LOGGER.error("Exception while getting AcademicYear for year "
 					+ year, e);

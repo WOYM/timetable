@@ -17,6 +17,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.MapKeyJoinColumn;
 import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
 
 /**
  * Diese Klasse repräsentiert einen Jahrgang.
@@ -49,6 +50,7 @@ public class AcademicYear implements Serializable {
 	 * Die zu diesem Jahrgang gehörigen Schulklassen.
 	 */
 	@OneToMany(cascade = CascadeType.ALL)
+	@OrderBy("identifier")
 	private List<Schoolclass> schoolclasses = new ArrayList<>();
 
 	/**

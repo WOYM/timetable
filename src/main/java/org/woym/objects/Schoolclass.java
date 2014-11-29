@@ -51,6 +51,12 @@ public class Schoolclass implements Serializable {
 	@Column(name = "DEMAND")
 	@MapKeyJoinColumn(name = "SUBJECT", referencedColumnName = "ID")
 	private Map<Subject, Integer> subjectDemands = new HashMap<>();
+	
+	/**
+	 * Der Klassenraum dieser Klasse.
+	 */
+	@JoinColumn
+	private Room room;
 
 	public Schoolclass() {
 	}
@@ -79,6 +85,14 @@ public class Schoolclass implements Serializable {
 		this.subjectDemands = subjectDemands;
 	}
 	
+	public Room getRoom() {
+		return room;
+	}
+
+	public void setRoom(Room room) {
+		this.room = room;
+	}
+
 	/**
 	 * Fügt ein Mapping für das übergebene Subject mit dem übergebenen int-Wert
 	 * ein. Ist bereits ein Mapping für das übergebene Subject vorhanden, wird

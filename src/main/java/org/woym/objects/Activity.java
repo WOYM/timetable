@@ -6,7 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.persistence.CascadeType;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -16,7 +16,7 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.MapKeyJoinColumn;
 import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
+import javax.persistence.OrderBy;
 
 /**
  * Diese Klasse repräsentiert eine Aktivität des Personals.
@@ -48,14 +48,15 @@ public class Activity implements Serializable {
 	/**
 	 * Der Zeitraum, in welchem diese Aktivität stattfindet.
 	 */
-	@OneToOne(cascade = CascadeType.ALL)
+	@Embedded
 	private TimePeriod time;
 
 	/**
 	 * Der Raum, in welchem die Aktivität stattfindet.
 	 */
-	@JoinColumn(nullable = false)
-	private Room room;
+	@ManyToMany
+	@OrderBy("name")
+	private List<Room> rooms;
 
 	/**
 	 * Die an der Aktivität teilnehmenden Schulklasse.
@@ -99,12 +100,12 @@ public class Activity implements Serializable {
 		this.time = time;
 	}
 
-	public Room getRoom() {
-		return room;
+	public List<Room> getRooms() {
+		return rooms;
 	}
 
-	public void setRoom(Room room) {
-		this.room = room;
+	public void setRooms(List<Room> rooms) {
+		this.rooms = rooms;
 	}
 
 	public List<Schoolclass> getSchoolclasses() {

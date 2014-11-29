@@ -6,7 +6,10 @@ import java.util.Observable;
 import java.util.Observer;
 
 import javax.persistence.EntityManager;
-import javax.persistence.Query;
+import javax.persistence.TypedQuery;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -124,14 +127,18 @@ public class AbstractGenericDAO<E extends Serializable> implements
 	/**
 	 * {@inheritDoc}
 	 */
-	@SuppressWarnings("unchecked")
 	@Override
-	public List<E> getAll() throws DatasetException {
+	public List<E> getAll(String orderBy) throws DatasetException {
 		try {
-			final Query query = em.createQuery("SELECT x FROM "
-					+ clazz.getSimpleName() + " x");
-			List<E> objects = query.getResultList();
-			return objects;
+			CriteriaBuilder cb = em.getCriteriaBuilder();
+			CriteriaQuery<E> cq = cb.createQuery(clazz);
+			Root<E> root = cq.from(clazz);
+			cq.select(root);
+			if(orderBy != null){
+				cq.orderBy(cb.asc(root.get(orderBy)));
+			}
+			TypedQuery<E> query = em.createQuery(cq);
+			return query.getResultList();
 		} catch (Exception e) {
 			LOGGER.error(String.format(
 					"Exception while getting all objects of %s.",

@@ -5,10 +5,10 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
 import javax.persistence.DiscriminatorType;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -16,6 +16,7 @@ import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
 
 /**
  * Superklasse für alle Personen des Personals.
@@ -85,19 +86,22 @@ public abstract class Employee implements Serializable{
 	/**
 	 * Die anrechenbaren Ersatzleistungen des Lehrers.
 	 */
-	@OneToMany(cascade = CascadeType.ALL)
+	@ElementCollection
+	@OneToMany
 	private List<ChargeableCompensation> compensations = new ArrayList<ChargeableCompensation>();
 
 	/**
 	 * Die von dieser Person des Personals betreuten Jahrgänge.
 	 */
 	@ManyToMany
+	@OrderBy("academicYear")
 	private List<AcademicYear> guidedAcademicYears = new ArrayList<AcademicYear>();
 
 	/**
 	 * Die von dieser Person des Personals betreuten Schulklassen.
 	 */
 	@ManyToMany
+	@OrderBy("identifier")
 	private List<Schoolclass> guidedSchoolclasses = new ArrayList<Schoolclass>();
 
 	/**
@@ -110,7 +114,8 @@ public abstract class Employee implements Serializable{
 	 * Eine Liste von {@link TimePeriod}-Objekten, welche die Zeitwünsche des
 	 * Lehrers darstellen.
 	 */
-	@OneToMany(cascade = CascadeType.ALL)
+	@ElementCollection
+	@OneToMany
 	private List<TimePeriod> timeWishes = new ArrayList<>();
 
 	public Employee() {

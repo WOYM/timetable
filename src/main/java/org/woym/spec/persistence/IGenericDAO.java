@@ -11,12 +11,11 @@ import org.woym.exceptions.DatasetException;
  * 
  * @author Adrian
  *
- * @param &lt;E>
- *            - die generische Klasse. Muss {@linkplain Serializable} implementieren.
+ * @param &lt;E> - die generische Klasse. Muss {@linkplain Serializable}
+ *        implementieren.
  */
 public interface IGenericDAO<E extends Serializable> {
 
-	
 	/**
 	 * Persistiert das übergebene Objekt in der Datenbank. Tritt dabei ein
 	 * Fehler auf, wird eine {@linkplain DatasetException} geworfen.
@@ -51,13 +50,18 @@ public interface IGenericDAO<E extends Serializable> {
 
 	/**
 	 * Gibt eine Liste aller in der Datenbank vorhandenen Objekte vom Typ E
-	 * zurück. Tritt dabei ein Fehler auf, wird eine {@linkplain DatasetException}
-	 * geworfen.
+	 * zurück. Als String kann der Name des Parameters übergeben werden, nach
+	 * dem die Liste sortiert werden soll. Wird {@code null}, wird die Liste
+	 * nicht sortiert. Wird ein ungültiger Parametername übergeben, fliegt eine
+	 * {@link IllegalArgumentException}. Tritt ein anderer Fehler auf, wird eine
+	 * {@linkplain DatasetException} geworfen.
 	 * 
+	 * @param orderBy
+	 *            - Name des Parameters nach dem die Liste sortiert werden soll
 	 * @return Liste mit allen vorhanden Objekten vom Typ E oder leere Liste
 	 * @throws DatasetException
 	 */
-	public List<E> getAll() throws DatasetException;
+	public List<E> getAll(String orderBy) throws DatasetException;
 
 	/**
 	 * Gibt ein Objekt vom Typ E mit der übergebenen ID zurück oder null, falls

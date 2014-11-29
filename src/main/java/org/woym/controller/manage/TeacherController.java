@@ -38,7 +38,7 @@ public class TeacherController implements Serializable {
 
 	public List<Teacher> getTeachers() {
 		try {
-			return TeacherDAO.getInstance().getAll();
+			return TeacherDAO.getInstance().getAll("symbol");
 		} catch (DatasetException e) {
 			FacesMessage message = new FacesMessage(
 					FacesMessage.SEVERITY_ERROR,
