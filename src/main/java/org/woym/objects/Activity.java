@@ -11,6 +11,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Inheritance;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
@@ -25,7 +26,8 @@ import javax.persistence.OrderBy;
  *
  */
 @Entity
-public class Activity implements Serializable {
+@Inheritance
+public abstract class Activity implements Serializable {
 
 	/**
 	 * 
@@ -38,12 +40,6 @@ public class Activity implements Serializable {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Long id;
-
-	/**
-	 * Die Art der Aktivität, z.B. bestimmtes Projekt oder Schulfach.
-	 */
-	@JoinColumn(nullable = false)
-	private ActivityType type;
 
 	/**
 	 * Der Zeitraum, in welchem diese Aktivität stattfindet.
@@ -82,14 +78,6 @@ public class Activity implements Serializable {
 
 	public void setId(Long id) {
 		this.id = id;
-	}
-
-	public ActivityType getType() {
-		return type;
-	}
-
-	public void setType(ActivityType type) {
-		this.type = type;
 	}
 
 	public TimePeriod getTime() {

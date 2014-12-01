@@ -24,7 +24,7 @@ import javax.persistence.OrderBy;
  */
 @Inheritance
 @Entity
-@DiscriminatorColumn(name="TYPE", discriminatorType=DiscriminatorType.STRING,length=20)
+@DiscriminatorColumn(name = "TYPE", discriminatorType = DiscriminatorType.STRING, length = 20)
 public abstract class ActivityType implements Serializable {
 
 	/**
@@ -88,9 +88,22 @@ public abstract class ActivityType implements Serializable {
 	public List<Room> getRooms() {
 		return rooms;
 	}
-	
+
 	public void setRooms(List<Room> rooms) {
 		this.rooms = rooms;
+	}
+
+	@Override
+	public String toString() {
+		return name + "(" + typicalDuration + " min.)";
+	}
+
+	@Override
+	public boolean equals(Object object) {
+		if (object instanceof ActivityType) {
+			return ((ActivityType) object).getName().equals(this.name);
+		}
+		return false;
 	}
 
 	/**

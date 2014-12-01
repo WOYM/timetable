@@ -11,7 +11,7 @@ import javax.persistence.Entity;
  */
 @Entity
 @DiscriminatorValue("Pause")
-public class Pause extends ActivityType {
+public class Pause extends Activity {
 
 	/**
 	 * 

@@ -26,8 +26,8 @@ import javax.persistence.OrderBy;
  */
 @Entity
 @Inheritance
-@DiscriminatorColumn(name="TYPE", discriminatorType=DiscriminatorType.STRING,length=20)
-public abstract class Employee implements Serializable{
+@DiscriminatorColumn(name = "TYPE", discriminatorType = DiscriminatorType.STRING, length = 20)
+public abstract class Employee implements Serializable {
 
 	/**
 	 * 
@@ -197,7 +197,8 @@ public abstract class Employee implements Serializable{
 		return possibleActivityTypes;
 	}
 
-	public void setPossibleActivityTypes(List<ActivityType> possibleActivityTypes) {
+	public void setPossibleActivityTypes(
+			List<ActivityType> possibleActivityTypes) {
 		this.possibleActivityTypes = possibleActivityTypes;
 	}
 
@@ -220,6 +221,24 @@ public abstract class Employee implements Serializable{
 	@Override
 	public String toString() {
 		return getName() + ", " + symbol + ", " + hoursPerWeek + "hpw";
+	}
+
+	/**
+	 * Überschreiben der equals-Methode. Zwei Mitarbeiter sind gleich, wenn sie
+	 * das gleiche Kürzel besitzen.
+	 * 
+	 * @param object
+	 *            - das zu vergleichende Objekt
+	 * @return {@code true}, wenn ein Employee mit demselben Kürzel übergeben
+	 *         würde, {@code false}, wenn das Kürzel verschieden ist oder kein
+	 *         {@linkplain Employee} übergeben wurde
+	 */
+	@Override
+	public boolean equals(Object object) {
+		if (object instanceof Employee) {
+			return ((Employee) object).getSymbol().equals(this.symbol);
+		}
+		return false;
 	}
 
 	/**
@@ -396,7 +415,7 @@ public abstract class Employee implements Serializable{
 	public boolean containsActivityType(final ActivityType activityType) {
 		return possibleActivityTypes.contains(activityType);
 	}
-	
+
 	/**
 	 * Fügt das übergebenene {@linkplain TimePeriod}-Objekt der entsprechenden
 	 * Liste hinzu, sofern es noch nicht darin vorhanden ist.

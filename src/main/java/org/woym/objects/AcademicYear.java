@@ -57,10 +57,10 @@ public class AcademicYear implements Serializable {
 	 * Die Unterrichtsbedarfe diesen Jahrgang.
 	 */
 	@ElementCollection
-	@CollectionTable(name = "ACADEMICYEAR_SUBJECTDEMANDS", joinColumns = @JoinColumn(name = "ACADEMICYEAR"))
+	@CollectionTable(name = "ACADEMICYEAR_LESSONDEMANDS", joinColumns = @JoinColumn(name = "ACADEMICYEAR"))
 	@Column(name = "DEMAND")
-	@MapKeyJoinColumn(name = "SUBJECT", referencedColumnName = "ID")
-	private Map<Subject, Integer> subjectDemands = new HashMap<>();
+	@MapKeyJoinColumn(name = "LESSONTYPE", referencedColumnName = "ID")
+	private Map<LessonType, Integer> lessonDemands = new HashMap<>();
 
 	public AcademicYear() {
 	}
@@ -89,12 +89,25 @@ public class AcademicYear implements Serializable {
 		this.schoolclasses = schoolclasses;
 	}
 
-	public Map<Subject, Integer> getSubjectDemands() {
-		return subjectDemands;
+	public Map<LessonType, Integer> getLessonDemands() {
+		return lessonDemands;
 	}
 
-	public void setSubjectDemands(Map<Subject, Integer> subjectDemands) {
-		this.subjectDemands = subjectDemands;
+	public void setLessonDemands(Map<LessonType, Integer> lessonDemands) {
+		this.lessonDemands = lessonDemands;
+	}
+
+	@Override
+	public String toString() {
+		return String.valueOf(academicYear);
+	}
+
+	@Override
+	public boolean equals(Object object) {
+		if (object instanceof AcademicYear) {
+			return ((AcademicYear) object).getAcademicYear() == this.academicYear;
+		}
+		return false;
 	}
 
 	/**
@@ -143,49 +156,50 @@ public class AcademicYear implements Serializable {
 	}
 
 	/**
-	 * Fügt ein Mapping für das übergebene Subject mit dem übergebenen int-Wert
-	 * ein. Ist bereits ein Mapping für das übergebene Subject vorhanden, wird
-	 * dieses nicht überschrieben und die Methode gibt {@code false} zurück.
-	 * Ansonsten wird das Mapping eingefügt und {@code true} zurückgegeben.
+	 * Fügt ein Mapping für den übergebenen {@linkplain LessonType} mit dem
+	 * übergebenen int-Wert ein. Ist bereits ein Mapping für das übergebene
+	 * Subject vorhanden, wird dieses nicht überschrieben und die Methode gibt
+	 * {@code false} zurück. Ansonsten wird das Mapping eingefügt und
+	 * {@code true} zurückgegeben.
 	 * 
-	 * @param subject
-	 *            - das Schulfach
+	 * @param lessonType
+	 *            - der Unterrichtstyp, für den ein Bedarf angegeben werden soll
 	 * @param demand
 	 *            - der zu mappende Bedarf
 	 * @return {@code true}, wenn noch kein Mapping vorhanden war und eins
 	 *         hinzugefügt wurde, ansonsten {@code false}
 	 */
-	public boolean addSubjectDemand(final Subject subject, int demand) {
-		if (!subjectDemands.containsKey(subject)) {
-			subjectDemands.put(subject, demand);
+	public boolean addLessonDemand(final LessonType lessonType, int demand) {
+		if (!lessonDemands.containsKey(lessonType)) {
+			lessonDemands.put(lessonType, demand);
 			return true;
 		}
 		return false;
 	}
 
 	/**
-	 * Entfernt das Mapping für das übergebene {@linkplain Subject}-Objekt.
+	 * Entfernt das Mapping für das übergebene {@linkplain LessonType}-Objekt.
 	 * 
-	 * @param subject
-	 *            - das Unterrichtsfache, für welches das Mapping entfernt
-	 *            werden soll
+	 * @param lessonType
+	 *            - der Unterrichtstyp, für welchen das Mapping entfernt werden
+	 *            soll werden soll
 	 * @return Integer (Value), wenn ein Mapping bestand, ansonsten {@code null}
 	 */
-	public Integer removeSubjectDemand(final Subject subject) {
-		return subjectDemands.remove(subject);
+	public Integer removeSubjectDemand(final LessonType lessonType) {
+		return lessonDemands.remove(lessonType);
 	}
 
 	/**
 	 * Gibt {@code true} zurück, wenn ein Mapping für das übergebene
-	 * {@linkplain Subject}-Objekt vorhanden ist, ansonsten {@code false}.
+	 * {@linkplain LessonType}-Objekt vorhanden ist, ansonsten {@code false}.
 	 * 
-	 * @param subject
-	 *            - das Schulfach, für das geprüft werden soll, ob ein Mapping
-	 *            vorhanden ist
+	 * @param lessonType
+	 *            - der Unterrichtstyp, für welchen geprüft werden soll, ob ein
+	 *            Mapping vorhanden ist
 	 * @return {@code true}, wenn ein Mapping vorhanden ist, ansonsten
 	 *         {@code false}
 	 */
-	public boolean containsSubjectDemand(final Subject subject) {
-		return subjectDemands.containsKey(subject);
+	public boolean containsSubjectDemand(final LessonType lessonType) {
+		return lessonDemands.containsKey(lessonType);
 	}
 }

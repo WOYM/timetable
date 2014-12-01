@@ -11,13 +11,23 @@ import javax.persistence.Entity;
  */
 @Entity
 @DiscriminatorValue("Meeting")
-public class Meeting extends ActivityType {
+public class Meeting extends Activity {
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 3347521812061561725L;
 
+	private MeetingType meetingType;
+	
 	public Meeting() {
+	}
+
+	public MeetingType getMeetingType() {
+		return meetingType;
+	}
+
+	public void setMeetingType(MeetingType meetingType) {
+		this.meetingType = meetingType;
 	}
 }

@@ -4,13 +4,14 @@ import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 
 /**
- * Diese Klasse repräsentiert den Aktivitätstyp "Projekt".
+ * Diese Klasse repräsentiert ein Projekt.
+ * 
  * @author Adrian
  *
  */
 @Entity
 @DiscriminatorValue("Project")
-public class Project extends ActivityType {
+public class Project extends Activity {
 
 	/**
 	 * 

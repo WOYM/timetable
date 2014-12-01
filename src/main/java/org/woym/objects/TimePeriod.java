@@ -97,5 +97,8 @@ public class TimePeriod implements Serializable{
 		this.week = week;
 	}
 	
-
+	@Override
+	public String toString(){
+		return startTime + "-" + endTime + ", " + day + ", " + week;
+	}
 }

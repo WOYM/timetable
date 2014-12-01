@@ -77,4 +77,17 @@ public class Room implements Serializable{
 	public void setAdditionalInformation(String additionalInformation) {
 		this.additionalInformation = additionalInformation;
 	}
+	
+	@Override
+	public String toString(){
+		return name + " (" + purpose + ")";
+	}
+	
+	@Override
+	public boolean equals(Object object){
+		if(object instanceof Room){
+			return ((Room) object).getName().equals(this.name);
+		}
+		return false;
+	}
 }

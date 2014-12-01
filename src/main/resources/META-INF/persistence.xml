@@ -10,14 +10,17 @@
 		<class>org.woym.objects.ChargeableCompensation</class>
 		<class>org.woym.objects.Employee</class>
 		<class>org.woym.objects.EmployeeTimePeriods</class>
+		<class>org.woym.objects.Lesson</class>
+		<class>org.woym.objects.LessonType</class>
 		<class>org.woym.objects.Location</class>
 		<class>org.woym.objects.Meeting</class>
+		<class>org.woym.objects.MeetingType</class>
 		<class>org.woym.objects.Pause</class>
 		<class>org.woym.objects.PedagogicAssistant</class>
 		<class>org.woym.objects.Project</class>
+		<class>org.woym.objects.ProjectType</class>
 		<class>org.woym.objects.Room</class>
 		<class>org.woym.objects.Schoolclass</class>
-		<class>org.woym.objects.Subject</class>
 		<class>org.woym.objects.Teacher</class>
 		<class>org.woym.objects.TimePeriod</class>
 
