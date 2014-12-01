@@ -83,11 +83,5 @@ public class Room implements Serializable{
 		return name + " (" + purpose + ")";
 	}
 	
-	@Override
-	public boolean equals(Object object){
-		if(object instanceof Room){
-			return ((Room) object).getName().equals(this.name);
-		}
-		return false;
-	}
+	//TODO: Selbes Problem mit equals wie bei Schoolclass.
 }
