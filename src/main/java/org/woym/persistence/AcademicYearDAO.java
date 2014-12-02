@@ -2,14 +2,10 @@ package org.woym.persistence;
 
 import java.util.Observer;
 
-import javax.persistence.TypedQuery;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Root;
+import javax.persistence.Query;
 
 import org.woym.exceptions.DatasetException;
 import org.woym.objects.AcademicYear;
-import org.woym.objects.AcademicYear_;
 import org.woym.spec.persistence.IAcademicYearDAO;
 
 /**
@@ -53,13 +49,14 @@ public class AcademicYearDAO extends AbstractGenericDAO<AcademicYear> implements
 	 */
 	@Override
 	public AcademicYear getByYear(int year) throws DatasetException {
+		if (year < 1) {
+			throw new IllegalArgumentException();
+		}
 		try {
-			CriteriaBuilder cb = getEm().getCriteriaBuilder();
-			CriteriaQuery<AcademicYear> cq = cb.createQuery(AcademicYear.class);
-			Root<AcademicYear> root = cq.from(AcademicYear.class);
-			cq.where(cb.equal(root.get(AcademicYear_.academicYear), year));
-			TypedQuery<AcademicYear> query = getEm().createQuery(cq);
-			return query.getSingleResult();
+			final Query query = getEm().createQuery(
+					"SELECT x FROM AcademicYear WHERE x.academicYear = ?1");
+			query.setParameter(1, year);
+			return (AcademicYear) query.getSingleResult();
 		} catch (Exception e) {
 			LOGGER.error("Exception while getting AcademicYear for year "
 					+ year, e);
