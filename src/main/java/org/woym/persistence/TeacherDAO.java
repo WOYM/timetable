@@ -1,6 +1,5 @@
 package org.woym.persistence;
 
-import java.io.Serializable;
 import java.util.List;
 
 import javax.activation.DataHandler;
@@ -18,14 +17,8 @@ import org.woym.spec.persistence.IEmployeeDAO;
  *
  */
 public class TeacherDAO extends AbstractDAO<Teacher> implements
-		IEmployeeDAO<Teacher>, Serializable{
+		IEmployeeDAO<Teacher> {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = -6895052561483060606L;
-	
-	
 	private static final String SELECT = "SELECT t FROM Teacher t";
 
 	/**
@@ -48,21 +41,16 @@ public class TeacherDAO extends AbstractDAO<Teacher> implements
 	/**
 	 * {@inheritDoc}
 	 */
-	@SuppressWarnings("unchecked")
 	@Override
-	public List<Teacher> getById(Long id) throws DatasetException {
+	public Teacher getById(Long id) throws DatasetException {
 		if (id == null) {
 			throw new IllegalArgumentException();
 		}
 		try {
-			final Query query = entityManager.createQuery(SELECT
-					+ " WHERE t.id = ?1");
-			query.setParameter(1, id);
-			List<Teacher> teachers = query.getResultList();
-			return teachers;
+			return entityManager.find(Teacher.class, id);
 		} catch (Exception e) {
 			LOGGER.error("Exception while getting teacher by id " + id, e);
-			throw new DatasetException("Error while getting all teachers: "
+			throw new DatasetException("Error while getting teacher by id: "
 					+ e.getMessage());
 		}
 	}
@@ -82,7 +70,8 @@ public class TeacherDAO extends AbstractDAO<Teacher> implements
 			List<Teacher> teachers = query.getResultList();
 			return teachers;
 		} catch (Exception e) {
-			LOGGER.error("Exception while getting teacher with symbol " + symbol, e);
+			LOGGER.error("Exception while getting teacher with symbol "
+					+ symbol, e);
 			throw new DatasetException(
 					"Error while getting teacher for symbol " + symbol + ": "
 							+ e.getMessage());
@@ -93,7 +82,7 @@ public class TeacherDAO extends AbstractDAO<Teacher> implements
 	 * {@inheritDoc}
 	 */
 	@SuppressWarnings("unchecked")
-	public List<Teacher> searchForStaff(String searchSymbol)
+	public List<Teacher> searchForEmployees(String searchSymbol)
 			throws DatasetException {
 		if (searchSymbol == null) {
 			throw new IllegalArgumentException();
@@ -105,9 +94,11 @@ public class TeacherDAO extends AbstractDAO<Teacher> implements
 			List<Teacher> teachers = query.getResultList();
 			return teachers;
 		} catch (Exception e) {
-			LOGGER.error("Exception while searching for teachers whose symbol contains " + searchSymbol, e);
+			LOGGER.error(
+					"Exception while searching for teachers whose symbol contain "
+							+ searchSymbol, e);
 			throw new DatasetException(
-					"Error while getting teachers whose symbol contains "
+					"Error while getting teachers whose symbol contain "
 							+ searchSymbol + ": " + e.getMessage());
 		}
 	}

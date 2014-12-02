@@ -55,13 +55,13 @@ public class TimePeriod implements Serializable{
 	 * Der Wochentag (s. {@linkplain Weekday}.
 	 */
 	@Column(nullable = false)
-	private int day;
+	private Weekday day;
 	
 	/**
 	 * Die Woche (s. {@linkplain Week}.
 	 */
 	@Column(nullable = false)
-	private int week;
+	private Week week;
 	
 
 	public TimePeriod() {
@@ -71,69 +71,49 @@ public class TimePeriod implements Serializable{
 		return id;
 	}
 
-
-
 	public void setId(Long id) {
 		this.id = id;
 	}
-
-
 
 	public Date getStartTime() {
 		return startTime;
 	}
 
-
-
 	public void setStartTime(Date startTime) {
 		this.startTime = startTime;
 	}
-
-
 
 	public Date getEndTime() {
 		return endTime;
 	}
 
-
-
 	public void setEndTime(Date endTime) {
 		this.endTime = endTime;
 	}
-
-
 
 	public int getDuration() {
 		return duration;
 	}
 
-
-
 	public void setDuration(int duration) {
 		this.duration = duration;
 	}
 
-
-
-	public int getDay() {
+	public Weekday getDay() {
 		return day;
 	}
 
-
-
-	public void setDay(int day) {
+	public void setDay(Weekday day) {
 		this.day = day;
 	}
 
-
-
-	public int getWeek() {
+	public Week getWeek() {
 		return week;
 	}
 
-
-
-	public void setWeek(int week) {
+	public void setWeek(Week week) {
 		this.week = week;
 	}
+	
+
 }

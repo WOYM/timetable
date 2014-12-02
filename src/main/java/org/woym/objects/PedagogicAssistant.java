@@ -1,16 +1,15 @@
 package org.woym.objects;
 
-import java.io.Serializable;
-
 import javax.persistence.Entity;
 
 /**
  * Diese Klasse repräsentiert einen pädagogischen Mitarbeiter.
+ * 
  * @author Adrian
  *
  */
 @Entity
-public class PedagogicAssistant extends Employee implements Serializable{
+public class PedagogicAssistant extends Employee {
 
 	/**
 	 * 
@@ -19,7 +18,7 @@ public class PedagogicAssistant extends Employee implements Serializable{
 
 	public PedagogicAssistant() {
 	}
-	
+
 	@Override
 	public boolean addActivityType(ActivityType activityType) {
 		// TODO Auto-generated method stub

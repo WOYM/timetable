@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -32,11 +33,29 @@ public class EmployeeTimePeriods implements Serializable {
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Long id;
 
-	@OneToMany
+	/**
+	 * Eine Liste von Zeiträumen.
+	 */
+	@OneToMany(cascade = CascadeType.ALL)
 	private List<TimePeriod> timePeriods = new ArrayList<>();
+
+	public EmployeeTimePeriods() {
+	}
+	
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
+	}
 
 	public List<TimePeriod> getTimePeriods() {
 		return timePeriods;
+	}
+	
+	public void setTimePeriods(List<TimePeriod> timePeriods) {
+		this.timePeriods = timePeriods;
 	}
 
 	public boolean add(final TimePeriod timePeriod) {
