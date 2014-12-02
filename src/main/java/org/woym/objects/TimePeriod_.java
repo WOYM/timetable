@@ -7,7 +7,7 @@ import javax.persistence.metamodel.StaticMetamodel;
 import org.woym.objects.Week;
 import org.woym.objects.Weekday;
 
-@Generated(value="EclipseLink-2.5.2.v20140319-rNA", date="2014-12-01T15:01:12")
+@Generated(value="EclipseLink-2.5.2.v20140319-rNA", date="2014-12-02T17:15:59")
 @StaticMetamodel(TimePeriod.class)
 public class TimePeriod_ { 
 

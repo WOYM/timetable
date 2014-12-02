@@ -8,7 +8,7 @@ import javax.persistence.metamodel.StaticMetamodel;
 import org.woym.objects.LessonType;
 import org.woym.objects.Schoolclass;
 
-@Generated(value="EclipseLink-2.5.2.v20140319-rNA", date="2014-12-01T15:01:12")
+@Generated(value="EclipseLink-2.5.2.v20140319-rNA", date="2014-12-02T17:15:59")
 @StaticMetamodel(AcademicYear.class)
 public class AcademicYear_ { 
 
