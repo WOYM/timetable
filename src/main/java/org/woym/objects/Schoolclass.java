@@ -47,7 +47,7 @@ public class Schoolclass implements Serializable {
 	 * dem diese Klasse gehört.
 	 */
 	@ElementCollection
-	@CollectionTable(name = "ACADEMICYEAR_LESSONDEMANDS", joinColumns = @JoinColumn(name = "ACADEMICYEAR"))
+	@CollectionTable(name = "SCHOOLCLASS_LESSONDEMANDS", joinColumns = @JoinColumn(name = "SCHOOLCLASS"))
 	@Column(name = "DEMAND")
 	@MapKeyJoinColumn(name = "LESSONTYPE", referencedColumnName = "ID")
 	private Map<LessonType, Integer> lessonDemands = new HashMap<>();
@@ -140,9 +140,4 @@ public class Schoolclass implements Serializable {
 	public boolean containsSubjectDemand(final LessonType lessonType) {
 		return lessonDemands.containsKey(lessonType);
 	}
-
-	// TODO: equals überschreiben. Momentan nicht möglich, da sich Schulklassen
-	// nicht eindeutig identifzieren lassen, weil sie ihren Jahrgang nicht
-	// kennen.
-
 }

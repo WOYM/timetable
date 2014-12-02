@@ -18,16 +18,17 @@ public class Lesson extends Activity {
 	 */
 	private static final long serialVersionUID = 2876347057241150863L;
 
-	private LessonType subject;
+	private LessonType lessonType;
 	
 	public Lesson() {
 	}
 
-	public LessonType getSubject() {
-		return subject;
+	public LessonType getLessonType() {
+		return lessonType;
 	}
 
-	public void setSubject(LessonType subject) {
-		this.subject = subject;
+	public void setLessonType(LessonType lessonType) {
+		this.lessonType = lessonType;
 	}
+
 }

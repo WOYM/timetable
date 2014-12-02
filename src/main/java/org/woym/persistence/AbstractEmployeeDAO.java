@@ -38,11 +38,7 @@ public abstract class AbstractEmployeeDAO<E extends Employee> extends
 			Root<E> root = cq.from(getClazz());
 			cq.where(cb.equal(root.get(Employee_.symbol), symbol));
 			TypedQuery<E> query = getEm().createQuery(cq);
-			List<E> employees = query.getResultList();
-			if (employees.isEmpty()) {
-				return null;
-			}
-			return employees.get(0);
+			return query.getSingleResult();
 		} catch (Exception e) {
 			LOGGER.error(String.format(
 					"Exception while getting %s with symbol %s.", getClazz()

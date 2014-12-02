@@ -60,8 +60,7 @@ public abstract class Employee implements Serializable {
 	/**
 	 * Der Nachname. Darf in der Datenbank nicht null sein.
 	 */
-	// TODO: Ändern.
-	// @Column(nullable = false)
+	@Column(nullable = false)
 	private String lastName;
 
 	/**
@@ -101,13 +100,13 @@ public abstract class Employee implements Serializable {
 	 * Die von dieser Person des Personals betreuten Schulklassen.
 	 */
 	@ManyToMany
-	@OrderBy("identifier")
 	private List<Schoolclass> guidedSchoolclasses = new ArrayList<Schoolclass>();
 
 	/**
 	 * Die möglichen Stundeninhalte dieser Person des Personals.
 	 */
 	@ManyToMany
+	@OrderBy("name")
 	private List<ActivityType> possibleActivityTypes = new ArrayList<ActivityType>();
 
 	/**

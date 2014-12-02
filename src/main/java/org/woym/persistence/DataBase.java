@@ -111,7 +111,7 @@ public class DataBase extends Observable implements Serializable {
 	 * 
 	 * @return {@linkplain EntityManager} - Instanz des EntityManager
 	 */
-	public EntityManager getEntityManager() {
+	EntityManager getEntityManager() {
 		return entityManager;
 	}
 

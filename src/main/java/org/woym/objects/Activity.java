@@ -6,6 +6,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.persistence.DiscriminatorColumn;
+import javax.persistence.DiscriminatorType;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -27,6 +29,7 @@ import javax.persistence.OrderBy;
  */
 @Entity
 @Inheritance
+@DiscriminatorColumn(name = "TYPE", discriminatorType = DiscriminatorType.STRING, length = 20)
 public abstract class Activity implements Serializable {
 
 	/**
@@ -48,7 +51,8 @@ public abstract class Activity implements Serializable {
 	private TimePeriod time;
 
 	/**
-	 * Der Raum, in welchem die Aktivität stattfindet.
+	 * Die Räume, in welchen die Aktivität stattfindet. Diese befinden sich alle
+	 * am selben Standort.
 	 */
 	@ManyToMany
 	@OrderBy("name")
@@ -184,8 +188,10 @@ public abstract class Activity implements Serializable {
 	 * Entfernt das Mapping für das übergebene {@linkplain Employee}-Objekt.
 	 * 
 	 * @param employee
-	 *            - der Mitarbeiter, für welchen das Mapping entfernt werden soll
-	 * @return EmployeeTimePeriods (Value), wenn ein Mapping bestand, ansonsten {@code null}
+	 *            - der Mitarbeiter, für welchen das Mapping entfernt werden
+	 *            soll
+	 * @return EmployeeTimePeriods (Value), wenn ein Mapping bestand, ansonsten
+	 *         {@code null}
 	 */
 	public EmployeeTimePeriods removeSubjectDemand(final Employee employee) {
 		return employees.remove(employee);

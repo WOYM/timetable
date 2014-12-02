@@ -39,6 +39,7 @@ public class AbstractGenericDAO<E extends Serializable> implements
 	 * Der verwendete EntityManager.
 	 */
 	private EntityManager em = DataBase.getInstance().getEntityManager();
+	
 
 	/**
 	 * Die Klasse, für welche das DAO geschrieben wurde.

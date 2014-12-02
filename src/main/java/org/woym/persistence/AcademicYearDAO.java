@@ -1,6 +1,5 @@
 package org.woym.persistence;
 
-import java.util.List;
 import java.util.Observer;
 
 import javax.persistence.TypedQuery;
@@ -60,11 +59,7 @@ public class AcademicYearDAO extends AbstractGenericDAO<AcademicYear> implements
 			Root<AcademicYear> root = cq.from(AcademicYear.class);
 			cq.where(cb.equal(root.get(AcademicYear_.academicYear), year));
 			TypedQuery<AcademicYear> query = getEm().createQuery(cq);
-			List<AcademicYear> years = query.getResultList();
-			if(years.isEmpty()){
-				return null;
-			}
-			return years.get(0);
+			return query.getSingleResult();
 		} catch (Exception e) {
 			LOGGER.error("Exception while getting AcademicYear for year "
 					+ year, e);

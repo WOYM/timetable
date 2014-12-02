@@ -82,6 +82,4 @@ public class Room implements Serializable{
 	public String toString(){
 		return name + " (" + purpose + ")";
 	}
-	
-	//TODO: Selbes Problem mit equals wie bei Schoolclass.
 }
