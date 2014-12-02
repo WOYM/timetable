@@ -65,7 +65,7 @@ public class TeacherDAO extends AbstractDAO<Teacher> implements
 		}
 		try {
 			final Query query = entityManager.createQuery(SELECT
-					+ "WHERE t.symbol = ?1");
+					+ " WHERE t.symbol = ?1");
 			query.setParameter(1, symbol);
 			List<Teacher> teachers = query.getResultList();
 			return teachers;

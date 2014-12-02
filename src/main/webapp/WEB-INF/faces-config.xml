@@ -2,6 +2,7 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-facesconfig_2_2.xsd">
 	<application>
+		<!-- Action-Listener -->
 	   <action-listener>
 	       org.primefaces.application.DialogActionListener
 	   </action-listener>
@@ -12,4 +13,13 @@
 	       org.primefaces.application.DialogViewHandler
 	   </view-handler>
     </application>
+   		<!-- Validators -->
+	<validator>
+   		<validator-id>NameValidator</validator-id>
+   		<validator-class>org.woym.ui.validators.NameValidator</validator-class>
+	</validator>
+	<validator>
+   		<validator-id>SymbolValidator</validator-id>
+   		<validator-class>org.woym.ui.validators.SymbolValidator</validator-class>
+	</validator>
 </faces-config>
