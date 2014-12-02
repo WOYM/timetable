@@ -6,10 +6,7 @@ import java.util.Observable;
 import java.util.Observer;
 
 import javax.persistence.EntityManager;
-import javax.persistence.TypedQuery;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Root;
+import javax.persistence.Query;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -39,17 +36,16 @@ public class AbstractGenericDAO<E extends Serializable> implements
 	 * Der verwendete EntityManager.
 	 */
 	private EntityManager em = DataBase.getInstance().getEntityManager();
-	
 
 	/**
 	 * Die Klasse, für welche das DAO geschrieben wurde.
 	 */
 	private Class<E> clazz;
 
-	protected EntityManager getEm(){
+	protected EntityManager getEm() {
 		return em;
 	}
-	
+
 	protected Class<E> getClazz() {
 		return clazz;
 	}
@@ -73,8 +69,8 @@ public class AbstractGenericDAO<E extends Serializable> implements
 			LOGGER.debug(String.format("%s %s persisted.", object.getClass()
 					.getSimpleName(), object));
 		} catch (Exception e) {
-			LOGGER.error(String.format("Exception while persisting %s.",
-					object.getClass().getSimpleName()), e);
+			LOGGER.error(String.format("Exception while persisting %s.", object
+					.getClass().getSimpleName()), e);
 			throw new DatasetException("Error while persisting object: "
 					+ e.getMessage());
 		}
@@ -128,18 +124,17 @@ public class AbstractGenericDAO<E extends Serializable> implements
 	/**
 	 * {@inheritDoc}
 	 */
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<E> getAll(String orderBy) throws DatasetException {
 		try {
-			CriteriaBuilder cb = em.getCriteriaBuilder();
-			CriteriaQuery<E> cq = cb.createQuery(clazz);
-			Root<E> root = cq.from(clazz);
-			cq.select(root);
-			if(orderBy != null){
-				cq.orderBy(cb.asc(root.get(orderBy)));
+			String select = "SELECT x FROM " + clazz.getSimpleName()
+					+ " x";
+			if (orderBy != null) {
+				select += " ORDER BY x." + orderBy;
 			}
-			TypedQuery<E> query = em.createQuery(cq);
-			return query.getResultList();
+			final Query query = em.createQuery(select);
+			return (List<E>) query.getResultList();
 		} catch (Exception e) {
 			LOGGER.error(String.format(
 					"Exception while getting all objects of %s.",
