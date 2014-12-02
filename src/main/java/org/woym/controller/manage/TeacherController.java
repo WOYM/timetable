@@ -11,6 +11,8 @@ import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
 import javax.faces.context.FacesContext;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.primefaces.context.RequestContext;
 import org.primefaces.event.SelectEvent;
 import org.woym.exceptions.DatasetException;
@@ -30,14 +32,22 @@ import org.woym.persistence.TeacherDAO;
 public class TeacherController implements Serializable {
 
 	private static final long serialVersionUID = -2341971622906815080L;
+	
+	private static Logger logger = LogManager.getLogger("teacherController");
 
 	private TeacherDAO db = new TeacherDAO();
-
 	private Teacher selectedTeacher;
+	private Teacher addTeacher;
+	// TODO Move to planningController
 	private Teacher selectedTeacherForSearch;
-	
 	private String searchSymbol;
+	//
 
+	/**
+	 * Liefert eine Liste mit allen Lehrkräften zurück.
+	 * 
+	 * @return Liste mit allen Lehrkräften
+	 */
 	public List<Teacher> getTeachers() {
 		try {
 			return db.getAll();
@@ -52,6 +62,8 @@ public class TeacherController implements Serializable {
 
 	public void addTeacherDialog() {
 
+		addTeacher = new Teacher();
+		
 		Map<String, Object> options = new HashMap<String, Object>();
 		options.put("modal", true);
 		options.put("draggable", false);
@@ -60,7 +72,7 @@ public class TeacherController implements Serializable {
 		options.put("contentWidth", 600);
 
 		RequestContext rc = RequestContext.getCurrentInstance();
-		rc.openDialog("manageTeachersDialog", options, null);
+		rc.openDialog("addTeachersDialog", options, null);
 	}
 
 	public void editTeacherDialog() {
@@ -94,6 +106,14 @@ public class TeacherController implements Serializable {
 		}
 	}
 
+	public void editTeacher() {
+		try {
+			db.persistObject(selectedTeacher);
+		} catch (DatasetException e) {
+			logger.error(e);
+		}
+	}
+	
 	public void deleteTeacher() {
 		if (selectedTeacher != null) {
 			try {
@@ -144,12 +164,24 @@ public class TeacherController implements Serializable {
 		return tempList;
 	}
 	
+    public void addTeacherFromDialog() {
+			RequestContext.getCurrentInstance().closeDialog(null);
+    }
+	
 	public Teacher getSelectedTeacher() {
 		return selectedTeacher;
 	}
 
 	public void setSelectedTeacher(Teacher selectedTeacher) {
 		this.selectedTeacher = selectedTeacher;
+	}
+	
+	public Teacher getAddTeacher() {
+		return addTeacher;
+	}
+	
+	public void setAddTeacher(Teacher addTeacher) {
+		this.addTeacher = addTeacher;
 	}
 	
 	public String getSearchSymbol() {
