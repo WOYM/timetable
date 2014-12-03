@@ -5,12 +5,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.Column;
+import javax.persistence.DiscriminatorColumn;
+import javax.persistence.DiscriminatorType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.ManyToMany;
+import javax.persistence.OrderBy;
 
 /**
  * Diese abstrakte Klasse dient als Superklasse für konkrete Aktivitätstypen.
@@ -21,6 +24,7 @@ import javax.persistence.ManyToMany;
  */
 @Inheritance
 @Entity
+@DiscriminatorColumn(name = "TYPE", discriminatorType = DiscriminatorType.STRING, length = 20)
 public abstract class ActivityType implements Serializable {
 
 	/**
@@ -51,6 +55,7 @@ public abstract class ActivityType implements Serializable {
 	 * abgehalten werden kann.
 	 */
 	@ManyToMany
+	@OrderBy("name")
 	private List<Room> rooms = new ArrayList<Room>();
 
 	public ActivityType() {
@@ -83,9 +88,22 @@ public abstract class ActivityType implements Serializable {
 	public List<Room> getRooms() {
 		return rooms;
 	}
-	
+
 	public void setRooms(List<Room> rooms) {
 		this.rooms = rooms;
+	}
+
+	@Override
+	public String toString() {
+		return name + "(" + typicalDuration + " min.)";
+	}
+
+	@Override
+	public boolean equals(Object object) {
+		if (object instanceof ActivityType) {
+			return ((ActivityType) object).getName().equals(this.name);
+		}
+		return false;
 	}
 
 	/**

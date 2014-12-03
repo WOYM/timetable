@@ -5,8 +5,10 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.DiscriminatorColumn;
+import javax.persistence.DiscriminatorType;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -14,6 +16,7 @@ import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
 
 /**
  * Superklasse für alle Personen des Personals.
@@ -23,7 +26,8 @@ import javax.persistence.OneToMany;
  */
 @Entity
 @Inheritance
-public abstract class Employee implements Serializable{
+@DiscriminatorColumn(name = "TYPE", discriminatorType = DiscriminatorType.STRING, length = 20)
+public abstract class Employee implements Serializable {
 
 	/**
 	 * 
@@ -56,8 +60,7 @@ public abstract class Employee implements Serializable{
 	/**
 	 * Der Nachname. Darf in der Datenbank nicht null sein.
 	 */
-	// TODO: Ändern.
-	// @Column(nullable = false)
+	@Column(nullable = false)
 	private String lastName;
 
 	/**
@@ -82,13 +85,15 @@ public abstract class Employee implements Serializable{
 	/**
 	 * Die anrechenbaren Ersatzleistungen des Lehrers.
 	 */
-	@OneToMany(cascade = CascadeType.ALL)
+	@ElementCollection
+	@OneToMany
 	private List<ChargeableCompensation> compensations = new ArrayList<ChargeableCompensation>();
 
 	/**
 	 * Die von dieser Person des Personals betreuten Jahrgänge.
 	 */
 	@ManyToMany
+	@OrderBy("academicYear")
 	private List<AcademicYear> guidedAcademicYears = new ArrayList<AcademicYear>();
 
 	/**
@@ -101,13 +106,15 @@ public abstract class Employee implements Serializable{
 	 * Die möglichen Stundeninhalte dieser Person des Personals.
 	 */
 	@ManyToMany
+	@OrderBy("name")
 	private List<ActivityType> possibleActivityTypes = new ArrayList<ActivityType>();
 
 	/**
 	 * Eine Liste von {@link TimePeriod}-Objekten, welche die Zeitwünsche des
 	 * Lehrers darstellen.
 	 */
-	@OneToMany(cascade = CascadeType.ALL)
+	@ElementCollection
+	@OneToMany
 	private List<TimePeriod> timeWishes = new ArrayList<>();
 
 	public Employee() {
@@ -189,7 +196,8 @@ public abstract class Employee implements Serializable{
 		return possibleActivityTypes;
 	}
 
-	public void setPossibleActivityTypes(List<ActivityType> possibleActivityTypes) {
+	public void setPossibleActivityTypes(
+			List<ActivityType> possibleActivityTypes) {
 		this.possibleActivityTypes = possibleActivityTypes;
 	}
 
@@ -212,6 +220,24 @@ public abstract class Employee implements Serializable{
 	@Override
 	public String toString() {
 		return getName() + ", " + symbol + ", " + hoursPerWeek + "hpw";
+	}
+
+	/**
+	 * Überschreiben der equals-Methode. Zwei Mitarbeiter sind gleich, wenn sie
+	 * das gleiche Kürzel besitzen.
+	 * 
+	 * @param object
+	 *            - das zu vergleichende Objekt
+	 * @return {@code true}, wenn ein Employee mit demselben Kürzel übergeben
+	 *         würde, {@code false}, wenn das Kürzel verschieden ist oder kein
+	 *         {@linkplain Employee} übergeben wurde
+	 */
+	@Override
+	public boolean equals(Object object) {
+		if (object instanceof Employee) {
+			return ((Employee) object).getSymbol().equals(this.symbol);
+		}
+		return false;
 	}
 
 	/**
@@ -388,7 +414,7 @@ public abstract class Employee implements Serializable{
 	public boolean containsActivityType(final ActivityType activityType) {
 		return possibleActivityTypes.contains(activityType);
 	}
-	
+
 	/**
 	 * Fügt das übergebenene {@linkplain TimePeriod}-Objekt der entsprechenden
 	 * Liste hinzu, sofern es noch nicht darin vorhanden ist.

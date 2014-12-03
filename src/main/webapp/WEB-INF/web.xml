@@ -25,6 +25,11 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
 		<servlet-class>javax.faces.webapp.FacesServlet</servlet-class>
 		<load-on-startup>1</load-on-startup>
 	</servlet>
+	<servlet>
+		<servlet-name>DataBase Startup Servlet</servlet-name>
+		<servlet-class>org.woym.persistence.DataBaseStartupServlet</servlet-class>
+		<load-on-startup>2</load-on-startup>
+	</servlet>
 	
 	<!-- Servlet-Mapping -->
 	<servlet-mapping>

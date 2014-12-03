@@ -1,5 +1,6 @@
 package org.woym.objects;
 
+import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 
 /**
@@ -9,7 +10,8 @@ import javax.persistence.Entity;
  *
  */
 @Entity
-public class Pause extends ActivityType {
+@DiscriminatorValue("Pause")
+public class Pause extends Activity {
 
 	/**
 	 * 

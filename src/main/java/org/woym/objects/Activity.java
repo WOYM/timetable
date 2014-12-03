@@ -6,17 +6,20 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.persistence.CascadeType;
+import javax.persistence.DiscriminatorColumn;
+import javax.persistence.DiscriminatorType;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Inheritance;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.MapKeyJoinColumn;
 import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
+import javax.persistence.OrderBy;
 
 /**
  * Diese Klasse repräsentiert eine Aktivität des Personals.
@@ -25,7 +28,9 @@ import javax.persistence.OneToOne;
  *
  */
 @Entity
-public class Activity implements Serializable {
+@Inheritance
+@DiscriminatorColumn(name = "TYPE", discriminatorType = DiscriminatorType.STRING, length = 20)
+public abstract class Activity implements Serializable {
 
 	/**
 	 * 
@@ -40,22 +45,18 @@ public class Activity implements Serializable {
 	private Long id;
 
 	/**
-	 * Die Art der Aktivität, z.B. bestimmtes Projekt oder Schulfach.
-	 */
-	@JoinColumn(nullable = false)
-	private ActivityType type;
-
-	/**
 	 * Der Zeitraum, in welchem diese Aktivität stattfindet.
 	 */
-	@OneToOne(cascade = CascadeType.ALL)
+	@Embedded
 	private TimePeriod time;
 
 	/**
-	 * Der Raum, in welchem die Aktivität stattfindet.
+	 * Die Räume, in welchen die Aktivität stattfindet. Diese befinden sich alle
+	 * am selben Standort.
 	 */
-	@JoinColumn(nullable = false)
-	private Room room;
+	@ManyToMany
+	@OrderBy("name")
+	private List<Room> rooms;
 
 	/**
 	 * Die an der Aktivität teilnehmenden Schulklasse.
@@ -83,14 +84,6 @@ public class Activity implements Serializable {
 		this.id = id;
 	}
 
-	public ActivityType getType() {
-		return type;
-	}
-
-	public void setType(ActivityType type) {
-		this.type = type;
-	}
-
 	public TimePeriod getTime() {
 		return time;
 	}
@@ -99,12 +92,12 @@ public class Activity implements Serializable {
 		this.time = time;
 	}
 
-	public Room getRoom() {
-		return room;
+	public List<Room> getRooms() {
+		return rooms;
 	}
 
-	public void setRoom(Room room) {
-		this.room = room;
+	public void setRooms(List<Room> rooms) {
+		this.rooms = rooms;
 	}
 
 	public List<Schoolclass> getSchoolclasses() {
@@ -195,8 +188,10 @@ public class Activity implements Serializable {
 	 * Entfernt das Mapping für das übergebene {@linkplain Employee}-Objekt.
 	 * 
 	 * @param employee
-	 *            - der Mitarbeiter, für welchen das Mapping entfernt werden soll
-	 * @return EmployeeTimePeriods (Value), wenn ein Mapping bestand, ansonsten {@code null}
+	 *            - der Mitarbeiter, für welchen das Mapping entfernt werden
+	 *            soll
+	 * @return EmployeeTimePeriods (Value), wenn ein Mapping bestand, ansonsten
+	 *         {@code null}
 	 */
 	public EmployeeTimePeriods removeSubjectDemand(final Employee employee) {
 		return employees.remove(employee);

@@ -1,102 +1,42 @@
 package org.woym.persistence;
 
-import java.util.List;
+import java.util.Observer;
 
-import javax.persistence.Query;
-
-import org.woym.exceptions.DatasetException;
 import org.woym.objects.PedagogicAssistant;
-import org.woym.spec.persistence.IEmployeeDAO;
 
-public class PedagogicAssistantDAO extends AbstractDAO<PedagogicAssistant>
-		implements IEmployeeDAO<PedagogicAssistant> {
+/**
+ * Diese Singleton-Klasse erweitert {@link AbstractEmployeeDAO} und bietet
+ * Methoden, die in Zusammenhang mit Datenbankanfragen stehen, die päd.
+ * Mitarbeiter betreffen.
+ * 
+ * @author Adrian
+ *
+ */
+public class PedagogicAssistantDAO extends
+		AbstractEmployeeDAO<PedagogicAssistant> {
 
-	private final static String SELECT = "SELECT p FROM PedagogicAssistant p";
-	
 	/**
-	 * {@inheritDoc}
+	 * Die Singleton-Instanz dieser Klasse.
 	 */
-	@Override
-	@SuppressWarnings("unchecked")
-	public List<PedagogicAssistant> getBySymbol(String symbol)
-			throws DatasetException {
-		if (symbol == null) {
-			throw new IllegalArgumentException();
-		}
-		try {
-			final Query query = entityManager.createQuery(SELECT
-					+ "WHERE p.symbol = ?1");
-			query.setParameter(1, symbol);
-			List<PedagogicAssistant> pedagogicAssistants = query.getResultList();
-			return pedagogicAssistants;
-		} catch (Exception e) {
-			LOGGER.error("Exception while getting pedagogic assistant with symbol " + symbol, e);
-			throw new DatasetException(
-					"Error while getting pedagogic assistant for symbol " + symbol + ": "
-							+ e.getMessage());
-		}
-	}
+	private static final PedagogicAssistantDAO INSTANCE = new PedagogicAssistantDAO();
 
-	
 	/**
-	 * {@inheritDoc}
+	 * Der private Konstruktor dieser Klasse. Registriert die Instanz bei
+	 * {@linkplain DataBase} als {@linkplain Observer} und ruft
+	 * {@linkplain AbstractGenericDAO#setClazz(Class)} mit
+	 * {@linkplain PedagogicAssistant} als Klasse auf.
 	 */
-	@SuppressWarnings("unchecked")
-	@Override
-	public List<PedagogicAssistant> searchForEmployees(String searchSymbol)
-			throws DatasetException {
-		if (searchSymbol == null) {
-			throw new IllegalArgumentException();
-		}
-		try {
-			final Query query = entityManager.createQuery(SELECT
-					+ "WHERE UPPER(p.symbol) LIKE ?1");
-			query.setParameter(1, "%" + searchSymbol.toUpperCase() + "%");
-			List<PedagogicAssistant> pedagogicAssistants = query.getResultList();
-			return pedagogicAssistants;
-		} catch (Exception e) {
-			LOGGER.error(
-					"Exception while searching for pedagogic assistants whose symbol contain "
-							+ searchSymbol, e);
-			throw new DatasetException(
-					"Error while getting pedagogic assistants whose symbol contain "
-							+ searchSymbol + ": " + e.getMessage());
-		}
+	private PedagogicAssistantDAO() {
+		DataBase.getInstance().addObserver(this);
+		setClazz(PedagogicAssistant.class);
 	}
 
 	/**
-	 * {@inheritDoc}
+	 * Gibt die Singleton-Instanz dieser Klasse zurück.
+	 * 
+	 * @return die Singleton-Instanz dieser Klasse.
 	 */
-	@SuppressWarnings("unchecked")
-	@Override
-	public List<PedagogicAssistant> getAll() throws DatasetException {
-		try {
-			final Query query = entityManager.createQuery(SELECT);
-			List<PedagogicAssistant> pedagogicAssistants = query.getResultList();
-			return pedagogicAssistants;
-		} catch (Exception e) {
-			LOGGER.error("Exception while getting all pedagogic assistants ", e);
-			throw new DatasetException("Error while getting all pedagogic assistant: "
-					+ e.getMessage());
-		}
+	public static PedagogicAssistantDAO getInstance() {
+		return INSTANCE;
 	}
-
-	
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public PedagogicAssistant getById(Long id) throws DatasetException {
-		if (id == null) {
-			throw new IllegalArgumentException();
-		}
-		try {
-			return entityManager.find(PedagogicAssistant.class, id);
-		} catch (Exception e) {
-			LOGGER.error("Exception while getting pedagogic assistant by id " + id, e);
-			throw new DatasetException("Error while getting pedagogic assistant by id: "
-					+ e.getMessage());
-		}
-	}
-
 }

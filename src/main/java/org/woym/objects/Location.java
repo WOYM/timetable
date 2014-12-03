@@ -72,6 +72,19 @@ public class Location implements Serializable {
 		this.rooms = rooms;
 	}
 
+	@Override
+	public String toString() {
+		return name;
+	}
+
+	@Override
+	public boolean equals(Object object) {
+		if (object instanceof Location) {
+			return ((Location) object).getName().equals(this.name);
+		}
+		return false;
+	}
+
 	public boolean addRoom(final Room room) {
 		if (!rooms.contains(room)) {
 			rooms.add(room);

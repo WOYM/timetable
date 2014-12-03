@@ -4,10 +4,7 @@ import java.io.Serializable;
 import java.util.Date;
 
 import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.Embeddable;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
@@ -16,20 +13,13 @@ import javax.persistence.TemporalType;
  * @author Adrian
  *
  */
-@Entity
+@Embeddable
 public class TimePeriod implements Serializable{
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 2207686775603230048L;
-
-	/**
-	 * Die automatisch generierte ID ist der Primärschlüssel für die Datenbank.
-	 */
-	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
-	private Long id;
 	
 	/**
 	 * Der Startzeitpunkt des Zeitraumes.
@@ -65,14 +55,6 @@ public class TimePeriod implements Serializable{
 	
 
 	public TimePeriod() {
-	}
-	
-	public Long getId() {
-		return id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
 	}
 
 	public Date getStartTime() {
@@ -115,5 +97,8 @@ public class TimePeriod implements Serializable{
 		this.week = week;
 	}
 	
-
+	@Override
+	public String toString(){
+		return startTime + "-" + endTime + ", " + day + ", " + week;
+	}
 }

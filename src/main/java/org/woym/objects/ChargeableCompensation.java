@@ -3,18 +3,16 @@ package org.woym.objects;
 import java.io.Serializable;
 
 import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.Embeddable;
 
 /**
  * Diese Klasse repräsentiert eine anrechenbare Ersatzleistung des Personals.
+ * 
  * @author Adrian
  *
  */
-@Entity
-public class ChargeableCompensation implements Serializable{
+@Embeddable
+public class ChargeableCompensation implements Serializable {
 
 	/**
 	 * 
@@ -22,33 +20,18 @@ public class ChargeableCompensation implements Serializable{
 	private static final long serialVersionUID = -4760121187261419220L;
 
 	/**
-	 * Die automatisch generierte ID ist der Primärschlüssel für die Datenbank.
-	 */
-	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
-	private Long id;
-	
-	/**
 	 * Die Höhe der anrechenbaren Ersatzleistung in Minuten.
 	 */
 	@Column(nullable = false)
 	private int value;
-	
+
 	/**
 	 * Eine Beschreibung der anrechenbaren Ersatzleistung.
 	 */
 	@Column(nullable = false)
 	private String description;
-	
+
 	public ChargeableCompensation() {
-	}
-
-	public Long getId() {
-		return id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
 	}
 
 	public int getValue() {
@@ -65,5 +48,15 @@ public class ChargeableCompensation implements Serializable{
 
 	public void setDescription(String description) {
 		this.description = description;
+	}
+
+	@Override
+	public boolean equals(Object object) {
+		if (object instanceof ChargeableCompensation) {
+			ChargeableCompensation toCompare = (ChargeableCompensation) object;
+			return toCompare.getValue() == this.value
+					&& toCompare.getDescription().equals(this.description);
+		}
+		return false;
 	}
 }

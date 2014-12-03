@@ -1,52 +1,44 @@
 package org.woym.persistence;
 
-import java.util.List;
+import java.util.Observer;
 
-import javax.persistence.Query;
-
-import org.woym.exceptions.DatasetException;
 import org.woym.objects.Schoolclass;
 import org.woym.spec.persistence.ISchoolclassDAO;
 
-public class SchoolclassDAO extends AbstractDAO<Schoolclass> implements
+/**
+ * Diese Singleton-Klasse erweitert {@linkplain AbstractGenericDAO} und
+ * implementiert {@linkplain ISchoolclassDAO}. Sie stellt Methoden bereit, die
+ * im Zusammenhang mit Datenbankanfragen, die Schulklassen betreffen, stehen.
+ * 
+ * @author Adrian
+ *
+ */
+public class SchoolclassDAO extends AbstractGenericDAO<Schoolclass> implements
 		ISchoolclassDAO {
-	
-	
-	private static final String SELECT = "SELECT s FROM Schoolclass s";
-	
+
 	/**
-	 * {@inheritDoc}
+	 * Die Singleton-Instanz dieser Klasse.
 	 */
-	@SuppressWarnings("unchecked")
-	@Override
-	public List<Schoolclass> getAll() throws DatasetException {
-		try {
-			final Query query = entityManager.createQuery(SELECT);
-			List<Schoolclass> schoolclasses = query.getResultList();
-			return schoolclasses;
-		} catch (Exception e) {
-			LOGGER.error("Exception while getting all schoolclasses.", e);
-			throw new DatasetException("Error while getting all schoolclasses: "
-					+ e.getMessage());
-		}
+	private static final SchoolclassDAO INSTANCE = new SchoolclassDAO();
+
+	/**
+	 * Der private Konstruktor. Registriert die Instanz bei
+	 * {@linkplain DataBase} als {@linkplain Observer} und ruft
+	 * {@linkplain AbstractGenericDAO#setClazz(Class)} mit
+	 * {@linkplain Schoolclass} als Klasse auf.
+	 */
+	private SchoolclassDAO() {
+		DataBase.getInstance().addObserver(this);
+		setClazz(Schoolclass.class);
 	}
 
-	
 	/**
-	 * {@inheritDoc}
+	 * Gibt die Singleton-Instanz dieser Klasse zurück.
+	 * 
+	 * @return die Singleton-Instanz dieser Klasse
 	 */
-	@Override
-	public Schoolclass getById(Long id) throws DatasetException {
-		if (id == null) {
-			throw new IllegalArgumentException();
-		}
-		try {
-			return entityManager.find(Schoolclass.class, id);
-		} catch (Exception e) {
-			LOGGER.error("Exception while getting schoolclass by id " + id, e);
-			throw new DatasetException("Error while getting schoolclass by id: "
-					+ e.getMessage());
-		}
+	public static SchoolclassDAO getInstance() {
+		return INSTANCE;
 	}
 
 }

@@ -4,17 +4,17 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.Serializable;
+import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.SQLException;
 import java.sql.Statement;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Observable;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
-import javax.faces.bean.ManagedBean;
-import javax.faces.bean.SessionScoped;
-import javax.faces.event.ComponentSystemEvent;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
@@ -26,37 +26,59 @@ import org.woym.exceptions.DatasetException;
 import org.woym.exceptions.InvalidFileException;
 
 /**
- * Diese Klasse initialisiert den EntityManager, welcher für alle
- * Datenbanktransaktionen verwendet wird.
+ * Diese Singleton-Klasse initialisiert den EntityManager, welcher für alle
+ * Datenbanktransaktionen verwendet wird. Zudem bietet sie Methoden für das
+ * Erstellen und Wiederherstellen eines Backups. Sie erweitert außerdem
+ * {@linkplain Observable}, um alle Observer über eine Änderung des Zustandes
+ * des EntityManagers zu informieren.
  * 
  * @author Adrian
  *
  */
-@ManagedBean
-@SessionScoped
-public class DataBase implements Serializable {
+public class DataBase extends Observable implements Serializable {
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 6237080407072299976L;
 
-	private static final String DB_URL = "jdbc:h2:~/WOYM/timetable.db/timetable";
+	/**
+	 * Die Singleton-Instanz dieser Klasse.
+	 */
+	private static final DataBase INSTANCE = new DataBase();
 
-	private static final String DB_LOCATION_PATH = System
+	/**
+	 * Die Datenbank URL.
+	 */
+	public static final String DB_URL = "jdbc:h2:~/WOYM/timetable.db/timetable";
+
+	/**
+	 * Der Pfad zu dem Ordner, in welchem sich die vom System genutzte Datebank
+	 * befindet.
+	 */
+	public static final String DB_LOCATION_PATH = System
 			.getProperty("user.home")
 			+ File.separator
 			+ "WOYM"
 			+ File.separator + "timetable.db";
 
-	private static final String DB_BACKUP_LOCATION = System
+	/**
+	 * Der Pfad zu dem Ordner, in welchem die Backups abgelegt werden.
+	 */
+	public static final String DB_BACKUP_LOCATION = System
 			.getProperty("user.home")
 			+ File.separator
 			+ "WOYM"
 			+ File.separator;
 
+	/**
+	 * Der User-Name für die Datenbank.
+	 */
 	private static final String USER = "timetable";
 
+	/**
+	 * Das Passwort für die Datenbank.
+	 */
 	private static final String PASSWORD = "timetable";
 
 	/**
@@ -67,45 +89,55 @@ public class DataBase implements Serializable {
 	/**
 	 * Der EntityManager.
 	 */
-	private static EntityManager ENTITY_MANAGER;
+	private transient EntityManager entityManager;
+
+	/**
+	 * Der private Konstruktor.
+	 */
+	private DataBase() {
+	}
+
+	/**
+	 * Gibt die Singleton-Instanz dieser Klasse zurück.
+	 * 
+	 * @return die Singleton-Instanz dieser Klasse
+	 */
+	public static DataBase getInstance() {
+		return INSTANCE;
+	}
 
 	/**
 	 * Gibt die Instanz von {@linkplain EntityManager} zurück.
 	 * 
 	 * @return {@linkplain EntityManager} - Instanz des EntityManager
 	 */
-	public static EntityManager getEntityManager() {
-		return ENTITY_MANAGER;
+	EntityManager getEntityManager() {
+		return entityManager;
 	}
 
 	/**
-	 * Initialisiert den EntityManager, sofern dieser noch nicht initialisiert
-	 * wurde, also null ist.
-	 * 
-	 * @param event
-	 *            - JSF Event
-	 * @throws PersistenceException
-	 *             wenn beim Initialisieren ein Fehler auftritt
-	 */
-	public void setUp(ComponentSystemEvent event) throws DatasetException {
-		init();
-	}
-
-	/**
-	 * Erzeugt ein Backup der Datenbank. Im Home-Verzeichnis im Ordner WOYM. Das
-	 * Backup trägt das aktuelle Datum plus Uhrzeit als Namen. Tritt beim Backup
-	 * ein Fehler auf, wird eine {@linkplain DatasetException} geworfen.
+	 * Erzeugt ein Backup der Datenbank. Im Verzeichnis
+	 * {@linkplain DataBase#DB_BACKUP_LOCATION}. Das Backup trägt das aktuelle
+	 * Datum plus Uhrzeit im Format "yyyy-mm-dd_HH.mm.ss" als Namen. Tritt beim
+	 * Backup ein Fehler auf, wird eine {@linkplain DatasetException} geworfen.
+	 * Schlägt das Schließen des {@linkplain Statement} oder der
+	 * {@linkplain Connection} fehl, wird eine {@linkplain SQLException}
+	 * geworfen.
 	 * 
 	 * @throws DatasetException
+	 * @throws SQLException
+	 *             wenn das Schließen des {@linkplain Statement} oder der
+	 *             {@linkplain Connection} fehlschlägt
 	 */
-	public void backup() throws DatasetException {
+	public void backup() throws DatasetException, SQLException {
+		Statement stm = null;
+		Connection conn = null;
 		try {
-			DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd_HHmmss");
+			DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd_HH.mm.ss");
 			Calendar cal = Calendar.getInstance();
 			String time = dateFormat.format(cal.getTime());
-			Statement stm = DriverManager.getConnection(
-					"jdbc:h2:~/WOYM/timetable.db/timetable", USER, PASSWORD)
-					.createStatement();
+			conn = DriverManager.getConnection(DB_URL, USER, PASSWORD);
+			stm = conn.createStatement();
 			stm.execute("SCRIPT TO '" + DB_BACKUP_LOCATION + time
 					+ ".zip' COMPRESSION ZIP");
 			LOGGER.info("Database backup created: " + time + ".zip");
@@ -113,6 +145,13 @@ public class DataBase implements Serializable {
 			LOGGER.error("Exception while backing up database", e);
 			throw new DatasetException("Error while backing up database: "
 					+ e.getMessage());
+		} finally {
+			if (stm != null) {
+				stm.close();
+			}
+			if (conn != null) {
+				conn.close();
+			}
 		}
 	}
 
@@ -123,12 +162,17 @@ public class DataBase implements Serializable {
 	 * geworfen. Ansonsten wird der EnitityManager geschlossen, die Datenbank
 	 * heruntergefahren und der aktuelle Datenbankordner gelöscht. Anschließend
 	 * wird das SQL-Skript ausgeführt und die Datenbankverbindung
-	 * wiederhergestellt. Tritt beim Überprüfen der Backup-Datei ein Fehler auf,
-	 * wird eine {@link IOException} geworfen. Tritt ein anderer Fehler auf,
-	 * wird eine {@link DatasetException} geworfen.
+	 * wiederhergestellt. <br>
+	 * Tritt beim Überprüfen der Backup-Datei ein Fehler auf, wird eine
+	 * {@link IOException} geworfen. <br>
+	 * Tritt beim Schließen des {@linkplain Statement} oder der
+	 * {@linkplain Connection} ein Fehler auf, wird {@linkplain SQLException}
+	 * geworfen. <br>
+	 * Tritt ein anderer Fehler auf, wird eine {@link DatasetException}
+	 * geworfen.
 	 * 
 	 * @param filePath
-	 *            - der Pfad zum wiederherzustellenden Backup
+	 *            - der absolute Pfad zum wiederherzustellenden Backup
 	 * @throws IOException
 	 *             wenn ein Fehler beim Überprüfen des Dateipfades auftritt
 	 * @throws InvalidFileException
@@ -136,30 +180,35 @@ public class DataBase implements Serializable {
 	 *             (keine ZIP-Datei oder kein SQL-Skript enthalten.
 	 * @throws DatasetException
 	 *             wenn ein anderweitiger Fehler auftritt
+	 * @throws SQLException
+	 *             wenn das Schließen des Statements fehlschlägt
 	 */
 	public void restore(String filePath) throws IOException,
-			InvalidFileException, DatasetException {
+			InvalidFileException, DatasetException, SQLException {
+		Statement stm = null;
+		Connection conn = null;
 		try {
 			if (!filePath.endsWith(".zip") || !checkZip(filePath)) {
 				LOGGER.error("Invalid file path.");
 				throw new InvalidFileException();
 			}
-			ENTITY_MANAGER.close();
-			Statement stm = DriverManager.getConnection(DB_URL, USER, PASSWORD)
-					.createStatement();
+			entityManager.close();
+			conn = DriverManager.getConnection(DB_URL, USER, PASSWORD);
+			stm = conn.createStatement();
 			stm.execute("SHUTDOWN");
-			LOGGER.info("Shut down database.");
+			stm.close();
+			conn.close();
+			LOGGER.info("Shut down database for backup restoration.");
 
 			File dbLocation = new File(DB_LOCATION_PATH);
 			deleteFolder(dbLocation);
 
-			DriverManager.getConnection(DB_URL, USER, PASSWORD);
-			stm = DriverManager.getConnection(DB_URL, USER, PASSWORD)
-					.createStatement();
+			conn = DriverManager.getConnection(DB_URL, USER, PASSWORD);
+			stm = conn.createStatement();
 			stm.execute("RUNSCRIPT FROM '" + filePath + "'  COMPRESSION ZIP");
 			LOGGER.info("Backup " + filePath + " restored.");
-			ENTITY_MANAGER = null;
-			init();
+			entityManager = null;
+			setUp();
 		} catch (IOException e) {
 			LOGGER.error("Error while checking backup file: ", e);
 			throw new IOException();
@@ -168,6 +217,13 @@ public class DataBase implements Serializable {
 			throw new DatasetException(
 					"Error while restoring database from backup: "
 							+ e.getMessage());
+		} finally {
+			if (stm != null) {
+				stm.close();
+			}
+			if (conn != null) {
+				conn.close();
+			}
 		}
 	}
 
@@ -178,15 +234,18 @@ public class DataBase implements Serializable {
 	 * @throws PersistenceException
 	 *             wenn beim Initialisieren ein Fehler auftritt
 	 */
-	private void init() {
-		if (ENTITY_MANAGER == null) {
+	void setUp() throws PersistenceException {
+		if (entityManager == null) {
 			LOGGER.info("Establishing database-connection...");
 			try {
 				EntityManagerFactory factory;
 				factory = Persistence.createEntityManagerFactory("timetable");
-				ENTITY_MANAGER = factory.createEntityManager();
+				entityManager = factory.createEntityManager();
+				setChanged();
+				notifyObservers();
 				LOGGER.info("Connection established.");
 			} catch (Exception e) {
+				LOGGER.error("Exception while establishing database connection.");
 				throw new PersistenceException(
 						"Could not initialize persistence component: "
 								+ e.getMessage());
@@ -208,22 +267,21 @@ public class DataBase implements Serializable {
 	private boolean checkZip(String filePath) throws IOException {
 		File zip = new File(filePath);
 		if (!zip.canRead()) {
-			throw new IllegalArgumentException();
+			return false;
 		}
 		ZipInputStream zis = new ZipInputStream(new FileInputStream(zip));
 		ZipEntry ze = zis.getNextEntry();
 
-		boolean check = false;
-
 		while (ze != null) {
 			String fileName = ze.getName();
 			if (fileName.equals("script.sql")) {
-				check = true;
+				zis.close();
+				return true;
 			}
 			ze = zis.getNextEntry();
 		}
 		zis.close();
-		return check;
+		return false;
 	}
 
 	/**

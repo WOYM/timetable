@@ -77,4 +77,9 @@ public class Room implements Serializable{
 	public void setAdditionalInformation(String additionalInformation) {
 		this.additionalInformation = additionalInformation;
 	}
+	
+	@Override
+	public String toString(){
+		return name + " (" + purpose + ")";
+	}
 }
