@@ -28,22 +28,30 @@
 
         <p:outputPanel>
             <h:panelGrid columns="3">
-                <p:outputLabel for="name" value="Name:" />
-                <p:inputText id="name" required="true"
-                    value="#{teacherController.selectedTeacher.name}" />
-                <p:message for="name" />
-                <p:outputLabel for="symbol" value="Kürzel:" />
-                <p:inputText id="symbol" required="true"
-                    value="#{teacherController.selectedTeacher.symbol}" />
-                <p:message for="symbol" />
-                <p:outputLabel for="weekhours" value="Wochenstunden:" />
-                <p:spinner id="weekhours" min="0" max="100"
-                    value="#{teacherController.selectedTeacher.weekhours}" />
-                <p:message for="weekhours" />
+				<p:outputLabel for="firstName" value="Vorname:" />
+				<p:inputText id="firstName" required="true"
+					value="#{teacherController.selectedTeacher.firstName}">
+					<f:validator validatorId="org.woym.NameValidator" />
+				</p:inputText>
+				<p:message for="firstName" />
+				<p:outputLabel for="lastName" value="Nachname:" />
+				<p:inputText id="lastName" required="true"
+					requiredMessage="Ein leerer Name ist nicht gültig."
+					value="#{teacherController.selectedTeacher.lastName}" />
+				<p:message for="lastName" />
+				<p:outputLabel for="symbol" value="Kürzel:" />
+				<p:inputText id="symbol" required="true"
+					value="#{teacherController.selectedTeacher.symbol}" />
+					<f:validator validatorId="org.woym.SymbolValidator" />
+				<p:message for="symbol" />
+				<p:outputLabel for="weekhours" value="Wochenstunden:" />
+				<p:spinner id="weekhours" min="0" max="100"
+					value="#{teacherController.selectedTeacher.hoursPerWeek}" />
+				<p:message for="weekhours" />
                 <p:spacer />
                 <p:outputPanel style="float:right">
-                    <p:commandButton value="Hinzufügen"
-                        actionListener="#{teacherController.editTeacher()}"
+                    <p:commandButton value="Übernehmen"
+                        actionListener="#{teacherController.editTeacher}"
                         update="@form" />
                 </p:outputPanel>
             </h:panelGrid>

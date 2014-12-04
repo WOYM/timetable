@@ -20,6 +20,10 @@
 			</p:menubar>
 			<p:spacer style="height:20px" />
 			<p:menu style="width:300px; top:0px; position:relative">
+				<p:submenu label="Räumlichkeiten">
+					<p:menuitem value="Standorte" icon="ui-icon-person"
+						action="#{GUIController.setPage('manageLocations')}" update="@all" />
+				</p:submenu>
 				<p:submenu label="Personal">
 					<p:menuitem value="Lehrkräfte" icon="ui-icon-person"
 						action="#{GUIController.setPage('manageTeachers')}" update="@all" />
