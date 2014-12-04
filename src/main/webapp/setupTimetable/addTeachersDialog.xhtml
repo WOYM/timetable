@@ -28,13 +28,23 @@
 
 		<p:outputPanel>
 			<h:panelGrid columns="3">
-				<p:outputLabel for="name" value="Name:" />
-				<p:inputText id="name" required="true"
-					value="#{teacherController.addTeacher.name}" />
-				<p:message for="name" />
+				<p:outputLabel for="firstName" value="Vorname:" />
+				<p:inputText id="firstName"
+					value="#{teacherController.addTeacher.firstName}" required="true"
+					requiredMessage="Ein leerer Name ist nicht gültig.">
+					<f:validator validatorId="org.woym.NameValidator" />
+				</p:inputText>
+				<p:message for="firstName" />
+				<p:outputLabel for="lastName" value="Nachname:" />
+				<p:inputText id="lastName" required="true"
+					requiredMessage="Ein leerer Name ist nicht gültig."
+					value="#{teacherController.addTeacher.lastName}" />
+				<p:message for="lastName" />
 				<p:outputLabel for="symbol" value="Kürzel:" />
-				<p:inputText id="symbol" required="true"
-					value="#{teacherController.addTeacher.symbol}" />
+				<p:inputText id="symbol"
+					value="#{teacherController.addTeacher.symbol}" required="true" requiredMessage="Ein leeres Kürzel ist nicht gültig.">
+					<f:validator validatorId="org.woym.SymbolValidator" />
+				</p:inputText>
 				<p:message for="symbol" />
 				<p:outputLabel for="weekhours" value="Wochenstunden:" />
 				<p:spinner id="weekhours" min="0" max="100"
@@ -47,6 +57,8 @@
 						update="@form" />
 				</p:outputPanel>
 			</h:panelGrid>
+			<p:messages id="messages" showDetail="true" autoUpdate="true"
+				closable="true" />
 		</p:outputPanel>
 	</h:form>
 </h:body>
