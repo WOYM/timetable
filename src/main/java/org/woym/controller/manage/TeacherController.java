@@ -11,6 +11,9 @@ import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
 import javax.faces.context.FacesContext;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.h2.util.StringUtils;
 import org.primefaces.context.RequestContext;
 import org.primefaces.event.SelectEvent;
 import org.woym.exceptions.DatasetException;
@@ -29,16 +32,28 @@ import org.woym.persistence.TeacherDAO;
 @ManagedBean(name = "teacherController")
 public class TeacherController implements Serializable {
 
-	private static final long serialVersionUID = -2341971622906815080L;;
+	private static final long serialVersionUID = -2341971622906815080L;
 
+	private static Logger logger = LogManager.getLogger("teacherController");
+
+	private TeacherDAO db = TeacherDAO.getInstance();
 	private Teacher selectedTeacher;
+	private Teacher addTeacher;
+	// TODO Move to planningController
 	private Teacher selectedTeacherForSearch;
-	
 	private String searchSymbol;
 
+	//
+
+	/**
+	 * Liefert eine Liste mit allen Lehrkräften zurück.
+	 * 
+	 * @return Liste mit allen Lehrkräften
+	 */
 	public List<Teacher> getTeachers() {
 		try {
-			return TeacherDAO.getInstance().getAll("symbol");
+			// Null for unordered
+			return db.getAll(null);
 		} catch (DatasetException e) {
 			FacesMessage message = new FacesMessage(
 					FacesMessage.SEVERITY_ERROR,
@@ -48,54 +63,58 @@ public class TeacherController implements Serializable {
 		}
 	}
 
+	/**
+	 * Opens a new dialog which enables the user to add a new teacher.
+	 */
 	public void addTeacherDialog() {
+
+		addTeacher = new Teacher();
 
 		Map<String, Object> options = new HashMap<String, Object>();
 		options.put("modal", true);
 		options.put("draggable", false);
 		options.put("resizable", false);
-		options.put("contentHeight", 400);
-		options.put("contentWidth", 600);
+		options.put("contentHeight", 600);
+		options.put("contentWidth", 800);
 
 		RequestContext rc = RequestContext.getCurrentInstance();
-		rc.openDialog("manageTeachersDialog", options, null);
+		rc.openDialog("addTeachersDialog", options, null);
 	}
 
+	/**
+	 * Opens a new dialog which enables the user to edit a new teacher.
+	 */
 	public void editTeacherDialog() {
 
 		Map<String, Object> options = new HashMap<String, Object>();
 		options.put("modal", true);
 		options.put("draggable", false);
 		options.put("resizable", false);
-		options.put("contentHeight", 400);
-		options.put("contentWidth", 600);
+		options.put("contentHeight", 600);
+		options.put("contentWidth", 800);
 
 		RequestContext rc = RequestContext.getCurrentInstance();
 		rc.openDialog("editTeacherDialog", options, null);
 	}
 
-	public void onTeacherAdded(SelectEvent event) {
-
-		Teacher teacher = (Teacher) event.getObject();
-
+	/**
+	 * Saves an edited teacher to the database.
+	 */
+	public void editTeacher() {
 		try {
-			TeacherDAO.getInstance().persist(teacher);
-			FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO,
-					"Lehrer hinzugefügt", teacher.getName() + " ("
-							+ teacher.getSymbol() + ")");
-			FacesContext.getCurrentInstance().addMessage(null, message);
+			db.update(selectedTeacher);
 		} catch (DatasetException e) {
-			FacesMessage message = new FacesMessage(
-					FacesMessage.SEVERITY_ERROR, "Lehrer existiert bereits", "");
-			FacesContext.getCurrentInstance().addMessage(null, message);
-			return;
+			logger.error(e);
 		}
 	}
 
+	/**
+	 * Deletes the selected teacher.
+	 */
 	public void deleteTeacher() {
 		if (selectedTeacher != null) {
 			try {
-				TeacherDAO.getInstance().delete(selectedTeacher);
+				db.delete(selectedTeacher);
 				FacesMessage message = new FacesMessage(
 						FacesMessage.SEVERITY_INFO, "Lehrer gelöscht",
 						selectedTeacher.getName() + " ("
@@ -110,38 +129,71 @@ public class TeacherController implements Serializable {
 		}
 	}
 
+	/**
+	 * Returns a list of teachers that match the given search-symbol. If no
+	 * search-symbol is set the first 5 teachers will be returned.
+	 * 
+	 * TODO: Move to planningController (Maybe) TODO: Make it search for real
+	 * 
+	 * @return
+	 */
 	public ArrayList<Teacher> getTeachersForSearch() {
-		
+
 		ArrayList<Teacher> tempList = new ArrayList<>();
-		
-		if(searchSymbol == null || "".equals(searchSymbol)) {
-			for(Teacher teacher : getTeachers()) {
+		if (StringUtils.isNullOrEmpty(searchSymbol)) {
+			for (Teacher teacher : getTeachers()) {
 				tempList.add(teacher);
-				
-				if(tempList.size() >= 5) {
+
+				if (tempList.size() >= 5) {
 					return tempList;
 				}
 
 			}
-			
+
 			return tempList;
 		}
-		
-		for(Teacher teacher : getTeachers()) {
-			
-			if(teacher.getSymbol().contains(searchSymbol)) {
-				
+
+		for (Teacher teacher : getTeachers()) {
+
+			if (teacher.getSymbol().contains(searchSymbol)) {
+
 				tempList.add(teacher);
-				
-				if(tempList.size() >= 5) {
+
+				if (tempList.size() >= 5) {
 					return tempList;
 				}
 			}
 		}
-		
+
 		return tempList;
 	}
-	
+
+	/**
+	 * Closes the dialog to add a teacher with a null-event.
+	 */
+	public void addTeacherFromDialog() {
+		Teacher teacher = addTeacher;
+
+		try {
+			db.persist(teacher);
+			addTeacher = new Teacher();
+			FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO,
+					"Lehrer hinzugefügt", teacher.getName() + " ("
+							+ teacher.getSymbol() + ")");
+			FacesContext.getCurrentInstance().addMessage(null, message);
+			
+			// TODO: DatabaseException does not mean that the teacher exists, it
+			// just means something went wrong
+		} catch (DatasetException e) {
+			FacesMessage message = new FacesMessage(
+					FacesMessage.SEVERITY_ERROR, "Ein Datenbankfehler ist aufgetreten.", "");
+			FacesContext.getCurrentInstance().addMessage(null, message);
+			return;
+		}
+
+		// RequestContext.getCurrentInstance().closeDialog(addTeacher);
+	}
+
 	public Teacher getSelectedTeacher() {
 		return selectedTeacher;
 	}
@@ -149,7 +201,15 @@ public class TeacherController implements Serializable {
 	public void setSelectedTeacher(Teacher selectedTeacher) {
 		this.selectedTeacher = selectedTeacher;
 	}
-	
+
+	public Teacher getAddTeacher() {
+		return addTeacher;
+	}
+
+	public void setAddTeacher(Teacher addTeacher) {
+		this.addTeacher = addTeacher;
+	}
+
 	public String getSearchSymbol() {
 		return searchSymbol;
 	}
