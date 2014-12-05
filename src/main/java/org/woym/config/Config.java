@@ -51,7 +51,6 @@ public final class Config {
 	 */
 	public static void init() {
 		try {
-			System.out.println(PROPERTIES_FILE_PATH);
 			propertiesConfig = new PropertiesConfiguration(PROPERTIES_FILE_PATH);
 			propertiesConfig.setListDelimiter(',');
 			propertiesConfig.setAutoSave(true);
@@ -76,8 +75,21 @@ public final class Config {
 		return propertiesConfig.getStringArray(propKey);
 	}
 
+	/**
+	 * Aktualisiert den Wert des übergebenen Property-Keys mit dem Wert des
+	 * übergebenen Property-Values, sofern der Key vorhanden ist. Anschließend
+	 * wird {@code true} zurückgegeben. Existiert der übergebene Key nicht, wird
+	 * {@code false} zurückgegeben.
+	 * 
+	 * @param propKey
+	 *            - der Key, zu welchem der Wert aktualisiert werden soll
+	 * @param propValue
+	 *            - der neue Wert
+	 * @return {@code true}, wenn der Key vorhanden ist und aktualisiert wurde,
+	 *         ansonsten {@code false}
+	 */
 	public static boolean updateProperty(String propKey, String propValue) {
-		if(propertiesConfig.containsKey(propKey)){
+		if (propertiesConfig.containsKey(propKey)) {
 			propertiesConfig.clearProperty(propKey);
 			propertiesConfig.addProperty(propKey, propValue);
 			return true;
@@ -93,7 +105,14 @@ public final class Config {
 	private static void createNewConfig() {
 		try {
 			File file = new File(PROPERTIES_FILE_PATH);
-			file.createNewFile();
+			if (file.exists()) {
+				if (!file.delete()) {
+					throw new IOException();
+				}
+			}
+			if (!file.createNewFile()) {
+				throw new IOException();
+			}
 			propertiesConfig = new PropertiesConfiguration(PROPERTIES_FILE_PATH);
 			propertiesConfig.setAutoSave(true);
 			propertiesConfig.setListDelimiter(',');
