@@ -108,6 +108,12 @@
 			<artifactId>h2</artifactId>
 			<version>1.3.176</version>
 		</dependency>
+		<!-- Commons Configuration -->
+		<dependency>
+			<groupId>commons-configuration</groupId>
+			<artifactId>commons-configuration</artifactId>
+			<version>1.10</version>
+		</dependency>
 	</dependencies>
 
 	<!-- Build-Process -->
