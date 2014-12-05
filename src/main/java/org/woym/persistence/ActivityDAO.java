@@ -1,6 +1,13 @@
 package org.woym.persistence;
 
+import java.util.List;
+
+import javax.persistence.Query;
+
+import org.woym.exceptions.DatasetException;
 import org.woym.objects.Activity;
+import org.woym.objects.Employee;
+import org.woym.objects.Schoolclass;
 import org.woym.spec.persistence.IActivityDAO;
 
 /**
@@ -30,6 +37,40 @@ public class ActivityDAO extends AbstractGenericDAO<Activity> implements
 
 	public static ActivityDAO getInstance() {
 		return INSTANCE;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Activity> getAll(Employee employee) throws DatasetException {
+		/*if (employee == null) {
+			throw new IllegalArgumentException();
+		}
+		try {
+			final Query query = getEm()
+					.createQuery(
+							"SELECT a from Activity a WHERE a IN (SELECT ae FROM a.employees ae) "
+									+ "AND ?1 IN (SELECT ae FROM a.employees ae)");
+			query.setParameter(1, employee);
+			return (List<Activity>) query.getResultList();
+		} catch (Exception e) {
+			LOGGER.error("Exception while getting all activities for "
+					+ employee, e);
+			throw new DatasetException(
+					"Error while getting all activities for " + employee + ": "
+							+ e.getMessage());
+		}*/
+		//TODO: Funktioniert noch nicht, muss noch recherchieren, woran dies liegen könnte.
+		return null;
+	}
+
+	@Override
+	public List<Activity> getAll(Schoolclass schoolclass)
+			throws DatasetException {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

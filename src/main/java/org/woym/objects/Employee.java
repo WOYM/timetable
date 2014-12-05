@@ -52,16 +52,10 @@ public abstract class Employee implements Serializable {
 	private Long id;
 
 	/**
-	 * Der Vorname. Darf in der Datenbank nicht null sein.
+	 * Der Name dieses Lehrers.
 	 */
 	@Column(nullable = false)
-	private String firstName;
-
-	/**
-	 * Der Nachname. Darf in der Datenbank nicht null sein.
-	 */
-	@Column(nullable = false)
-	private String lastName;
+	private String name;
 
 	/**
 	 * Das Kürzel. Darf in der Datenbank nicht null sein und ist einzigartig.
@@ -128,20 +122,12 @@ public abstract class Employee implements Serializable {
 		this.id = id;
 	}
 
-	public String getFirstName() {
-		return firstName;
+	public String getName() {
+		return name;
 	}
 
-	public void setFirstName(String firstName) {
-		this.firstName = firstName;
-	}
-
-	public String getLastName() {
-		return lastName;
-	}
-
-	public void setLastName(String lastName) {
-		this.lastName = lastName;
+	public void setName(String name) {
+		this.name = name;
 	}
 
 	public String getSymbol() {
@@ -209,10 +195,6 @@ public abstract class Employee implements Serializable {
 		this.timeWishes = timeWishes;
 	}
 
-	public String getName() {
-		return firstName + " " + lastName;
-	}
-
 	/**
 	 * Überschreiben der toString-Methode, um in der DEBUG-Ausgabe des Loggers
 	 * die Objekteigenschaften identifizieren zu können.
@@ -239,6 +221,8 @@ public abstract class Employee implements Serializable {
 		}
 		return false;
 	}
+	
+	//TODO: hashCode() überschreiben.
 
 	/**
 	 * Fügt das übergebenene {@linkplain ChargeableCompensation}-Objekt der

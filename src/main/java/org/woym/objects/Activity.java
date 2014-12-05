@@ -47,6 +47,7 @@ public abstract class Activity implements Serializable {
 	/**
 	 * Der Zeitraum, in welchem diese Aktivität stattfindet.
 	 */
+
 	@Embedded
 	private TimePeriod time;
 
@@ -69,8 +70,8 @@ public abstract class Activity implements Serializable {
 	 * {@linkplain EmployeeTimePeriods} Zeiträumen zugeordnet.
 	 */
 	@OneToMany
-	@JoinTable(name = "ACTIVITY_EMPLOYEES", joinColumns = @JoinColumn(name = "ACTIVITY"), inverseJoinColumns = @JoinColumn(name = "EMPLOYEETIMEPERIODS"))
-	@MapKeyJoinColumn(name = "EMPLOYEE")
+	@JoinTable(name = "ACTIVITY_EMPLOYEES", joinColumns = @JoinColumn(name = "ACTIVITY_ID"), inverseJoinColumns = @JoinColumn(name = "EMPLOYEETIMEPERIODS_ID"))
+	@MapKeyJoinColumn(name = "EMPLOYEE_ID", table = "ACTIVITY_EMPLOYEES")
 	private Map<Employee, EmployeeTimePeriods> employees = new HashMap<>();
 
 	public Activity() {

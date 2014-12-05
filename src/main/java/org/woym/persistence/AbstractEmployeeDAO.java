@@ -34,7 +34,7 @@ public abstract class AbstractEmployeeDAO<E extends Employee> extends
 					"SELECT x FROM " + getClazz().getSimpleName()
 							+ " x WHERE x.symbol = ?1");
 			query.setParameter(1, symbol);
-			List<E> result = (List<E>) query.getResultList();
+			List<E> result = query.getResultList();
 			if (result.isEmpty()) {
 				return null;
 			}

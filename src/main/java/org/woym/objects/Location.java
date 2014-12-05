@@ -84,6 +84,8 @@ public class Location implements Serializable {
 		}
 		return false;
 	}
+	
+	//TODO: hashCode() überschreiben.
 
 	public boolean addRoom(final Room room) {
 		if (!rooms.contains(room)) {

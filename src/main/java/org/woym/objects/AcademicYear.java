@@ -109,6 +109,8 @@ public class AcademicYear implements Serializable {
 		}
 		return false;
 	}
+	
+	//TODO: hashCode() überschreiben.
 
 	/**
 	 * Fügt das übergebenene {@linkplain Schoolclass}-Objekt der entsprechenden

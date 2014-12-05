@@ -1,7 +1,11 @@
 package org.woym.persistence;
 
+import java.util.List;
 import java.util.Observer;
 
+import javax.persistence.Query;
+
+import org.woym.exceptions.DatasetException;
 import org.woym.objects.Schoolclass;
 import org.woym.spec.persistence.ISchoolclassDAO;
 
@@ -41,4 +45,32 @@ public class SchoolclassDAO extends AbstractGenericDAO<Schoolclass> implements
 		return INSTANCE;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
+	@SuppressWarnings("unchecked")
+	@Override
+	public Schoolclass getOne(int academicYear, char identifier)
+			throws DatasetException {
+		try {
+			final Query query = getEm()
+					.createQuery(
+							"SELECT s FROM Schoolclass s, AcademicYear a WHERE a.academicYear = ?1 "
+									+ "AND s.identifier = ?2 AND s MEMBER OF a.schoolclasses");
+			query.setParameter(1, academicYear);
+			query.setParameter(2, identifier);
+			List<Schoolclass> result = query.getResultList();
+			if (result.isEmpty()) {
+				return null;
+			}
+			return result.get(0);
+		} catch (Exception e) {
+			LOGGER.error("Exception while getting schoolclass with identifier "
+					+ identifier + " from academic year " + academicYear, e);
+			throw new DatasetException(String.format(
+					"Exception while getting schoolclass with identifier %s"
+							+ " from academic year %s: " + e.getMessage(),
+					identifier, academicYear));
+		}
+	}
 }
