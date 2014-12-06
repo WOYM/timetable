@@ -36,6 +36,7 @@ public class TeacherController implements Serializable {
 
 	private static Logger logger = LogManager.getLogger("teacherController");
 
+	// TODO: transient machen oder TeacherDAO Serializable implementieren lassen
 	private TeacherDAO db = TeacherDAO.getInstance();
 	private Teacher selectedTeacher;
 	private Teacher addTeacher;
@@ -181,12 +182,13 @@ public class TeacherController implements Serializable {
 					"Lehrer hinzugefügt", teacher.getName() + " ("
 							+ teacher.getSymbol() + ")");
 			FacesContext.getCurrentInstance().addMessage(null, message);
-			
+
 			// TODO: DatabaseException does not mean that the teacher exists, it
 			// just means something went wrong
 		} catch (DatasetException e) {
 			FacesMessage message = new FacesMessage(
-					FacesMessage.SEVERITY_ERROR, "Ein Datenbankfehler ist aufgetreten.", "");
+					FacesMessage.SEVERITY_ERROR,
+					"Ein Datenbankfehler ist aufgetreten.", "");
 			FacesContext.getCurrentInstance().addMessage(null, message);
 			return;
 		}

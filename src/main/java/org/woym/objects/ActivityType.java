@@ -58,6 +58,11 @@ public abstract class ActivityType implements Serializable {
 	@OrderBy("name")
 	private List<Room> rooms = new ArrayList<Room>();
 
+	/**
+	 * Die Farbe dieses Aktivitätstyps als Hexadezimal-String.
+	 */
+	private String hexColor;
+
 	public ActivityType() {
 	}
 
@@ -93,6 +98,14 @@ public abstract class ActivityType implements Serializable {
 		this.rooms = rooms;
 	}
 
+	public String getHexColor() {
+		return hexColor;
+	}
+
+	public void setHexColor(String hexColor) {
+		this.hexColor = hexColor;
+	}
+
 	@Override
 	public String toString() {
 		return name + "(" + typicalDuration + " min.)";
@@ -105,6 +118,8 @@ public abstract class ActivityType implements Serializable {
 		}
 		return false;
 	}
+	
+	//TODO: hashCode() überschreiben.
 
 	/**
 	 * Fügt das übergebenene {@linkplain Room}-Objekt der entsprechenden Liste

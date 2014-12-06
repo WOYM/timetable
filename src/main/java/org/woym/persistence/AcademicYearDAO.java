@@ -48,7 +48,7 @@ public class AcademicYearDAO extends AbstractGenericDAO<AcademicYear> implements
 	 * {@inheritDoc}
 	 */
 	@Override
-	public AcademicYear getByYear(int year) throws DatasetException {
+	public AcademicYear getOne(int year) throws DatasetException {
 		if (year < 1) {
 			throw new IllegalArgumentException();
 		}
