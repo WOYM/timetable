@@ -12,7 +12,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.h2.util.StringUtils;
 import org.woym.exceptions.DatasetException;
-import org.woym.persistence.ActivityTypeDAO;
+import org.woym.persistence.DataAccess;
 
 /**
  * <h1>ActivityTypeNameValidator</h1>
@@ -48,7 +48,7 @@ public class ActivityTypeNameValidator implements Validator{
 
 	private static Logger LOGGER = LogManager.getLogger(ActivityTypeNameValidator.class);
 	
-	ActivityTypeDAO activityTypeDAO = ActivityTypeDAO.getInstance();
+	DataAccess dataAccess = DataAccess.getInstance();
 
 	@Override
 	public void validate(FacesContext context, UIComponent uiComponent, Object value)
@@ -75,7 +75,7 @@ public class ActivityTypeNameValidator implements Validator{
 		}
 		
 		try {
-			if(activityTypeDAO.getOne(name) != null) {
+			if(dataAccess.getOneActivityType(name) != null) {
 				FacesMessage msg = 
 						new FacesMessage("Ungültiger Bezeichner.", 
 								"Der Bezeichner wird bereis verwendet.");

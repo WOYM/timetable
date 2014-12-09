@@ -25,7 +25,7 @@ import org.woym.objects.Room;
 public class LocationController {
 	private static final long serialVersionUID = -2341971622906815080L;
 
-	private static Logger logger = LogManager.getLogger("locationController");
+	private static Logger LOGGER = LogManager.getLogger("locationController");
 
 	// private LocationDAO db = new LocationDAO();
 	private Location selectedLocation;

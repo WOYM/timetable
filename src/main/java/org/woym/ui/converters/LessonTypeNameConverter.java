@@ -10,12 +10,12 @@ import javax.faces.convert.FacesConverter;
 import org.woym.exceptions.DatasetException;
 import org.woym.objects.ActivityType;
 import org.woym.objects.LessonType;
-import org.woym.persistence.ActivityTypeDAO;
+import org.woym.persistence.DataAccess;
 
 @FacesConverter("org.woym.LessonTypeNameConverter")
 public class LessonTypeNameConverter implements Converter{
 
-	ActivityTypeDAO lessonTypeDAO = ActivityTypeDAO.getInstance();
+	DataAccess dataAccess = DataAccess.getInstance();
 	
 	@Override
 	public Object getAsObject(FacesContext context, UIComponent uiComponent, String value) throws ConverterException {
@@ -23,7 +23,7 @@ public class LessonTypeNameConverter implements Converter{
 		ActivityType lessonType = new LessonType();
 		
 		try {
-			lessonType = lessonTypeDAO.getOne(value);
+			lessonType = dataAccess.getOneActivityType(value);
 		} catch(DatasetException e) {
 			FacesMessage msg = 
 					new FacesMessage("Ungültiges Kürzel.", 
