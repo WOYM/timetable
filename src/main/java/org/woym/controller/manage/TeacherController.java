@@ -3,6 +3,7 @@ package org.woym.controller.manage;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -15,10 +16,12 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.h2.util.StringUtils;
 import org.primefaces.context.RequestContext;
-import org.primefaces.event.SelectEvent;
+import org.primefaces.event.TransferEvent;
+import org.primefaces.model.DualListModel;
 import org.woym.exceptions.DatasetException;
+import org.woym.objects.ActivityType;
 import org.woym.objects.Teacher;
-import org.woym.persistence.TeacherDAO;
+import org.woym.persistence.DataAccess;
 
 /**
  * <h1>TeacherController</h1>
@@ -34,17 +37,86 @@ public class TeacherController implements Serializable {
 
 	private static final long serialVersionUID = -2341971622906815080L;
 
-	private static Logger logger = LogManager.getLogger("teacherController");
+	private static Logger LOGGER = LogManager
+			.getLogger(TeacherController.class);
 
-	// TODO: transient machen oder TeacherDAO Serializable implementieren lassen
-	private TeacherDAO db = TeacherDAO.getInstance();
+	private transient DataAccess dataAccess = DataAccess.getInstance();
 	private Teacher selectedTeacher;
 	private Teacher addTeacher;
 	// TODO Move to planningController
 	private Teacher selectedTeacherForSearch;
 	private String searchSymbol;
 
-	//
+	private DualListModel<ActivityType> activityTypes;
+
+	public DualListModel<ActivityType> getActivityTypesForAddTeacher() {
+		List<ActivityType> allActivityTypes;
+		List<ActivityType> possibleActivityTypes = new ArrayList<>();
+
+		try {
+			allActivityTypes = dataAccess.getAllActivityTypes();
+
+			activityTypes = new DualListModel<ActivityType>(allActivityTypes,
+					possibleActivityTypes);
+		} catch (DatasetException e) {
+			LOGGER.error(e);
+			FacesMessage message = new FacesMessage(
+					FacesMessage.SEVERITY_ERROR, "Datenbankfehler",
+					"Bei der Kommunikation mit der Datenbank ist ein Fehler aufgetreten.");
+			FacesContext.getCurrentInstance().addMessage(null, message);
+		}
+
+		return activityTypes;
+	}
+
+	public void setActivityTypesForAddTeacher(
+			DualListModel<ActivityType> activityTypes) {
+
+		this.activityTypes = activityTypes;
+	}
+
+	@SuppressWarnings("unchecked")
+	public void onTransferAddTeacher(TransferEvent event) {
+		addTeacher.setPossibleActivityTypes(((ArrayList<ActivityType>) event.getItems()));
+	}
+	
+	public DualListModel<ActivityType> getActivityTypesForSelectedTeacher() {
+		List<ActivityType> allActivityTypes;
+		List<ActivityType> possibleActivityTypes;
+
+		try {
+			allActivityTypes = dataAccess.getAllActivityTypes();
+			possibleActivityTypes = selectedTeacher.getPossibleActivityTypes();
+
+			for(Iterator<ActivityType> activityTypeIter = allActivityTypes.iterator(); activityTypeIter.hasNext();) {
+				if(possibleActivityTypes.contains(activityTypeIter.next())) {
+					activityTypeIter.remove();
+				}
+			}
+			
+			activityTypes = new DualListModel<ActivityType>(allActivityTypes,
+					possibleActivityTypes);
+		} catch (DatasetException e) {
+			LOGGER.error(e);
+			FacesMessage message = new FacesMessage(
+					FacesMessage.SEVERITY_ERROR, "Datenbankfehler",
+					"Bei der Kommunikation mit der Datenbank ist ein Fehler aufgetreten.");
+			FacesContext.getCurrentInstance().addMessage(null, message);
+		}
+
+		return activityTypes;
+	}
+
+	public void setActivityTypesForSelectedTeacher(
+			DualListModel<ActivityType> activityTypes) {
+
+		this.activityTypes = activityTypes;
+	}
+
+	@SuppressWarnings("unchecked")
+	public void onTransferSelectedTeacher(TransferEvent event) {
+		selectedTeacher.setPossibleActivityTypes(((ArrayList<ActivityType>) event.getItems()));
+	}
 
 	/**
 	 * Liefert eine Liste mit allen Lehrkräften zurück.
@@ -53,8 +125,7 @@ public class TeacherController implements Serializable {
 	 */
 	public List<Teacher> getTeachers() {
 		try {
-			// Null for unordered
-			return db.getAll(null);
+			return dataAccess.getAllTeachers();
 		} catch (DatasetException e) {
 			FacesMessage message = new FacesMessage(
 					FacesMessage.SEVERITY_ERROR,
@@ -103,9 +174,9 @@ public class TeacherController implements Serializable {
 	 */
 	public void editTeacher() {
 		try {
-			db.update(selectedTeacher);
+			dataAccess.update(selectedTeacher);
 		} catch (DatasetException e) {
-			logger.error(e);
+			LOGGER.error(e);
 		}
 	}
 
@@ -115,7 +186,7 @@ public class TeacherController implements Serializable {
 	public void deleteTeacher() {
 		if (selectedTeacher != null) {
 			try {
-				db.delete(selectedTeacher);
+				dataAccess.delete(selectedTeacher);
 				FacesMessage message = new FacesMessage(
 						FacesMessage.SEVERITY_INFO, "Lehrer gelöscht",
 						selectedTeacher.getName() + " ("
@@ -176,7 +247,7 @@ public class TeacherController implements Serializable {
 		Teacher teacher = addTeacher;
 
 		try {
-			db.persist(teacher);
+			dataAccess.persist(teacher);
 			addTeacher = new Teacher();
 			FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO,
 					"Lehrer hinzugefügt", teacher.getName() + " ("

@@ -1,7 +1,8 @@
 package org.woym.config;
 
 /**
- * Dieses Enum enthält die Default-Einstellungen der Software.
+ * Dieses Enum enthält die Default-Einstellungen der Software. Mehrere Werte zu
+ * einem Key müssen mittels Komma getrennt werden.
  * 
  * @author Adrian
  *
@@ -17,23 +18,55 @@ public enum DefaultConfigEnum {
 	 * Die Uhrzeit, zu welcher ein Backup stattfinden soll, falls das
 	 * Backup-Intervall >= 1440 ist.
 	 */
-	BACKUP_TIME("backup_time", null),
+	BACKUP_TIME("backup_time", "12:00"),
 
 	/**
-	 * Die Uhrzeit, zu welcher die Planung montags erlaubt ist.
+	 * Die Uhrzeit, zu welcher die Planung montags erlaubt ist. Als Werte
+	 * sollten Start- und Endzeit durch Komma getrennt angegeben werden. Ist der
+	 * Wert {@code null} ist der Tag nicht in die Planung einzubeziehen.
 	 */
 	MONDAY_TIME("monday_time", "08:00,16:00"),
 
+	/**
+	 * Die Uhrzeit, zu welcher die Planung dienstags erlaubt ist. Als Werte
+	 * sollten Start- und Endzeit durch Komma getrennt angegeben werden. Ist der
+	 * Wert {@code null} ist der Tag nicht in die Planung einzubeziehen.
+	 */
 	TUESDAY_STARTTIME("tuesday_time", "08:00,16:00"),
 
+	/**
+	 * Die Uhrzeit, zu welcher die Planung mittwochs erlaubt ist. Als Werte
+	 * sollten Start- und Endzeit durch Komma getrennt angegeben werden. Ist der
+	 * Wert {@code null} ist der Tag nicht in die Planung einzubeziehen.
+	 */
 	WEDNESDAY_TIME("wednesday_time", "08:00,16:00"),
 
+	/**
+	 * Die Uhrzeit, zu welcher die Planung donnerstags erlaubt ist. Als Werte
+	 * sollten Start- und Endzeit durch Komma getrennt angegeben werden. Ist der
+	 * Wert {@code null} ist der Tag nicht in die Planung einzubeziehen.
+	 */
 	THURSDAY_TIME("thursday_time", "08:00,16:00"),
 
+	/**
+	 * Die Uhrzeit, zu welcher die Planung freitags erlaubt ist. Als Werte
+	 * sollten Start- und Endzeit durch Komma getrennt angegeben werden. Ist der
+	 * Wert {@code null} ist der Tag nicht in die Planung einzubeziehen.
+	 */
 	FRIDAY_TIME("friday_time", "08:00,16:00"),
 
+	/**
+	 * Die Uhrzeit, zu welcher die Planung samstags erlaubt ist. Als Werte
+	 * sollten Start- und Endzeit durch Komma getrennt angegeben werden. Ist der
+	 * Wert {@code null} ist der Tag nicht in die Planung einzubeziehen.
+	 */
 	SATURDAY_TIME("saturday_time", null),
 
+	/**
+	 * Die Uhrzeit, zu welcher die Planung sonntags erlaubt ist. Als Werte
+	 * sollten Start- und Endzeit durch Komma getrennt angegeben werden. Ist der
+	 * Wert {@code null} ist der Tag nicht in die Planung einzubeziehen.
+	 */
 	SUNDAY_TIME("sunday_time", null),
 
 	/**

@@ -21,7 +21,14 @@ public class Teacher extends Employee implements Serializable {
 
 	@Override
 	public boolean addActivityType(ActivityType activityType) {
-		// TODO Auto-generated method stub
+		if(activityType == null) {
+			return false;
+		}
+		
+		if(!this.possibleActivityTypes.contains(activityType)) {
+			this.possibleActivityTypes.add(activityType);
+			return true;
+		}
 		return false;
 	}
 }
