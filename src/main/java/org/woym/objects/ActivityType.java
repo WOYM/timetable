@@ -118,8 +118,8 @@ public abstract class ActivityType implements Serializable {
 		}
 		return false;
 	}
-	
-	//TODO: hashCode() überschreiben.
+
+	// TODO: hashCode() überschreiben.
 
 	/**
 	 * Fügt das übergebenene {@linkplain Room}-Objekt der entsprechenden Liste
@@ -163,5 +163,42 @@ public abstract class ActivityType implements Serializable {
 	 */
 	public boolean containsRoom(final Room room) {
 		return rooms.contains(room);
+	}
+
+	/**
+	 * Gibt die Dauer in Minuten in einem textual schöneren String
+	 * "XX Stunden, XX Minuten", bzw. "XX Minuten" (wenn keine ganze Stunde
+	 * erfüllt wird) zurück
+	 * 
+	 * @return Die typische Dauer in einem lesbaren Format
+	 */
+	public String getReadableDuration() {
+		String readableString = "";
+		int minutes;
+		int hours;
+
+		if (typicalDuration >= 60) {
+			minutes = typicalDuration % 60;
+			hours = ((int) (typicalDuration - minutes) / 60);
+			
+			if(hours == 1) {
+				
+			}
+			
+			readableString += hours + " Stunden";
+
+		} else {
+			minutes = typicalDuration;
+			hours = 0;
+		}
+		
+		if (hours != 0 && minutes != 0) {
+			readableString += ", ";
+		}
+
+		if (minutes != 0) {
+			readableString += minutes + " Minuten";
+		}
+		return readableString;
 	}
 }

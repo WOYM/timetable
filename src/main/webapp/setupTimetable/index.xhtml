@@ -37,7 +37,9 @@
 					<p:menuitem value="Klassen" ajax="false" icon="ui-icon-calculator" />
 				</p:submenu>
 				<p:submenu label="Unterricht">
-					<p:menuitem value="Fächer" ajax="false" icon="ui-icon-tag" />
+					<p:menuitem value="Inhalte"
+						action="#{GUIController.setPage('manageLessonTypes')}" update="@all"
+						icon="ui-icon-tag" />
 				</p:submenu>
 			</p:menu>
 		</h:form>
