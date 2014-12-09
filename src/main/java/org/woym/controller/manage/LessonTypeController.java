@@ -8,7 +8,6 @@ import java.util.Map;
 
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
-import javax.faces.bean.RequestScoped;
 import javax.faces.bean.SessionScoped;
 import javax.faces.context.FacesContext;
 
@@ -16,9 +15,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.primefaces.context.RequestContext;
 import org.woym.exceptions.DatasetException;
-import org.woym.objects.ActivityType;
 import org.woym.objects.LessonType;
-import org.woym.persistence.ActivityTypeDAO;
+import org.woym.persistence.DataAccess;
 
 /**
  * <h1>LessonTypeController</h1>
@@ -33,10 +31,10 @@ import org.woym.persistence.ActivityTypeDAO;
 public class LessonTypeController implements Serializable {
 	private static final long serialVersionUID = -2341971622906815080L;
 
-	private static Logger logger = LogManager
+	private static Logger LOGGER = LogManager
 			.getLogger(LessonTypeController.class);
 
-	private ActivityTypeDAO lessonTypeDAO = ActivityTypeDAO.getInstance();
+	private transient DataAccess dataAccess = DataAccess.getInstance();
 	private LessonType selectedLessonType;
 	private LessonType addLessonType;
 
@@ -45,16 +43,15 @@ public class LessonTypeController implements Serializable {
 	 * 
 	 * @return Liste mit allen Unterrichtsinhalten
 	 */
-	public List<ActivityType> getLessonTypes() {
+	public List<LessonType> getLessonTypes() {
 		try {
-			// Null for unordered
-			return lessonTypeDAO.getAll(null);
+			return dataAccess.getAllLessonTypes();
 		} catch (DatasetException e) {
 			FacesMessage message = new FacesMessage(
 					FacesMessage.SEVERITY_ERROR,
 					"Datenbankfehler", "Bei der Kommunikation mit der Datenbank ist ein Fehler aufgetreten.");
 			FacesContext.getCurrentInstance().addMessage(null, message);
-			return new ArrayList<ActivityType>();
+			return new ArrayList<LessonType>();
 		}
 	}
 
@@ -95,7 +92,7 @@ public class LessonTypeController implements Serializable {
 	public void deleteLessonType() {
 		if (selectedLessonType != null) {
 			try {
-				lessonTypeDAO.delete(selectedLessonType);
+				dataAccess.delete(selectedLessonType);
 				FacesMessage message = new FacesMessage(
 						FacesMessage.SEVERITY_INFO,
 						"Unterrichtsinhalt gelöscht",
@@ -117,7 +114,7 @@ public class LessonTypeController implements Serializable {
 		LessonType lessonType = addLessonType;
 
 		try {
-			lessonTypeDAO.persist(lessonType);
+			dataAccess.persist(lessonType);
 			addLessonType = new LessonType();
 			FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO,
 					"Unterrichtsinhalt hinzugefügt", lessonType.getName());

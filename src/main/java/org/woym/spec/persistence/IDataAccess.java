@@ -52,13 +52,13 @@ public interface IDataAccess {
 	public void delete(Serializable object) throws DatasetException;
 
 	/**
-	 * Gibt eine Liste aller in der Datenbank vorhanden
-	 * {@linkplain AcademicYear}-Objekte zurück. Sind keine vorhanden wird, eine
-	 * leere Liste zurückgegeben. Tritt bei der Anfrage ein Fehler auf, wird
-	 * eine {@linkplain DatasetException} geworfen.
+	 * Gibt eine Liste aller in der Datenbank vorhandenen
+	 * {@linkplain AcademicYear}-Objekte nach Jahr sortiert zurück. Sind keine
+	 * vorhanden wird, eine leere Liste zurückgegeben. Tritt bei der Anfrage ein
+	 * Fehler auf, wird eine {@linkplain DatasetException} geworfen.
 	 * 
-	 * @return Liste der vorhandenen {@linkplain AcademicYear}-Objekte oder
-	 *         leere Liste, wenn keine vorhanden sind
+	 * @return Liste der vorhandenen {@linkplain AcademicYear}-Objekte nach Jahr
+	 *         sortiert oder leere Liste, wenn keine vorhanden sind
 	 * @throws DatasetException
 	 */
 	public List<AcademicYear> getAllAcademicYears() throws DatasetException;
@@ -79,10 +79,10 @@ public interface IDataAccess {
 	public AcademicYear getOneAcademicYear(int year) throws DatasetException;
 
 	/**
-	 * Gibt eine Liste aller in der Datenbank vorhanden {@linkplain Schoolclass}
-	 * -Objekte zurück. Sind keine vorhanden wird, eine leere Liste
-	 * zurückgegeben. Tritt bei der Anfrage ein Fehler auf, wird eine
-	 * {@linkplain DatasetException} geworfen.
+	 * Gibt eine Liste aller in der Datenbank vorhandenen
+	 * {@linkplain Schoolclass} -Objekte zurück. Sind keine vorhanden wird, eine
+	 * leere Liste zurückgegeben. Tritt bei der Anfrage ein Fehler auf, wird
+	 * eine {@linkplain DatasetException} geworfen.
 	 * 
 	 * @return Liste der vorhandenen {@linkplain Schoolclass}-Objekte oder leere
 	 *         Liste, wenn keine vorhanden sind
@@ -107,35 +107,35 @@ public interface IDataAccess {
 			throws DatasetException;
 
 	/**
-	 * Gibt eine Liste aller in der Datenbank vorhanden
-	 * {@linkplain PedagogicAssistant}-Objekte zurück. Sind keine vorhanden
-	 * wird, eine leere Liste zurückgegeben. Tritt bei der Anfrage ein Fehler
-	 * auf, wird eine {@linkplain DatasetException} geworfen.
+	 * Gibt eine Liste aller in der Datenbank vorhandenen
+	 * {@linkplain PedagogicAssistant}-Objekte nach Kürzel sortiert zurück. Sind
+	 * keine vorhanden wird, eine leere Liste zurückgegeben. Tritt bei der
+	 * Anfrage ein Fehler auf, wird eine {@linkplain DatasetException} geworfen.
 	 * 
 	 * @return Liste der vorhandenen {@linkplain PedagogicAssistant}-Objekte
-	 *         oder leere Liste, wenn keine vorhanden sind
+	 *         nach Kürzel sortiert oder leere Liste, wenn keine vorhanden sind
 	 * @throws DatasetException
 	 */
 	public List<PedagogicAssistant> getAllPAs() throws DatasetException;
 
 	/**
-	 * Gibt eine Liste aller in der Datenbank vorhanden {@linkplain Teacher}
-	 * -Objekte zurück. Sind keine vorhanden wird, eine leere Liste
-	 * zurückgegeben. Tritt bei der Anfrage ein Fehler auf, wird eine
-	 * {@linkplain DatasetException} geworfen.
+	 * Gibt eine Liste aller in der Datenbank vorhandenen {@linkplain Teacher}
+	 * -Objekte nach Kürzel sortiert zurück. Sind keine vorhanden wird, eine
+	 * leere Liste zurückgegeben. Tritt bei der Anfrage ein Fehler auf, wird
+	 * eine {@linkplain DatasetException} geworfen.
 	 * 
-	 * @return Liste der vorhandenen {@linkplain Teacher}-Objekte oder leere
-	 *         Liste, wenn keine vorhanden sind
+	 * @return Liste der vorhandenen {@linkplain Teacher}-Objekte nach Kürzel
+	 *         sortiert oder leere Liste, wenn keine vorhanden sind
 	 * @throws DatasetException
 	 */
 	public List<Teacher> getAllTeachers() throws DatasetException;
 
 	/**
-	 * Führt eine Datenbankanfrage aus, die nach einem Mitarbeiter Typs sucht,
-	 * der exakt das übergebene Kürzel hat. Wird ein Mitarbeiter mit dem
-	 * übergebenen Kürzel gefunden, wird dieser zurückgegeben, ansonsten
-	 * {@code null}. Tritt bei der Anfrage ein Fehler auf, wird eine
-	 * {@linkplain DatasetException} geworfen.
+	 * Führt eine Datenbankanfrage aus, die nach einem Mitarbeiter sucht, der
+	 * bei ignorierter Groß- und Kleinschreibung exakt das übergebene Kürzel
+	 * hat. Wird ein Mitarbeiter mit dem übergebenen Kürzel gefunden, wird
+	 * dieser zurückgegeben, ansonsten {@code null}. Tritt bei der Anfrage ein
+	 * Fehler auf, wird eine {@linkplain DatasetException} geworfen.
 	 * 
 	 * @param symbol
 	 *            - das Kürzel, mit dem gesucht werden soll
@@ -146,8 +146,8 @@ public interface IDataAccess {
 
 	/**
 	 * Sucht nach Mitarbeitern, deren Kürzel den übergebenen String enthalten.
-	 * Tritt bei der Anfrage ein Fehler auf, wird eine
-	 * {@linkplain DatasetException} geworfen.
+	 * Groß- und Kleinschreibung wird ignoriert. Tritt bei der Anfrage ein
+	 * Fehler auf, wird eine {@linkplain DatasetException} geworfen.
 	 * 
 	 * @param searchSymbol
 	 *            - String, mit dem die Kürzel durchsucht werden sollen
@@ -159,9 +159,9 @@ public interface IDataAccess {
 			throws DatasetException;
 
 	/**
-	 * Sucht nach Lehrern, deren Kürzel den übergebenen String enthalten. Tritt
-	 * bei der Anfrage ein Fehler auf, wird eine {@linkplain DatasetException}
-	 * geworfen.
+	 * Sucht nach Lehrern, deren Kürzel den übergebenen String enthalten. Groß-
+	 * und Kleinschreibung wird ignoriert. Tritt bei der Anfrage ein Fehler auf,
+	 * wird eine {@linkplain DatasetException} geworfen.
 	 * 
 	 * @param searchSymbol
 	 *            - String, mit dem die Kürzel durchsucht werden sollen
@@ -174,8 +174,8 @@ public interface IDataAccess {
 
 	/**
 	 * Sucht nach pädagogischen Mitarbeitern, deren Kürzel den übergebenen
-	 * String enthalten. Tritt bei der Anfrage ein Fehler auf, wird eine
-	 * {@linkplain DatasetException} geworfen.
+	 * String enthalten. Groß- und Kleinschreibung wird ignoriert.Tritt bei der
+	 * Anfrage ein Fehler auf, wird eine {@linkplain DatasetException} geworfen.
 	 * 
 	 * @param searchSymbol
 	 *            - String, mit dem die Kürzel durchsucht werden sollen
@@ -187,13 +187,13 @@ public interface IDataAccess {
 			throws DatasetException;
 
 	/**
-	 * Gibt eine Liste aller in der Datenbank vorhanden {@linkplain Location}
-	 * -Objekte zurück. Sind keine vorhanden wird, eine leere Liste
-	 * zurückgegeben. Tritt bei der Anfrage ein Fehler auf, wird eine
-	 * {@linkplain DatasetException} geworfen.
+	 * Gibt eine Liste aller in der Datenbank vorhandenen {@linkplain Location}
+	 * -Objekte nach Namen sortiert zurück. Sind keine vorhanden wird, eine
+	 * leere Liste zurückgegeben. Tritt bei der Anfrage ein Fehler auf, wird
+	 * eine {@linkplain DatasetException} geworfen.
 	 * 
-	 * @return Liste der vorhandenen {@linkplain Location}-Objekte oder leere
-	 *         Liste, wenn keine vorhanden sind
+	 * @return Liste der vorhandenen {@linkplain Location}-Objekte nach Namen
+	 *         sortiert oder leere Liste, wenn keine vorhanden sind
 	 * @throws DatasetException
 	 */
 	public List<Location> getAllLocations() throws DatasetException;
@@ -230,37 +230,49 @@ public interface IDataAccess {
 			throws DatasetException;
 
 	/**
-	 * Gibt eine Liste aller in der Datenbank vorhanden {@linkplain MeetingType}
-	 * -Objekte zurück. Sind keine vorhanden wird, eine leere Liste
-	 * zurückgegeben. Tritt bei der Anfrage ein Fehler auf, wird eine
-	 * {@linkplain DatasetException} geworfen.
+	 * Gibt eine Liste aller in der Datenbank vorhandenen
+	 * {@linkplain ActivityType} -Objekte nach Namen sortiert zurück. Sind keine
+	 * vorhanden wird, eine leere Liste zurückgegeben. Tritt bei der Anfrage ein
+	 * Fehler auf, wird eine {@linkplain DatasetException} geworfen.
 	 * 
-	 * @return Liste der vorhandenen {@linkplain MeetingType}-Objekte oder leere
-	 *         Liste, wenn keine vorhanden sind
+	 * @return Liste der vorhandenen {@linkplain ActivityType}-Objekte nach
+	 *         Namen sortiert oder leere Liste, wenn keine vorhanden sind
+	 * @throws DatasetException
+	 */
+	public List<ActivityType> getAllActivityTypes() throws DatasetException;
+
+	/**
+	 * Gibt eine Liste aller in der Datenbank vorhandenen
+	 * {@linkplain MeetingType} -Objekte nach Namen sortiert zurück. Sind keine
+	 * vorhanden wird, eine leere Liste zurückgegeben. Tritt bei der Anfrage ein
+	 * Fehler auf, wird eine {@linkplain DatasetException} geworfen.
+	 * 
+	 * @return Liste der vorhandenen {@linkplain MeetingType}-Objekte nach Namen
+	 *         sortiert oder leere Liste, wenn keine vorhanden sind
 	 * @throws DatasetException
 	 */
 	public List<MeetingType> getAllMeetingTypes() throws DatasetException;
 
 	/**
-	 * Gibt eine Liste aller in der Datenbank vorhanden {@linkplain LessonType}
-	 * -Objekte zurück. Sind keine vorhanden wird, eine leere Liste
-	 * zurückgegeben. Tritt bei der Anfrage ein Fehler auf, wird eine
-	 * {@linkplain DatasetException} geworfen.
+	 * Gibt eine Liste aller in der Datenbank vorhandenen
+	 * {@linkplain LessonType} -Objekte nach Namen sortiert zurück. Sind keine
+	 * vorhanden wird, eine leere Liste zurückgegeben. Tritt bei der Anfrage ein
+	 * Fehler auf, wird eine {@linkplain DatasetException} geworfen.
 	 * 
-	 * @return Liste der vorhandenen {@linkplain LessonType}-Objekte oder leere
-	 *         Liste, wenn keine vorhanden sind
+	 * @return Liste der vorhandenen {@linkplain LessonType}-Objekte nach Namen
+	 *         sortiert oder leere Liste, wenn keine vorhanden sind
 	 * @throws DatasetException
 	 */
 	public List<LessonType> getAllLessonTypes() throws DatasetException;
 
 	/**
-	 * Gibt eine Liste aller in der Datenbank vorhanden {@linkplain LessonType}
-	 * -Objekte zurück. Sind keine vorhanden wird, eine leere Liste
-	 * zurückgegeben. Tritt bei der Anfrage ein Fehler auf, wird eine
-	 * {@linkplain DatasetException} geworfen.
+	 * Gibt eine Liste aller in der Datenbank vorhandenen
+	 * {@linkplain ProjectType} -Objekte nach Namen sortiert zurück. Sind keine
+	 * vorhanden wird, eine leere Liste zurückgegeben. Tritt bei der Anfrage ein
+	 * Fehler auf, wird eine {@linkplain DatasetException} geworfen.
 	 * 
-	 * @return Liste der vorhandenen {@linkplain LessonType}-Objekte oder leere
-	 *         Liste, wenn keine vorhanden sind
+	 * @return Liste der vorhandenen {@linkplain ProjectType}-Objekte nach Namen
+	 *         sortiert oder leere Liste, wenn keine vorhanden sind
 	 * @throws DatasetException
 	 */
 	public List<ProjectType> getAllProjectTypes() throws DatasetException;
@@ -278,10 +290,10 @@ public interface IDataAccess {
 	public ActivityType getOneActivityType(String name) throws DatasetException;
 
 	/**
-	 * Wird {@code null} übergeben, wird eine {@linkplaien
-	 * IllegalArgumentException} geworfen. Ansonsten wird in der Datenbank nach
-	 * allen Aktivitäten des übergebenen Mitarbeiters gesucht und diese als
-	 * Liste zurückgegeben. Tritt dabei ein Fehler auf, wird eine
+	 * Wird {@code null} übergeben, wird eine
+	 * {@linkplain IllegalArgumentException} geworfen. Ansonsten wird in der
+	 * Datenbank nach allen Aktivitäten des übergebenen Mitarbeiters gesucht und
+	 * diese als Liste zurückgegeben. Tritt dabei ein Fehler auf, wird eine
 	 * {@linkplain DatasetException} geworfen.
 	 * 
 	 * @param employee

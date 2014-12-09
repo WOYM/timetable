@@ -32,7 +32,7 @@ import org.woym.spec.persistence.IDataAccess;
  * @author Adrian
  *
  */
-public final class DataAccess implements IDataAccess, Observer {
+public class DataAccess implements IDataAccess, Observer {
 
 	/**
 	 * Die Singleton-Instanz dieser Klasse.
@@ -235,8 +235,8 @@ public final class DataAccess implements IDataAccess, Observer {
 		}
 		try {
 			final Query query = em
-					.createQuery("SELECT e FROM Employee e WHERE e.symbol = ?1");
-			query.setParameter(1, symbol);
+					.createQuery("SELECT e FROM Employee e WHERE UPPER(e.symbol) = ?1");
+			query.setParameter(1, symbol.toUpperCase());
 			List<Employee> result = query.getResultList();
 			if (result.isEmpty()) {
 				return null;
@@ -347,6 +347,15 @@ public final class DataAccess implements IDataAccess, Observer {
 							+ " exists in location " + locationName + ": "
 							+ e.getMessage());
 		}
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	@SuppressWarnings("unchecked")
+	public List<ActivityType> getAllActivityTypes() throws DatasetException {
+		return (List<ActivityType>) getAll(ActivityType.class, "name");
 	}
 
 	/**

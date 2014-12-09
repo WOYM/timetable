@@ -35,7 +35,7 @@ import org.woym.exceptions.InvalidFileException;
  * @author Adrian
  *
  */
-public final class DataBase extends Observable implements Serializable {
+public class DataBase extends Observable implements Serializable {
 
 	/**
 	 * 
