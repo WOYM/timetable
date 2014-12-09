@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+<h:head>
+
+</h:head>
+
+<h:body>
+	<h:form id="manageLessonTypesForm">
+		<p:outputPanel>
+			<h1>
+				<h:outputText value="Unterrichtsinhaltsverwaltung" />
+			</h1>
+			<h:outputText
+				value="In dieser Ansicht werden die verschiedenen Inhalte, die eine Unterrichtseinheit verwenden kann verwaltet." />
+		</p:outputPanel>
+
+		<p:spacer style="height:50px;" />
+
+		<p:outputPanel style="float:right">
+			<p:commandButton value="Hinzufügen" icon="ui-icon-plusthick"
+				actionListener="#{lessonTypeController.addLessonTypeDialog}">
+				<p:ajax event="dialogReturn" update="@form" />
+			</p:commandButton>
+		</p:outputPanel>
+
+		<!-- Existierende Unterrichtsinhalte -->
+		<p:contextMenu for="lessonTypeTable">
+			<p:menuitem value="Bearbeiten"
+				actionListener="#{lessonTypeController.editLessonTypeDialog}"
+				icon="ui-icon-pencil" />
+			<p:menuitem value="Löschen" update="@form" icon="ui-icon-close"
+				actionListener="#{lessonTypeController.deleteLessonType}" />
+		</p:contextMenu>
+		<p:dataTable id="lessonTypeTable" var="lessonType"
+			value="#{lessonTypeController.getLessonTypes()}"
+			selection="#{lessonTypeController.selectedLessonType}"
+			selectionMode="single" rowKey="#{lessonType.name}">
+			<p:column headerText="Bezeichner">
+				<h:outputText value="#{lessonType.name}" />
+			</p:column>
+			<p:column headerText="Standarddauer">
+				<h:outputText value="#{lessonType.getReadableDuration()}" />
+			</p:column>
+			<p:column headerText="Standardräume">
+				<ui:repeat var="room" value="#{lessonType.getRooms()}">
+					<h:outputText value="#{room.name}, " />
+				</ui:repeat>
+			</p:column>
+		</p:dataTable>
+		
+		<p:poll interval="3" update="lessonTypeTable" />
+	</h:form>
+</h:body>
+</html>

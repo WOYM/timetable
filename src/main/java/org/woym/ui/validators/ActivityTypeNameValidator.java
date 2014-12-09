@@ -1,6 +1,5 @@
 package org.woym.ui.validators;
 
-import java.util.List;
 
 import javax.faces.application.FacesMessage;
 import javax.faces.component.UIComponent;
@@ -13,15 +12,15 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.h2.util.StringUtils;
 import org.woym.exceptions.DatasetException;
-import org.woym.objects.Teacher;
-import org.woym.persistence.TeacherDAO;
+import org.woym.persistence.ActivityTypeDAO;
 
 /**
- * <h1>SymbolValidator</h1>
+ * <h1>ActivityTypeNameValidator</h1>
  * <p>
- * Dieser Validator prüft ein Symbol auf Gültigkeit.
+ * Dieser Validator prüft den Bezeichner eines 
+ * Aktivitätstypen auf Gültigkeit.
  * <p>
- * Ein Symbol ist dann gültig, wenn es...: 
+ * Ein Bezeichner ist dann gültig, wenn er...: 
  * <ul>
  * 		<li>
  * 			<b>Nicht</b> {@code null} oder leer ist.
@@ -33,56 +32,53 @@ import org.woym.persistence.TeacherDAO;
  * </ul>
  * <p>
  * <h2>Zusätzliche Informationen</h2>
- * Vor der Validierung wird ein Symbol getrimmt, das
- * heißt, es werden vorrangehende oder nachfolgende
- * Leerzeichen entfernt.<br>
+ * Vor der Validierung wird ein Bezeichner getrimmt, 
+ * das heißt, es werden vorrangehende oder 
+ * nachfolgende Leerzeichen entfernt.<br>
  * Ein Leerzeichen im Inneren eines Symbols ist
  * gültig.<br>
- * Ein Symbol wird immer in Großbuchstaben umgewandelt
+ * Ein Bezeichner wird in Groß- und Kleinschreibung
+ * nicht verändert.
  * 
  * @author Tim Hansen (tihansen)
  *
  */
-@FacesValidator("org.woym.SymbolValidator")
-public class SymbolValidator implements Validator{
+@FacesValidator("org.woym.ActivityTypeNameValidator")
+public class ActivityTypeNameValidator implements Validator{
+
+	private static Logger LOGGER = LogManager.getLogger(ActivityTypeNameValidator.class);
 	
-	private static Logger LOGGER = LogManager.getLogger(SymbolValidator.class);
-	
-	TeacherDAO teacherDAO = TeacherDAO.getInstance();
+	ActivityTypeDAO activityTypeDAO = ActivityTypeDAO.getInstance();
 
 	@Override
 	public void validate(FacesContext context, UIComponent uiComponent, Object value)
 			throws ValidatorException {
 		
-		String symbol = value.toString();
+		String name = value.toString();
 		
-		if(StringUtils.isNullOrEmpty(symbol)) {
+		if(StringUtils.isNullOrEmpty(name)) {
 			FacesMessage msg = 
-					new FacesMessage("Ungültiges Kürzel.", 
-							"Kürzel darf nicht leer sein.");
+					new FacesMessage("Ungültiger Bezeichner.", 
+							"Bezeichner darf nicht leer sein.");
 				msg.setSeverity(FacesMessage.SEVERITY_ERROR);
 				throw new ValidatorException(msg);
 		}
 		
-		symbol = symbol.trim();
+		name = name.trim();
 		
-		if(StringUtils.isNullOrEmpty(symbol)) {
+		if(StringUtils.isNullOrEmpty(name)) {
 			FacesMessage msg = 
-					new FacesMessage("Ungültiges Kürzel.", 
-							"Kürzel darf nicht leer sein.");
+					new FacesMessage("Ungültiger Bezeichner.", 
+							"Bezeichner darf nicht leer sein.");
 				msg.setSeverity(FacesMessage.SEVERITY_ERROR);
 				throw new ValidatorException(msg);
 		}
-		
-		symbol = symbol.toUpperCase();
 		
 		try {
-			List<Teacher> teacherList = teacherDAO.search(symbol);
-			
-			if(teacherList.size() != 0) {
+			if(activityTypeDAO.getOne(name) != null) {
 				FacesMessage msg = 
-						new FacesMessage("Ungültiges Kürzel.", 
-								"Das Kürzel wird bereis verwendet.");
+						new FacesMessage("Ungültiger Bezeichner.", 
+								"Der Bezeichner wird bereis verwendet.");
 					msg.setSeverity(FacesMessage.SEVERITY_ERROR);
 					throw new ValidatorException(msg);
 			}
@@ -90,7 +86,7 @@ public class SymbolValidator implements Validator{
 		} catch (DatasetException e) {
 			LOGGER.error(e);
 			FacesMessage msg = 
-					new FacesMessage("Datenbankfehler.", 
+					new FacesMessage("Datenbankfehler", 
 							"Bei der Kommunikation mit der Datenbank ist ein Fehler aufgetreten.");
 				msg.setSeverity(FacesMessage.SEVERITY_ERROR);
 				throw new ValidatorException(msg);
