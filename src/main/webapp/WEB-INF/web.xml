@@ -26,9 +26,14 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
 		<load-on-startup>1</load-on-startup>
 	</servlet>
 	<servlet>
+		<servlet-name>Config Servlet</servlet-name>
+		<servlet-class>org.woym.config.ConfigServlet</servlet-class>
+		<load-on-startup>2</load-on-startup>
+	</servlet>
+	<servlet>
 		<servlet-name>DataBase Startup Servlet</servlet-name>
 		<servlet-class>org.woym.persistence.DataBaseStartupServlet</servlet-class>
-		<load-on-startup>2</load-on-startup>
+		<load-on-startup>3</load-on-startup>
 	</servlet>
 	
 	<!-- Servlet-Mapping -->

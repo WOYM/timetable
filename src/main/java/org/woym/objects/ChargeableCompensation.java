@@ -59,4 +59,6 @@ public class ChargeableCompensation implements Serializable {
 		}
 		return false;
 	}
+	
+	//TODO: hashCode() überschreiben.
 }
