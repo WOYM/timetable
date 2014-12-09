@@ -26,36 +26,49 @@
         
         <p:spacer style="height:10px;" />
 
-        <p:outputPanel>
-            <h:panelGrid columns="3">
-				<p:outputLabel for="firstName" value="Vorname:" />
-				<p:inputText id="firstName" required="true"
-					value="#{teacherController.selectedTeacher.firstName}">
+		<p:outputPanel>
+			<h:panelGrid columns="3">
+				<p:outputLabel for="name" value="Name:" />
+				<p:inputText id="name" value="#{teacherController.selectedTeacher.name}"
+					required="true" requiredMessage="Ein leerer Name ist nicht gültig.">
 					<f:validator validatorId="org.woym.NameValidator" />
 				</p:inputText>
-				<p:message for="firstName" />
-				<p:outputLabel for="lastName" value="Nachname:" />
-				<p:inputText id="lastName" required="true"
-					requiredMessage="Ein leerer Name ist nicht gültig."
-					value="#{teacherController.selectedTeacher.lastName}" />
-				<p:message for="lastName" />
+				<p:message for="name" />
 				<p:outputLabel for="symbol" value="Kürzel:" />
-				<p:inputText id="symbol" required="true"
-					value="#{teacherController.selectedTeacher.symbol}" />
-					<f:validator validatorId="org.woym.SymbolValidator" />
+				<p:inputText id="symbol"
+					value="#{teacherController.selectedTeacher.symbol}" required="true"
+					requiredMessage="Ein leeres Kürzel ist nicht gültig.">
+				</p:inputText>
 				<p:message for="symbol" />
 				<p:outputLabel for="weekhours" value="Wochenstunden:" />
 				<p:spinner id="weekhours" min="0" max="100"
 					value="#{teacherController.selectedTeacher.hoursPerWeek}" />
 				<p:message for="weekhours" />
-                <p:spacer />
-                <p:outputPanel style="float:right">
-                    <p:commandButton value="Übernehmen"
-                        actionListener="#{teacherController.editTeacher}"
-                        update="@form" />
-                </p:outputPanel>
-            </h:panelGrid>
-        </p:outputPanel>
-    </h:form>
+			</h:panelGrid>
+			<p:fieldset legend="Schulfächer" toggleable="true" toggleSpeed="500"
+				collapsed="true">
+				<p:pickList id="lessonTypePickList" value="#{teacherController.activityTypesForSelectedTeacher}"
+					var="lessonType" itemValue="#{lessonType}"
+					itemLabel="#{lessonType.name}" filterMatchMode="contains" converter="LessonTypeNameConverter">
+
+					<f:facet name="sourceCaption">Verfügbar</f:facet>
+					<f:facet name="targetCaption">Gewählt</f:facet>
+
+					<p:ajax event="transfer" listener="#{teacherController.onTransferSelectedTeacher}" />
+
+					<p:column>
+						<h:outputText value="#{lessonType.name}" />
+					</p:column>
+				</p:pickList>
+			</p:fieldset>
+			<p:outputPanel style="margin-top:10px; float:right">
+				<p:commandButton value="Submit"
+					actionListener="#{teacherController.addTeacherFromDialog}"
+					update="@form" />
+			</p:outputPanel>
+			<p:messages style="margin-top:55px;" id="messages" showDetail="true" autoUpdate="true"
+				closable="true" />
+		</p:outputPanel>
+	</h:form>
 </h:body>
 </html>
