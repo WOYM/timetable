@@ -3,9 +3,9 @@ package org.woym.logic;
 import java.util.LinkedList;
 
 import org.woym.spec.logic.ICommand;
-import org.woym.spec.logic.IFiFoQueue;
+import org.woym.spec.logic.ILimetedQueue;
 
-public class FiFoQueue<E extends ICommand> implements IFiFoQueue<E> {
+public class LimitedQueue<E extends ICommand> implements ILimetedQueue<E> {
 
 	private final LinkedList<E> queue = new LinkedList<>();
 
@@ -20,8 +20,12 @@ public class FiFoQueue<E extends ICommand> implements IFiFoQueue<E> {
 
 	}
 
+	public void clear() {
+		queue.clear();
+	}
+
 	@Override
-	public E get() {
+	public E getFirst() {
 		if (queue.size() > 0) {
 			return queue.pollFirst();
 		}
@@ -31,6 +35,14 @@ public class FiFoQueue<E extends ICommand> implements IFiFoQueue<E> {
 	@Override
 	public Integer size() {
 		return queue.size();
+	}
+
+	@Override
+	public E getLast() {
+		if (queue.size() > 0) {
+			return queue.pollLast();
+		}
+		return null;
 	}
 
 }
