@@ -54,7 +54,7 @@ public final class Config {
 			propertiesConfig = new PropertiesConfiguration(PROPERTIES_FILE_PATH);
 			propertiesConfig.setListDelimiter(',');
 			propertiesConfig.setAutoSave(true);
-			LOGGER.info("Loaded configuration file.");
+			LOGGER.info("Configuration file loaded.");
 		} catch (ConfigurationException e) {
 			LOGGER.warn("No configuration file found.");
 			LOGGER.info("Creating new configuration file.");
