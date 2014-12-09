@@ -101,7 +101,7 @@ public abstract class Employee implements Serializable {
 	 */
 	@ManyToMany
 	@OrderBy("name")
-	private List<ActivityType> possibleActivityTypes = new ArrayList<ActivityType>();
+	protected List<ActivityType> possibleActivityTypes = new ArrayList<ActivityType>();
 
 	/**
 	 * Eine Liste von {@link TimePeriod}-Objekten, welche die Zeitwünsche des
@@ -135,7 +135,7 @@ public abstract class Employee implements Serializable {
 	}
 
 	public void setSymbol(String symbol) {
-		this.symbol = symbol;
+		this.symbol = symbol.toUpperCase();
 	}
 
 	public BigDecimal getHoursPerWeek() {

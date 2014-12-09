@@ -25,4 +25,9 @@
    		<validator-id>ActivityTypeNameValidator</validator-id>
    		<validator-class>org.woym.ui.validators.ActivityTypeNameValidator</validator-class>
 	</validator>
+	<!-- Converters -->
+	<converter>
+   		<converter-id>LessonTypeNameConverter</converter-id>
+   		<converter-class>org.woym.ui.converters.LessonTypeNameConverter</converter-class>
+	</converter>
 </faces-config>
