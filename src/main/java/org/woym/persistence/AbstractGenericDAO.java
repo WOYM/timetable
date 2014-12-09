@@ -24,7 +24,7 @@ import org.woym.spec.persistence.IGenericDAO;
  * @param <E>
  *            die generische Klasse
  */
-public class AbstractGenericDAO<E extends Serializable> implements
+public abstract class AbstractGenericDAO<E extends Serializable> implements
 		IGenericDAO<E>, Observer {
 
 	/**

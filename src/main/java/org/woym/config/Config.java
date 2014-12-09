@@ -54,6 +54,7 @@ public final class Config {
 			propertiesConfig = new PropertiesConfiguration(PROPERTIES_FILE_PATH);
 			propertiesConfig.setListDelimiter(',');
 			propertiesConfig.setAutoSave(true);
+			LOGGER.info("Loaded configuration file.");
 		} catch (ConfigurationException e) {
 			LOGGER.warn("No configuration file found.");
 			LOGGER.info("Creating new configuration file.");
@@ -79,12 +80,14 @@ public final class Config {
 	 * Aktualisiert den Wert des übergebenen Property-Keys mit dem Wert des
 	 * übergebenen Property-Values, sofern der Key vorhanden ist. Anschließend
 	 * wird {@code true} zurückgegeben. Existiert der übergebene Key nicht, wird
-	 * {@code false} zurückgegeben.
+	 * {@code false} zurückgegeben. Sollen zu dem Key mehrere Werte gespeichert
+	 * werden, sind diese durch Kommata zu trennen.
 	 * 
 	 * @param propKey
 	 *            - der Key, zu welchem der Wert aktualisiert werden soll
 	 * @param propValue
-	 *            - der neue Wert
+	 *            - der neue Wert, sollen mehrere Werte zu dem Key gespeichert
+	 *            werden, sind diese durch Kommata zu trennen
 	 * @return {@code true}, wenn der Key vorhanden ist und aktualisiert wurde,
 	 *         ansonsten {@code false}
 	 */

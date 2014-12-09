@@ -45,32 +45,47 @@ public class ActivityDAO extends AbstractGenericDAO<Activity> implements
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<Activity> getAll(Employee employee) throws DatasetException {
-		/*if (employee == null) {
+		/*
+		 * if (employee == null) { throw new IllegalArgumentException(); } try {
+		 * final Query query = getEm() .createQuery(
+		 * "SELECT a from Activity a WHERE a IN (SELECT ae FROM a.employees ae) "
+		 * + "AND ?1 IN (SELECT ae FROM a.employees ae)"); query.setParameter(1,
+		 * employee); return (List<Activity>) query.getResultList(); } catch
+		 * (Exception e) {
+		 * LOGGER.error("Exception while getting all activities for " +
+		 * employee, e); throw new DatasetException(
+		 * "Error while getting all activities for " + employee + ": " +
+		 * e.getMessage()); }
+		 */
+		// TODO: Funktioniert noch nicht, muss noch recherchieren, woran dies
+		// liegen könnte.
+		return null;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Activity> getAll(Schoolclass schoolclass)
+			throws DatasetException {
+		if (schoolclass == null) {
 			throw new IllegalArgumentException();
 		}
 		try {
 			final Query query = getEm()
 					.createQuery(
-							"SELECT a from Activity a WHERE a IN (SELECT ae FROM a.employees ae) "
-									+ "AND ?1 IN (SELECT ae FROM a.employees ae)");
-			query.setParameter(1, employee);
+							"SELECT a FROM Activity a WHERE ?1 MEMBER OF a.schoolclasses");
+			query.setParameter(1, schoolclass);
 			return (List<Activity>) query.getResultList();
 		} catch (Exception e) {
-			LOGGER.error("Exception while getting all activities for "
-					+ employee, e);
-			throw new DatasetException(
-					"Error while getting all activities for " + employee + ": "
-							+ e.getMessage());
-		}*/
-		//TODO: Funktioniert noch nicht, muss noch recherchieren, woran dies liegen könnte.
-		return null;
+			LOGGER.error(
+					"Exception while getting all activities for schoolclass "
+							+ schoolclass, e);
+			throw new DatasetException(String.format(
+					"Error while getting all activities for schoolclass %s : ",
+					schoolclass)
+					+ e.getMessage());
+		}
 	}
-
-	@Override
-	public List<Activity> getAll(Schoolclass schoolclass)
-			throws DatasetException {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
 }

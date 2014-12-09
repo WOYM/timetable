@@ -7,6 +7,9 @@ import javax.persistence.Query;
 
 import org.woym.exceptions.DatasetException;
 import org.woym.objects.ActivityType;
+import org.woym.objects.LessonType;
+import org.woym.objects.MeetingType;
+import org.woym.objects.ProjectType;
 import org.woym.spec.persistence.IActivityTypeDAO;
 
 /**
@@ -68,6 +71,57 @@ public class ActivityTypeDAO extends AbstractGenericDAO<ActivityType> implements
 			throw new DatasetException(
 					"Error while getting ActivityType with name " + name + " "
 							+ e.getMessage());
+		}
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<LessonType> getAllLessonTypes() throws DatasetException {
+		try {
+			final Query query = getEm().createQuery(
+					"SELECT l FROM LessonType l");
+			return (List<LessonType>) query.getResultList();
+		} catch (Exception e) {
+			LOGGER.error("Exception while getting all lesson types", e);
+			throw new DatasetException("Error while getting all lesson types :"
+					+ e.getMessage());
+		}
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<ProjectType> getAllProjectTypes() throws DatasetException {
+		try {
+			final Query query = getEm().createQuery(
+					"SELECT p FROM ProjectType p");
+			return (List<ProjectType>) query.getResultList();
+		} catch (Exception e) {
+			LOGGER.error("Exception while getting all project types", e);
+			throw new DatasetException("Error while getting all project types :"
+					+ e.getMessage());
+		}
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<MeetingType> getAllMeetingTypes() throws DatasetException {
+		try {
+			final Query query = getEm().createQuery(
+					"SELECT m FROM MeetingType m");
+			return (List<MeetingType>) query.getResultList();
+		} catch (Exception e) {
+			LOGGER.error("Exception while getting all meeting types", e);
+			throw new DatasetException("Error while getting all meeting types :"
+					+ e.getMessage());
 		}
 	}
 
