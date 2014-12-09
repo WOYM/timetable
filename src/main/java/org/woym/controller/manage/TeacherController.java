@@ -3,6 +3,7 @@ package org.woym.controller.manage;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -15,9 +16,12 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.h2.util.StringUtils;
 import org.primefaces.context.RequestContext;
-import org.primefaces.event.SelectEvent;
+import org.primefaces.event.TransferEvent;
+import org.primefaces.model.DualListModel;
 import org.woym.exceptions.DatasetException;
+import org.woym.objects.ActivityType;
 import org.woym.objects.Teacher;
+import org.woym.persistence.ActivityTypeDAO;
 import org.woym.persistence.TeacherDAO;
 
 /**
@@ -34,7 +38,8 @@ public class TeacherController implements Serializable {
 
 	private static final long serialVersionUID = -2341971622906815080L;
 
-	private static Logger logger = LogManager.getLogger("teacherController");
+	private static Logger logger = LogManager
+			.getLogger(TeacherController.class);
 
 	// TODO: transient machen oder TeacherDAO Serializable implementieren lassen
 	private TeacherDAO db = TeacherDAO.getInstance();
@@ -44,7 +49,82 @@ public class TeacherController implements Serializable {
 	private Teacher selectedTeacherForSearch;
 	private String searchSymbol;
 
-	//
+	private DualListModel<ActivityType> activityTypes;
+
+	public DualListModel<ActivityType> getActivityTypesForAddTeacher() {
+		List<ActivityType> allActivityTypes;
+		List<ActivityType> possibleActivityTypes = new ArrayList<>();
+
+		ActivityTypeDAO activityTypeDAO = ActivityTypeDAO.getInstance();
+
+		// TODO: Try orderBy
+		try {
+			allActivityTypes = activityTypeDAO.getAll(null);
+
+			activityTypes = new DualListModel<ActivityType>(allActivityTypes,
+					possibleActivityTypes);
+		} catch (DatasetException e) {
+			logger.error(e);
+			FacesMessage message = new FacesMessage(
+					FacesMessage.SEVERITY_ERROR, "Datenbankfehler",
+					"Bei der Kommunikation mit der Datenbank ist ein Fehler aufgetreten.");
+			FacesContext.getCurrentInstance().addMessage(null, message);
+		}
+
+		return activityTypes;
+	}
+
+	public void setActivityTypesForAddTeacher(
+			DualListModel<ActivityType> activityTypes) {
+
+		this.activityTypes = activityTypes;
+	}
+
+	@SuppressWarnings("unchecked")
+	public void onTransferAddTeacher(TransferEvent event) {
+		addTeacher.setPossibleActivityTypes(((ArrayList<ActivityType>) event.getItems()));
+	}
+	
+	public DualListModel<ActivityType> getActivityTypesForSelectedTeacher() {
+		List<ActivityType> allActivityTypes;
+		List<ActivityType> possibleActivityTypes;
+
+		ActivityTypeDAO activityTypeDAO = ActivityTypeDAO.getInstance();
+
+		// TODO: Try orderBy
+		try {
+			allActivityTypes = activityTypeDAO.getAll(null);
+			possibleActivityTypes = selectedTeacher.getPossibleActivityTypes();
+
+			for(Iterator<ActivityType> activityTypeIter = allActivityTypes.iterator(); activityTypeIter.hasNext();) {
+				if(possibleActivityTypes.contains(activityTypeIter.next())) {
+					activityTypeIter.remove();
+				}
+			}
+			
+			activityTypes = new DualListModel<ActivityType>(allActivityTypes,
+					possibleActivityTypes);
+		} catch (DatasetException e) {
+			logger.error(e);
+			FacesMessage message = new FacesMessage(
+					FacesMessage.SEVERITY_ERROR, "Datenbankfehler",
+					"Bei der Kommunikation mit der Datenbank ist ein Fehler aufgetreten.");
+			FacesContext.getCurrentInstance().addMessage(null, message);
+		}
+
+		return activityTypes;
+	}
+
+	public void setActivityTypesForSelectedTeacher(
+			DualListModel<ActivityType> activityTypes) {
+
+		this.activityTypes = activityTypes;
+	}
+
+	@SuppressWarnings("unchecked")
+	public void onTransferSelectedTeacher(TransferEvent event) {
+		selectedTeacher.setPossibleActivityTypes(((ArrayList<ActivityType>) event.getItems()));
+	}
 
 	/**
 	 * Liefert eine Liste mit allen Lehrkräften zurück.

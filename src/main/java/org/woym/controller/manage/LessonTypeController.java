@@ -8,6 +8,7 @@ import java.util.Map;
 
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
+import javax.faces.bean.RequestScoped;
 import javax.faces.bean.SessionScoped;
 import javax.faces.context.FacesContext;
 
@@ -17,7 +18,6 @@ import org.primefaces.context.RequestContext;
 import org.woym.exceptions.DatasetException;
 import org.woym.objects.ActivityType;
 import org.woym.objects.LessonType;
-import org.woym.objects.Teacher;
 import org.woym.persistence.ActivityTypeDAO;
 
 /**
@@ -52,7 +52,7 @@ public class LessonTypeController implements Serializable {
 		} catch (DatasetException e) {
 			FacesMessage message = new FacesMessage(
 					FacesMessage.SEVERITY_ERROR,
-					"Fehler beim Laden der Lehrer", "");
+					"Datenbankfehler", "Bei der Kommunikation mit der Datenbank ist ein Fehler aufgetreten.");
 			FacesContext.getCurrentInstance().addMessage(null, message);
 			return new ArrayList<ActivityType>();
 		}
