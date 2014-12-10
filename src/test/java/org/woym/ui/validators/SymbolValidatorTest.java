@@ -1,8 +1,5 @@
 package org.woym.ui.validators;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import javax.faces.context.FacesContext;
 import javax.faces.validator.ValidatorException;
 
@@ -15,13 +12,13 @@ import org.powermock.api.mockito.PowerMockito;
 import org.powermock.modules.junit4.PowerMockRunner;
 import org.woym.exceptions.DatasetException;
 import org.woym.objects.Teacher;
-import org.woym.persistence.TeacherDAO;
+import org.woym.persistence.DataAccess;
 
 @RunWith(PowerMockRunner.class)
 public class SymbolValidatorTest {
 
 	@Mock
-	TeacherDAO teacherDAO;
+	DataAccess dataAccess;
 	
 	@Mock
 	FacesContext facesContext;
@@ -36,10 +33,10 @@ public class SymbolValidatorTest {
 	 */
 	@Test(expected=ValidatorException.class)
 	public void testSymbolInuse() throws DatasetException {
-		List<Teacher> teacherList = new ArrayList<>();
-		teacherList.add(new Teacher());
 		
-		PowerMockito.when(teacherDAO.search(Mockito.anyString())).thenReturn(teacherList);
+		Teacher t = PowerMockito.mock(Teacher.class);
+		
+		PowerMockito.when(dataAccess.getOneEmployee(Mockito.anyString())).thenReturn(t);
 		
 		symbolValidator.validate(facesContext, null, "testSymbol");
 	}
@@ -51,7 +48,7 @@ public class SymbolValidatorTest {
 	 */
 	@Test
 	public void testSymbolNotInuse() throws DatasetException {
-		PowerMockito.when(teacherDAO.search(Mockito.anyString())).thenReturn(new ArrayList<Teacher>());
+		PowerMockito.when(dataAccess.getOneEmployee(Mockito.anyString())).thenReturn(null);
 		
 		symbolValidator.validate(facesContext, null, "testSymbol");
 	}
