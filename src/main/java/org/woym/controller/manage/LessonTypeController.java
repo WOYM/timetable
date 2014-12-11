@@ -14,6 +14,8 @@ import javax.faces.context.FacesContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.primefaces.context.RequestContext;
+import org.woym.config.Config;
+import org.woym.config.DefaultConfigEnum;
 import org.woym.exceptions.DatasetException;
 import org.woym.objects.LessonType;
 import org.woym.persistence.DataAccess;
@@ -62,6 +64,8 @@ public class LessonTypeController implements Serializable {
 	public void addLessonTypeDialog() {
 
 		addLessonType = new LessonType();
+		addLessonType.setTypicalDuration(getTypicalDuration());
+		
 		Map<String, Object> options = new HashMap<String, Object>();
 		options.put("modal", true);
 		options.put("draggable", false);
@@ -108,6 +112,22 @@ public class LessonTypeController implements Serializable {
 	}
 	
 	/**
+	 * Bearbeitet einen Unterrichtsinhalt
+	 */
+	public void editLessonType() {
+		try {
+			dataAccess.update(selectedLessonType);
+			FacesMessage message = new FacesMessage(
+					FacesMessage.SEVERITY_INFO,
+					"Unterrichtsinhalt aktualisiert",
+					selectedLessonType.getName());
+			FacesContext.getCurrentInstance().addMessage(null, message);
+		} catch (DatasetException e) {
+			LOGGER.error(e);
+		}
+	}
+	
+	/**
 	 * Fügt einen neuen Unterrichtsinhalt hinzu
 	 */
 	public void addLessonTypeFromDialog() {
@@ -116,6 +136,8 @@ public class LessonTypeController implements Serializable {
 		try {
 			dataAccess.persist(lessonType);
 			addLessonType = new LessonType();
+			addLessonType.setTypicalDuration(getTypicalDuration());
+			
 			FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO,
 					"Unterrichtsinhalt hinzugefügt", lessonType.getName());
 			FacesContext.getCurrentInstance().addMessage(null, message);
@@ -145,5 +167,20 @@ public class LessonTypeController implements Serializable {
 	public void setAddLessonType(LessonType addLessonType) {
 		this.addLessonType = addLessonType;
 	}
-
+	
+	private int getTypicalDuration() {
+		int typicalDuration = 0; 
+		
+		// Get prop-value
+		String[] typicalDurationString = Config.getPropValue(DefaultConfigEnum.TYPICAL_ACTIVITY_DURATION.getPropKey());
+		// Check for exactly one valid entry in configuration
+		if(typicalDurationString.length == 1) {
+			try {
+				typicalDuration = Integer.parseInt(typicalDurationString[0]);
+			  // Do nothing
+			} catch (NumberFormatException e) {}
+		}
+		
+		return typicalDuration;
+	}
 }
