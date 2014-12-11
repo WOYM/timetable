@@ -1,6 +1,7 @@
 package org.woym.controller.manage;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -14,6 +15,8 @@ import javax.faces.context.FacesContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.primefaces.context.RequestContext;
+import org.woym.config.Config;
+import org.woym.config.DefaultConfigEnum;
 import org.woym.exceptions.DatasetException;
 import org.woym.objects.LessonType;
 import org.woym.persistence.DataAccess;
@@ -62,6 +65,20 @@ public class LessonTypeController implements Serializable {
 	public void addLessonTypeDialog() {
 
 		addLessonType = new LessonType();
+		int typicalDuration = 0; 
+		
+		// Get prop-value
+		String[] typicalDurationString = Config.getPropValue(DefaultConfigEnum.TYPICAL_ACTIVITY_DURATION.getPropKey());
+		// Check for exactly one valid entry in configuration
+		if(typicalDurationString.length == 1) {
+			try {
+				typicalDuration = Integer.parseInt(typicalDurationString[0]);
+			  // Do nothing
+			} catch (NumberFormatException e) {}
+		}
+		
+		addLessonType.setTypicalDuration(typicalDuration);
+		
 		Map<String, Object> options = new HashMap<String, Object>();
 		options.put("modal", true);
 		options.put("draggable", false);

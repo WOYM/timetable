@@ -53,7 +53,13 @@
 				</ui:repeat>
 			</p:column>
 		</p:dataTable>
-		
+
+		<p:fieldset legend="Information" style="margin-bottom:20px; margin-top:20px;">
+			<h:panelGrid columns="2">
+				<h:outputText style="font-weight:bold;" value="Zeit:" /><h:outputText value="Stunden in Zeitstunden, eine Stunde entspricht sechzig Minuten." />
+			</h:panelGrid>
+		</p:fieldset>
+
 		<p:poll interval="3" update="lessonTypeTable" />
 	</h:form>
 </h:body>
