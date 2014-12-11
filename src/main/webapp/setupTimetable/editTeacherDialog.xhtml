@@ -31,7 +31,6 @@
 				<p:outputLabel for="name" value="Name:" />
 				<p:inputText id="name" value="#{teacherController.selectedTeacher.name}"
 					required="true" requiredMessage="Ein leerer Name ist nicht gültig.">
-					<f:validator validatorId="org.woym.NameValidator" />
 				</p:inputText>
 				<p:message for="name" />
 				<p:outputLabel for="symbol" value="Kürzel:" />
@@ -63,7 +62,7 @@
 			</p:fieldset>
 			<p:outputPanel style="margin-top:10px; float:right">
 				<p:commandButton value="Submit"
-					actionListener="#{teacherController.addTeacherFromDialog}"
+					actionListener="#{teacherController.editTeacher}"
 					update="@form" />
 			</p:outputPanel>
 			<p:messages style="margin-top:55px;" id="messages" showDetail="true" autoUpdate="true"

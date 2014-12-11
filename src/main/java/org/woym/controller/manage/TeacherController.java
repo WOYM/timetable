@@ -84,13 +84,14 @@ public class TeacherController implements Serializable {
 		List<ActivityType> allActivityTypes;
 		List<ActivityType> possibleActivityTypes;
 
+		// Logic to display correct lists
 		try {
-			allActivityTypes = dataAccess.getAllActivityTypes();
+			allActivityTypes = new ArrayList<>();
 			possibleActivityTypes = selectedTeacher.getPossibleActivityTypes();
 
-			for(Iterator<ActivityType> activityTypeIter = allActivityTypes.iterator(); activityTypeIter.hasNext();) {
-				if(possibleActivityTypes.contains(activityTypeIter.next())) {
-					activityTypeIter.remove();
+			for(ActivityType activityType : dataAccess.getAllActivityTypes()) {
+				if(!possibleActivityTypes.contains(activityType)) {
+					allActivityTypes.add(activityType);
 				}
 			}
 			
@@ -113,9 +114,8 @@ public class TeacherController implements Serializable {
 		this.activityTypes = activityTypes;
 	}
 
-	@SuppressWarnings("unchecked")
 	public void onTransferSelectedTeacher(TransferEvent event) {
-		selectedTeacher.setPossibleActivityTypes(((ArrayList<ActivityType>) event.getItems()));
+		selectedTeacher.setPossibleActivityTypes(activityTypes.getTarget());
 	}
 
 	/**
@@ -175,6 +175,11 @@ public class TeacherController implements Serializable {
 	public void editTeacher() {
 		try {
 			dataAccess.update(selectedTeacher);
+			FacesMessage message = new FacesMessage(
+					FacesMessage.SEVERITY_INFO,
+					"Lehrer aktualisiert",
+					selectedTeacher.getName());
+			FacesContext.getCurrentInstance().addMessage(null, message);
 		} catch (DatasetException e) {
 			LOGGER.error(e);
 		}
