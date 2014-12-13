@@ -37,11 +37,11 @@
 			<p:menuitem value="Löschen" update="@form" icon="ui-icon-close"
 				actionListener="#{lessonTypeController.deleteLessonType}" />
 		</p:contextMenu>
-		<p:dataTable id="lessonTypeTable" var="lessonType"
+		<p:dataTable emptyMessage="Keine Unterrichtsinhalte vorhanden" id="lessonTypeTable" var="lessonType"
 			value="#{lessonTypeController.getLessonTypes()}"
-			selection="#{lessonTypeController.selectedLessonType}"
+			selection="#{lessonTypeController.lessonType}"
 			selectionMode="single" rowKey="#{lessonType.name}">
-			<p:column headerText="Bezeichner">
+			<p:column headerText="Name">
 				<h:outputText value="#{lessonType.name}" />
 			</p:column>
 			<p:column headerText="Standarddauer">

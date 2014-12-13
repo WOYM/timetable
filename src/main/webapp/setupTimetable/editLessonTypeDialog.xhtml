@@ -29,13 +29,13 @@
 		<p:outputPanel>
 			<h:panelGrid columns="3">
 				<p:outputLabel for="name" value="Bezeichner:" />
-				<p:inputText id="name" value="#{lessonTypeController.selectedLessonType.name}"
+				<p:inputText id="name" value="#{lessonTypeController.lessonType.name}"
 					required="true" requiredMessage="Ein leerer Bezeichner ist nicht gültig.">
 				</p:inputText>
 				<p:message for="name" />
 				<p:outputLabel for="duration" value="Typische Dauer (Minuten):" />
 				<p:spinner id="duration" min="0" max="1000"
-					value="#{lessonTypeController.selectedLessonType.typicalDuration}" />
+					value="#{lessonTypeController.lessonType.typicalDuration}" />
 				<p:message for="duration" />
 			</h:panelGrid>
 			<p:outputPanel style="margin-top:10px; float:right">

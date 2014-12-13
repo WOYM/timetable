@@ -3,7 +3,6 @@ package org.woym.controller.manage;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -40,61 +39,37 @@ public class TeacherController implements Serializable {
 	private static Logger LOGGER = LogManager
 			.getLogger(TeacherController.class);
 
-	private transient DataAccess dataAccess = DataAccess.getInstance();
-	private Teacher selectedTeacher;
-	private Teacher addTeacher;
+	private Teacher teacher = new Teacher();
+
 	// TODO Move to planningController
 	private Teacher selectedTeacherForSearch;
 	private String searchSymbol;
 
 	private DualListModel<ActivityType> activityTypes;
 
-	public DualListModel<ActivityType> getActivityTypesForAddTeacher() {
-		List<ActivityType> allActivityTypes;
-		List<ActivityType> possibleActivityTypes = new ArrayList<>();
-
-		try {
-			allActivityTypes = dataAccess.getAllActivityTypes();
-
-			activityTypes = new DualListModel<ActivityType>(allActivityTypes,
-					possibleActivityTypes);
-		} catch (DatasetException e) {
-			LOGGER.error(e);
-			FacesMessage message = new FacesMessage(
-					FacesMessage.SEVERITY_ERROR, "Datenbankfehler",
-					"Bei der Kommunikation mit der Datenbank ist ein Fehler aufgetreten.");
-			FacesContext.getCurrentInstance().addMessage(null, message);
-		}
-
-		return activityTypes;
-	}
-
-	public void setActivityTypesForAddTeacher(
-			DualListModel<ActivityType> activityTypes) {
-
-		this.activityTypes = activityTypes;
-	}
-
-	@SuppressWarnings("unchecked")
-	public void onTransferAddTeacher(TransferEvent event) {
-		addTeacher.setPossibleActivityTypes(((ArrayList<ActivityType>) event.getItems()));
-	}
-	
-	public DualListModel<ActivityType> getActivityTypesForSelectedTeacher() {
+	/**
+	 * Diese Methode liefert ein Modell zweier Listen zurück. In diesen Listen
+	 * befinden sich die verfügbaren und die gewählten Unterrichtsinhalte für
+	 * einen Lehrer
+	 * 
+	 * @return Liste mit Unterrichtstypen
+	 */
+	public DualListModel<ActivityType> getActivityTypes() {
 		List<ActivityType> allActivityTypes;
 		List<ActivityType> possibleActivityTypes;
 
 		// Logic to display correct lists
 		try {
 			allActivityTypes = new ArrayList<>();
-			possibleActivityTypes = selectedTeacher.getPossibleActivityTypes();
+			possibleActivityTypes = teacher.getPossibleActivityTypes();
 
-			for(ActivityType activityType : dataAccess.getAllActivityTypes()) {
-				if(!possibleActivityTypes.contains(activityType)) {
+			for (ActivityType activityType : DataAccess.getInstance()
+					.getAllActivityTypes()) {
+				if (!possibleActivityTypes.contains(activityType)) {
 					allActivityTypes.add(activityType);
 				}
 			}
-			
+
 			activityTypes = new DualListModel<ActivityType>(allActivityTypes,
 					possibleActivityTypes);
 		} catch (DatasetException e) {
@@ -108,14 +83,12 @@ public class TeacherController implements Serializable {
 		return activityTypes;
 	}
 
-	public void setActivityTypesForSelectedTeacher(
-			DualListModel<ActivityType> activityTypes) {
-
+	public void setActivityTypes(DualListModel<ActivityType> activityTypes) {
 		this.activityTypes = activityTypes;
 	}
 
-	public void onTransferSelectedTeacher(TransferEvent event) {
-		selectedTeacher.setPossibleActivityTypes(activityTypes.getTarget());
+	public void onTransfer(TransferEvent event) {
+		teacher.setPossibleActivityTypes(activityTypes.getTarget());
 	}
 
 	/**
@@ -125,7 +98,7 @@ public class TeacherController implements Serializable {
 	 */
 	public List<Teacher> getTeachers() {
 		try {
-			return dataAccess.getAllTeachers();
+			return DataAccess.getInstance().getAllTeachers();
 		} catch (DatasetException e) {
 			FacesMessage message = new FacesMessage(
 					FacesMessage.SEVERITY_ERROR,
@@ -136,27 +109,31 @@ public class TeacherController implements Serializable {
 	}
 
 	/**
-	 * Opens a new dialog which enables the user to add a new teacher.
+	 * Öffnet einen neuen Dialog, mit dem sich ein Lehrer hinzufügen lässt.
 	 */
-	public void addTeacherDialog() {
+	public void openDialogAddTeacher() {
+		teacher = new Teacher();
 
-		addTeacher = new Teacher();
-
-		Map<String, Object> options = new HashMap<String, Object>();
-		options.put("modal", true);
-		options.put("draggable", false);
-		options.put("resizable", false);
-		options.put("contentHeight", 600);
-		options.put("contentWidth", 800);
-
-		RequestContext rc = RequestContext.getCurrentInstance();
-		rc.openDialog("addTeachersDialog", options, null);
+		openDialog("addTeacherDialog");
 	}
 
 	/**
-	 * Opens a new dialog which enables the user to edit a new teacher.
+	 * Öffnet einen neuen Dialog, mit dem sich der momentane Lehrer bearbeiten
+	 * lässt.
 	 */
-	public void editTeacherDialog() {
+	public void openDialogEditTeacher() {
+		openDialog("editTeacherDialog");
+	}
+
+	private void openDialog(String dialog) {
+
+		if (StringUtils.isNullOrEmpty(dialog)) {
+
+			IllegalArgumentException e = new IllegalArgumentException(
+					"Empty dialog-title is not allowed!");
+			LOGGER.error(e);
+			throw e;
+		}
 
 		Map<String, Object> options = new HashMap<String, Object>();
 		options.put("modal", true);
@@ -166,7 +143,7 @@ public class TeacherController implements Serializable {
 		options.put("contentWidth", 800);
 
 		RequestContext rc = RequestContext.getCurrentInstance();
-		rc.openDialog("editTeacherDialog", options, null);
+		rc.openDialog(dialog, options, null);
 	}
 
 	/**
@@ -174,11 +151,10 @@ public class TeacherController implements Serializable {
 	 */
 	public void editTeacher() {
 		try {
-			dataAccess.update(selectedTeacher);
-			FacesMessage message = new FacesMessage(
-					FacesMessage.SEVERITY_INFO,
-					"Lehrer aktualisiert",
-					selectedTeacher.getName());
+			DataAccess.getInstance().update(teacher);
+			FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO,
+					"Lehrer aktualisiert", teacher.getName() + " ("
+							+ teacher.getSymbol() + ")");
 			FacesContext.getCurrentInstance().addMessage(null, message);
 		} catch (DatasetException e) {
 			LOGGER.error(e);
@@ -189,13 +165,12 @@ public class TeacherController implements Serializable {
 	 * Deletes the selected teacher.
 	 */
 	public void deleteTeacher() {
-		if (selectedTeacher != null) {
+		if (teacher != null) {
 			try {
-				dataAccess.delete(selectedTeacher);
+				DataAccess.getInstance().delete(teacher);
 				FacesMessage message = new FacesMessage(
 						FacesMessage.SEVERITY_INFO, "Lehrer gelöscht",
-						selectedTeacher.getName() + " ("
-								+ selectedTeacher.getSymbol() + ")");
+						teacher.getName() + " (" + teacher.getSymbol() + ")");
 				FacesContext.getCurrentInstance().addMessage(null, message);
 			} catch (DatasetException e) {
 				FacesMessage message = new FacesMessage(
@@ -249,16 +224,13 @@ public class TeacherController implements Serializable {
 	 * Closes the dialog to add a teacher with a null-event.
 	 */
 	public void addTeacherFromDialog() {
-		Teacher teacher = addTeacher;
-
 		try {
-			dataAccess.persist(teacher);
-			addTeacher = new Teacher();
+			DataAccess.getInstance().persist(teacher);
 			FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO,
 					"Lehrer hinzugefügt", teacher.getName() + " ("
 							+ teacher.getSymbol() + ")");
 			FacesContext.getCurrentInstance().addMessage(null, message);
-
+			teacher = new Teacher();
 			// TODO: DatabaseException does not mean that the teacher exists, it
 			// just means something went wrong
 		} catch (DatasetException e) {
@@ -272,20 +244,14 @@ public class TeacherController implements Serializable {
 		// RequestContext.getCurrentInstance().closeDialog(addTeacher);
 	}
 
-	public Teacher getSelectedTeacher() {
-		return selectedTeacher;
+	public Teacher getTeacher() {
+		return teacher;
 	}
 
-	public void setSelectedTeacher(Teacher selectedTeacher) {
-		this.selectedTeacher = selectedTeacher;
-	}
-
-	public Teacher getAddTeacher() {
-		return addTeacher;
-	}
-
-	public void setAddTeacher(Teacher addTeacher) {
-		this.addTeacher = addTeacher;
+	public void setTeacher(Teacher teacher) {
+		if (teacher != null) {
+			this.teacher = teacher;
+		}
 	}
 
 	public String getSearchSymbol() {
