@@ -1,6 +1,5 @@
 package org.woym.objects;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,7 +18,7 @@ import javax.persistence.OneToMany;
  *
  */
 @Entity
-public class Location implements Serializable {
+public class Location extends org.woym.objects.Entity {
 
 	/**
 	 * 
@@ -78,14 +77,29 @@ public class Location implements Serializable {
 	}
 
 	@Override
-	public boolean equals(Object object) {
-		if (object instanceof Location) {
-			return ((Location) object).getName().equals(this.name);
-		}
-		return false;
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((name == null) ? 0 : name.hashCode());
+		return result;
 	}
-	
-	//TODO: hashCode() überschreiben.
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Location other = (Location) obj;
+		if (name == null) {
+			if (other.name != null)
+				return false;
+		} else if (!name.equals(other.name))
+			return false;
+		return true;
+	}
 
 	public boolean addRoom(final Room room) {
 		if (!rooms.contains(room)) {

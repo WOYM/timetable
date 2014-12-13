@@ -51,14 +51,31 @@ public class ChargeableCompensation implements Serializable {
 	}
 
 	@Override
-	public boolean equals(Object object) {
-		if (object instanceof ChargeableCompensation) {
-			ChargeableCompensation toCompare = (ChargeableCompensation) object;
-			return toCompare.getValue() == this.value
-					&& toCompare.getDescription().equals(this.description);
-		}
-		return false;
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result
+				+ ((description == null) ? 0 : description.hashCode());
+		result = prime * result + value;
+		return result;
 	}
-	
-	//TODO: hashCode() überschreiben.
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		ChargeableCompensation other = (ChargeableCompensation) obj;
+		if (description == null) {
+			if (other.description != null)
+				return false;
+		} else if (!description.equals(other.description))
+			return false;
+		if (value != other.value)
+			return false;
+		return true;
+	}
 }

@@ -11,6 +11,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.h2.util.StringUtils;
 import org.woym.exceptions.DatasetException;
+import org.woym.messages.StatusMessageEnum;
 import org.woym.objects.Employee;
 import org.woym.persistence.DataAccess;
 
@@ -50,8 +51,9 @@ public class SymbolValidator implements Validator {
 		String symbol = value.toString();
 
 		if (StringUtils.isNullOrEmpty(symbol)) {
-			FacesMessage msg = new FacesMessage("Ungültiges Kürzel.",
-					"Kürzel darf nicht leer sein.");
+			FacesMessage msg = new FacesMessage(
+					StatusMessageEnum.SYMBOL_IS_EMPTY.getSummary(),
+					StatusMessageEnum.SYMBOL_IS_EMPTY.getStatusMessage());
 			msg.setSeverity(FacesMessage.SEVERITY_ERROR);
 			throw new ValidatorException(msg);
 		}
@@ -59,8 +61,9 @@ public class SymbolValidator implements Validator {
 		symbol = symbol.trim();
 
 		if (StringUtils.isNullOrEmpty(symbol)) {
-			FacesMessage msg = new FacesMessage("Ungültiges Kürzel.",
-					"Kürzel darf nicht leer sein.");
+			FacesMessage msg = new FacesMessage(
+					StatusMessageEnum.SYMBOL_IS_EMPTY.getSummary(),
+					StatusMessageEnum.SYMBOL_IS_EMPTY.getStatusMessage());
 			msg.setSeverity(FacesMessage.SEVERITY_ERROR);
 			throw new ValidatorException(msg);
 		}
@@ -69,16 +72,20 @@ public class SymbolValidator implements Validator {
 			Employee employee = dataAccess.getOneEmployee(symbol);
 
 			if (employee != null) {
-				FacesMessage msg = new FacesMessage("Ungültiges Kürzel.",
-						"Das Kürzel wird bereis verwendet.");
+				FacesMessage msg = new FacesMessage(
+						StatusMessageEnum.SYMBOL_ALREADY_EXISTS.getSummary(),
+						StatusMessageEnum.SYMBOL_ALREADY_EXISTS
+								.getStatusMessage());
 				msg.setSeverity(FacesMessage.SEVERITY_ERROR);
 				throw new ValidatorException(msg);
 			}
 
 		} catch (DatasetException e) {
 			LOGGER.error(e);
-			FacesMessage msg = new FacesMessage("Datenbankfehler.",
-					"Bei der Kommunikation mit der Datenbank ist ein Fehler aufgetreten.");
+			FacesMessage msg = new FacesMessage(
+					StatusMessageEnum.DATABASE_COMMUNICATION_ERROR.getSummary(),
+					StatusMessageEnum.DATABASE_COMMUNICATION_ERROR
+							.getStatusMessage());
 			msg.setSeverity(FacesMessage.SEVERITY_ERROR);
 			throw new ValidatorException(msg);
 		}
