@@ -33,8 +33,8 @@ public class NameValidator implements Validator {
 
 		if (StringUtils.isNullOrEmpty(value.toString())) {
 			FacesMessage msg = new FacesMessage(
-					StatusMessageEnum.INVALID_NAME.getSummary(),
-					StatusMessageEnum.INVALID_NAME.getStatusMessage());
+					StatusMessageEnum.NAME_IS_EMPTY.getSummary(),
+					StatusMessageEnum.NAME_IS_EMPTY.getStatusMessage());
 			msg.setSeverity(FacesMessage.SEVERITY_ERROR);
 			throw new ValidatorException(msg);
 		}

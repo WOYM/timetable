@@ -52,8 +52,8 @@ public class SymbolValidator implements Validator {
 
 		if (StringUtils.isNullOrEmpty(symbol)) {
 			FacesMessage msg = new FacesMessage(
-					StatusMessageEnum.INVALID_SYMBOL.getSummary(),
-					StatusMessageEnum.INVALID_SYMBOL.getStatusMessage());
+					StatusMessageEnum.SYMBOL_IS_EMPTY.getSummary(),
+					StatusMessageEnum.SYMBOL_IS_EMPTY.getStatusMessage());
 			msg.setSeverity(FacesMessage.SEVERITY_ERROR);
 			throw new ValidatorException(msg);
 		}
@@ -62,8 +62,8 @@ public class SymbolValidator implements Validator {
 
 		if (StringUtils.isNullOrEmpty(symbol)) {
 			FacesMessage msg = new FacesMessage(
-					StatusMessageEnum.INVALID_SYMBOL.getSummary(),
-					StatusMessageEnum.INVALID_SYMBOL.getStatusMessage());
+					StatusMessageEnum.SYMBOL_IS_EMPTY.getSummary(),
+					StatusMessageEnum.SYMBOL_IS_EMPTY.getStatusMessage());
 			msg.setSeverity(FacesMessage.SEVERITY_ERROR);
 			throw new ValidatorException(msg);
 		}
