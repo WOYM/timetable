@@ -12,6 +12,8 @@ import org.apache.logging.log4j.Logger;
 import org.h2.util.StringUtils;
 import org.woym.exceptions.DatasetException;
 import org.woym.messages.StatusMessageEnum;
+import org.woym.objects.ActivityType;
+import org.woym.objects.LessonType;
 import org.woym.persistence.DataAccess;
 
 /**
@@ -42,14 +44,15 @@ public class ActivityTypeNameValidator implements Validator {
 	private static Logger LOGGER = LogManager
 			.getLogger(ActivityTypeNameValidator.class);
 
-	DataAccess dataAccess = DataAccess.getInstance();
-
 	@Override
 	public void validate(FacesContext context, UIComponent uiComponent,
 			Object value) throws ValidatorException {
 
 		String name = value.toString();
-
+		Object lessonBean = uiComponent.getValueExpression("lessonBean")
+				.getValue(context.getELContext());
+		
+		if(lessonBean instanceof LessonType)
 		if (StringUtils.isNullOrEmpty(name)) {
 			FacesMessage msg = new FacesMessage(
 					StatusMessageEnum.NAME_IS_EMPTY.getSummary(),
@@ -69,7 +72,8 @@ public class ActivityTypeNameValidator implements Validator {
 		}
 
 		try {
-			if (dataAccess.getOneActivityType(name) != null) {
+			ActivityType activityType = DataAccess.getInstance().getOneActivityType(name);
+			if (activityType != null && activityType != lessonBean) {
 				FacesMessage msg = new FacesMessage(
 						StatusMessageEnum.NAME_ALREADY_EXISTS.getSummary(),
 						StatusMessageEnum.NAME_ALREADY_EXISTS

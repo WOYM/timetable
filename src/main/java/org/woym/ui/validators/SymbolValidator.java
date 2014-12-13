@@ -13,6 +13,7 @@ import org.h2.util.StringUtils;
 import org.woym.exceptions.DatasetException;
 import org.woym.messages.StatusMessageEnum;
 import org.woym.objects.Employee;
+import org.woym.objects.Teacher;
 import org.woym.persistence.DataAccess;
 
 /**
@@ -42,52 +43,56 @@ public class SymbolValidator implements Validator {
 
 	private static Logger LOGGER = LogManager.getLogger(SymbolValidator.class);
 
-	DataAccess dataAccess = DataAccess.getInstance();
-
 	@Override
 	public void validate(FacesContext context, UIComponent uiComponent,
 			Object value) throws ValidatorException {
 
 		String symbol = value.toString();
+		Object teacherBean = uiComponent.getValueExpression("teacherBean")
+				.getValue(context.getELContext());
 
-		if (StringUtils.isNullOrEmpty(symbol)) {
-			FacesMessage msg = new FacesMessage(
-					StatusMessageEnum.SYMBOL_IS_EMPTY.getSummary(),
-					StatusMessageEnum.SYMBOL_IS_EMPTY.getStatusMessage());
-			msg.setSeverity(FacesMessage.SEVERITY_ERROR);
-			throw new ValidatorException(msg);
-		}
-
-		symbol = symbol.trim();
-
-		if (StringUtils.isNullOrEmpty(symbol)) {
-			FacesMessage msg = new FacesMessage(
-					StatusMessageEnum.SYMBOL_IS_EMPTY.getSummary(),
-					StatusMessageEnum.SYMBOL_IS_EMPTY.getStatusMessage());
-			msg.setSeverity(FacesMessage.SEVERITY_ERROR);
-			throw new ValidatorException(msg);
-		}
-
-		try {
-			Employee employee = dataAccess.getOneEmployee(symbol);
-
-			if (employee != null) {
+		if (teacherBean instanceof Teacher) {
+			if (StringUtils.isNullOrEmpty(symbol)) {
 				FacesMessage msg = new FacesMessage(
-						StatusMessageEnum.SYMBOL_ALREADY_EXISTS.getSummary(),
-						StatusMessageEnum.SYMBOL_ALREADY_EXISTS
-								.getStatusMessage());
+						StatusMessageEnum.SYMBOL_IS_EMPTY.getSummary(),
+						StatusMessageEnum.SYMBOL_IS_EMPTY.getStatusMessage());
 				msg.setSeverity(FacesMessage.SEVERITY_ERROR);
 				throw new ValidatorException(msg);
 			}
 
-		} catch (DatasetException e) {
-			LOGGER.error(e);
-			FacesMessage msg = new FacesMessage(
-					StatusMessageEnum.DATABASE_COMMUNICATION_ERROR.getSummary(),
-					StatusMessageEnum.DATABASE_COMMUNICATION_ERROR
-							.getStatusMessage());
-			msg.setSeverity(FacesMessage.SEVERITY_ERROR);
-			throw new ValidatorException(msg);
+			symbol = symbol.trim();
+
+			if (StringUtils.isNullOrEmpty(symbol)) {
+				FacesMessage msg = new FacesMessage(
+						StatusMessageEnum.SYMBOL_IS_EMPTY.getSummary(),
+						StatusMessageEnum.SYMBOL_IS_EMPTY.getStatusMessage());
+				msg.setSeverity(FacesMessage.SEVERITY_ERROR);
+				throw new ValidatorException(msg);
+			}
+
+			try {
+				Employee employee = DataAccess.getInstance().getOneEmployee(symbol);
+
+				if (employee != null && employee != teacherBean) {
+					FacesMessage msg = new FacesMessage(
+							StatusMessageEnum.SYMBOL_ALREADY_EXISTS
+									.getSummary(),
+							StatusMessageEnum.SYMBOL_ALREADY_EXISTS
+									.getStatusMessage());
+					msg.setSeverity(FacesMessage.SEVERITY_ERROR);
+					throw new ValidatorException(msg);
+				}
+
+			} catch (DatasetException e) {
+				LOGGER.error(e);
+				FacesMessage msg = new FacesMessage(
+						StatusMessageEnum.DATABASE_COMMUNICATION_ERROR
+								.getSummary(),
+						StatusMessageEnum.DATABASE_COMMUNICATION_ERROR
+								.getStatusMessage());
+				msg.setSeverity(FacesMessage.SEVERITY_ERROR);
+				throw new ValidatorException(msg);
+			}
 		}
 
 	}

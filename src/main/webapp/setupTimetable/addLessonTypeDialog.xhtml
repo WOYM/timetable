@@ -32,6 +32,7 @@
 				<p:inputText id="name"
 					value="#{lessonTypeController.lessonType.name}" required="true" requiredMessage="Ein leerer Name ist nicht gültig.">
 					<f:validator validatorId="org.woym.ActivityTypeNameValidator" />
+					<f:attribute name="lessonBean" value="#{lessonTypeController.lessonType}"/>
 				</p:inputText>
 				<p:message for="name" />
 				<p:outputLabel for="duration" value="Typische Dauer (Minuten):" />
