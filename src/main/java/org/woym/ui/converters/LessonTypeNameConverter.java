@@ -8,6 +8,7 @@ import javax.faces.convert.ConverterException;
 import javax.faces.convert.FacesConverter;
 
 import org.woym.exceptions.DatasetException;
+import org.woym.messages.StatusMessageEnum;
 import org.woym.objects.ActivityType;
 import org.woym.objects.LessonType;
 import org.woym.persistence.DataAccess;
@@ -24,8 +25,6 @@ import org.woym.persistence.DataAccess;
 @FacesConverter("org.woym.LessonTypeNameConverter")
 public class LessonTypeNameConverter implements Converter {
 
-	DataAccess dataAccess = DataAccess.getInstance();
-
 	@Override
 	public Object getAsObject(FacesContext context, UIComponent uiComponent,
 			String value) throws ConverterException {
@@ -33,12 +32,14 @@ public class LessonTypeNameConverter implements Converter {
 		ActivityType lessonType = new LessonType();
 
 		try {
-			lessonType = dataAccess.getOneActivityType(value);
+			lessonType = DataAccess.getInstance().getOneActivityType(value);
 		} catch (DatasetException e) {
-			FacesMessage message = new FacesMessage(
-					FacesMessage.SEVERITY_ERROR, "Datenbankfehler",
-					"Bei der Kommunikation mit der Datenbank ist ein Fehler aufgetreten.");
-			throw new ConverterException(message);
+			FacesMessage msg = new FacesMessage(
+					StatusMessageEnum.DATABASE_COMMUNICATION_ERROR.getSummary(),
+					StatusMessageEnum.DATABASE_COMMUNICATION_ERROR
+							.getStatusMessage());
+			msg.setSeverity(FacesMessage.SEVERITY_ERROR);
+			throw new ConverterException(msg);
 		}
 
 		return lessonType;
