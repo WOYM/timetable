@@ -1,6 +1,5 @@
 package org.woym.objects;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -12,14 +11,14 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 
 /**
- * Eine Klasse die eine Liste von TimePeriod-Objekten hält, damit die HashMap in
- * {@linkplain Activity} persistiert werden kann.
+ * Eine Klasse die eine Liste die einen Mitarbeiter und eine Liste von Zeiträumen
+ * enhält.
  * 
  * @author Adrian
  *
  */
 @Entity
-public class EmployeeTimePeriods implements Serializable {
+public class EmployeeTimePeriods extends org.woym.objects.Entity {
 
 	/**
 	 * 
@@ -34,6 +33,11 @@ public class EmployeeTimePeriods implements Serializable {
 	private Long id;
 
 	/**
+	 * Der Lehrer.
+	 */
+	private Employee employee;
+
+	/**
 	 * Eine Liste von Zeiträumen.
 	 */
 	@ElementCollection
@@ -42,7 +46,7 @@ public class EmployeeTimePeriods implements Serializable {
 
 	public EmployeeTimePeriods() {
 	}
-	
+
 	public Long getId() {
 		return id;
 	}
@@ -51,14 +55,48 @@ public class EmployeeTimePeriods implements Serializable {
 		this.id = id;
 	}
 
+	public Employee getEmployee() {
+		return employee;
+	}
+
+	public void setEmployee(Employee employee) {
+		this.employee = employee;
+	}
+
 	public List<TimePeriod> getTimePeriods() {
 		return timePeriods;
 	}
-	
+
 	public void setTimePeriods(List<TimePeriod> timePeriods) {
 		this.timePeriods = timePeriods;
 	}
+	
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result
+				+ ((employee == null) ? 0 : employee.hashCode());
+		return result;
+	}
 
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		EmployeeTimePeriods other = (EmployeeTimePeriods) obj;
+		if (employee == null) {
+			if (other.employee != null)
+				return false;
+		} else if (!employee.equals(other.employee))
+			return false;
+		return true;
+	}
+	
 	public boolean add(final TimePeriod timePeriod) {
 		if (!timePeriods.contains(timePeriod)) {
 			timePeriods.add(timePeriod);

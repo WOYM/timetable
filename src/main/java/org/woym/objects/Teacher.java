@@ -18,17 +18,4 @@ public class Teacher extends Employee implements Serializable {
 
 	public Teacher() {	
 	}
-
-	@Override
-	public boolean addActivityType(ActivityType activityType) {
-		if(activityType == null) {
-			return false;
-		}
-		
-		if(!this.possibleActivityTypes.contains(activityType)) {
-			this.possibleActivityTypes.add(activityType);
-			return true;
-		}
-		return false;
-	}
 }

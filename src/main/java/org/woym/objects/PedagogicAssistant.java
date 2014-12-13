@@ -20,11 +20,4 @@ public class PedagogicAssistant extends Employee {
 
 	public PedagogicAssistant() {
 	}
-
-	@Override
-	public boolean addActivityType(ActivityType activityType) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
 }

@@ -1,11 +1,9 @@
 package org.woym.objects;
 
-import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
+import javax.persistence.CascadeType;
 import javax.persistence.DiscriminatorColumn;
 import javax.persistence.DiscriminatorType;
 import javax.persistence.Embedded;
@@ -14,10 +12,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
-import javax.persistence.MapKeyJoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
 
@@ -30,7 +25,7 @@ import javax.persistence.OrderBy;
 @Entity
 @Inheritance
 @DiscriminatorColumn(name = "TYPE", discriminatorType = DiscriminatorType.STRING, length = 20)
-public abstract class Activity implements Serializable {
+public abstract class Activity extends org.woym.objects.Entity {
 
 	/**
 	 * 
@@ -69,10 +64,8 @@ public abstract class Activity implements Serializable {
 	 * Die an der Aktivität teilnehmenden Lehrer über
 	 * {@linkplain EmployeeTimePeriods} Zeiträumen zugeordnet.
 	 */
-	@OneToMany
-	@JoinTable(name = "ACTIVITY_EMPLOYEES", joinColumns = @JoinColumn(name = "ACTIVITY_ID"), inverseJoinColumns = @JoinColumn(name = "EMPLOYEETIMEPERIODS_ID"))
-	@MapKeyJoinColumn(name = "EMPLOYEE_ID", table = "ACTIVITY_EMPLOYEES")
-	private Map<Employee, EmployeeTimePeriods> employees = new HashMap<>();
+	@OneToMany(cascade = CascadeType.ALL)
+	private List<EmployeeTimePeriods> employeeTimePeriods = new ArrayList<EmployeeTimePeriods>();
 
 	public Activity() {
 	}
@@ -109,12 +102,13 @@ public abstract class Activity implements Serializable {
 		this.schoolclasses = schoolclasses;
 	}
 
-	public Map<Employee, EmployeeTimePeriods> getEmployees() {
-		return employees;
+	public List<EmployeeTimePeriods> getEmployeeTimePeriods() {
+		return employeeTimePeriods;
 	}
 
-	public void setEmployees(Map<Employee, EmployeeTimePeriods> employees) {
-		this.employees = employees;
+	public void setEmployeeTimePeriods(
+			List<EmployeeTimePeriods> employeeTimePeriods) {
+		this.employeeTimePeriods = employeeTimePeriods;
 	}
 
 	/**
@@ -163,52 +157,59 @@ public abstract class Activity implements Serializable {
 	}
 
 	/**
-	 * Fügt ein Mapping für den übergebenen Lehrer mit dem übergebenen
-	 * {@linkplain EmployeeTimePeriods}-Objekt ein. ein. Ist bereits ein Mapping
-	 * für den übergebenen {@link Employee} vorhanden, wird dieses nicht
-	 * überschrieben und die Methode gibt {@code false} zurück. Ansonsten wird
-	 * das Mapping eingefügt und {@code true} zurückgegeben.
+	 * Fügt der Liste von {@linkplain EmployeeTimePeriods}-Objekten das
+	 * übergebene hinzu und gibt {@code true} zurück, sofern es noch nicht
+	 * vorhanden war. Ansonsten wird es nicht hinzugefügt und {@code false}
+	 * zurückgegeben.
 	 * 
-	 * @param employee
-	 *            - der Mitarbeiter
 	 * @param employeeTimePeriods
-	 *            - das zu mappende {@link EmployeeTimePeriods}-Objekt
-	 * @return {@code true}, wenn noch kein Mapping vorhanden war und eins
-	 *         hinzugefügt wurde, ansonsten {@code false}
+	 *            - das hinzuzufügende {@linkplain EmployeeTimePeriods}-Objekt
+	 * @return {@code true}, wenn das übergebene
+	 *         {@linkplain EmployeeTimePeriods}-Objekt noch nicht vorhanden war
+	 *         und neu hinzugefügt wurde, ansonsten {@code false}
 	 */
-	public boolean addSubjectDemand(final Employee employee,
+	public boolean addEmployeeTimePeriods(
 			EmployeeTimePeriods employeeTimePeriods) {
-		if (!employees.containsKey(employee)) {
-			employees.put(employee, employeeTimePeriods);
+		if (!this.employeeTimePeriods.contains(employeeTimePeriods)) {
+			this.employeeTimePeriods.add(employeeTimePeriods);
 			return true;
 		}
 		return false;
 	}
 
 	/**
-	 * Entfernt das Mapping für das übergebene {@linkplain Employee}-Objekt.
+	 * Entfernt das das übergebene {@linkplain EmployeeTimePeriods}-Objekt, gibt
+	 * {@code true} zurück, wenn das Entfernen erfolgreich war (das Objekt
+	 * vorhanden war), ansonsten {@code false}.
 	 * 
 	 * @param employee
 	 *            - der Mitarbeiter, für welchen das Mapping entfernt werden
 	 *            soll
-	 * @return EmployeeTimePeriods (Value), wenn ein Mapping bestand, ansonsten
-	 *         {@code null}
+	 * @return {@code true}, wenn übergebenes Objekt gelöscht, ansonsten
+	 *         {@code false}
 	 */
-	public EmployeeTimePeriods removeSubjectDemand(final Employee employee) {
-		return employees.remove(employee);
+	public boolean removeEmployeeTimePeriods(
+			EmployeeTimePeriods employeeTimePeriods) {
+		return this.employeeTimePeriods.remove(employeeTimePeriods);
 	}
 
 	/**
-	 * Gibt {@code true} zurück, wenn ein Mapping für das übergebene
-	 * {@linkplain Teacher}-Objekt vorhanden ist, ansonsten {@code false}.
+	 * Gibt {@code true} zurück, wenn ein {@linkplain EmployeeTimePeriods} für
+	 * den übergebenen Lehrer vorhanden ist, ansonsten {@code false}.<br>
+	 * 
+	 * Funktioniert nur, wenn {@linkplain EmployeeTimePeriods#equals(Object)}
+	 * über das in EmployeeTimePeriods vorhandene {@linkplain Employee}-Objekt
+	 * definiert ist.
 	 * 
 	 * @param employee
-	 *            - der Mitarbeiter, für den eprüft werden soll, ob ein Mapping
-	 *            vorhanden ist
-	 * @return {@code true}, wenn ein Mapping vorhanden ist, ansonsten
-	 *         {@code false}
+	 *            - der Mitarbeiter, für den eprüft werden soll, ein
+	 *            {@linkplain EmployeeTimePeriods}-Objekt vorhanden ist
+	 * @return {@code true}, wenn ein {@linkplain EmployeeTimePeriods}-Objekt
+	 *         vorhanden ist, ansonsten {@code false}
 	 */
-	public boolean containsSubjectDemand(final Employee employee) {
-		return employees.containsKey(employee);
+	public boolean containsEmployee(final Employee employee) {
+		EmployeeTimePeriods employeeTimePeriods = new EmployeeTimePeriods();
+		employeeTimePeriods.setEmployee(employee);
+		return this.employeeTimePeriods.contains(employeeTimePeriods);
 	}
 }
