@@ -1,6 +1,5 @@
 package org.woym.objects;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -26,7 +25,7 @@ import javax.persistence.OrderBy;
  *
  */
 @Entity
-public class AcademicYear implements Serializable {
+public class AcademicYear extends org.woym.objects.Entity {
 
 	/**
 	 * 
@@ -103,14 +102,23 @@ public class AcademicYear implements Serializable {
 	}
 
 	@Override
-	public boolean equals(Object object) {
-		if (object instanceof AcademicYear) {
-			return ((AcademicYear) object).getAcademicYear() == this.academicYear;
-		}
-		return false;
+	public int hashCode() {
+		return academicYear;
 	}
-	
-	//TODO: hashCode() überschreiben.
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		AcademicYear other = (AcademicYear) obj;
+		if (academicYear != other.academicYear)
+			return false;
+		return true;
+	}
 
 	/**
 	 * Fügt das übergebenene {@linkplain Schoolclass}-Objekt der entsprechenden

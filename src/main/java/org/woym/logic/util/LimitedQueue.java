@@ -1,4 +1,4 @@
-package org.woym.logic;
+package org.woym.logic.util;
 
 import java.util.LinkedList;
 
