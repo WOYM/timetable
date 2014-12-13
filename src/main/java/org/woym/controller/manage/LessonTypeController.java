@@ -36,9 +36,7 @@ public class LessonTypeController implements Serializable {
 	private static Logger LOGGER = LogManager
 			.getLogger(LessonTypeController.class);
 
-	private transient DataAccess dataAccess = DataAccess.getInstance();
-	private LessonType selectedLessonType;
-	private LessonType addLessonType;
+	private LessonType lessonType;
 
 	/**
 	 * Liefert eine Liste mit allen Unterrichtsinhalten zurück.
@@ -47,11 +45,11 @@ public class LessonTypeController implements Serializable {
 	 */
 	public List<LessonType> getLessonTypes() {
 		try {
-			return dataAccess.getAllLessonTypes();
+			return DataAccess.getInstance().getAllLessonTypes();
 		} catch (DatasetException e) {
 			FacesMessage message = new FacesMessage(
-					FacesMessage.SEVERITY_ERROR,
-					"Datenbankfehler", "Bei der Kommunikation mit der Datenbank ist ein Fehler aufgetreten.");
+					FacesMessage.SEVERITY_ERROR, "Datenbankfehler",
+					"Bei der Kommunikation mit der Datenbank ist ein Fehler aufgetreten.");
 			FacesContext.getCurrentInstance().addMessage(null, message);
 			return new ArrayList<LessonType>();
 		}
@@ -63,22 +61,19 @@ public class LessonTypeController implements Serializable {
 	 */
 	public void addLessonTypeDialog() {
 
-		addLessonType = new LessonType();
-		addLessonType.setTypicalDuration(getTypicalDuration());
-		
-		Map<String, Object> options = new HashMap<String, Object>();
-		options.put("modal", true);
-		options.put("draggable", false);
-		options.put("resizable", false);
-		options.put("contentHeight", 400);
-		options.put("contentWidth", 600);
+		lessonType = new LessonType();
+		lessonType.setTypicalDuration(getTypicalDuration());
 
-		RequestContext rc = RequestContext.getCurrentInstance();
-		rc.openDialog("addLessonTypeDialog", options, null);
+		openDialog("addLessonTypeDialog");
 	}
 
 	public void editLessonTypeDialog() {
 
+		openDialog("editLessonTypeDialog");
+	}
+
+	private void openDialog(String dialog) {
+
 		Map<String, Object> options = new HashMap<String, Object>();
 		options.put("modal", true);
 		options.put("draggable", false);
@@ -87,20 +82,19 @@ public class LessonTypeController implements Serializable {
 		options.put("contentWidth", 600);
 
 		RequestContext rc = RequestContext.getCurrentInstance();
-		rc.openDialog("editLessonTypeDialog", options, null);
+		rc.openDialog(dialog, options, null);
 	}
 
 	/**
 	 * Löscht den selektierten Unterrichtsinhalt
 	 */
 	public void deleteLessonType() {
-		if (selectedLessonType != null) {
+		if (lessonType != null) {
 			try {
-				dataAccess.delete(selectedLessonType);
+				DataAccess.getInstance().delete(lessonType);
 				FacesMessage message = new FacesMessage(
 						FacesMessage.SEVERITY_INFO,
-						"Unterrichtsinhalt gelöscht",
-						selectedLessonType.getName());
+						"Unterrichtsinhalt gelöscht", lessonType.getName());
 				FacesContext.getCurrentInstance().addMessage(null, message);
 			} catch (DatasetException e) {
 				FacesMessage message = new FacesMessage(
@@ -110,41 +104,37 @@ public class LessonTypeController implements Serializable {
 			}
 		}
 	}
-	
+
 	/**
 	 * Bearbeitet einen Unterrichtsinhalt
 	 */
 	public void editLessonType() {
 		try {
-			dataAccess.update(selectedLessonType);
-			FacesMessage message = new FacesMessage(
-					FacesMessage.SEVERITY_INFO,
-					"Unterrichtsinhalt aktualisiert",
-					selectedLessonType.getName());
+			DataAccess.getInstance().update(lessonType);
+			FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO,
+					"Unterrichtsinhalt aktualisiert", lessonType.getName());
 			FacesContext.getCurrentInstance().addMessage(null, message);
 		} catch (DatasetException e) {
 			LOGGER.error(e);
 		}
 	}
-	
+
 	/**
 	 * Fügt einen neuen Unterrichtsinhalt hinzu
 	 */
 	public void addLessonTypeFromDialog() {
-		LessonType lessonType = addLessonType;
 
 		try {
-			dataAccess.persist(lessonType);
-			addLessonType = new LessonType();
-			addLessonType.setTypicalDuration(getTypicalDuration());
-			
+			DataAccess.getInstance().persist(lessonType);
 			FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO,
 					"Unterrichtsinhalt hinzugefügt", lessonType.getName());
 			FacesContext.getCurrentInstance().addMessage(null, message);
+			lessonType = new LessonType();
+			lessonType.setTypicalDuration(getTypicalDuration());
 		} catch (DatasetException e) {
 			FacesMessage message = new FacesMessage(
-					FacesMessage.SEVERITY_ERROR,
-					"Datenbankfehler", "Bei der Kommunikation mit der Datenbank ist ein Fehler aufgetreten.");
+					FacesMessage.SEVERITY_ERROR, "Datenbankfehler",
+					"Bei der Kommunikation mit der Datenbank ist ein Fehler aufgetreten.");
 			FacesContext.getCurrentInstance().addMessage(null, message);
 			return;
 		}
@@ -152,35 +142,32 @@ public class LessonTypeController implements Serializable {
 		// RequestContext.getCurrentInstance().closeDialog(addTeacher);
 	}
 
-	public LessonType getSelectedLessonType() {
-		return selectedLessonType;
+	public LessonType getLessonType() {
+		return lessonType;
 	}
 
-	public void setSelectedLessonType(LessonType selectedLessonType) {
-		this.selectedLessonType = selectedLessonType;
+	public void setLessonType(LessonType lessonType) {
+		if (lessonType != null) {
+			this.lessonType = lessonType;
+		}
 	}
 
-	public LessonType getAddLessonType() {
-		return addLessonType;
-	}
-
-	public void setAddLessonType(LessonType addLessonType) {
-		this.addLessonType = addLessonType;
-	}
-	
 	private int getTypicalDuration() {
-		int typicalDuration = 0; 
-		
+		int typicalDuration = 0;
+
 		// Get prop-value
-		String[] typicalDurationString = Config.getPropValue(DefaultConfigEnum.TYPICAL_ACTIVITY_DURATION.getPropKey());
+		String[] typicalDurationString = Config
+				.getPropValue(DefaultConfigEnum.TYPICAL_ACTIVITY_DURATION
+						.getPropKey());
 		// Check for exactly one valid entry in configuration
-		if(typicalDurationString.length == 1) {
+		if (typicalDurationString.length == 1) {
 			try {
 				typicalDuration = Integer.parseInt(typicalDurationString[0]);
-			  // Do nothing
-			} catch (NumberFormatException e) {}
+				// Do nothing
+			} catch (NumberFormatException e) {
+			}
 		}
-		
+
 		return typicalDuration;
 	}
 }

@@ -7,14 +7,14 @@
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:p="http://primefaces.org/ui">
 <h:head>
-	<title>Lehrkraft hinzufügen</title>
+	<title>Lehrkräfte</title>
 </h:head>
 
 <h:body>
 	<h:form>
 		<p:outputPanel>
 			<h1>
-				<h:outputText value="Hinzufügen neuer Lehrkräfte" />
+				<h:outputText value="Hinzufügen von Lehrkräften" />
 			</h1>
 			<h:outputText
 				value="In dieser Ansicht können neue Lehrkräfte hinzugefügt werden." />
@@ -29,34 +29,34 @@
 		<p:outputPanel>
 			<h:panelGrid columns="3">
 				<p:outputLabel for="name" value="Name:" />
-				<p:inputText id="name" value="#{teacherController.addTeacher.name}"
+				<p:inputText id="name" value="#{teacherController.teacher.name}"
 					required="true" requiredMessage="Ein leerer Name ist nicht gültig.">
 					<f:validator validatorId="org.woym.NameValidator" />
 				</p:inputText>
 				<p:message for="name" />
 				<p:outputLabel for="symbol" value="Kürzel:" />
 				<p:inputText id="symbol"
-					value="#{teacherController.addTeacher.symbol}" required="true"
+					value="#{teacherController.teacher.symbol}" required="true"
 					requiredMessage="Ein leeres Kürzel ist nicht gültig.">
 					<f:validator validatorId="org.woym.SymbolValidator" />
 				</p:inputText>
 				<p:message for="symbol" />
 				<p:outputLabel for="weekhours" value="Wochenstunden:" />
 				<p:spinner id="weekhours" min="0" max="100"
-					value="#{teacherController.addTeacher.hoursPerWeek}" />
+					value="#{teacherController.teacher.hoursPerWeek}" />
 				<p:message for="weekhours" />
 			</h:panelGrid>
 			<p:fieldset legend="Schulfächer" toggleable="true" toggleSpeed="500"
 				collapsed="true">
 
-				<p:pickList id="lessonTypePickList" value="#{teacherController.activityTypesForAddTeacher}"
+				<p:pickList id="lessonTypePickList" value="#{teacherController.activityTypes}"
 					var="lessonType" itemValue="#{lessonType}"
 					itemLabel="#{lessonType.name}" filterMatchMode="contains" converter="LessonTypeNameConverter">
 
 					<f:facet name="sourceCaption">Verfügbar</f:facet>
 					<f:facet name="targetCaption">Gewählt</f:facet>
 
-					<p:ajax event="transfer" listener="#{teacherController.onTransferAddTeacher}" />
+					<p:ajax event="transfer" listener="#{teacherController.onTransfer}" />
 
 					<p:column>
 						<h:outputText value="#{lessonType.name}" />

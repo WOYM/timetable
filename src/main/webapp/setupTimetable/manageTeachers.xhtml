@@ -24,7 +24,7 @@
 
 		<p:outputPanel style="float:right">
 			<p:commandButton value="Hinzufügen" icon="ui-icon-plusthick"
-				actionListener="#{teacherController.addTeacherDialog}">
+				actionListener="#{teacherController.openDialogAddTeacher}">
 				<p:ajax event="dialogReturn" update="@form" />
 			</p:commandButton>
 		</p:outputPanel>
@@ -32,14 +32,14 @@
 		<!-- Existierende Lehrkräfte -->
 		<p:contextMenu for="teacherTable">
 			<p:menuitem value="Bearbeiten"
-				actionListener="#{teacherController.editTeacherDialog}"
+				actionListener="#{teacherController.openDialogEditTeacher}"
 				icon="ui-icon-pencil" />
 			<p:menuitem value="Löschen" update="@form" icon="ui-icon-close"
 				actionListener="#{teacherController.deleteTeacher}" />
 		</p:contextMenu>
-		<p:dataTable id="teacherTable" var="teacher"
+		<p:dataTable emptyMessage="Keine Lehrer vorhanden" id="teacherTable" var="teacher"
 			value="#{teacherController.getTeachers()}"
-			selection="#{teacherController.selectedTeacher}"
+			selection="#{teacherController.teacher}"
 			selectionMode="single" rowKey="#{teacher.symbol}">
 			<p:column headerText="Name">
 				<h:outputText value="#{teacher.name}" />
