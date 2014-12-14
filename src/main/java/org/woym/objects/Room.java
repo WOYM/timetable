@@ -1,7 +1,5 @@
 package org.woym.objects;
 
-import java.io.Serializable;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -10,11 +8,12 @@ import javax.persistence.Id;
 
 /**
  * Diese Klasse repräsentiert einen Raum.
+ * 
  * @author Adrian
  *
  */
 @Entity
-public class Room implements Serializable{
+public class Room extends org.woym.objects.Entity {
 
 	/**
 	 * 
@@ -26,18 +25,18 @@ public class Room implements Serializable{
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Long id;
-	
+
 	/**
 	 * Name des Raumes.
 	 */
 	@Column(nullable = false)
 	private String name;
-	
+
 	/**
 	 * Funktion des Raumes.
 	 */
 	private String purpose;
-	
+
 	/**
 	 * Zusätzliche Informationen zu dem Raum.
 	 */
@@ -45,7 +44,7 @@ public class Room implements Serializable{
 
 	public Room() {
 	}
-	
+
 	public Long getId() {
 		return id;
 	}
@@ -77,9 +76,10 @@ public class Room implements Serializable{
 	public void setAdditionalInformation(String additionalInformation) {
 		this.additionalInformation = additionalInformation;
 	}
-	
+
 	@Override
-	public String toString(){
+	public String toString() {
 		return name + " (" + purpose + ")";
 	}
+	
 }

@@ -12,30 +12,41 @@ import org.woym.objects.ActivityType;
 import org.woym.objects.LessonType;
 import org.woym.persistence.DataAccess;
 
+/**
+ * <h1>LessonTypeNameConverter</h1>
+ * <p>
+ * Diese Controller ist dafür zuständig, die in den Listen zur Auswahl von
+ * Unterrichtsinhalten dargestellten Objekte richtig darzustellen.
+ * 
+ * 
+ * @author Tim Hansen (tihansen)
+ */
 @FacesConverter("org.woym.LessonTypeNameConverter")
-public class LessonTypeNameConverter implements Converter{
+public class LessonTypeNameConverter implements Converter {
 
 	DataAccess dataAccess = DataAccess.getInstance();
-	
+
 	@Override
-	public Object getAsObject(FacesContext context, UIComponent uiComponent, String value) throws ConverterException {
-		
+	public Object getAsObject(FacesContext context, UIComponent uiComponent,
+			String value) throws ConverterException {
+
 		ActivityType lessonType = new LessonType();
-		
+
 		try {
 			lessonType = dataAccess.getOneActivityType(value);
-		} catch(DatasetException e) {
-			FacesMessage msg = 
-					new FacesMessage("Ungültiges Kürzel.", 
-							"Kürzel darf nicht leer sein.");
-				msg.setSeverity(FacesMessage.SEVERITY_ERROR);
-				throw new ConverterException(msg);
+		} catch (DatasetException e) {
+			FacesMessage message = new FacesMessage(
+					FacesMessage.SEVERITY_ERROR, "Datenbankfehler",
+					"Bei der Kommunikation mit der Datenbank ist ein Fehler aufgetreten.");
+			throw new ConverterException(message);
 		}
+
 		return lessonType;
 	}
 
 	@Override
-	public String getAsString(FacesContext context, UIComponent uiComponent, Object value) throws ConverterException {
+	public String getAsString(FacesContext context, UIComponent uiComponent,
+			Object value) throws ConverterException {
 		ActivityType lessonType = (ActivityType) value;
 		return lessonType.getName();
 	}

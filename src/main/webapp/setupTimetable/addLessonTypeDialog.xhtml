@@ -30,13 +30,13 @@
 			<h:panelGrid columns="3">
 				<p:outputLabel for="name" value="Bezeichner:" />
 				<p:inputText id="name"
-					value="#{lessonTypeController.addLessonType.name}" required="true" requiredMessage="Ein leerer Bezeichner ist nicht gültig.">
+					value="#{lessonTypeController.lessonType.name}" required="true" requiredMessage="Ein leerer Name ist nicht gültig.">
 					<f:validator validatorId="org.woym.ActivityTypeNameValidator" />
 				</p:inputText>
 				<p:message for="name" />
 				<p:outputLabel for="duration" value="Typische Dauer (Minuten):" />
 				<p:spinner id="duration" min="0" max="1000"
-					value="#{lessonTypeController.addLessonType.typicalDuration}" />
+					value="#{lessonTypeController.lessonType.typicalDuration}" />
 				<p:message for="duration" />
 				<p:spacer />
 				<p:outputPanel style="float:right">

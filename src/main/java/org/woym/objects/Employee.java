@@ -1,6 +1,5 @@
 package org.woym.objects;
 
-import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
@@ -27,22 +26,12 @@ import javax.persistence.OrderBy;
 @Entity
 @Inheritance
 @DiscriminatorColumn(name = "TYPE", discriminatorType = DiscriminatorType.STRING, length = 20)
-public abstract class Employee implements Serializable {
+public abstract class Employee extends org.woym.objects.Entity {
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 9008279410416213060L;
-
-	/**
-	 * Rechengenauigkeit der verwendeten Kommazahlen.
-	 */
-	private static final int PRECISION = 4;
-
-	/**
-	 * Anzahl der Nachkommstellen bei Kommazahlen.
-	 */
-	private static final int SCALE = 2;
 
 	/**
 	 * Die automatisch generierte ID ist der Primärschlüssel für die Datenbank.
@@ -66,15 +55,15 @@ public abstract class Employee implements Serializable {
 	/**
 	 * Anzahl der Wochenstunden. Darf nicht null sein.
 	 */
-	@Column(nullable = false, precision = PRECISION, scale = SCALE)
+	@Column(nullable = false)
 	private BigDecimal hoursPerWeek;
 
 	/**
 	 * Anzahl der Stunden, die die Person des Personals auf Aktivitäten verteilt
 	 * ist. Bei Erzeugung sind dies null Stunden.
 	 */
-	@Column(nullable = false, precision = PRECISION, scale = SCALE)
-	private BigDecimal allocatedHours = new BigDecimal("0").setScale(SCALE);
+	@Column(nullable = false)
+	private BigDecimal allocatedHours = new BigDecimal("0");
 
 	/**
 	 * Die anrechenbaren Ersatzleistungen des Lehrers.
@@ -204,25 +193,30 @@ public abstract class Employee implements Serializable {
 		return getName() + ", " + symbol + ", " + hoursPerWeek + "hpw";
 	}
 
-	/**
-	 * Überschreiben der equals-Methode. Zwei Mitarbeiter sind gleich, wenn sie
-	 * das gleiche Kürzel besitzen.
-	 * 
-	 * @param object
-	 *            - das zu vergleichende Objekt
-	 * @return {@code true}, wenn ein Employee mit demselben Kürzel übergeben
-	 *         würde, {@code false}, wenn das Kürzel verschieden ist oder kein
-	 *         {@linkplain Employee} übergeben wurde
-	 */
 	@Override
-	public boolean equals(Object object) {
-		if (object instanceof Employee) {
-			return ((Employee) object).getSymbol().equals(this.symbol);
-		}
-		return false;
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((symbol == null) ? 0 : symbol.hashCode());
+		return result;
 	}
-	
-	//TODO: hashCode() überschreiben.
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Employee other = (Employee) obj;
+		if (symbol == null) {
+			if (other.symbol != null)
+				return false;
+		} else if (!symbol.equals(other.symbol))
+			return false;
+		return true;
+	}
 
 	/**
 	 * Fügt das übergebenene {@linkplain ChargeableCompensation}-Objekt der
@@ -369,7 +363,17 @@ public abstract class Employee implements Serializable {
 	 * @return {@code true}, wenn das Objekt sich noch nicht in der Liste
 	 *         befindet und hinzugefügt wurde, ansonsten {@code false}
 	 */
-	public abstract boolean addActivityType(final ActivityType activityType);
+	public boolean addActivityType(ActivityType activityType) {
+		if(activityType == null) {
+			return false;
+		}
+		
+		if(!this.possibleActivityTypes.contains(activityType)) {
+			this.possibleActivityTypes.add(activityType);
+			return true;
+		}
+		return false;
+	}
 
 	/**
 	 * Entfernt das übergebene {@linkplain ActivityType}-Objekt aus der

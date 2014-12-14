@@ -37,11 +37,11 @@
 			<p:menuitem value="Löschen" update="@form" icon="ui-icon-close"
 				actionListener="#{lessonTypeController.deleteLessonType}" />
 		</p:contextMenu>
-		<p:dataTable id="lessonTypeTable" var="lessonType"
+		<p:dataTable emptyMessage="Keine Unterrichtsinhalte vorhanden" id="lessonTypeTable" var="lessonType"
 			value="#{lessonTypeController.getLessonTypes()}"
-			selection="#{lessonTypeController.selectedLessonType}"
+			selection="#{lessonTypeController.lessonType}"
 			selectionMode="single" rowKey="#{lessonType.name}">
-			<p:column headerText="Bezeichner">
+			<p:column headerText="Name">
 				<h:outputText value="#{lessonType.name}" />
 			</p:column>
 			<p:column headerText="Standarddauer">
@@ -53,7 +53,13 @@
 				</ui:repeat>
 			</p:column>
 		</p:dataTable>
-		
+
+		<p:fieldset legend="Information" style="margin-bottom:20px; margin-top:20px;">
+			<h:panelGrid columns="2">
+				<h:outputText style="font-weight:bold;" value="Zeit:" /><h:outputText value="Stunden in Zeitstunden, eine Stunde entspricht sechzig Minuten." />
+			</h:panelGrid>
+		</p:fieldset>
+
 		<p:poll interval="3" update="lessonTypeTable" />
 	</h:form>
 </h:body>
