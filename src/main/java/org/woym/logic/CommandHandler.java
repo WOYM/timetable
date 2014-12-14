@@ -5,6 +5,7 @@ package org.woym.logic;
 
 import org.woym.spec.logic.ICommand;
 import org.woym.spec.logic.ICommandHandler;
+import org.woym.spec.logic.ILimitedQueue;
 import org.woym.spec.logic.IStatus;
 
 /**
@@ -17,9 +18,9 @@ public class CommandHandler implements ICommandHandler {
 
 	static final private CommandHandler COMMAND_HANDLER = new CommandHandler();
 
-	final private LimitedQueue<ICommand> undo = new LimitedQueue<ICommand>();
+	final private ILimitedQueue<ICommand> undo = new LimitedQueue<ICommand>();
 
-	final private LimitedQueue<ICommand> redo = new LimitedQueue<ICommand>();
+	final private ILimitedQueue<ICommand> redo = new LimitedQueue<ICommand>();
 
 	/**
 	 * Privater Konstruktor

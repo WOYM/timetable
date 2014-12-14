@@ -1,6 +1,6 @@
 package org.woym.spec.logic;
 
-public interface ILimetedQueue<E> {
+public interface ILimitedQueue<E> {
 
 	// Static final Size for all Queues
 	public static final Integer LIST_SIZE = 5;
