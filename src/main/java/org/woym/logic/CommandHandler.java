@@ -3,6 +3,7 @@
  */
 package org.woym.logic;
 
+import org.woym.logic.util.LimitedQueue;
 import org.woym.spec.logic.ICommand;
 import org.woym.spec.logic.ICommandHandler;
 import org.woym.spec.logic.ILimitedQueue;
