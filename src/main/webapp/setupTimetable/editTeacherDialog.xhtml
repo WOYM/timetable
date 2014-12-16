@@ -37,6 +37,8 @@
 				<p:inputText id="symbol"
 					value="#{teacherController.teacher.symbol}" required="true"
 					requiredMessage="Ein leeres Kürzel ist nicht gültig.">
+					<f:validator validatorId="org.woym.SymbolValidator" />
+					<f:attribute name="teacherBean" value="#{teacherController.teacher}"/>
 				</p:inputText>
 				<p:message for="symbol" />
 				<p:outputLabel for="weekhours" value="Wochenstunden:" />

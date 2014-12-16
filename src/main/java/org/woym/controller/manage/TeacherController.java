@@ -1,6 +1,5 @@
 package org.woym.controller.manage;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -18,6 +17,7 @@ import org.primefaces.context.RequestContext;
 import org.primefaces.event.TransferEvent;
 import org.primefaces.model.DualListModel;
 import org.woym.exceptions.DatasetException;
+import org.woym.messages.StatusMessageEnum;
 import org.woym.objects.ActivityType;
 import org.woym.objects.Teacher;
 import org.woym.persistence.DataAccess;
@@ -32,12 +32,12 @@ import org.woym.persistence.DataAccess;
  */
 @SessionScoped
 @ManagedBean(name = "teacherController")
-public class TeacherController implements Serializable {
-
-	private static final long serialVersionUID = -2341971622906815080L;
+public class TeacherController{
 
 	private static Logger LOGGER = LogManager
 			.getLogger(TeacherController.class);
+	
+	private DataAccess dataAccess = DataAccess.getInstance();
 
 	private Teacher teacher = new Teacher();
 
@@ -63,7 +63,7 @@ public class TeacherController implements Serializable {
 			allActivityTypes = new ArrayList<>();
 			possibleActivityTypes = teacher.getPossibleActivityTypes();
 
-			for (ActivityType activityType : DataAccess.getInstance()
+			for (ActivityType activityType : dataAccess
 					.getAllActivityTypes()) {
 				if (!possibleActivityTypes.contains(activityType)) {
 					allActivityTypes.add(activityType);
@@ -98,7 +98,7 @@ public class TeacherController implements Serializable {
 	 */
 	public List<Teacher> getTeachers() {
 		try {
-			return DataAccess.getInstance().getAllTeachers();
+			return dataAccess.getAllTeachers();
 		} catch (DatasetException e) {
 			FacesMessage message = new FacesMessage(
 					FacesMessage.SEVERITY_ERROR,
@@ -126,15 +126,6 @@ public class TeacherController implements Serializable {
 	}
 
 	private void openDialog(String dialog) {
-
-		if (StringUtils.isNullOrEmpty(dialog)) {
-
-			IllegalArgumentException e = new IllegalArgumentException(
-					"Empty dialog-title is not allowed!");
-			LOGGER.error(e);
-			throw e;
-		}
-
 		Map<String, Object> options = new HashMap<String, Object>();
 		options.put("modal", true);
 		options.put("draggable", false);
@@ -147,11 +138,11 @@ public class TeacherController implements Serializable {
 	}
 
 	/**
-	 * Saves an edited teacher to the database.
+	 * Speichert einen aktualisierten Lehrer.
 	 */
 	public void editTeacher() {
 		try {
-			DataAccess.getInstance().update(teacher);
+			dataAccess.update(teacher);
 			FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO,
 					"Lehrer aktualisiert", teacher.getName() + " ("
 							+ teacher.getSymbol() + ")");
@@ -162,21 +153,22 @@ public class TeacherController implements Serializable {
 	}
 
 	/**
-	 * Deletes the selected teacher.
+	 * Löscht den selektierten Lehrer.
 	 */
 	public void deleteTeacher() {
 		if (teacher != null) {
 			try {
-				DataAccess.getInstance().delete(teacher);
+				dataAccess.delete(teacher);
 				FacesMessage message = new FacesMessage(
 						FacesMessage.SEVERITY_INFO, "Lehrer gelöscht",
 						teacher.getName() + " (" + teacher.getSymbol() + ")");
 				FacesContext.getCurrentInstance().addMessage(null, message);
 			} catch (DatasetException e) {
-				FacesMessage message = new FacesMessage(
-						FacesMessage.SEVERITY_ERROR,
-						"Fehler beim Löschen des Lehrers", "");
-				FacesContext.getCurrentInstance().addMessage(null, message);
+				FacesMessage msg = new FacesMessage(
+						StatusMessageEnum.DATABASE_COMMUNICATION_ERROR.getSummary(),
+						StatusMessageEnum.DATABASE_COMMUNICATION_ERROR
+								.getStatusMessage());
+				msg.setSeverity(FacesMessage.SEVERITY_ERROR);
 			}
 		}
 	}
@@ -225,23 +217,19 @@ public class TeacherController implements Serializable {
 	 */
 	public void addTeacherFromDialog() {
 		try {
-			DataAccess.getInstance().persist(teacher);
+			dataAccess.persist(teacher);
 			FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO,
 					"Lehrer hinzugefügt", teacher.getName() + " ("
 							+ teacher.getSymbol() + ")");
 			FacesContext.getCurrentInstance().addMessage(null, message);
 			teacher = new Teacher();
-			// TODO: DatabaseException does not mean that the teacher exists, it
-			// just means something went wrong
 		} catch (DatasetException e) {
-			FacesMessage message = new FacesMessage(
-					FacesMessage.SEVERITY_ERROR,
-					"Ein Datenbankfehler ist aufgetreten.", "");
-			FacesContext.getCurrentInstance().addMessage(null, message);
-			return;
+			FacesMessage msg = new FacesMessage(
+					StatusMessageEnum.DATABASE_COMMUNICATION_ERROR.getSummary(),
+					StatusMessageEnum.DATABASE_COMMUNICATION_ERROR
+							.getStatusMessage());
+			msg.setSeverity(FacesMessage.SEVERITY_ERROR);
 		}
-
-		// RequestContext.getCurrentInstance().closeDialog(addTeacher);
 	}
 
 	public Teacher getTeacher() {
