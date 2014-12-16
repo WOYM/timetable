@@ -3,6 +3,9 @@
  */
 package org.woym.logic.command;
 
+import org.woym.logic.FailureStatus;
+import org.woym.logic.SuccessStatus;
+import org.woym.objects.Teacher;
 import org.woym.spec.logic.ICommand;
 import org.woym.spec.logic.IStatus;
 
@@ -12,9 +15,28 @@ import org.woym.spec.logic.IStatus;
  */
 public class UpdateTeacherCommand implements ICommand {
 
+	private Teacher teacher;
+
+	public UpdateTeacherCommand(Teacher teacher) {
+		if (teacher == null) {
+			throw new IllegalArgumentException("Teacher was null");
+		}
+		this.teacher = teacher;
+	}
+
 	@Override
 	public IStatus execute() {
-		throw new UnsupportedOperationException();
+		IStatus status;
+
+		try {
+			teacher.persist();
+			status = new SuccessStatus();
+		} catch (Exception e) {
+			status = new FailureStatus();
+			((FailureStatus) status).addException(e);
+		}
+
+		return status;
 	}
 
 	@Override
