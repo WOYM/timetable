@@ -43,6 +43,8 @@ public class ActivityTypeNameValidator implements Validator {
 
 	private static Logger LOGGER = LogManager
 			.getLogger(ActivityTypeNameValidator.class);
+	
+	private DataAccess dataAccess = DataAccess.getInstance(); 
 
 	@Override
 	public void validate(FacesContext context, UIComponent uiComponent,
@@ -72,7 +74,7 @@ public class ActivityTypeNameValidator implements Validator {
 		}
 
 		try {
-			ActivityType activityType = DataAccess.getInstance().getOneActivityType(name);
+			ActivityType activityType = dataAccess.getOneActivityType(name);
 			if (activityType != null && activityType != lessonBean) {
 				FacesMessage msg = new FacesMessage(
 						StatusMessageEnum.NAME_ALREADY_EXISTS.getSummary(),

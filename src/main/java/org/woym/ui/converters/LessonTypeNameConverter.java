@@ -25,6 +25,8 @@ import org.woym.persistence.DataAccess;
 @FacesConverter("org.woym.LessonTypeNameConverter")
 public class LessonTypeNameConverter implements Converter {
 
+	private DataAccess dataAccess = DataAccess.getInstance();
+	
 	@Override
 	public Object getAsObject(FacesContext context, UIComponent uiComponent,
 			String value) throws ConverterException {
@@ -32,7 +34,7 @@ public class LessonTypeNameConverter implements Converter {
 		ActivityType lessonType = new LessonType();
 
 		try {
-			lessonType = DataAccess.getInstance().getOneActivityType(value);
+			lessonType = dataAccess.getOneActivityType(value);
 		} catch (DatasetException e) {
 			FacesMessage msg = new FacesMessage(
 					StatusMessageEnum.DATABASE_COMMUNICATION_ERROR.getSummary(),

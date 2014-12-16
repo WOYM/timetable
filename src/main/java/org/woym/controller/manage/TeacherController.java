@@ -36,6 +36,8 @@ public class TeacherController{
 
 	private static Logger LOGGER = LogManager
 			.getLogger(TeacherController.class);
+	
+	private DataAccess dataAccess = DataAccess.getInstance();
 
 	private Teacher teacher = new Teacher();
 
@@ -61,7 +63,7 @@ public class TeacherController{
 			allActivityTypes = new ArrayList<>();
 			possibleActivityTypes = teacher.getPossibleActivityTypes();
 
-			for (ActivityType activityType : DataAccess.getInstance()
+			for (ActivityType activityType : dataAccess
 					.getAllActivityTypes()) {
 				if (!possibleActivityTypes.contains(activityType)) {
 					allActivityTypes.add(activityType);
@@ -96,7 +98,7 @@ public class TeacherController{
 	 */
 	public List<Teacher> getTeachers() {
 		try {
-			return DataAccess.getInstance().getAllTeachers();
+			return dataAccess.getAllTeachers();
 		} catch (DatasetException e) {
 			FacesMessage message = new FacesMessage(
 					FacesMessage.SEVERITY_ERROR,
@@ -140,7 +142,7 @@ public class TeacherController{
 	 */
 	public void editTeacher() {
 		try {
-			DataAccess.getInstance().update(teacher);
+			dataAccess.update(teacher);
 			FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO,
 					"Lehrer aktualisiert", teacher.getName() + " ("
 							+ teacher.getSymbol() + ")");
@@ -156,7 +158,7 @@ public class TeacherController{
 	public void deleteTeacher() {
 		if (teacher != null) {
 			try {
-				DataAccess.getInstance().delete(teacher);
+				dataAccess.delete(teacher);
 				FacesMessage message = new FacesMessage(
 						FacesMessage.SEVERITY_INFO, "Lehrer gelöscht",
 						teacher.getName() + " (" + teacher.getSymbol() + ")");
@@ -215,7 +217,7 @@ public class TeacherController{
 	 */
 	public void addTeacherFromDialog() {
 		try {
-			DataAccess.getInstance().persist(teacher);
+			dataAccess.persist(teacher);
 			FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO,
 					"Lehrer hinzugefügt", teacher.getName() + " ("
 							+ teacher.getSymbol() + ")");

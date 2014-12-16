@@ -30,6 +30,8 @@ import org.woym.persistence.DataAccess;
 public class LocationController {
 	private static Logger LOGGER = LogManager.getLogger(LocationController.class);
 
+	private DataAccess dataAccess = DataAccess.getInstance();
+	
 	private Location location;
 	private Room room;
 
@@ -38,7 +40,7 @@ public class LocationController {
 	 */
 	public void editLocation() {
 		try {
-			DataAccess.getInstance().update(location);
+			dataAccess.update(location);
 			FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO,
 					"Standort aktualisiert", location.getName());
 			FacesContext.getCurrentInstance().addMessage(null, message);
@@ -53,7 +55,7 @@ public class LocationController {
 	public void deleteLocation() {
 		if (location != null) {
 			try {
-				DataAccess.getInstance().delete(location);
+				dataAccess.delete(location);
 				FacesMessage message = new FacesMessage(
 						FacesMessage.SEVERITY_INFO, "Standort gelöscht",
 						location.getName());
