@@ -23,6 +23,7 @@ import org.woym.objects.ProjectType;
 import org.woym.objects.Room;
 import org.woym.objects.Schoolclass;
 import org.woym.objects.Teacher;
+import org.woym.objects.TravelTimeList;
 import org.woym.spec.persistence.IDataAccess;
 
 /**
@@ -480,6 +481,21 @@ public class DataAccess implements IDataAccess, Observer {
 					"Exception while getting %s by id %s: ",
 					clazz.getSimpleName(), id)
 					+ e.getMessage());
+		}
+	}
+	
+	@SuppressWarnings("unchecked")
+	public TravelTimeList getTravelTimeList() throws DatasetException {
+		try{
+			final Query query = em.createQuery("SELECT t FROM TravelTimeList t");
+			List<TravelTimeList> result = query.getResultList();
+			if(result.isEmpty()){
+				return null;
+			}
+			return result.get(0);
+		} catch (Exception e){
+			LOGGER.error("Exception while getting TravelTimeList.", e);
+			throw new DatasetException("Error while getting TravelTimeList: " + e.getMessage());
 		}
 	}
 

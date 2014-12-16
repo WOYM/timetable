@@ -5,7 +5,7 @@ package org.woym.logic.command;
 
 import org.woym.logic.FailureStatus;
 import org.woym.logic.SuccessStatus;
-import org.woym.objects.Teacher;
+import org.woym.objects.Entity;
 import org.woym.spec.logic.ICommand;
 import org.woym.spec.logic.IStatus;
 
@@ -13,29 +13,28 @@ import org.woym.spec.logic.IStatus;
  * @author JurSch
  *
  */
-public class UpdateTeacherCommand implements ICommand {
+public class AddCommand<E extends Entity> implements ICommand {
 
-	private Teacher teacher;
+	private E entity;
 
-	public UpdateTeacherCommand(Teacher teacher) {
-		if (teacher == null) {
-			throw new IllegalArgumentException("Teacher was null");
+	public AddCommand(E entity) {
+		if (entity == null) {
+			throw new IllegalArgumentException("Entity was null");
 		}
-		this.teacher = teacher;
+		this.entity = entity;
 	}
 
 	@Override
 	public IStatus execute() {
 		IStatus status;
-
-		try {
-			teacher.persist();
+		
+		try{
+			entity.persist();
 			status = new SuccessStatus();
-		} catch (Exception e) {
+		}catch (Exception e) {
 			status = new FailureStatus();
-			((FailureStatus) status).addException(e);
+			((FailureStatus)status).addException(e);
 		}
-
 		return status;
 	}
 

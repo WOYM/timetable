@@ -1,27 +1,25 @@
-/**
- * 
- */
 package org.woym.logic.command;
 
 import org.woym.logic.FailureStatus;
 import org.woym.logic.SuccessStatus;
-import org.woym.objects.Teacher;
+import org.woym.objects.Entity;
 import org.woym.spec.logic.ICommand;
 import org.woym.spec.logic.IStatus;
 
 /**
+ * 
  * @author JurSch
  *
  */
-public class UpdateTeacherCommand implements ICommand {
+public class UpdateCommand<E extends Entity> implements ICommand {
 
-	private Teacher teacher;
+	private E entity;
 
-	public UpdateTeacherCommand(Teacher teacher) {
-		if (teacher == null) {
-			throw new IllegalArgumentException("Teacher was null");
+	public UpdateCommand(E entity) {
+		if (entity == null) {
+			throw new IllegalArgumentException("Entity was null");
 		}
-		this.teacher = teacher;
+		this.entity = entity;
 	}
 
 	@Override
@@ -29,24 +27,25 @@ public class UpdateTeacherCommand implements ICommand {
 		IStatus status;
 
 		try {
-			teacher.persist();
+			entity.update();
 			status = new SuccessStatus();
 		} catch (Exception e) {
 			status = new FailureStatus();
 			((FailureStatus) status).addException(e);
 		}
-
 		return status;
 	}
 
 	@Override
 	public IStatus undo() {
-		throw new UnsupportedOperationException();
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 	@Override
 	public IStatus redo() {
-		throw new UnsupportedOperationException();
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

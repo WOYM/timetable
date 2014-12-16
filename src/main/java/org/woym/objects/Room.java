@@ -6,6 +6,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
+import org.woym.spec.logic.ActivityObject;
+
 /**
  * Diese Klasse repräsentiert einen Raum.
  * 
@@ -13,7 +15,7 @@ import javax.persistence.Id;
  *
  */
 @Entity
-public class Room extends org.woym.objects.Entity {
+public class Room extends org.woym.objects.Entity implements ActivityObject {
 
 	/**
 	 * 
