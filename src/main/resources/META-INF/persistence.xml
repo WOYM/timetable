@@ -23,6 +23,7 @@
 		<class>org.woym.objects.Schoolclass</class>
 		<class>org.woym.objects.Teacher</class>
 		<class>org.woym.objects.TimePeriod</class>
+		<class>org.woym.objects.TravelTimeList</class>
 
 		
 		<properties>
