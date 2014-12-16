@@ -3,9 +3,9 @@ package org.woym.logic.util;
 import java.util.LinkedList;
 
 import org.woym.spec.logic.ICommand;
-import org.woym.spec.logic.ILimetedQueue;
+import org.woym.spec.logic.ILimitedQueue;
 
-public class LimitedQueue<E extends ICommand> implements ILimetedQueue<E> {
+public class LimitedQueue<E extends ICommand> implements ILimitedQueue<E> {
 
 	private final LinkedList<E> queue = new LinkedList<>();
 
