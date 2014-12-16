@@ -1,6 +1,5 @@
 package org.woym.controller.manage;
 
-import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -28,9 +27,7 @@ import org.woym.persistence.DataAccess;
  */
 @SessionScoped
 @ManagedBean(name = "locationController")
-public class LocationController implements Serializable {
-	private static final long serialVersionUID = -2341971622906815080L;
-
+public class LocationController {
 	private static Logger LOGGER = LogManager.getLogger(LocationController.class);
 
 	private Location location;
