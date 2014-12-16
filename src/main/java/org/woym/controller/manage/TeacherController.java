@@ -1,5 +1,6 @@
 package org.woym.controller.manage;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -32,7 +33,9 @@ import org.woym.persistence.DataAccess;
  */
 @SessionScoped
 @ManagedBean(name = "teacherController")
-public class TeacherController{
+public class TeacherController implements Serializable {
+
+	private static final long serialVersionUID = 1L;
 
 	private static Logger LOGGER = LogManager
 			.getLogger(TeacherController.class);
