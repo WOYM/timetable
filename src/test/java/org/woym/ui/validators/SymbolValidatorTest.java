@@ -66,12 +66,31 @@ public class SymbolValidatorTest {
 	@Test
 	public void testSymbolNotInuse() throws DatasetException {
 		
-		Teacher t = Mockito.mock(Teacher.class);
+		Teacher t1 = Mockito.mock(Teacher.class);
 		
 		PowerMockito.when(dataAccess.getOneEmployee(Mockito.anyString())).thenReturn(null);
 		PowerMockito.when(facesContext.getELContext()).thenReturn(elContext);
 		PowerMockito.when(uiComponent.getValueExpression(Mockito.anyString())).thenReturn(valueExpression);
-		PowerMockito.when(valueExpression.getValue(elContext)).thenReturn(t);
+		PowerMockito.when(valueExpression.getValue(elContext)).thenReturn(t1);
+		
+		symbolValidator.validate(facesContext, uiComponent, "testSymbol");
+	}
+	
+	/**
+	 * Test for a symbol that is in use, but belongs to the current object that
+	 * shall be edited or created.
+	 * 
+	 * @throws DatasetException
+	 */
+	@Test
+	public void testSymbolOnSameObject() throws DatasetException {
+		
+		Teacher t1 = Mockito.mock(Teacher.class);
+		
+		PowerMockito.when(dataAccess.getOneEmployee(Mockito.anyString())).thenReturn(t1);
+		PowerMockito.when(facesContext.getELContext()).thenReturn(elContext);
+		PowerMockito.when(uiComponent.getValueExpression(Mockito.anyString())).thenReturn(valueExpression);
+		PowerMockito.when(valueExpression.getValue(elContext)).thenReturn(t1);
 		
 		symbolValidator.validate(facesContext, uiComponent, "testSymbol");
 	}

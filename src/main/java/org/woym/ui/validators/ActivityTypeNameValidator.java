@@ -1,5 +1,7 @@
 package org.woym.ui.validators;
 
+import javax.el.ELContext;
+import javax.el.ValueExpression;
 import javax.faces.application.FacesMessage;
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
@@ -40,6 +42,8 @@ import org.woym.persistence.DataAccess;
  */
 @FacesValidator("org.woym.ActivityTypeNameValidator")
 public class ActivityTypeNameValidator implements Validator {
+	
+	public static final String BEAN_NAME = "lessonBean";
 
 	private static Logger LOGGER = LogManager
 			.getLogger(ActivityTypeNameValidator.class);
@@ -51,8 +55,9 @@ public class ActivityTypeNameValidator implements Validator {
 			Object value) throws ValidatorException {
 
 		String name = value.toString();
-		Object lessonBean = uiComponent.getValueExpression("lessonBean")
-				.getValue(context.getELContext());
+		ELContext elContext = context.getELContext();
+		ValueExpression valueExpression = uiComponent.getValueExpression(BEAN_NAME);
+		Object lessonBean = valueExpression.getValue(elContext);
 		
 		if(lessonBean instanceof LessonType)
 		if (StringUtils.isNullOrEmpty(name)) {
