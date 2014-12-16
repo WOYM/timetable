@@ -13,6 +13,8 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.MapKeyJoinColumn;
 
+import org.woym.spec.logic.ActivityObject;
+
 /**
  * Diese Klasse repräsentiert eine Schulklasse.
  * 
@@ -20,7 +22,7 @@ import javax.persistence.MapKeyJoinColumn;
  *
  */
 @Entity
-public class Schoolclass extends org.woym.objects.Entity {
+public class Schoolclass extends org.woym.objects.Entity implements ActivityObject{
 
 	/**
 	 * 
