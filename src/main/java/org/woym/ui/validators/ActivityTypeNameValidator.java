@@ -1,5 +1,7 @@
 package org.woym.ui.validators;
 
+import javax.el.ELContext;
+import javax.el.ValueExpression;
 import javax.faces.application.FacesMessage;
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
@@ -12,6 +14,8 @@ import org.apache.logging.log4j.Logger;
 import org.h2.util.StringUtils;
 import org.woym.exceptions.DatasetException;
 import org.woym.messages.StatusMessageEnum;
+import org.woym.objects.ActivityType;
+import org.woym.objects.LessonType;
 import org.woym.persistence.DataAccess;
 
 /**
@@ -38,18 +42,24 @@ import org.woym.persistence.DataAccess;
  */
 @FacesValidator("org.woym.ActivityTypeNameValidator")
 public class ActivityTypeNameValidator implements Validator {
+	
+	public static final String BEAN_NAME = "lessonBean";
 
 	private static Logger LOGGER = LogManager
 			.getLogger(ActivityTypeNameValidator.class);
-
-	DataAccess dataAccess = DataAccess.getInstance();
+	
+	private DataAccess dataAccess = DataAccess.getInstance(); 
 
 	@Override
 	public void validate(FacesContext context, UIComponent uiComponent,
 			Object value) throws ValidatorException {
 
 		String name = value.toString();
-
+		ELContext elContext = context.getELContext();
+		ValueExpression valueExpression = uiComponent.getValueExpression(BEAN_NAME);
+		Object lessonBean = valueExpression.getValue(elContext);
+		
+		if(lessonBean instanceof LessonType)
 		if (StringUtils.isNullOrEmpty(name)) {
 			FacesMessage msg = new FacesMessage(
 					StatusMessageEnum.NAME_IS_EMPTY.getSummary(),
@@ -69,7 +79,8 @@ public class ActivityTypeNameValidator implements Validator {
 		}
 
 		try {
-			if (dataAccess.getOneActivityType(name) != null) {
+			ActivityType activityType = dataAccess.getOneActivityType(name);
+			if (activityType != null && activityType != lessonBean) {
 				FacesMessage msg = new FacesMessage(
 						StatusMessageEnum.NAME_ALREADY_EXISTS.getSummary(),
 						StatusMessageEnum.NAME_ALREADY_EXISTS

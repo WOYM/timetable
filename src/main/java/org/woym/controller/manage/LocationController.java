@@ -3,14 +3,19 @@ package org.woym.controller.manage;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
+import javax.faces.context.FacesContext;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.primefaces.context.RequestContext;
+import org.woym.exceptions.DatasetException;
+import org.woym.messages.StatusMessageEnum;
 import org.woym.objects.Location;
 import org.woym.objects.Room;
+import org.woym.persistence.DataAccess;
 
 /**
  * <h1>LocationController</h1>
@@ -23,22 +28,85 @@ import org.woym.objects.Room;
 @SessionScoped
 @ManagedBean(name = "locationController")
 public class LocationController {
-	private static final long serialVersionUID = -2341971622906815080L;
+	private static Logger LOGGER = LogManager.getLogger(LocationController.class);
 
-	private static Logger LOGGER = LogManager.getLogger("locationController");
+	private DataAccess dataAccess = DataAccess.getInstance();
+	
+	private Location location;
+	private Room room;
 
-	// private LocationDAO db = new LocationDAO();
-	private Location selectedLocation;
-	private Location addLocation;
-	private Room selectedRoom;
-	private Room addRoom;
+	/**
+	 * Saves an edited teacher to the database.
+	 */
+	public void editLocation() {
+		try {
+			dataAccess.update(location);
+			FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO,
+					"Standort aktualisiert", location.getName());
+			FacesContext.getCurrentInstance().addMessage(null, message);
+		} catch (DatasetException e) {
+			LOGGER.error(e);
+		}
+	}
+
+	/**
+	 * Deletes the selected teacher.
+	 */
+	public void deleteLocation() {
+		if (location != null) {
+			try {
+				dataAccess.delete(location);
+				FacesMessage message = new FacesMessage(
+						FacesMessage.SEVERITY_INFO, "Standort gelöscht",
+						location.getName());
+				FacesContext.getCurrentInstance().addMessage(null, message);
+			} catch (DatasetException e) {
+				FacesMessage msg = new FacesMessage(
+						StatusMessageEnum.DATABASE_COMMUNICATION_ERROR.getSummary(),
+						StatusMessageEnum.DATABASE_COMMUNICATION_ERROR
+								.getStatusMessage());
+				msg.setSeverity(FacesMessage.SEVERITY_ERROR);
+			}
+		}
+	}
 	
 	/**
-	 * Opens a new dialog which enables the user to add a new location.
+	 * Öffnet einen neuen Dialog, mit Hilfe dessen ein neuer Standort
+	 * hinzugefügt werden kann.
 	 */
 	public void addLocationDialog() {
+		location = new Location();
+		openDialog("addLocationDialog");
+	}
+	
+	/**
+	 * Öffnet einen neuen Dialog, mit Hilfe dessen ein neuer Raum
+	 * hinzugefügt werden kann.
+	 */
+	public void addRoomDialog() {
+		room = new Room();
+		location.addRoom(room);
+		openDialog("addRoomDialog");
+	}
+	
+	/**
+	 * Öffnet einen neuen Dialog, mit Hilfe dessen ein neuer Standort
+	 * bearbeitet werden kann.
+	 */
+	public void editLocationDialog() {
+		openDialog("addLocationDialog");
+	}
+	
+	/**
+	 * Öffnet einen neuen Dialog, mit Hilfe dessen ein neuer Standort
+	 * bearbeitet werden kann.
+	 */
+	public void editRoomDialog() {
+		openDialog("addRoomDialog");
+	}
 
-		addLocation = new Location();
+	private void openDialog(String dialog) {
+		location = new Location();
 		Map<String, Object> options = new HashMap<String, Object>();
 		options.put("modal", true);
 		options.put("draggable", false);
@@ -47,7 +115,23 @@ public class LocationController {
 		options.put("contentWidth", 800);
 
 		RequestContext rc = RequestContext.getCurrentInstance();
-		rc.openDialog("addLocationDialog", options, null);
+		rc.openDialog(dialog, options, null);
+	}
+
+	public Location getLocation() {
+		return location;
+	}
+
+	public void setLocation(Location location) {
+		this.location = location;
+	}
+
+	public Room getRoom() {
+		return room;
+	}
+
+	public void setRoom(Room room) {
+		this.room = room;
 	}
 
 }
