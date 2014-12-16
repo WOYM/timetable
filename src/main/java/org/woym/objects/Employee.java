@@ -17,6 +17,8 @@ import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
 
+import org.woym.spec.logic.ActivityObject;
+
 /**
  * Superklasse für alle Personen des Personals.
  * 
@@ -26,7 +28,7 @@ import javax.persistence.OrderBy;
 @Entity
 @Inheritance
 @DiscriminatorColumn(name = "TYPE", discriminatorType = DiscriminatorType.STRING, length = 20)
-public abstract class Employee extends org.woym.objects.Entity {
+public abstract class Employee extends org.woym.objects.Entity implements ActivityObject {
 
 	/**
 	 * 
