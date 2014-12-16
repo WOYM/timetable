@@ -37,6 +37,8 @@ public class LessonTypeController implements Serializable {
 			.getLogger(LessonTypeController.class);
 
 	private LessonType lessonType;
+	
+	private DataAccess dataAccess = DataAccess.getInstance();
 
 	/**
 	 * Liefert eine Liste mit allen Unterrichtsinhalten zurück.
@@ -45,7 +47,7 @@ public class LessonTypeController implements Serializable {
 	 */
 	public List<LessonType> getLessonTypes() {
 		try {
-			return DataAccess.getInstance().getAllLessonTypes();
+			return dataAccess.getAllLessonTypes();
 		} catch (DatasetException e) {
 			FacesMessage message = new FacesMessage(
 					FacesMessage.SEVERITY_ERROR, "Datenbankfehler",
@@ -91,7 +93,7 @@ public class LessonTypeController implements Serializable {
 	public void deleteLessonType() {
 		if (lessonType != null) {
 			try {
-				DataAccess.getInstance().delete(lessonType);
+				dataAccess.delete(lessonType);
 				FacesMessage message = new FacesMessage(
 						FacesMessage.SEVERITY_INFO,
 						"Unterrichtsinhalt gelöscht", lessonType.getName());
@@ -110,7 +112,7 @@ public class LessonTypeController implements Serializable {
 	 */
 	public void editLessonType() {
 		try {
-			DataAccess.getInstance().update(lessonType);
+			dataAccess.update(lessonType);
 			FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO,
 					"Unterrichtsinhalt aktualisiert", lessonType.getName());
 			FacesContext.getCurrentInstance().addMessage(null, message);
@@ -125,7 +127,7 @@ public class LessonTypeController implements Serializable {
 	public void addLessonTypeFromDialog() {
 
 		try {
-			DataAccess.getInstance().persist(lessonType);
+			dataAccess.persist(lessonType);
 			FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO,
 					"Unterrichtsinhalt hinzugefügt", lessonType.getName());
 			FacesContext.getCurrentInstance().addMessage(null, message);

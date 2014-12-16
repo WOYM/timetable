@@ -1,5 +1,7 @@
 package org.woym.ui.validators;
 
+import javax.el.ELContext;
+import javax.el.ValueExpression;
 import javax.faces.application.FacesMessage;
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
@@ -41,15 +43,20 @@ import org.woym.persistence.DataAccess;
 @FacesValidator("org.woym.SymbolValidator")
 public class SymbolValidator implements Validator {
 
+	public static final String BEAN_NAME = "teacherBean";
+	
 	private static Logger LOGGER = LogManager.getLogger(SymbolValidator.class);
+	private DataAccess dataAccess = DataAccess.getInstance();
 
 	@Override
 	public void validate(FacesContext context, UIComponent uiComponent,
 			Object value) throws ValidatorException {
 
 		String symbol = value.toString();
-		Object teacherBean = uiComponent.getValueExpression("teacherBean")
-				.getValue(context.getELContext());
+		
+		ELContext elContext = context.getELContext();
+		ValueExpression valueExpression = uiComponent.getValueExpression(BEAN_NAME);
+		Object teacherBean = valueExpression.getValue(elContext);
 
 		if (teacherBean instanceof Teacher) {
 			if (StringUtils.isNullOrEmpty(symbol)) {
@@ -71,7 +78,7 @@ public class SymbolValidator implements Validator {
 			}
 
 			try {
-				Employee employee = DataAccess.getInstance().getOneEmployee(symbol);
+				Employee employee = dataAccess.getOneEmployee(symbol);
 
 				if (employee != null && employee != teacherBean) {
 					FacesMessage msg = new FacesMessage(
