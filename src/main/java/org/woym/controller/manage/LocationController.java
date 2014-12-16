@@ -1,6 +1,9 @@
 package org.woym.controller.manage;
 
+import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.faces.application.FacesMessage;
@@ -8,8 +11,6 @@ import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
 import javax.faces.context.FacesContext;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.primefaces.context.RequestContext;
 import org.woym.exceptions.DatasetException;
 import org.woym.messages.StatusMessageEnum;
@@ -27,16 +28,58 @@ import org.woym.persistence.DataAccess;
  */
 @SessionScoped
 @ManagedBean(name = "locationController")
-public class LocationController {
-	private static Logger LOGGER = LogManager.getLogger(LocationController.class);
+public class LocationController implements Serializable {
 
+	private static final long serialVersionUID = 1L;
+
+	/**
+	 * Datenbankinstanz
+	 */
 	private DataAccess dataAccess = DataAccess.getInstance();
-	
+
 	private Location location;
 	private Room room;
 
+	private Boolean selected = false;
+
 	/**
-	 * Saves an edited teacher to the database.
+	 * Liefert eine Liste mit allen Standorten zurück.
+	 * 
+	 * @return Liste mit allen Standorten
+	 */
+	public List<Location> getLocations() {
+		try {
+			return dataAccess.getAllLocations();
+		} catch (DatasetException e) {
+			FacesMessage msg = new FacesMessage(
+					StatusMessageEnum.DATABASE_COMMUNICATION_ERROR.getSummary(),
+					StatusMessageEnum.DATABASE_COMMUNICATION_ERROR
+							.getStatusMessage());
+			msg.setSeverity(FacesMessage.SEVERITY_ERROR);
+			return new ArrayList<Location>();
+		}
+	}
+
+	/**
+	 * Liefert eine Liste mit allen Räumen zurück.
+	 * 
+	 * @return Liste mit allen Räumen
+	 */
+	public List<Room> getRooms() {
+		try {
+			return dataAccess.getOneLocation(location.getName()).getRooms();
+		} catch (DatasetException e) {
+			FacesMessage msg = new FacesMessage(
+					StatusMessageEnum.DATABASE_COMMUNICATION_ERROR.getSummary(),
+					StatusMessageEnum.DATABASE_COMMUNICATION_ERROR
+							.getStatusMessage());
+			msg.setSeverity(FacesMessage.SEVERITY_ERROR);
+			return new ArrayList<Room>();
+		}
+	}
+
+	/**
+	 * Speichert einen bearbeiteten Standort in die Datenbank.
 	 */
 	public void editLocation() {
 		try {
@@ -45,12 +88,34 @@ public class LocationController {
 					"Standort aktualisiert", location.getName());
 			FacesContext.getCurrentInstance().addMessage(null, message);
 		} catch (DatasetException e) {
-			LOGGER.error(e);
+			FacesMessage msg = new FacesMessage(
+					StatusMessageEnum.DATABASE_COMMUNICATION_ERROR.getSummary(),
+					StatusMessageEnum.DATABASE_COMMUNICATION_ERROR
+							.getStatusMessage());
+			msg.setSeverity(FacesMessage.SEVERITY_ERROR);
 		}
 	}
 
 	/**
-	 * Deletes the selected teacher.
+	 * Speichert einen bearbeiteten Raum in die Datenbank.
+	 */
+	public void editRoom() {
+		try {
+			dataAccess.update(room);
+			FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO,
+					"Raum aktualisiert", room.getName());
+			FacesContext.getCurrentInstance().addMessage(null, message);
+		} catch (DatasetException e) {
+			FacesMessage msg = new FacesMessage(
+					StatusMessageEnum.DATABASE_COMMUNICATION_ERROR.getSummary(),
+					StatusMessageEnum.DATABASE_COMMUNICATION_ERROR
+							.getStatusMessage());
+			msg.setSeverity(FacesMessage.SEVERITY_ERROR);
+		}
+	}
+
+	/**
+	 * Löscht einen Standort aus der Datenbank.
 	 */
 	public void deleteLocation() {
 		if (location != null) {
@@ -62,57 +127,100 @@ public class LocationController {
 				FacesContext.getCurrentInstance().addMessage(null, message);
 			} catch (DatasetException e) {
 				FacesMessage msg = new FacesMessage(
-						StatusMessageEnum.DATABASE_COMMUNICATION_ERROR.getSummary(),
+						StatusMessageEnum.DATABASE_COMMUNICATION_ERROR
+								.getSummary(),
 						StatusMessageEnum.DATABASE_COMMUNICATION_ERROR
 								.getStatusMessage());
 				msg.setSeverity(FacesMessage.SEVERITY_ERROR);
 			}
 		}
 	}
-	
+
+	/**
+	 * Löscht einen Standort aus der Datenbank.
+	 */
+	public void deleteRoom() {
+		if (room != null) {
+			try {
+				dataAccess.delete(room);
+				FacesMessage message = new FacesMessage(
+						FacesMessage.SEVERITY_INFO, "Raum gelöscht",
+						room.getName());
+				FacesContext.getCurrentInstance().addMessage(null, message);
+			} catch (DatasetException e) {
+				FacesMessage msg = new FacesMessage(
+						StatusMessageEnum.DATABASE_COMMUNICATION_ERROR
+								.getSummary(),
+						StatusMessageEnum.DATABASE_COMMUNICATION_ERROR
+								.getStatusMessage());
+				msg.setSeverity(FacesMessage.SEVERITY_ERROR);
+			}
+		}
+	}
+
+	/**
+	 * Fügt einen Standort zur Datenbank hinzu
+	 */
+	public void addLocationFromDialog() {
+		try {
+			dataAccess.persist(location);
+			FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO,
+					"Lehrer hinzugefügt", location.getName());
+			FacesContext.getCurrentInstance().addMessage(null, message);
+			location = new Location();
+		} catch (DatasetException e) {
+			FacesMessage msg = new FacesMessage(
+					StatusMessageEnum.DATABASE_COMMUNICATION_ERROR.getSummary(),
+					StatusMessageEnum.DATABASE_COMMUNICATION_ERROR
+							.getStatusMessage());
+			msg.setSeverity(FacesMessage.SEVERITY_ERROR);
+		}
+	}
+
 	/**
 	 * Öffnet einen neuen Dialog, mit Hilfe dessen ein neuer Standort
 	 * hinzugefügt werden kann.
 	 */
 	public void addLocationDialog() {
 		location = new Location();
+		selected = false;
 		openDialog("addLocationDialog");
 	}
-	
+
 	/**
-	 * Öffnet einen neuen Dialog, mit Hilfe dessen ein neuer Raum
-	 * hinzugefügt werden kann.
+	 * Öffnet einen neuen Dialog, mit Hilfe dessen ein neuer Raum hinzugefügt
+	 * werden kann.
 	 */
 	public void addRoomDialog() {
 		room = new Room();
+		// TODO: In persist(room)
 		location.addRoom(room);
 		openDialog("addRoomDialog");
 	}
-	
+
 	/**
-	 * Öffnet einen neuen Dialog, mit Hilfe dessen ein neuer Standort
-	 * bearbeitet werden kann.
+	 * Öffnet einen neuen Dialog, mit Hilfe dessen ein neuer Standort bearbeitet
+	 * werden kann.
 	 */
 	public void editLocationDialog() {
-		openDialog("addLocationDialog");
+		openDialog("editLocationDialog");
 	}
-	
+
 	/**
-	 * Öffnet einen neuen Dialog, mit Hilfe dessen ein neuer Standort
-	 * bearbeitet werden kann.
+	 * Öffnet einen neuen Dialog, mit Hilfe dessen ein neuer Standort bearbeitet
+	 * werden kann.
 	 */
 	public void editRoomDialog() {
-		openDialog("addRoomDialog");
+		openDialog("editRoomDialog");
 	}
 
 	private void openDialog(String dialog) {
-		location = new Location();
 		Map<String, Object> options = new HashMap<String, Object>();
 		options.put("modal", true);
 		options.put("draggable", false);
 		options.put("resizable", false);
-		options.put("contentHeight", 600);
-		options.put("contentWidth", 800);
+		options.put("contentHeight", 300);
+		options.put("contentWidth", 600);
 
 		RequestContext rc = RequestContext.getCurrentInstance();
 		rc.openDialog(dialog, options, null);
@@ -123,7 +231,10 @@ public class LocationController {
 	}
 
 	public void setLocation(Location location) {
-		this.location = location;
+		if (location != null) {
+			this.location = location;
+			selected = true;
+		}
 	}
 
 	public Room getRoom() {
@@ -132,6 +243,14 @@ public class LocationController {
 
 	public void setRoom(Room room) {
 		this.room = room;
+	}
+
+	public Boolean getSelected() {
+		return selected;
+	}
+
+	public void setSelected(Boolean selected) {
+		this.selected = selected;
 	}
 
 }
