@@ -13,7 +13,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.MapKeyJoinColumn;
 
-import org.woym.spec.logic.ActivityObject;
+import org.woym.spec.objects.IActivityObject;
 
 /**
  * Diese Klasse repräsentiert eine Schulklasse.
@@ -22,7 +22,8 @@ import org.woym.spec.logic.ActivityObject;
  *
  */
 @Entity
-public class Schoolclass extends org.woym.objects.Entity implements ActivityObject{
+public class Schoolclass extends org.woym.objects.Entity implements
+		IActivityObject {
 
 	/**
 	 * 
@@ -59,6 +60,12 @@ public class Schoolclass extends org.woym.objects.Entity implements ActivityObje
 	@JoinColumn
 	private Room room;
 
+	/**
+	 * Der Klassenlehrer dieser Klasse.
+	 */
+	@JoinColumn
+	private Teacher teacher;
+
 	public Schoolclass() {
 	}
 
@@ -92,6 +99,14 @@ public class Schoolclass extends org.woym.objects.Entity implements ActivityObje
 
 	public void setRoom(Room room) {
 		this.room = room;
+	}
+
+	public Teacher getTeacher() {
+		return teacher;
+	}
+
+	public void setTeacher(Teacher teacher) {
+		this.teacher = teacher;
 	}
 
 	/**
@@ -140,5 +155,63 @@ public class Schoolclass extends org.woym.objects.Entity implements ActivityObje
 	 */
 	public boolean containsSubjectDemand(final LessonType lessonType) {
 		return lessonDemands.containsKey(lessonType);
+	}
+
+	/**
+	 * Erzeugt ein neues {@linkplain Memento} und gibt es zurück.
+	 * 
+	 * @return ein {@linkplain Memento} mit dem aktuellen Zustand des Objektes
+	 */
+	public Memento createMemento() {
+		return new Memento(this);
+	}
+
+	/**
+	 * Setzt den Status des {@linkplain Schoolclass}-Objektes auf den Status des
+	 * übergebenen {@linkplain Memento}-Objektes.
+	 * 
+	 * @param memento
+	 *            - das Memento-Objekt, von welchem das {@linkplain Schoolclass}
+	 *            -Objekt den Status annehmen soll
+	 */
+	public void setMemento(Memento memento) {
+		if (memento == null) {
+			throw new IllegalArgumentException();
+		}
+		id = memento.id;
+		identifier = memento.identifier;
+		lessonDemands = memento.lessonDemands;
+		room = memento.room;
+		teacher = memento.teacher;
+	}
+
+	/**
+	 * Die Memento-Klasse zu {@linkplain Schoolclass}.
+	 * 
+	 * @author adrian
+	 *
+	 */
+	public static class Memento {
+
+		private final Long id;
+
+		private final char identifier;
+
+		private final Map<LessonType, Integer> lessonDemands;
+
+		private final Room room;
+
+		private final Teacher teacher;
+
+		public Memento(Schoolclass originator) {
+			if (originator == null) {
+				throw new IllegalArgumentException();
+			}
+			id = originator.id;
+			identifier = originator.identifier;
+			lessonDemands = originator.lessonDemands;
+			room = originator.room;
+			teacher = originator.teacher;
+		}
 	}
 }

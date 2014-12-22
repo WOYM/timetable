@@ -3,9 +3,12 @@
  */
 package org.woym.logic;
 
-import java.util.ArrayList;
-import java.util.List;
+import javax.faces.application.FacesMessage;
 
+import org.woym.messages.GenericStatusMessage;
+import org.woym.messages.MessageHelper;
+import org.woym.messages.SpecificStatusMessage;
+import org.woym.objects.Entity;
 import org.woym.spec.logic.IStatus;
 
 /**
@@ -14,25 +17,26 @@ import org.woym.spec.logic.IStatus;
  */
 public class FailureStatus implements IStatus {
 
-	ArrayList<Exception> exceptions = new ArrayList<>();
-
-	/**
-	 * Fügt eine Exception zu der internen List ehinzu.
-	 * 
-	 * @param exception
-	 * 		Hinzufügende Exception
-	 * 
-	 * @return
-	 * 		{@code true} beim erfolgreichen Hinzufügen
-	 * 		{@code false} beim Misserfolg
-	 */
-	public boolean addException(Exception exception) {
-		return exceptions.add(exception);
-	}
+	private final FacesMessage facesMessage;
 	
-	@Override
-	public List<String> report() {
-		throw new UnsupportedOperationException();
+	public FailureStatus(SpecificStatusMessage message,
+			Class<? extends Entity> clazz, FacesMessage.Severity severity) {
+		if (message == null || clazz == null || severity == null) {
+			throw new IllegalArgumentException();
+		}
+		facesMessage = MessageHelper.generateMessage(message, clazz, severity);
 	}
 
+	public FailureStatus(GenericStatusMessage message,
+			FacesMessage.Severity severity) {
+		if (message == null || severity == null) {
+			throw new IllegalArgumentException();
+		}
+		facesMessage = MessageHelper.generateMessage(message, severity);
+	}
+
+	@Override
+	public FacesMessage report() {
+		return facesMessage;
+	}
 }

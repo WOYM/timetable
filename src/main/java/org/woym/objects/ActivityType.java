@@ -194,18 +194,18 @@ public abstract class ActivityType extends org.woym.objects.Entity {
 		if (typicalDuration >= 60) {
 			minutes = typicalDuration % 60;
 			hours = ((int) (typicalDuration - minutes) / 60);
-			
-			if(hours == 1) {
-				
+
+			if (hours == 1) {
+
 			}
-			
+
 			readableString += hours + " Stunden";
 
 		} else {
 			minutes = typicalDuration;
 			hours = 0;
 		}
-		
+
 		if (hours != 0 && minutes != 0) {
 			readableString += ", ";
 		}
@@ -214,5 +214,65 @@ public abstract class ActivityType extends org.woym.objects.Entity {
 			readableString += minutes + " Minuten";
 		}
 		return readableString;
+	}
+
+	/**
+	 * Erzeugt ein neues {@linkplain Memento} und gibt es zurück.
+	 * 
+	 * @return ein {@linkplain Memento} mit dem aktuellen Zustand
+	 *         des Objektes
+	 */
+	public Memento createMemento() {
+		return new Memento(this);
+	}
+
+	/**
+	 * Setzt den Status des {@linkplain ActivityType}-Objektes auf den Status
+	 * des übergebenen {@linkplain Memento}-Objektes.
+	 * 
+	 * @param memento
+	 *            - das Memento-Objekt, von welchem das
+	 *            {@linkplain ActivityType} -Objekt den Status annehmen soll
+	 */
+	public void setMemento(Memento memento) {
+		if (memento == null) {
+			throw new IllegalArgumentException();
+		}
+		id = memento.id;
+		name = memento.name;
+		typicalDuration = memento.typicalDuration;
+		rooms = memento.rooms;
+		hexColor = memento.hexColor;
+	}
+
+	/**
+	 * Die Memento-Klasse zu {@linkplain ActivityType}.
+	 * 
+	 * @author adrian
+	 *
+	 */
+	public static class Memento {
+
+		private final Long id;
+
+		private final String name;
+
+		private final int typicalDuration;
+
+		private final List<Room> rooms;
+
+		private final String hexColor;
+
+		public Memento(ActivityType originator) {
+			if (originator == null) {
+				throw new IllegalArgumentException();
+			}
+			id = originator.id;
+			name = originator.name;
+			typicalDuration = originator.typicalDuration;
+			rooms = originator.rooms;
+			hexColor = originator.hexColor;
+		}
+
 	}
 }

@@ -212,4 +212,58 @@ public class AcademicYear extends org.woym.objects.Entity {
 	public boolean containsSubjectDemand(final LessonType lessonType) {
 		return lessonDemands.containsKey(lessonType);
 	}
+
+	/**
+	 * Erzeugt ein neues {@linkplain Memento} und gibt es zurück.
+	 * 
+	 * @return ein {@linkplain Memento} mit dem aktuellen Zustand des Objektes
+	 */
+	public Memento createMemento() {
+		return new Memento(this);
+	}
+
+	/**
+	 * Setzt den Status des {@linkplain AcademicYear}-Objektes auf den Status
+	 * des übergebenen {@linkplain Memento}-Objektes.
+	 * 
+	 * @param memento
+	 *            - das Memento-Objekt, von welchem das
+	 *            {@linkplain AcademicYear}-Objekt den Status annehmen soll
+	 */
+	public void setMemento(Memento memento) {
+		if (memento == null) {
+			throw new IllegalArgumentException();
+		}
+		id = memento.id;
+		academicYear = memento.academicYear;
+		schoolclasses = memento.schoolclasses;
+		lessonDemands = memento.lessonDemands;
+	}
+
+	/**
+	 * Die Memento-Klasse für {@linkplain AcademicYear}.
+	 * 
+	 * @author adrian
+	 *
+	 */
+	public static class Memento {
+
+		private final Long id;
+
+		private final int academicYear;
+
+		private final List<Schoolclass> schoolclasses;
+
+		private final Map<LessonType, Integer> lessonDemands;
+
+		public Memento(AcademicYear originator) {
+			if (originator == null) {
+				throw new IllegalArgumentException();
+			}
+			id = originator.id;
+			academicYear = originator.academicYear;
+			schoolclasses = originator.schoolclasses;
+			lessonDemands = originator.lessonDemands;
+		}
+	}
 }

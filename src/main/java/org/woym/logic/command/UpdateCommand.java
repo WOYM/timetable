@@ -1,7 +1,10 @@
 package org.woym.logic.command;
 
+import javax.faces.application.FacesMessage;
+
 import org.woym.logic.FailureStatus;
 import org.woym.logic.SuccessStatus;
+import org.woym.messages.SpecificStatusMessage;
 import org.woym.objects.Entity;
 import org.woym.spec.logic.ICommand;
 import org.woym.spec.logic.IStatus;
@@ -30,8 +33,9 @@ public class UpdateCommand<E extends Entity> implements ICommand {
 			entity.update();
 			status = new SuccessStatus();
 		} catch (Exception e) {
-			status = new FailureStatus();
-			((FailureStatus) status).addException(e);
+			status = new FailureStatus(
+					SpecificStatusMessage.UPDATE_OBJECT_DATASET_EXCEPTION,
+					entity.getClass(), FacesMessage.SEVERITY_ERROR);
 		}
 		return status;
 	}

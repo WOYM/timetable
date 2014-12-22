@@ -17,7 +17,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
 
 /**
- * Diese Klasse repräsentiert eine Aktivität des Personals.
+ * Diese Klasse repräsentiert eine Aktivität innerhalb eines Stundenplans.
  * 
  * @author Adrian
  *
@@ -211,5 +211,66 @@ public abstract class Activity extends org.woym.objects.Entity {
 		EmployeeTimePeriods employeeTimePeriods = new EmployeeTimePeriods();
 		employeeTimePeriods.setEmployee(employee);
 		return this.employeeTimePeriods.contains(employeeTimePeriods);
+	}
+
+	protected void setMemento(Memento memento) {
+		if (memento == null) {
+			throw new IllegalArgumentException();
+		}
+		id = memento.id;
+		time = memento.time;
+		rooms = memento.rooms;
+		schoolclasses = memento.schoolclasses;
+		employeeTimePeriods = memento.employeeTimePeriods;
+	}
+
+	/**
+	 * Eine Memento-Klasse für {@linkplain Activity}-Objekte.
+	 * 
+	 * @author adrian
+	 *
+	 */
+	public static class Memento {
+
+		private final Long id;
+
+		private final TimePeriod time;
+
+		private final List<Room> rooms;
+
+		private final List<Schoolclass> schoolclasses;
+
+		private final List<EmployeeTimePeriods> employeeTimePeriods;
+
+		public Memento(Activity originator) {
+			if (originator == null) {
+				throw new IllegalArgumentException();
+			}
+			id = originator.id;
+			time = originator.time;
+			rooms = originator.rooms;
+			schoolclasses = originator.schoolclasses;
+			employeeTimePeriods = originator.employeeTimePeriods;
+		}
+
+		Long getId() {
+			return id;
+		}
+
+		TimePeriod getTime() {
+			return time;
+		}
+
+		List<Room> getRooms() {
+			return rooms;
+		}
+
+		List<Schoolclass> getSchoolclasses() {
+			return schoolclasses;
+		}
+
+		List<EmployeeTimePeriods> getEmployeeTimePeriods() {
+			return employeeTimePeriods;
+		}
 	}
 }

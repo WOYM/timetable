@@ -116,4 +116,54 @@ public class Location extends org.woym.objects.Entity {
 	public boolean containsRoom(final Room room) {
 		return rooms.contains(room);
 	}
+
+	/**
+	 * Erzeugt ein neues {@linkplain Memento} und gibt es zurück.
+	 * 
+	 * @return ein {@linkplain Memento} mit dem aktuellen Zustand des Objektes
+	 */
+	public Memento createMemento() {
+		return new Memento(this);
+	}
+
+	/**
+	 * Setzt den Status des {@linkplain Location}-Objektes auf den Status des
+	 * übergebenen {@linkplain Memento}-Objektes.
+	 * 
+	 * @param memento
+	 *            - das Memento-Objekt, von welchem das {@linkplain Location}
+	 *            -Objekt den Status annehmen soll
+	 */
+	public void setMemento(Memento memento) {
+		if (memento == null) {
+			throw new IllegalArgumentException();
+		}
+		id = memento.id;
+		name = memento.name;
+		rooms = memento.rooms;
+	}
+
+	/**
+	 * Die Memento-Klasse zu {@linkplain Location}.
+	 * 
+	 * @author adrian
+	 *
+	 */
+	public static class Memento {
+
+		private final Long id;
+
+		private final String name;
+
+		private final List<Room> rooms;
+
+		public Memento(Location originator) {
+			if (originator == null) {
+				throw new IllegalArgumentException();
+			}
+			id = originator.id;
+			name = originator.name;
+			rooms = originator.rooms;
+		}
+	}
 }

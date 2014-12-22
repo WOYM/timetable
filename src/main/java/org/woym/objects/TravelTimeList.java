@@ -195,6 +195,48 @@ public final class TravelTimeList extends org.woym.objects.Entity {
 	}
 
 	/**
+	 * Erzeugt ein neues {@linkplain Memento} und gibt es zurück.
+	 * 
+	 * @return ein {@linkplain Memento} mit dem aktuellen Zustand des Objektes
+	 */
+	public Memento createMemento() {
+		return new Memento(this);
+	}
+
+	/**
+	 * Setzt den Status des {@linkplain TravelTimeList}-Objektes auf den Status
+	 * des übergebenen {@linkplain Memento}-Objektes.
+	 * 
+	 * @param memento
+	 *            - das Memento-Objekt, von welchem das
+	 *            {@linkplain TravelTimeList} -Objekt den Status annehmen soll
+	 */
+	public void setMemento(Memento memento) {
+		if (memento == null) {
+			throw new IllegalArgumentException();
+		}
+		edges = memento.edges;
+	}
+
+	/**
+	 * Die Memento-Klasse zu {@linkplain TravelTimeList}.
+	 * 
+	 * @author adrian
+	 *
+	 */
+	public static class Memento {
+
+		private final List<Edge> edges;
+
+		public Memento(TravelTimeList originator) {
+			if (originator == null) {
+				throw new IllegalArgumentException();
+			}
+			edges = originator.edges;
+		}
+	}
+
+	/**
 	 * Die Klasse Edge repräsentiert als ungerichtete Kante zwischen zwei
 	 * Standorten mit einer bestimmten Distanz eine Wegzeit.
 	 * 
@@ -202,7 +244,7 @@ public final class TravelTimeList extends org.woym.objects.Entity {
 	 *
 	 */
 	@Embeddable
-	static class Edge {
+	public static class Edge {
 
 		/**
 		 * Der eine Standort der Kante.

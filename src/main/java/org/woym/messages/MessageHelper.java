@@ -106,7 +106,7 @@ public abstract class MessageHelper {
 		} else if (clazz == Schoolclass.class) {
 			return "der Schulklasse";
 		} else if (clazz == Teacher.class) {
-			return "des Lehrers";
+			return "der Lehrkraft";
 		}
 		return null;
 	}
