@@ -24,21 +24,25 @@
 
 		<p:outputPanel style="float:right">
 			<p:commandButton value="Hinzufügen" icon="ui-icon-plusthick"
-				actionListener="#{lessonTypeController.addLessonTypeDialog}" />
+				actionListener="#{lessonTypeController.addLessonTypeDialog}"
+				process="@this" update="addLessonTypePanel">
+			</p:commandButton>
 		</p:outputPanel>
 
 		<!-- Existierende Unterrichtsinhalte -->
 		<p:contextMenu for="lessonTypeTable">
 			<p:menuitem value="Bearbeiten"
-				onclick="PF('editLessonTypeDialog').show();" icon="ui-icon-pencil" />
+				oncomplete="PF('wEditLessonTypeDialog').show();"
+				icon="ui-icon-pencil" />
 			<p:menuitem value="Löschen" update="@form" icon="ui-icon-close"
 				actionListener="#{lessonTypeController.deleteLessonType}" />
 		</p:contextMenu>
 		<p:dataTable emptyMessage="Keine Unterrichtsinhalte vorhanden"
 			id="lessonTypeTable" var="lessonType"
+			selection="#{lessonTypeController.lessonType}"
 			value="#{lessonTypeController.getLessonTypes()}"
-			selection="#{lessonTypeController.lessonType}" selectionMode="single"
-			rowKey="#{lessonType.name}">
+			selectionMode="single" rowKey="#{lessonType.name}" scrollable="true"
+			scrollHeight="500">
 			<p:column headerText="Name">
 				<h:outputText value="#{lessonType.name}" />
 			</p:column>
@@ -63,11 +67,12 @@
 
 		<!-- Add-Dialog -->
 		<p:dialog header="Hinzufügen von Unterrichtsinhalten"
-			id="addLessonTypeDialog" widgetVar="addLessonTypeDialog"
-			minHeight="600" modal="true" draggable="false" resizable="false">
+			id="addLessonTypeDialog" widgetVar="wAddLessonTypeDialog"
+			minHeight="600" modal="true" draggable="true" resizable="false"
+			appendToBody="true" dynamic="true">
 			<p:ajax event="close" update="@form" />
-			<p:outputPanel>
-				<h:panelGrid columns="3">
+			<p:outputPanel id="addLessonTypePanel">
+				<h:panelGrid columns="2">
 					<p:outputLabel for="addName" value="Name:" />
 					<p:inputText id="addName"
 						value="#{lessonTypeController.lessonType.name}" required="true"
@@ -76,28 +81,30 @@
 						<f:attribute name="validateBean"
 							value="#{lessonTypeController.lessonType}" />
 					</p:inputText>
-					<p:message for="addName" />
 					<p:outputLabel for="addDuration" value="Typische Dauer (Minuten):" />
 					<p:spinner id="addDuration" min="0" max="1000"
 						value="#{lessonTypeController.lessonType.typicalDuration}" />
-					<p:message for="addDuration" />
 					<p:spacer />
-					<p:outputPanel style="float:right">
+					<p:outputPanel id="addLessonTypeButton" style="float:right">
 						<p:commandButton value="Hinzufügen"
-							actionListener="#{lessonTypeController.addLessonType}" />
+							actionListener="#{lessonTypeController.addLessonType}"
+							process="addName,addDuration,@this" update="addLessonTypePanel" />
 					</p:outputPanel>
+					<p:defaultCommand target="addLessonTypeButton" />
 				</h:panelGrid>
+				<p:messages showDetail="true" />
 			</p:outputPanel>
 		</p:dialog>
 
 		<!-- Edit-Dialog -->
 		<p:dialog
 			header="Bearbeiten von Unterrichtsinhalt #{lessonTypeController.lessonType.name}"
-			id="editLessonTypeDialog" widgetVar="editLessonTypeDialog"
-			minHeight="600" modal="true" draggable="false" resizable="false">
+			id="editLessonTypeDialog" widgetVar="wEditLessonTypeDialog"
+			minHeight="600" modal="true" draggable="true" resizable="false"
+			appendToBody="true" dynamic="true">
 			<p:ajax event="close" update="@form" />
-			<p:outputPanel>
-				<h:panelGrid columns="3">
+			<p:outputPanel id="editLessonTypePanel">
+				<h:panelGrid columns="2">
 					<p:outputLabel for="editName" value="Name:" />
 					<p:inputText id="editName"
 						value="#{lessonTypeController.lessonType.name}" required="true"
@@ -106,17 +113,19 @@
 						<f:attribute name="validateBean"
 							value="#{lessonTypeController.lessonType}" />
 					</p:inputText>
-					<p:message for="editName" />
 					<p:outputLabel for="editDuration" value="Typische Dauer (Minuten):" />
 					<p:spinner id="editDuration" min="0" max="1000"
 						value="#{lessonTypeController.lessonType.typicalDuration}" />
-					<p:message for="editDuration" />
+					<p:spacer />
+					<p:outputPanel style="margin-top:10px; float:right">
+						<p:commandButton id="editLessonTypeButton" value="Bearbeiten"
+							actionListener="#{lessonTypeController.editLessonType}"
+							process="editName,editDuration,@this"
+							update="editLessonTypePanel" />
+					</p:outputPanel>
+					<p:defaultCommand target="editLessonTypeButton" />
 				</h:panelGrid>
-				<p:outputPanel style="margin-top:10px; float:right">
-					<p:commandButton value="Bearbeiten"
-						actionListener="#{lessonTypeController.editLessonType}"
-						update="@form" />
-				</p:outputPanel>
+				<p:messages showDetail="true" />
 			</p:outputPanel>
 		</p:dialog>
 	</h:form>

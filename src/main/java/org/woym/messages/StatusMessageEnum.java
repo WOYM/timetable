@@ -105,7 +105,7 @@ public enum StatusMessageEnum {
 
 	NAME_IS_EMPTY(28, "Ungültiger Name.", "Name darf nicht leer sein."),
 
-	NAME_ALREADY_EXISTS(29, "Ungültiger name.",
+	NAME_ALREADY_EXISTS(29, "Ungültiger Name.",
 			"Dieser Name wird bereits verwendet."),
 
 	SYMBOL_IS_EMPTY(30, "Ungültiges Kürzel.", "Kürzel darf nicht leer sein."),

@@ -4,8 +4,10 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
+import javax.faces.bean.SessionScoped;
 import javax.faces.context.FacesContext;
 
 import org.apache.logging.log4j.LogManager;
@@ -25,6 +27,7 @@ import org.woym.persistence.DataAccess;
  * @author Tim Hansen (tihansen)
  *
  */
+@SessionScoped
 @ManagedBean(name = "lessonTypeController")
 public class LessonTypeController implements Serializable {
 
@@ -33,9 +36,15 @@ public class LessonTypeController implements Serializable {
 	private static Logger LOGGER = LogManager
 			.getLogger(LessonTypeController.class);
 
-	private LessonType lessonType = new LessonType();
+	private LessonType lessonType;
 
 	private DataAccess dataAccess = DataAccess.getInstance();
+
+	@PostConstruct
+	public void init() {
+		lessonType = new LessonType();
+		lessonType.setTypicalDuration(getTypicalDuration());
+	}
 
 	/**
 	 * Liefert eine Liste mit allen Unterrichtsinhalten zurück.
@@ -62,7 +71,7 @@ public class LessonTypeController implements Serializable {
 		lessonType = new LessonType();
 		lessonType.setTypicalDuration(getTypicalDuration());
 		RequestContext context = RequestContext.getCurrentInstance();
-		context.execute("PF('addLessonTypeDialog').show()");
+		context.execute("PF('wAddLessonTypeDialog').show();");
 
 	}
 
@@ -120,7 +129,6 @@ public class LessonTypeController implements Serializable {
 			return;
 		}
 
-		// RequestContext.getCurrentInstance().closeDialog(addTeacher);
 	}
 
 	public LessonType getLessonType() {
