@@ -21,7 +21,7 @@ public class GUIController implements Serializable {
 
 	private static final long serialVersionUID = 8156760488563380338L;
 	
-	private String page = "manageTeachers";
+	private String page = "manageLessonTypes";
 
 	public String getPage() {
 		return page;

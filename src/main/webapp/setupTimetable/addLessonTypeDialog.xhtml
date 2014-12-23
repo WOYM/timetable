@@ -26,31 +26,7 @@
 
 		<p:spacer style="height:10px;" />
 
-		<p:outputPanel>
-			<h:panelGrid columns="3">
-				<p:outputLabel for="name" value="Name:" />
-				<p:inputText id="name"
-					value="#{lessonTypeController.lessonType.name}" required="true"
-					requiredMessage="Ein leerer Name ist nicht gültig.">
-					<f:validator validatorId="org.woym.NameValidator" />
-					<f:attribute name="validateBean"
-						value="#{lessonTypeController.lessonType}" />
-				</p:inputText>
-				<p:message for="name" />
-				<p:outputLabel for="duration" value="Typische Dauer (Minuten):" />
-				<p:spinner id="duration" min="0" max="1000"
-					value="#{lessonTypeController.lessonType.typicalDuration}" />
-				<p:message for="duration" />
-				<p:spacer />
-				<p:outputPanel style="float:right">
-					<p:commandButton value="Hinzufügen"
-						actionListener="#{lessonTypeController.addLessonTypeFromDialog}"
-						update="@form" />
-				</p:outputPanel>
-			</h:panelGrid>
-			<p:messages id="messages" showDetail="true" autoUpdate="true"
-				closable="true" />
-		</p:outputPanel>
+
 	</h:form>
 </h:body>
 </html>

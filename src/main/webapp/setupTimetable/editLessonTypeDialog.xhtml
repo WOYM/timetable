@@ -11,43 +11,17 @@
 </h:head>
 
 <h:body>
-    <h:form>
-        <p:outputPanel>
-            <h1>
-                <h:outputText value="Bearbeiten des Unterrichtsinhaltes #{lessonTypeController.lessonType.name}" />
-            </h1>
-            <h:outputText
-                value="In dieser Ansicht können Unterrichtsinhalte bearbeitet werden." />
-        </p:outputPanel>
-
-		<p:separator />
-
-		<p:spacer style="height:10px;" />
-
+	<h:form>
 		<p:outputPanel>
-			<h:panelGrid columns="3">
-				<p:outputLabel for="name" value="Name:" />
-				<p:inputText id="name"
-					value="#{lessonTypeController.lessonType.name}" required="true"
-					requiredMessage="Ein leerer Bezeichner ist nicht gültig.">
-					<f:validator validatorId="org.woym.NameValidator" />
-					<f:attribute name="validateBean"
-						value="#{lessonTypeController.lessonType}" />
-				</p:inputText>
-				<p:message for="name" />
-				<p:outputLabel for="duration" value="Typische Dauer (Minuten):" />
-				<p:spinner id="duration" min="0" max="1000"
-					value="#{lessonTypeController.lessonType.typicalDuration}" />
-				<p:message for="duration" />
-			</h:panelGrid>
-			<p:outputPanel style="margin-top:10px; float:right">
-				<p:commandButton value="Bearbeiten"
-					actionListener="#{lessonTypeController.editLessonType}"
-					update="@form" />
-			</p:outputPanel>
-			<p:messages style="margin-top:55px;" id="messages" showDetail="true"
-				autoUpdate="true" closable="true" />
+			<h1>
+				<h:outputText
+					value="Bearbeiten des Unterrichtsinhaltes #{lessonTypeController.lessonType.name}" />
+			</h1>
+			<h:outputText
+				value="In dieser Ansicht können Unterrichtsinhalte bearbeitet werden." />
 		</p:outputPanel>
+		<p:separator />
+		<p:spacer style="height:10px;" />
 	</h:form>
 </h:body>
 </html>
