@@ -13,7 +13,7 @@ public enum SuccessMessage {
 	 * wurde.
 	 */
 	UPDATE_OBJECT_SUCCESS("%s aktualisiert",
-			"%s %S wurde erfolgreich aktualisiert."),
+			"%s %s wurde erfolgreich aktualisiert."),
 
 	/**
 	 * Diese Nachricht wird gewählt, wenn ein Objekt erfolgreich gelöscht wurde.
