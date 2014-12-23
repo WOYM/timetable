@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+﻿<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"
@@ -11,16 +11,14 @@
 </h:head>
 
 <h:body>
-	<h:form>
-		<p:outputPanel>
-			<h1>
-				<h:outputText value="Bearbeiten von Unterrichtsinhalten" />
-			</h1>
-			<h:outputText
-				value="In dieser Ansicht können Unterrichtsinhalte bearbeitet werden." />
-		</p:outputPanel>
-
-		<p:spacer style="height:10px;" />
+    <h:form>
+        <p:outputPanel>
+            <h1>
+                <h:outputText value="Bearbeiten des Unterrichtsinhaltes #{lessonTypeController.lessonType.name}" />
+            </h1>
+            <h:outputText
+                value="In dieser Ansicht können Unterrichtsinhalte bearbeitet werden." />
+        </p:outputPanel>
 
 		<p:separator />
 
