@@ -72,6 +72,7 @@
 			appendToBody="true" dynamic="true">
 			<p:ajax event="close" update="@form" />
 			<p:outputPanel id="addLessonTypePanel">
+			<b><h:outputText value="Neuer Unterrichtsinhalt" /></b>
 				<h:panelGrid columns="2">
 					<p:outputLabel for="addName" value="Name:" />
 					<p:inputText id="addName"
@@ -98,12 +99,13 @@
 
 		<!-- Edit-Dialog -->
 		<p:dialog
-			header="Bearbeiten von Unterrichtsinhalt #{lessonTypeController.lessonType.name}"
+			header="Bearbeiten von Unterrichtsinhalt"
 			id="editLessonTypeDialog" widgetVar="wEditLessonTypeDialog"
 			minHeight="600" modal="true" draggable="true" resizable="false"
 			appendToBody="true" dynamic="true">
 			<p:ajax event="close" update="@form" />
 			<p:outputPanel id="editLessonTypePanel">
+			    <b><h:outputText value="Bearbeiten von #{lessonTypeController.lessonType.name}" /></b>
 				<h:panelGrid columns="2">
 					<p:outputLabel for="editName" value="Name:" />
 					<p:inputText id="editName"
