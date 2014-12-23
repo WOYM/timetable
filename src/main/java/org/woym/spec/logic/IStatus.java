@@ -1,18 +1,15 @@
 package org.woym.spec.logic;
 
-import java.util.List;
+import javax.faces.application.FacesMessage;
 
 public interface IStatus {
-	
+
 	/**
-	 * erstellt einen für den Kunden 
-	 * anzeigbaren Text mit Statusmeldungen.
+	 * Erzeugt eine {@linkplain FacesMessage}, welche dem Kunden angezeigt wird.
 	 * 
-	 * @return
-	 * 		Eine Liste mit Statusmeldungen, 
-	 * 		der größe {@code > 0}
+	 * @return eine FacesMessage
 	 * 
 	 */
-	public List<String> report();
+	public FacesMessage report();
 
 }

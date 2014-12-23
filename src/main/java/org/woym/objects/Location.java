@@ -11,6 +11,9 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 
+import org.woym.spec.objects.IMemento;
+import org.woym.spec.objects.IMementoObject;
+
 /**
  * Diese Klasse repräsentiert einen Standort.
  * 
@@ -18,7 +21,7 @@ import javax.persistence.OneToMany;
  *
  */
 @Entity
-public class Location extends org.woym.objects.Entity {
+public class Location extends org.woym.objects.Entity implements IMementoObject {
 
 	/**
 	 * 
@@ -115,5 +118,64 @@ public class Location extends org.woym.objects.Entity {
 
 	public boolean containsRoom(final Room room) {
 		return rooms.contains(room);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Memento createMemento() {
+		return new Memento(this);
+	}
+
+	/**
+	 * Bei Übergabe von {@code null} oder einem Parameter, der nicht vom Typ
+	 * {@linkplain Memento} ist, wird eine {@linkplain IllegalArgumentException}
+	 * geworfen. Ansonsten wird der Status des Objektes auf den des übergebenen
+	 * Memento-Objektes gesetzt.
+	 * 
+	 * @param memento
+	 *            - das {@linkplain Memento}-Objekt, von welchem dieses Objekt
+	 *            den Status annehmen soll
+	 */
+	@Override
+	public void setMemento(IMemento memento) {
+		if (memento == null) {
+			throw new IllegalArgumentException("Parameter is null");
+		}
+		if (memento instanceof Memento) {
+			Memento actualMemento = (Memento) memento;
+			id = actualMemento.id;
+			name = actualMemento.name;
+			rooms = actualMemento.rooms;
+		} else {
+			throw new IllegalArgumentException(
+					"Only org.woym.objects.Location.Memento as parameter allowed.");
+		}
+
+	}
+
+	/**
+	 * Die Memento-Klasse zu {@linkplain Location}.
+	 * 
+	 * @author adrian
+	 *
+	 */
+	public static class Memento implements IMemento {
+
+		private final Long id;
+
+		private final String name;
+
+		private final List<Room> rooms;
+
+		Memento(Location originator) {
+			if (originator == null) {
+				throw new IllegalArgumentException();
+			}
+			id = originator.id;
+			name = originator.name;
+			rooms = originator.rooms;
+		}
 	}
 }

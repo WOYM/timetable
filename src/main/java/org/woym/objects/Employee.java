@@ -17,7 +17,9 @@ import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
 
-import org.woym.spec.logic.ActivityObject;
+import org.woym.spec.objects.IActivityObject;
+import org.woym.spec.objects.IMemento;
+import org.woym.spec.objects.IMementoObject;
 
 /**
  * Superklasse für alle Personen des Personals.
@@ -28,7 +30,8 @@ import org.woym.spec.logic.ActivityObject;
 @Entity
 @Inheritance
 @DiscriminatorColumn(name = "TYPE", discriminatorType = DiscriminatorType.STRING, length = 20)
-public abstract class Employee extends org.woym.objects.Entity implements ActivityObject {
+public abstract class Employee extends org.woym.objects.Entity implements
+		IActivityObject, IMementoObject {
 
 	/**
 	 * 
@@ -73,19 +76,6 @@ public abstract class Employee extends org.woym.objects.Entity implements Activi
 	@ElementCollection
 	@OneToMany
 	private List<ChargeableCompensation> compensations = new ArrayList<ChargeableCompensation>();
-
-	/**
-	 * Die von dieser Person des Personals betreuten Jahrgänge.
-	 */
-	@ManyToMany
-	@OrderBy("academicYear")
-	private List<AcademicYear> guidedAcademicYears = new ArrayList<AcademicYear>();
-
-	/**
-	 * Die von dieser Person des Personals betreuten Schulklassen.
-	 */
-	@ManyToMany
-	private List<Schoolclass> guidedSchoolclasses = new ArrayList<Schoolclass>();
 
 	/**
 	 * Die möglichen Stundeninhalte dieser Person des Personals.
@@ -151,22 +141,6 @@ public abstract class Employee extends org.woym.objects.Entity implements Activi
 
 	public void setCompensations(List<ChargeableCompensation> compensations) {
 		this.compensations = compensations;
-	}
-
-	public List<AcademicYear> getGuidedAcademicYears() {
-		return guidedAcademicYears;
-	}
-
-	public void setGuidedAcademicYears(List<AcademicYear> guidedAcademicYears) {
-		this.guidedAcademicYears = guidedAcademicYears;
-	}
-
-	public List<Schoolclass> getGuidedSchoolclasses() {
-		return guidedSchoolclasses;
-	}
-
-	public void setGuidedSchoolclasses(List<Schoolclass> guidedSchoolclasses) {
-		this.guidedSchoolclasses = guidedSchoolclasses;
 	}
 
 	public List<ActivityType> getPossibleActivityTypes() {
@@ -267,96 +241,6 @@ public abstract class Employee extends org.woym.objects.Entity implements Activi
 	}
 
 	/**
-	 * Fügt das übergebenene {@linkplain AcademicYear}-Objekt der entsprechenden
-	 * Liste hinzu, sofern es noch nicht darin vorhanden ist.
-	 * 
-	 * @param academicYear
-	 *            - das hinzuzufügende Objekt
-	 * @return {@code true}, wenn das Objekt sich noch nicht in der Liste
-	 *         befindet und hinzugefügt wurde, ansonsten {@code false}
-	 */
-	public boolean addAcademicYear(final AcademicYear academicYear) {
-		if (!guidedAcademicYears.contains(academicYear)) {
-			guidedAcademicYears.add(academicYear);
-			return true;
-		}
-		return false;
-	}
-
-	/**
-	 * Entfernt das übergebene {@linkplain AcademicYear}-Objekt aus der
-	 * entsprechenden Liste.
-	 * 
-	 * @param academicYear
-	 *            - das zu entfernden Objekt
-	 * @return {@code true}, wenn das Objekt entfernt wurde, ansonsten
-	 *         {@code false}
-	 */
-	public boolean removeAcademicYear(final AcademicYear academicYear) {
-		return guidedAcademicYears.remove(academicYear);
-	}
-
-	/**
-	 * Gibt {@code true} zurück, wenn sich das übergebene
-	 * {@linkplain AcademicYear}-Objekt in der Liste befindet, ansonsten
-	 * {@code false}.
-	 * 
-	 * @param academicYear
-	 *            - das Objekt, für das geprüft werden soll, ob es sich in der
-	 *            Liste befindet
-	 * @return {@code true}, wenn das Objekt sich in der Liste befindet,
-	 *         ansonsten {@code false}
-	 */
-	public boolean containsAcademicYear(final AcademicYear academicYear) {
-		return guidedAcademicYears.contains(academicYear);
-	}
-
-	/**
-	 * Fügt das übergebenene {@linkplain Schoolclass}-Objekt der entsprechenden
-	 * Liste hinzu, sofern es noch nicht darin vorhanden ist.
-	 * 
-	 * @param schoolclass
-	 *            - das hinzuzufügende Objekt
-	 * @return {@code true}, wenn das Objekt sich noch nicht in der Liste
-	 *         befindet und hinzugefügt wurde, ansonsten {@code false}
-	 */
-	public boolean addSchoolclass(final Schoolclass schoolclass) {
-		if (!guidedSchoolclasses.contains(schoolclass)) {
-			guidedSchoolclasses.add(schoolclass);
-			return true;
-		}
-		return false;
-	}
-
-	/**
-	 * Entfernt das übergebene {@linkplain Schoolclass}-Objekt aus der
-	 * entsprechenden Liste.
-	 * 
-	 * @param schoolclass
-	 *            - das zu entfernden Objekt
-	 * @return {@code true}, wenn das Objekt entfernt wurde, ansonsten
-	 *         {@code false}
-	 */
-	public boolean removeSchoolclass(final Schoolclass schoolclass) {
-		return guidedSchoolclasses.remove(schoolclass);
-	}
-
-	/**
-	 * Gibt {@code true} zurück, wenn sich das übergebene
-	 * {@linkplain Schoolclass}-Objekt in der Liste befindet, ansonsten
-	 * {@code false}.
-	 * 
-	 * @param schoolclass
-	 *            - das Objekt, für das geprüft werden soll, ob es sich in der
-	 *            Liste befindet
-	 * @return {@code true}, wenn das Objekt sich in der Liste befindet,
-	 *         ansonsten {@code false}
-	 */
-	public boolean containsSchoolclass(final Schoolclass schoolclass) {
-		return guidedSchoolclasses.contains(schoolclass);
-	}
-
-	/**
 	 * Fügt das übergebenene {@linkplain ActivityType}-Objekt der entsprechenden
 	 * Liste hinzu, sofern es noch nicht darin vorhanden ist.
 	 * 
@@ -366,11 +250,11 @@ public abstract class Employee extends org.woym.objects.Entity implements Activi
 	 *         befindet und hinzugefügt wurde, ansonsten {@code false}
 	 */
 	public boolean addActivityType(ActivityType activityType) {
-		if(activityType == null) {
+		if (activityType == null) {
 			return false;
 		}
-		
-		if(!this.possibleActivityTypes.contains(activityType)) {
+
+		if (!this.possibleActivityTypes.contains(activityType)) {
 			this.possibleActivityTypes.add(activityType);
 			return true;
 		}
@@ -449,4 +333,83 @@ public abstract class Employee extends org.woym.objects.Entity implements Activi
 	public boolean containsTimeWish(final TimePeriod timePeriod) {
 		return timeWishes.contains(timePeriod);
 	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Memento createMemento() {
+		return new Memento(this);
+	}
+
+	/**
+	 * Bei Übergabe von {@code null} oder einem Parameter, der nicht vom Typ
+	 * {@linkplain Memento} ist, wird eine {@linkplain IllegalArgumentException}
+	 * geworfen. Ansonsten wird der Status des Objektes auf den des übergebenen
+	 * Memento-Objektes gesetzt.
+	 * 
+	 * @param memento
+	 *            - das {@linkplain Memento}-Objekt, von welchem dieses Objekt
+	 *            den Status annehmen soll
+	 */
+	@Override
+	public void setMemento(IMemento memento) {
+		if (memento == null) {
+			throw new IllegalArgumentException("Parameter is null.");
+		}
+		if (memento instanceof Memento) {
+			Memento actualMemento = (Memento) memento;
+			id = actualMemento.id;
+			name = actualMemento.name;
+			symbol = actualMemento.symbol;
+			hoursPerWeek = actualMemento.hoursPerWeek;
+			allocatedHours = actualMemento.allocatedHours;
+			compensations = actualMemento.compensations;
+			possibleActivityTypes = actualMemento.possibleActivityTypes;
+			timeWishes = actualMemento.timeWishes;
+		} else {
+			throw new IllegalArgumentException(
+					"Only org.woym.objects.Employee.Memento as parameter allowed.");
+		}
+	}
+
+	/**
+	 * Die Memento-Klasse zu {@linkplain Employee}.
+	 * 
+	 * @author adrian
+	 *
+	 */
+	public static class Memento implements IMemento {
+
+		private final Long id;
+
+		private final String name;
+
+		private final String symbol;
+
+		private final BigDecimal hoursPerWeek;
+
+		private final BigDecimal allocatedHours;
+
+		private final List<ChargeableCompensation> compensations;
+
+		private final List<ActivityType> possibleActivityTypes;
+
+		private final List<TimePeriod> timeWishes;
+
+		Memento(Employee originator) {
+			if (originator == null) {
+				throw new IllegalArgumentException();
+			}
+			id = originator.id;
+			name = originator.name;
+			symbol = originator.symbol;
+			hoursPerWeek = originator.hoursPerWeek;
+			allocatedHours = originator.allocatedHours;
+			compensations = originator.compensations;
+			possibleActivityTypes = originator.possibleActivityTypes;
+			timeWishes = originator.timeWishes;
+		}
+	}
+
 }

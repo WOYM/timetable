@@ -8,7 +8,8 @@ import javax.faces.validator.Validator;
 import javax.faces.validator.ValidatorException;
 
 import org.h2.util.StringUtils;
-import org.woym.messages.StatusMessageEnum;
+import org.woym.messages.GenericStatusMessage;
+import org.woym.messages.MessageHelper;
 
 /**
  * <h1>NameValidator</h1>
@@ -32,10 +33,9 @@ public class NameValidator implements Validator {
 			Object value) throws ValidatorException {
 
 		if (StringUtils.isNullOrEmpty(value.toString())) {
-			FacesMessage msg = new FacesMessage(
-					StatusMessageEnum.NAME_IS_EMPTY.getSummary(),
-					StatusMessageEnum.NAME_IS_EMPTY.getStatusMessage());
-			msg.setSeverity(FacesMessage.SEVERITY_ERROR);
+			FacesMessage msg = MessageHelper.generateMessage(
+					GenericStatusMessage.NAME_IS_EMPTY,
+					FacesMessage.SEVERITY_ERROR);
 			throw new ValidatorException(msg);
 		}
 	}

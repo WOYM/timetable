@@ -8,7 +8,7 @@ import javax.faces.convert.ConverterException;
 import javax.faces.convert.FacesConverter;
 
 import org.woym.exceptions.DatasetException;
-import org.woym.messages.StatusMessageEnum;
+import org.woym.messages.GenericStatusMessage;
 import org.woym.objects.ActivityType;
 import org.woym.objects.LessonType;
 import org.woym.persistence.DataAccess;
@@ -37,8 +37,8 @@ public class LessonTypeNameConverter implements Converter {
 			lessonType = dataAccess.getOneActivityType(value);
 		} catch (DatasetException e) {
 			FacesMessage msg = new FacesMessage(
-					StatusMessageEnum.DATABASE_COMMUNICATION_ERROR.getSummary(),
-					StatusMessageEnum.DATABASE_COMMUNICATION_ERROR
+					GenericStatusMessage.DATABASE_COMMUNICATION_ERROR.getSummary(),
+					GenericStatusMessage.DATABASE_COMMUNICATION_ERROR
 							.getStatusMessage());
 			msg.setSeverity(FacesMessage.SEVERITY_ERROR);
 			throw new ConverterException(msg);

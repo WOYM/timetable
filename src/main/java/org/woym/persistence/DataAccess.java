@@ -24,6 +24,7 @@ import org.woym.objects.Room;
 import org.woym.objects.Schoolclass;
 import org.woym.objects.Teacher;
 import org.woym.objects.TravelTimeList;
+import org.woym.objects.Weekday;
 import org.woym.spec.persistence.IDataAccess;
 
 /**
@@ -106,8 +107,8 @@ public class DataAccess implements IDataAccess, Observer {
 			em.getTransaction().begin();
 			em.merge(object);
 			em.getTransaction().commit();
-			LOGGER.debug(String.format("%s %s updated.", object.getClass()
-					.getSimpleName(), object));
+			LOGGER.debug(String.format("Existing %s updated to %s.", object
+					.getClass().getSimpleName(), object));
 		} catch (Exception e) {
 			LOGGER.error(String.format("Exception while updating %s.", object
 					.getClass().getSimpleName()), e);
@@ -466,6 +467,55 @@ public class DataAccess implements IDataAccess, Observer {
 	/**
 	 * {@inheritDoc}
 	 */
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Activity> getAllActivities(Room room) throws DatasetException {
+		if (room == null) {
+			throw new IllegalArgumentException();
+		}
+		try {
+			final Query query = em
+					.createQuery("SELECT a FROM Activity a WHERE ?1 MEMBER OF a.rooms");
+			query.setParameter(1, room);
+			return (List<Activity>) query.getResultList();
+		} catch (Exception e) {
+			LOGGER.error("Exception while getting all activities for room "
+					+ room, e);
+			throw new DatasetException(String.format(
+					"Error while getting all activities for romm %s : ", room)
+					+ e.getMessage());
+		}
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Activity> getAllActivities(Employee employee, Weekday weekday)
+			throws DatasetException {
+		if (employee == null || weekday == null) {
+			throw new IllegalArgumentException();
+		}
+		try {
+			final Query query = em
+					.createQuery("SELECT DISTINCT a from Activity a INNER JOIN a.employeeTimePeriods e "
+							+ "WHERE e.employee.id = ?1 AND a.time.day = ?2");
+			query.setParameter(1, employee.getId());
+			query.setParameter(2, weekday);
+			return (List<Activity>) query.getResultList();
+		} catch (Exception e) {
+			LOGGER.error("Exception while getting all activities for "
+					+ employee, e);
+			throw new DatasetException(
+					"Error while getting all activities for " + employee + ": "
+							+ e.getMessage());
+		}
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public <E> E getById(Class<E> clazz, Long id) throws DatasetException {
 		if (id == null) {
@@ -483,19 +533,25 @@ public class DataAccess implements IDataAccess, Observer {
 					+ e.getMessage());
 		}
 	}
-	
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
 	@SuppressWarnings("unchecked")
 	public TravelTimeList getTravelTimeList() throws DatasetException {
-		try{
-			final Query query = em.createQuery("SELECT t FROM TravelTimeList t");
+		try {
+			final Query query = em
+					.createQuery("SELECT t FROM TravelTimeList t");
 			List<TravelTimeList> result = query.getResultList();
-			if(result.isEmpty()){
+			if (result.isEmpty()) {
 				return null;
 			}
 			return result.get(0);
-		} catch (Exception e){
+		} catch (Exception e) {
 			LOGGER.error("Exception while getting TravelTimeList.", e);
-			throw new DatasetException("Error while getting TravelTimeList: " + e.getMessage());
+			throw new DatasetException("Error while getting TravelTimeList: "
+					+ e.getMessage());
 		}
 	}
 

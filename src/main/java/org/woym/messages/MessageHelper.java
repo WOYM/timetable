@@ -1,6 +1,8 @@
 package org.woym.messages;
 
-import org.woym.exceptions.DatasetException;
+import javax.faces.application.FacesMessage;
+
+import org.woym.objects.AcademicYear;
 import org.woym.objects.Activity;
 import org.woym.objects.Entity;
 import org.woym.objects.LessonType;
@@ -13,8 +15,7 @@ import org.woym.objects.Schoolclass;
 import org.woym.objects.Teacher;
 
 /**
- * Diese Klasse ist eine Hilfsklasse für {@linkplain StatusMessageEnum} um viele
- * doppelte Texte zu ersparen.
+ * Diese Klasse dient der Generierung von Fehlernachrichten.
  * 
  * @author Adrian
  *
@@ -22,68 +23,55 @@ import org.woym.objects.Teacher;
 public abstract class MessageHelper {
 
 	/**
-	 * Fehlerbezeichnung für einen Datenbankfehler.
-	 */
-	static final String DATABASE_ERROR = "Datenbankfehler";
-
-	/**
-	 * Text der Statusnachricht, wenn beim Hinzufügen eines Objektes eine
-	 * {@linkplain DatasetException} auftritt.
-	 */
-	private static final String ADD_OBJECT_DATASET_EXCEPTION = "Beim Hinzufügen %s ist ein Datenbankfehler aufgetreten.";
-
-	/**
-	 * Text der Statusnachricht, wenn beim Aktualisieren eines Objektes eine
-	 * {@linkplain DatasetException} auftritt.
-	 */
-	private static final String EDIT_OBJECT_DATASET_EXCEPTION = "Beim Aktualisieren %s ist ein Datenbankfehler aufgetreten.";
-
-	/**
-	 * Text der Statusnachricht, wenn beim Löschen eines Objektes eine
-	 * {@linkplain DatasetException} auftritt.
-	 */
-	private static final String DELETE_OBJECT_DATASET_EXCEPTION = "Beim Löschen %s ist ein Datenbankfehler aufgetreten.";
-
-	/**
-	 * Gibt eine Statusnachricht für einen Datenbankfehler beim Hinzufügen der
-	 * übergebenen Klasse zurück.
+	 * Generiert aus der übergebenen {@linkplain SpecificStatusMessage}, der
+	 * übergebenen Klasse und {@linkplain FacesMessage.Severity} eine
+	 * {@linkplain FacesMessage} und gibt diese zurück.
 	 * 
+	 * @param message
+	 *            - die Statusnachricht aus dem
+	 *            {@linkplain SpecificStatusMessage}-Enum
 	 * @param clazz
-	 *            - die Klasse, bei welcher der Fehler auftritt
-	 * @return die Statusnachricht für die übergebene Klasse, wenn die Klasse
-	 *         unbekannt ist, enthält die Statusnachricht {@code null}
+	 *            -die Klasse, welche betroffen ist
+	 * @param severity
+	 *            - die Art der Meldung (Info, Warnung, Fehler)
+	 * @return die generierte {@linkplain FacesMessage}
 	 */
-	static String addDatasetException(Class<? extends Entity> clazz) {
-		String textToInsert = getInsertString(clazz);
-		return String.format(ADD_OBJECT_DATASET_EXCEPTION, textToInsert);
+	public static FacesMessage generateMessage(SpecificStatusMessage message,
+			Class<? extends Entity> clazz, FacesMessage.Severity severity) {
+		if (message == null || clazz == null || severity == null) {
+			throw new IllegalArgumentException();
+		}
+		String toInsert = getInsertString(clazz);
+		FacesMessage facesMessage = new FacesMessage();
+		facesMessage.setSummary(message.getSummary());
+		facesMessage.setDetail(String.format(message.getStatusMessage(),
+				toInsert));
+		facesMessage.setSeverity(severity);
+		return facesMessage;
 	}
 
 	/**
-	 * Gibt eine Statusnachricht für einen Datenbankfehler beim Aktualisieren
-	 * der übergebenen Klasse zurück.
+	 * Generiert aus der übergebenen {@linkplain GenericStatusMessage} und der
+	 * übergebenen {@linkplain FacesMessage.Severity} eine
+	 * {@linkplain FacesMessage} und gibt diese zurück.
 	 * 
-	 * @param clazz
-	 *            - die Klasse, bei welcher der Fehler auftritt
-	 * @return die Statusnachricht für die übergebene Klasse, wenn die Klasse
-	 *         unbekannt ist, enthält die Statusnachricht {@code null}
+	 * @param message
+	 *            - die Statusnachricht aus dem
+	 *            {@linkplain GenericStatusMessage}-Enum
+	 * @param severity
+	 *            - die Art der Meldung (Info, Warnung, Fehler)
+	 * @return die generierte {@linkplain FacesMessage}
 	 */
-	static String editDatasetException(Class<? extends Entity> clazz) {
-		String textToInsert = getInsertString(clazz);
-		return String.format(EDIT_OBJECT_DATASET_EXCEPTION, textToInsert);
-	}
-
-	/**
-	 * Gibt eine Statusnachricht für einen Datenbankfehler beim Löschen der
-	 * übergebenen Klasse zurück.
-	 * 
-	 * @param clazz
-	 *            - die Klasse, bei welcher der Fehler auftritt
-	 * @return die Statusnachricht für die übergebene Klasse, wenn die Klasse
-	 *         unbekannt ist, enthält die Statusnachricht {@code null}
-	 */
-	static String deleteDatasetException(Class<? extends Entity> clazz) {
-		String textToInsert = getInsertString(clazz);
-		return String.format(DELETE_OBJECT_DATASET_EXCEPTION, textToInsert);
+	public static FacesMessage generateMessage(GenericStatusMessage message,
+			FacesMessage.Severity severity) {
+		if (message == null || severity == null) {
+			throw new IllegalArgumentException();
+		}
+		FacesMessage facesMessage = new FacesMessage();
+		facesMessage.setSummary(message.getSummary());
+		facesMessage.setDetail(message.getStatusMessage());
+		facesMessage.setSeverity(severity);
+		return facesMessage;
 	}
 
 	/**
@@ -98,7 +86,10 @@ public abstract class MessageHelper {
 	 *         {@code null}, wenn die Klasse unbekannt ist
 	 */
 	private static String getInsertString(Class<? extends Entity> clazz) {
-		if (clazz == Activity.class) {
+		if (clazz == AcademicYear.class) {
+			return "des Jahrgangs";
+		} else if (clazz == Activity.class
+				|| clazz.getSuperclass() == Activity.class) {
 			return "der Aktivität";
 		} else if (clazz == LessonType.class) {
 			return "des Unterrichtsinhalts";
@@ -115,7 +106,7 @@ public abstract class MessageHelper {
 		} else if (clazz == Schoolclass.class) {
 			return "der Schulklasse";
 		} else if (clazz == Teacher.class) {
-			return "des Lehrers";
+			return "der Lehrkraft";
 		}
 		return null;
 	}
