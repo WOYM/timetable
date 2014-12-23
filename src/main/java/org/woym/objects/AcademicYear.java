@@ -18,6 +18,9 @@ import javax.persistence.MapKeyJoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
 
+import org.woym.spec.objects.IMemento;
+import org.woym.spec.objects.IMementoObject;
+
 /**
  * Diese Klasse repräsentiert einen Jahrgang.
  * 
@@ -25,7 +28,8 @@ import javax.persistence.OrderBy;
  *
  */
 @Entity
-public class AcademicYear extends org.woym.objects.Entity {
+public class AcademicYear extends org.woym.objects.Entity implements
+		IMementoObject {
 
 	/**
 	 * 
@@ -211,5 +215,89 @@ public class AcademicYear extends org.woym.objects.Entity {
 	 */
 	public boolean containsSubjectDemand(final LessonType lessonType) {
 		return lessonDemands.containsKey(lessonType);
+	}
+
+	/**
+	 * Setzt den Status des {@linkplain AcademicYear}-Objektes auf den Status
+	 * des übergebenen {@linkplain Memento}-Objektes.
+	 * 
+	 * @param memento
+	 *            - das Memento-Objekt, von welchem das
+	 *            {@linkplain AcademicYear}-Objekt den Status annehmen soll
+	 */
+	public void setMemento(Memento memento) {
+		if (memento == null) {
+			throw new IllegalArgumentException();
+		}
+		id = memento.id;
+		academicYear = memento.academicYear;
+		schoolclasses = memento.schoolclasses;
+		lessonDemands = memento.lessonDemands;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Memento createMemento() {
+		return new Memento(this);
+	}
+
+	/**
+	 * Bei Übergabe von {@code null} oder einem Parameter, der nicht vom Typ
+	 * {@linkplain Memento} ist, wird eine {@linkplain IllegalArgumentException}
+	 * geworfen. Ansonsten wird der Status des Objektes auf den des übergebenen
+	 * Memento-Objektes gesetzt.
+	 * 
+	 * @param memento
+	 *            - das {@linkplain Memento}-Objekt, von welchem dieses Objekt
+	 *            den Status annehmen soll
+	 */
+	@Override
+	public void setMemento(IMemento memento) {
+		if (memento == null) {
+			throw new IllegalArgumentException("Parameter is null.");
+		}
+		if (memento instanceof Memento) {
+			Memento actualMemento = (Memento) memento;
+			id = actualMemento.id;
+			academicYear = actualMemento.academicYear;
+			schoolclasses = actualMemento.schoolclasses;
+			lessonDemands = actualMemento.lessonDemands;
+		} else {
+			throw new IllegalArgumentException(
+					"Only org.woym.objects.AcademicYear.Memento as parameter allowed.");
+		}
+	}
+
+	/**
+	 * Die Memento-Klasse für {@linkplain AcademicYear}.
+	 * 
+	 * @author adrian
+	 *
+	 */
+	public static class Memento implements IMemento {
+
+		private final Long id;
+
+		private final int academicYear;
+
+		private final List<Schoolclass> schoolclasses;
+
+		private final Map<LessonType, Integer> lessonDemands;
+
+		Memento(AcademicYear originator) {
+			if (originator == null) {
+				throw new IllegalArgumentException();
+			}
+			id = originator.id;
+			academicYear = originator.academicYear;
+			schoolclasses = originator.schoolclasses;
+			lessonDemands = originator.lessonDemands;
+		}
+
+		public Long getId() {
+			return id;
+		}
 	}
 }

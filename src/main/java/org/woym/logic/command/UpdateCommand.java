@@ -1,31 +1,32 @@
-/**
- * 
- */
 package org.woym.logic.command;
 
 import javax.faces.application.FacesMessage;
 
-import org.woym.exceptions.DatasetException;
 import org.woym.logic.FailureStatus;
 import org.woym.logic.SuccessStatus;
 import org.woym.messages.SpecificStatusMessage;
 import org.woym.objects.Entity;
 import org.woym.spec.logic.ICommand;
 import org.woym.spec.logic.IStatus;
+import org.woym.spec.objects.IMemento;
 
 /**
+ * 
  * @author JurSch
  *
  */
-public class AddCommand<E extends Entity> implements ICommand {
+public class UpdateCommand<E extends Entity> implements ICommand {
 
-	private E entity;
+	private final E entity;
+	
+	private final IMemento memento;
 
-	public AddCommand(E entity) {
+	public UpdateCommand(E entity) {
 		if (entity == null) {
 			throw new IllegalArgumentException("Entity was null");
 		}
 		this.entity = entity;
+		memento = entity.createMemento();
 	}
 
 	@Override
@@ -33,11 +34,11 @@ public class AddCommand<E extends Entity> implements ICommand {
 		IStatus status;
 
 		try {
-			entity.persist();
+			entity.update();
 			status = new SuccessStatus();
-		} catch (DatasetException e) {
+		} catch (Exception e) {
 			status = new FailureStatus(
-					SpecificStatusMessage.ADD_OBJECT_DATASET_EXCEPTION,
+					SpecificStatusMessage.UPDATE_OBJECT_DATASET_EXCEPTION,
 					entity.getClass(), FacesMessage.SEVERITY_ERROR);
 		}
 		return status;
@@ -45,12 +46,15 @@ public class AddCommand<E extends Entity> implements ICommand {
 
 	@Override
 	public IStatus undo() {
-		throw new UnsupportedOperationException();
+		entity.setMemento(memento);
+		//TODO:
+		return null;
 	}
 
 	@Override
 	public IStatus redo() {
-		throw new UnsupportedOperationException();
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

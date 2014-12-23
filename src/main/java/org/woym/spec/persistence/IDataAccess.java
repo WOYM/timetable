@@ -16,6 +16,8 @@ import org.woym.objects.ProjectType;
 import org.woym.objects.Room;
 import org.woym.objects.Schoolclass;
 import org.woym.objects.Teacher;
+import org.woym.objects.TravelTimeList;
+import org.woym.objects.Weekday;
 
 public interface IDataAccess {
 
@@ -322,6 +324,40 @@ public interface IDataAccess {
 			throws DatasetException;
 
 	/**
+	 * Wird {@code null} übergeben, wird eine
+	 * {@linkplain IllegalArgumentException} geworfen. Ansonsten wird in der
+	 * Datenbank nach allen Aktivitäten gesucht, die im übergebenen Raum
+	 * stattfinden und diese als Liste zurückgegeben. Tritt dabei ein Fehler
+	 * auf, wird eine {@linkplain DatasetException} geworfen.
+	 * 
+	 * @param room
+	 *            - Raum, für welchen alle Aktivitäten gesucht werden sollen
+	 * @return Liste aller Aktivitäten, die im übergebenen Raum stattfinden,
+	 *         kann auch leer sein
+	 * @throws DatasetException
+	 */
+	public List<Activity> getAllActivities(Room room) throws DatasetException;
+
+	/**
+	 * Wird für einen Parameter{@code null} übergeben, wird eine
+	 * {@linkplain IllegalArgumentException} geworfen. Ansonsten wird in der
+	 * Datenbank nach allen Aktivitäten gesucht, die am übergebenen Wochentag
+	 * stattfinden und an welchen der übergebene Mitarbeiter teilnimmt.
+	 * 
+	 * @param employee
+	 *            - der Mitarbeiter, für welchen nach Aktivitäten gesucht werden
+	 *            soll
+	 * @param weekday
+	 *            - der Tag, an welchem diese Aktivitäten liegen sollen
+	 * @return Liste aller Aktivitäten, die am übergebenen Tag mit dem
+	 *         übergebenen Mitarbeiter als Teilnehmer stattfinden, kann auch
+	 *         leer sein
+	 * @throws DatasetException
+	 */
+	public List<Activity> getAllActivities(Employee employee, Weekday weekday)
+			throws DatasetException;
+
+	/**
 	 * Sucht nach einem Objekt der übergebenen Klasse, welches den übergebenen
 	 * Long-Wert als Primärschlüssel besitzt. Exisitert kein solches Objekt,
 	 * wird {@code null} zurückgegeben. Tritt dabei ein Fehler auf, wird eine
@@ -335,4 +371,17 @@ public interface IDataAccess {
 	 * @throws DatasetException
 	 */
 	public <E> E getById(Class<E> clazz, Long id) throws DatasetException;
+
+	/**
+	 * Sucht nach allen Objekten der Klasse {@linkplain TravelTimeList} in der
+	 * Datenbank. Da es davon nur ein Objekt geben darf, wird entweder
+	 * {@code null} zurückgegeben, wenn keins vorhanden ist und ansonsten das
+	 * gefundene {@linkplain TravelTimeList}-Objekt.
+	 * 
+	 * @return das {@linkplain TravelTimeList}-Objekt oder {@code null}, wenn
+	 *         nicht vorhanden
+	 * 
+	 * @throws DatasetException
+	 */
+	public TravelTimeList getTravelTimeList() throws DatasetException;
 }

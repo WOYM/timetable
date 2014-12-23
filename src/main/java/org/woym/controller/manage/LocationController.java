@@ -12,7 +12,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.primefaces.context.RequestContext;
 import org.woym.exceptions.DatasetException;
-import org.woym.messages.StatusMessageEnum;
+import org.woym.messages.GenericStatusMessage;
 import org.woym.objects.Location;
 import org.woym.objects.Room;
 import org.woym.persistence.DataAccess;
@@ -62,8 +62,8 @@ public class LocationController {
 				FacesContext.getCurrentInstance().addMessage(null, message);
 			} catch (DatasetException e) {
 				FacesMessage msg = new FacesMessage(
-						StatusMessageEnum.DATABASE_COMMUNICATION_ERROR.getSummary(),
-						StatusMessageEnum.DATABASE_COMMUNICATION_ERROR
+						GenericStatusMessage.DATABASE_COMMUNICATION_ERROR.getSummary(),
+						GenericStatusMessage.DATABASE_COMMUNICATION_ERROR
 								.getStatusMessage());
 				msg.setSeverity(FacesMessage.SEVERITY_ERROR);
 			}

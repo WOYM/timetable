@@ -16,8 +16,11 @@ import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
 
+import org.woym.spec.objects.IMemento;
+import org.woym.spec.objects.IMementoObject;
+
 /**
- * Diese Klasse repräsentiert eine Aktivität des Personals.
+ * Diese Klasse repräsentiert eine Aktivität innerhalb eines Stundenplans.
  * 
  * @author Adrian
  *
@@ -25,7 +28,8 @@ import javax.persistence.OrderBy;
 @Entity
 @Inheritance
 @DiscriminatorColumn(name = "TYPE", discriminatorType = DiscriminatorType.STRING, length = 20)
-public abstract class Activity extends org.woym.objects.Entity {
+public abstract class Activity extends org.woym.objects.Entity implements
+		IMementoObject {
 
 	/**
 	 * 
@@ -211,5 +215,85 @@ public abstract class Activity extends org.woym.objects.Entity {
 		EmployeeTimePeriods employeeTimePeriods = new EmployeeTimePeriods();
 		employeeTimePeriods.setEmployee(employee);
 		return this.employeeTimePeriods.contains(employeeTimePeriods);
+	}
+
+	/**
+	 * Bei Übergabe von {@code null} oder einem Parameter, der nicht vom Typ
+	 * {@linkplain Memento} ist, wird eine {@linkplain IllegalArgumentException}
+	 * geworfen. Ansonsten wird der Status des Objektes auf den des übergebenen
+	 * Memento-Objektes gesetzt.
+	 * 
+	 * @param memento
+	 *            - das {@linkplain Memento}-Objekt, von welchem dieses Objekt
+	 *            den Status annehmen soll
+	 */
+	@Override
+	public void setMemento(IMemento memento) {
+		if (memento == null) {
+			throw new IllegalArgumentException("Paramater is null.");
+		}
+		if (memento instanceof Memento) {
+			Memento actualMemento = (Memento) memento;
+			id = actualMemento.id;
+			time = actualMemento.time;
+			rooms = actualMemento.rooms;
+			schoolclasses = actualMemento.schoolclasses;
+			employeeTimePeriods = actualMemento.employeeTimePeriods;
+		} else {
+			throw new IllegalArgumentException(
+					"Parameter must from type org.woym.objects.Activity.Memento");
+
+		}
+
+	}
+
+	/**
+	 * Eine Memento-Klasse für {@linkplain Activity}-Objekte.
+	 * 
+	 * @author adrian
+	 *
+	 */
+	public static class Memento implements IMemento {
+
+		private final Long id;
+
+		private final TimePeriod time;
+
+		private final List<Room> rooms;
+
+		private final List<Schoolclass> schoolclasses;
+
+		private final List<EmployeeTimePeriods> employeeTimePeriods;
+
+		Memento(Activity originator) {
+			if (originator == null) {
+				throw new IllegalArgumentException();
+			}
+			id = originator.id;
+			time = originator.time;
+			rooms = originator.rooms;
+			schoolclasses = originator.schoolclasses;
+			employeeTimePeriods = originator.employeeTimePeriods;
+		}
+
+		Long getId() {
+			return id;
+		}
+
+		TimePeriod getTime() {
+			return time;
+		}
+
+		List<Room> getRooms() {
+			return rooms;
+		}
+
+		List<Schoolclass> getSchoolclasses() {
+			return schoolclasses;
+		}
+
+		List<EmployeeTimePeriods> getEmployeeTimePeriods() {
+			return employeeTimePeriods;
+		}
 	}
 }

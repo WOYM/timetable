@@ -1,6 +1,3 @@
-/**
- * 
- */
 package org.woym.logic.command;
 
 import javax.faces.application.FacesMessage;
@@ -14,14 +11,15 @@ import org.woym.spec.logic.ICommand;
 import org.woym.spec.logic.IStatus;
 
 /**
+ * 
  * @author JurSch
  *
  */
-public class AddCommand<E extends Entity> implements ICommand {
+public class DeleteCommand<E extends Entity> implements ICommand {
 
 	private E entity;
 
-	public AddCommand(E entity) {
+	public DeleteCommand(E entity) {
 		if (entity == null) {
 			throw new IllegalArgumentException("Entity was null");
 		}
@@ -33,11 +31,11 @@ public class AddCommand<E extends Entity> implements ICommand {
 		IStatus status;
 
 		try {
-			entity.persist();
+			entity.delete();
 			status = new SuccessStatus();
 		} catch (DatasetException e) {
 			status = new FailureStatus(
-					SpecificStatusMessage.ADD_OBJECT_DATASET_EXCEPTION,
+					SpecificStatusMessage.DELETE_OBJECT_DATASET_EXCEPTION,
 					entity.getClass(), FacesMessage.SEVERITY_ERROR);
 		}
 		return status;
@@ -45,12 +43,14 @@ public class AddCommand<E extends Entity> implements ICommand {
 
 	@Override
 	public IStatus undo() {
-		throw new UnsupportedOperationException();
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 	@Override
 	public IStatus redo() {
-		throw new UnsupportedOperationException();
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

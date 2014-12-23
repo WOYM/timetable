@@ -13,7 +13,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.h2.util.StringUtils;
 import org.woym.exceptions.DatasetException;
-import org.woym.messages.StatusMessageEnum;
+import org.woym.messages.GenericStatusMessage;
+import org.woym.messages.MessageHelper;
 import org.woym.objects.ActivityType;
 import org.woym.objects.LessonType;
 import org.woym.persistence.DataAccess;
@@ -42,13 +43,13 @@ import org.woym.persistence.DataAccess;
  */
 @FacesValidator("org.woym.ActivityTypeNameValidator")
 public class ActivityTypeNameValidator implements Validator {
-	
+
 	public static final String BEAN_NAME = "lessonBean";
 
 	private static Logger LOGGER = LogManager
 			.getLogger(ActivityTypeNameValidator.class);
-	
-	private DataAccess dataAccess = DataAccess.getInstance(); 
+
+	private DataAccess dataAccess = DataAccess.getInstance();
 
 	@Override
 	public void validate(FacesContext context, UIComponent uiComponent,
@@ -56,46 +57,41 @@ public class ActivityTypeNameValidator implements Validator {
 
 		String name = value.toString();
 		ELContext elContext = context.getELContext();
-		ValueExpression valueExpression = uiComponent.getValueExpression(BEAN_NAME);
+		ValueExpression valueExpression = uiComponent
+				.getValueExpression(BEAN_NAME);
 		Object lessonBean = valueExpression.getValue(elContext);
-		
-		if(lessonBean instanceof LessonType)
-		if (StringUtils.isNullOrEmpty(name)) {
-			FacesMessage msg = new FacesMessage(
-					StatusMessageEnum.NAME_IS_EMPTY.getSummary(),
-					StatusMessageEnum.NAME_IS_EMPTY.getStatusMessage());
-			msg.setSeverity(FacesMessage.SEVERITY_ERROR);
-			throw new ValidatorException(msg);
-		}
+
+		if (lessonBean instanceof LessonType)
+			if (StringUtils.isNullOrEmpty(name)) {
+				FacesMessage msg = MessageHelper.generateMessage(
+						GenericStatusMessage.NAME_IS_EMPTY,
+						FacesMessage.SEVERITY_ERROR);
+				throw new ValidatorException(msg);
+			}
 
 		name = name.trim();
 
 		if (StringUtils.isNullOrEmpty(name)) {
-			FacesMessage msg = new FacesMessage(
-					StatusMessageEnum.NAME_IS_EMPTY.getSummary(),
-					StatusMessageEnum.NAME_IS_EMPTY.getStatusMessage());
-			msg.setSeverity(FacesMessage.SEVERITY_ERROR);
+			FacesMessage msg = MessageHelper.generateMessage(
+					GenericStatusMessage.NAME_IS_EMPTY,
+					FacesMessage.SEVERITY_ERROR);
 			throw new ValidatorException(msg);
 		}
 
 		try {
 			ActivityType activityType = dataAccess.getOneActivityType(name);
 			if (activityType != null && activityType != lessonBean) {
-				FacesMessage msg = new FacesMessage(
-						StatusMessageEnum.NAME_ALREADY_EXISTS.getSummary(),
-						StatusMessageEnum.NAME_ALREADY_EXISTS
-								.getStatusMessage());
-				msg.setSeverity(FacesMessage.SEVERITY_ERROR);
+				FacesMessage msg = MessageHelper.generateMessage(
+						GenericStatusMessage.NAME_ALREADY_EXISTS,
+						FacesMessage.SEVERITY_ERROR);
 				throw new ValidatorException(msg);
 			}
 
 		} catch (DatasetException e) {
 			LOGGER.error(e);
-			FacesMessage msg = new FacesMessage(
-					StatusMessageEnum.DATABASE_COMMUNICATION_ERROR.getSummary(),
-					StatusMessageEnum.DATABASE_COMMUNICATION_ERROR
-							.getStatusMessage());
-			msg.setSeverity(FacesMessage.SEVERITY_ERROR);
+			FacesMessage msg = MessageHelper.generateMessage(
+					GenericStatusMessage.DATABASE_COMMUNICATION_ERROR,
+					FacesMessage.SEVERITY_ERROR);
 			throw new ValidatorException(msg);
 		}
 

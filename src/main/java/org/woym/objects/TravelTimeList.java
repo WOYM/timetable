@@ -12,6 +12,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.woym.exceptions.DatasetException;
 import org.woym.persistence.DataAccess;
+import org.woym.spec.objects.IMemento;
+import org.woym.spec.objects.IMementoObject;
 
 /**
  * Diese Singleton-Klasse speichert eine Liste von Kanten, welche die Wegzeiten
@@ -21,7 +23,8 @@ import org.woym.persistence.DataAccess;
  *
  */
 @Entity
-public final class TravelTimeList extends org.woym.objects.Entity {
+public final class TravelTimeList extends org.woym.objects.Entity implements
+		IMementoObject {
 
 	/**
 	 * 
@@ -195,6 +198,56 @@ public final class TravelTimeList extends org.woym.objects.Entity {
 	}
 
 	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Memento createMemento() {
+		return new Memento(this);
+	}
+
+	/**
+	 * Bei Übergabe von {@code null} oder einem Parameter, der nicht vom Typ
+	 * {@linkplain Memento} ist, wird eine {@linkplain IllegalArgumentException}
+	 * geworfen. Ansonsten wird der Status des Objektes auf den des übergebenen
+	 * Memento-Objektes gesetzt.
+	 * 
+	 * @param memento
+	 *            - das {@linkplain Memento}-Objekt, von welchem dieses Objekt
+	 *            den Status annehmen soll
+	 */
+	@Override
+	public void setMemento(IMemento memento) {
+		if (memento == null) {
+			throw new IllegalArgumentException("Parameter is null.");
+		}
+		if (memento instanceof Memento) {
+			Memento actualMemento = (Memento) memento;
+			edges = actualMemento.edges;
+		} else {
+			throw new IllegalArgumentException(
+					"Only org.woym.objects.TravelTimeList.Memento as parameter allowed.");
+		}
+	}
+
+	/**
+	 * Die Memento-Klasse zu {@linkplain TravelTimeList}.
+	 * 
+	 * @author adrian
+	 *
+	 */
+	public static class Memento implements IMemento {
+
+		private final List<Edge> edges;
+
+		Memento(TravelTimeList originator) {
+			if (originator == null) {
+				throw new IllegalArgumentException();
+			}
+			edges = originator.edges;
+		}
+	}
+
+	/**
 	 * Die Klasse Edge repräsentiert als ungerichtete Kante zwischen zwei
 	 * Standorten mit einer bestimmten Distanz eine Wegzeit.
 	 * 
@@ -202,7 +255,7 @@ public final class TravelTimeList extends org.woym.objects.Entity {
 	 *
 	 */
 	@Embeddable
-	static class Edge {
+	public static class Edge {
 
 		/**
 		 * Der eine Standort der Kante.
