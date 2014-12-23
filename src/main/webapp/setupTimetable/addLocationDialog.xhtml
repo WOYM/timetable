@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui">
+<h:head>
+    <title>Standort hinzufügen</title>
+</h:head>
+
+<h:body>
+    <h:form>
+        <p:outputPanel>
+            <h1>
+                <h:outputText value="Hinzufügen von Standorten" />
+            </h1>
+            <h:outputText
+                value="In dieser Ansicht können neue Standorte hinzugefügt werden." />
+        </p:outputPanel>
+
+        <p:spacer style="height:10px;" />
+
+        <p:separator />
+
+        <p:spacer style="height:10px;" />
+
+        <p:outputPanel>
+            <h:panelGrid columns="3">
+                <p:outputLabel for="name" value="Name:" />
+                <p:inputText id="name" value="#{locationController.location.name}"
+                    required="true" requiredMessage="Ein leerer Name ist nicht gültig.">
+                    <f:validator validatorId="org.woym.NameValidator" />
+                    <f:attribute name="validateBean" value="#{locationController.location}"/>
+                </p:inputText>
+                <p:message for="name" />
+            </h:panelGrid>
+            <p:outputPanel style="margin-top:10px; float:right">
+                <p:commandButton value="Hinzufügen"
+                    actionListener="#{locationController.addLocationFromDialog}"
+                    update="@form" />
+            </p:outputPanel>
+            <p:messages style="margin-top:55px;" id="messages" showDetail="true" autoUpdate="true"
+                closable="true" />
+        </p:outputPanel>
+    </h:form>
+</h:body>
+</html>
