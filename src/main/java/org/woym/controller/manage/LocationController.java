@@ -167,7 +167,6 @@ public class LocationController implements Serializable {
 			FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO,
 					"Lehrer hinzugefügt", location.getName());
 			FacesContext.getCurrentInstance().addMessage(null, message);
-			location = new Location();
 		} catch (DatasetException e) {
 			FacesMessage msg = new FacesMessage(
 					StatusMessageEnum.DATABASE_COMMUNICATION_ERROR.getSummary(),

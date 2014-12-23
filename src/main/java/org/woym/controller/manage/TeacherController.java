@@ -225,7 +225,6 @@ public class TeacherController implements Serializable {
 					"Lehrer hinzugefügt", teacher.getName() + " ("
 							+ teacher.getSymbol() + ")");
 			FacesContext.getCurrentInstance().addMessage(null, message);
-			teacher = new Teacher();
 		} catch (DatasetException e) {
 			FacesMessage msg = new FacesMessage(
 					StatusMessageEnum.DATABASE_COMMUNICATION_ERROR.getSummary(),
