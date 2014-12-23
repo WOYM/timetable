@@ -31,15 +31,14 @@
 				<p:outputLabel for="name" value="Name:" />
 				<p:inputText id="name" value="#{teacherController.teacher.name}"
 					required="true" requiredMessage="Ein leerer Name ist nicht gültig.">
-					<f:validator validatorId="org.woym.NameValidator" />
 				</p:inputText>
 				<p:message for="name" />
 				<p:outputLabel for="symbol" value="Kürzel:" />
 				<p:inputText id="symbol"
 					value="#{teacherController.teacher.symbol}" required="true"
 					requiredMessage="Ein leeres Kürzel ist nicht gültig.">
-					<f:validator validatorId="org.woym.SymbolValidator" />
-					<f:attribute name="teacherBean" value="#{teacherController.teacher}"/>
+					<f:validator validatorId="org.woym.NameValidator" />
+					<f:attribute name="validateBean" value="#{teacherController.teacher}"/>
 				</p:inputText>
 				<p:message for="symbol" />
 				<p:outputLabel for="weekhours" value="Wochenstunden:" />
@@ -65,7 +64,7 @@
 				</p:pickList>
 			</p:fieldset>
 			<p:outputPanel style="margin-top:10px; float:right">
-				<p:commandButton value="Submit"
+				<p:commandButton value="Hinzufügen"
 					actionListener="#{teacherController.addTeacherFromDialog}"
 					update="@form" />
 			</p:outputPanel>
