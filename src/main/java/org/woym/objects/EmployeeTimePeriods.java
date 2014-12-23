@@ -10,6 +10,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 
+import org.woym.spec.objects.IMemento;
+
 /**
  * Eine Klasse die eine Liste die einen Mitarbeiter und eine Liste von Zeiträumen
  * enhält.
@@ -111,5 +113,22 @@ public class EmployeeTimePeriods extends org.woym.objects.Entity {
 
 	public boolean contains(final TimePeriod timePeriod) {
 		return timePeriods.contains(timePeriod);
+	}
+
+	/**
+	 * @deprecated In dieser Klasse ohne Funktion.
+	 */
+	@Override
+	@Deprecated
+	public IMemento createMemento() {
+		return null;
+	}
+
+	/**
+	 * @deprecated In dieser Klasse ohne Funktion.
+	 */
+	@Override
+	@Deprecated
+	public void setMemento(IMemento memento) {
 	}
 }

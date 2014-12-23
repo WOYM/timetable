@@ -1,8 +1,8 @@
-package org.woym.spec.logic;
+package org.woym.spec.objects;
 
 import org.woym.exceptions.DatasetException;
 
-public interface ActivityObject {
+public interface IActivityObject {
 	
 	public void persist() throws DatasetException;
 	

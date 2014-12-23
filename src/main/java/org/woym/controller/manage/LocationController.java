@@ -13,7 +13,7 @@ import javax.faces.context.FacesContext;
 
 import org.primefaces.context.RequestContext;
 import org.woym.exceptions.DatasetException;
-import org.woym.messages.StatusMessageEnum;
+import org.woym.messages.GenericStatusMessage;
 import org.woym.objects.Location;
 import org.woym.objects.Room;
 import org.woym.persistence.DataAccess;
@@ -52,8 +52,8 @@ public class LocationController implements Serializable {
 			return dataAccess.getAllLocations();
 		} catch (DatasetException e) {
 			FacesMessage msg = new FacesMessage(
-					StatusMessageEnum.DATABASE_COMMUNICATION_ERROR.getSummary(),
-					StatusMessageEnum.DATABASE_COMMUNICATION_ERROR
+					GenericStatusMessage.DATABASE_COMMUNICATION_ERROR.getSummary(),
+					GenericStatusMessage.DATABASE_COMMUNICATION_ERROR
 							.getStatusMessage());
 			msg.setSeverity(FacesMessage.SEVERITY_ERROR);
 			return new ArrayList<Location>();
@@ -70,8 +70,8 @@ public class LocationController implements Serializable {
 			return dataAccess.getOneLocation(location.getName()).getRooms();
 		} catch (DatasetException e) {
 			FacesMessage msg = new FacesMessage(
-					StatusMessageEnum.DATABASE_COMMUNICATION_ERROR.getSummary(),
-					StatusMessageEnum.DATABASE_COMMUNICATION_ERROR
+					GenericStatusMessage.DATABASE_COMMUNICATION_ERROR.getSummary(),
+					GenericStatusMessage.DATABASE_COMMUNICATION_ERROR
 							.getStatusMessage());
 			msg.setSeverity(FacesMessage.SEVERITY_ERROR);
 			return new ArrayList<Room>();
@@ -89,8 +89,8 @@ public class LocationController implements Serializable {
 			FacesContext.getCurrentInstance().addMessage(null, message);
 		} catch (DatasetException e) {
 			FacesMessage msg = new FacesMessage(
-					StatusMessageEnum.DATABASE_COMMUNICATION_ERROR.getSummary(),
-					StatusMessageEnum.DATABASE_COMMUNICATION_ERROR
+					GenericStatusMessage.DATABASE_COMMUNICATION_ERROR.getSummary(),
+					GenericStatusMessage.DATABASE_COMMUNICATION_ERROR
 							.getStatusMessage());
 			msg.setSeverity(FacesMessage.SEVERITY_ERROR);
 		}
@@ -107,8 +107,8 @@ public class LocationController implements Serializable {
 			FacesContext.getCurrentInstance().addMessage(null, message);
 		} catch (DatasetException e) {
 			FacesMessage msg = new FacesMessage(
-					StatusMessageEnum.DATABASE_COMMUNICATION_ERROR.getSummary(),
-					StatusMessageEnum.DATABASE_COMMUNICATION_ERROR
+					GenericStatusMessage.DATABASE_COMMUNICATION_ERROR.getSummary(),
+					GenericStatusMessage.DATABASE_COMMUNICATION_ERROR
 							.getStatusMessage());
 			msg.setSeverity(FacesMessage.SEVERITY_ERROR);
 		}
@@ -127,9 +127,8 @@ public class LocationController implements Serializable {
 				FacesContext.getCurrentInstance().addMessage(null, message);
 			} catch (DatasetException e) {
 				FacesMessage msg = new FacesMessage(
-						StatusMessageEnum.DATABASE_COMMUNICATION_ERROR
-								.getSummary(),
-						StatusMessageEnum.DATABASE_COMMUNICATION_ERROR
+						GenericStatusMessage.DATABASE_COMMUNICATION_ERROR.getSummary(),
+						GenericStatusMessage.DATABASE_COMMUNICATION_ERROR
 								.getStatusMessage());
 				msg.setSeverity(FacesMessage.SEVERITY_ERROR);
 			}
@@ -149,9 +148,9 @@ public class LocationController implements Serializable {
 				FacesContext.getCurrentInstance().addMessage(null, message);
 			} catch (DatasetException e) {
 				FacesMessage msg = new FacesMessage(
-						StatusMessageEnum.DATABASE_COMMUNICATION_ERROR
+						GenericStatusMessage.DATABASE_COMMUNICATION_ERROR
 								.getSummary(),
-						StatusMessageEnum.DATABASE_COMMUNICATION_ERROR
+								GenericStatusMessage.DATABASE_COMMUNICATION_ERROR
 								.getStatusMessage());
 				msg.setSeverity(FacesMessage.SEVERITY_ERROR);
 			}
@@ -169,8 +168,8 @@ public class LocationController implements Serializable {
 			FacesContext.getCurrentInstance().addMessage(null, message);
 		} catch (DatasetException e) {
 			FacesMessage msg = new FacesMessage(
-					StatusMessageEnum.DATABASE_COMMUNICATION_ERROR.getSummary(),
-					StatusMessageEnum.DATABASE_COMMUNICATION_ERROR
+					GenericStatusMessage.DATABASE_COMMUNICATION_ERROR.getSummary(),
+					GenericStatusMessage.DATABASE_COMMUNICATION_ERROR
 							.getStatusMessage());
 			msg.setSeverity(FacesMessage.SEVERITY_ERROR);
 		}

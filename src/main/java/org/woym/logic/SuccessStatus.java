@@ -3,8 +3,7 @@
  */
 package org.woym.logic;
 
-import java.util.ArrayList;
-import java.util.List;
+import javax.faces.application.FacesMessage;
 
 import org.woym.spec.logic.IStatus;
 
@@ -16,18 +15,11 @@ import org.woym.spec.logic.IStatus;
  */
 public class SuccessStatus implements IStatus {
 
-	final private ArrayList<String> status = new ArrayList<>(1);
-
 	@Override
-	public List<String> report() {
-		createStatus();
-
-		return status;
-	}
-
-	private void createStatus() {
-		status.add("Ayeeeee");
-
+	public FacesMessage report() {
+		// TODO: sinnvolle Implementierung notwendig. Nachrichten bei Erfolg
+		// werden momentan direkt in den Controllern erzeugt
+		return null;
 	}
 
 }
