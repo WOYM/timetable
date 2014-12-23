@@ -76,8 +76,7 @@
 				<h:panelGrid columns="2">
 					<p:outputLabel for="addName" value="Name:" />
 					<p:inputText id="addName"
-						value="#{lessonTypeController.lessonType.name}" required="true"
-						requiredMessage="Ein leerer Name ist nicht gültig.">
+						value="#{lessonTypeController.lessonType.name}">
 						<f:validator validatorId="org.woym.NameValidator" />
 						<f:attribute name="validateBean"
 							value="#{lessonTypeController.lessonType}" />
@@ -109,8 +108,7 @@
 				<h:panelGrid columns="2">
 					<p:outputLabel for="editName" value="Name:" />
 					<p:inputText id="editName"
-						value="#{lessonTypeController.lessonType.name}" required="true"
-						requiredMessage="Ein leerer Bezeichner ist nicht gültig.">
+						value="#{lessonTypeController.lessonType.name}" >
 						<f:validator validatorId="org.woym.NameValidator" />
 						<f:attribute name="validateBean"
 							value="#{lessonTypeController.lessonType}" />

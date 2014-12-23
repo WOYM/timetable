@@ -20,37 +20,67 @@
 				value="In dieser Ansicht werden Standorte und Räume verwaltet." />
 		</p:outputPanel>
 
-		<p:spacer style="height:50px;" />
 
 		<p:outputPanel style="float:right">
 			<p:commandButton value="Hinzufügen" icon="ui-icon-plusthick"
-				actionListener="#{teacherController.addTeacherDialog}">
+				actionListener="#{locationController.addLocationDialog}">
 				<p:ajax event="dialogReturn" update="@form" />
 			</p:commandButton>
 		</p:outputPanel>
+		<h3 style="margin-top: 10px; margin-bottom: 15px;">Standorte</h3>
 
-		<!-- Existierende Lehrkräfte -->
-		<p:contextMenu for="teacherTable">
+		<!-- Existierende Standorte -->
+		<p:contextMenu for="locationTable">
 			<p:menuitem value="Bearbeiten"
-				actionListener="#{teacherController.editTeacherDialog}"
+				actionListener="#{locationController.editLocationDialog}"
 				icon="ui-icon-pencil" />
 			<p:menuitem value="Löschen" update="@form" icon="ui-icon-close"
-				actionListener="#{teacherController.deleteTeacher}" />
+				actionListener="#{locationController.deleteLocation}" />
 		</p:contextMenu>
-		<p:dataTable id="teacherTable" var="teacher"
-			value="#{teacherController.getTeachers()}"
-			selection="#{teacherController.selectedTeacher}"
-			selectionMode="single" rowKey="#{teacher.symbol}">
-			<p:column headerText="Name">
-				<h:outputText value="#{teacher.firstName} #{teacher.lastName}" />
-			</p:column>
-			<p:column headerText="Kürzel">
-				<h:outputText value="#{teacher.symbol}" />
-			</p:column>
-			<p:column headerText="Wochenstunden">
-				<h:outputText value="#{teacher.hoursPerWeek}" />
+		<p:dataTable emptyMessage="Keine Standorte vorhanden"
+			id="locationTable" var="location"
+			value="#{locationController.getLocations()}"
+			selection="#{locationController.location}" selectionMode="single"
+			rowKey="#{location.name}">
+			<p:ajax event="rowSelect" update="@form" />
+			<p:column>
+				<h:outputText value="#{location.name}" />
 			</p:column>
 		</p:dataTable>
+
+		<p:outputPanel rendered="#{locationController.selected}">
+			<p:outputPanel style="float:right">
+				<p:commandButton value="Hinzufügen" icon="ui-icon-plusthick"
+					actionListener="#{locationController.addRoomDialog}">
+					<p:ajax event="dialogReturn" update="@form" />
+				</p:commandButton>
+			</p:outputPanel>
+			<h3 style="margin-top: 15px; margin-bottom: 20px;">
+				<h:outputText value="Räume von #{locationController.location.name}" />
+			</h3>
+
+
+			<!-- Existierende Räume -->
+
+			<p:contextMenu for="roomTable">
+				<p:menuitem value="Bearbeiten"
+					actionListener="#{locationController.editRoomDialog}"
+					icon="ui-icon-pencil" />
+				<p:menuitem value="Löschen" update="@form" icon="ui-icon-close"
+					actionListener="#{locationController.deleteRoom}" />
+			</p:contextMenu>
+			<p:dataTable emptyMessage="Keine Räume vorhanden" id="roomTable"
+				var="room" value="#{locationController.location.getRooms()}"
+				selection="#{locationController.room}" selectionMode="single"
+				rowKey="#{room.name}">
+				<p:column>
+					<h:outputText value="#{room.name}" />
+				</p:column>
+			</p:dataTable>
+		</p:outputPanel>
+
+		<p:poll interval="3" update="locationTable" />
+		<p:poll interval="3" update="roomTable" />
 	</h:form>
 </h:body>
 </html>
