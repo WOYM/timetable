@@ -170,6 +170,32 @@ public class DataAccess implements IDataAccess, Observer {
 		}
 	}
 
+	@SuppressWarnings("unchecked")
+	@Override
+	public AcademicYear getOneAcademicYear(Schoolclass schoolclass)
+			throws DatasetException {
+		if (schoolclass == null) {
+			throw new IllegalArgumentException();
+		}
+		try {
+			final Query query = em
+					.createQuery("SELECT a FROM AcademicYear a WHERE ?1 MEMBER OF a.schoolclasses");
+			query.setParameter(1, schoolclass);
+			List<AcademicYear> result = query.getResultList();
+			if (result.isEmpty()) {
+				return null;
+			}
+			return result.get(0);
+		} catch (Exception e) {
+			LOGGER.error(
+					"Exception while getting academic year which contains schoolclass"
+							+ schoolclass, e);
+			throw new DatasetException(
+					"Error while getting academic year which contains schoolclass"
+							+ schoolclass + " " + e.getMessage());
+		}
+	}
+
 	/**
 	 * {@inheritDoc}
 	 */

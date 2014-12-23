@@ -84,7 +84,7 @@ public class Room extends org.woym.objects.Entity implements IActivityObject,
 
 	@Override
 	public String toString() {
-		return name + " (" + purpose + ")";
+		return purpose == null ? name : name + " (" + purpose + ")";
 	}
 
 	/**
