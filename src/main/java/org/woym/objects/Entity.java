@@ -4,24 +4,51 @@ import java.io.Serializable;
 
 import org.woym.exceptions.DatasetException;
 import org.woym.persistence.DataAccess;
+import org.woym.spec.objects.IMementoObject;
 
-public abstract class Entity implements Serializable{
+/**
+ * Diese abstrakte Klasse implementiert Methoden, welche auf Objekten einer
+ * erweiternden Klasse aufgerufen werden können, um sie zu persistieren, löschen
+ * oder zu aktualisieren.
+ * 
+ * @author adrian
+ *
+ */
+public abstract class Entity implements Serializable, IMementoObject {
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 5127366857697076089L;
 
-	public void persist() throws DatasetException{
+	/**
+	 * Persistiert dieses Objekt in der Datenbank. Tritt dabei ein Fehler auf,
+	 * wird eine {@linkplain DatasetException} geworfen.
+	 * 
+	 * @throws DatasetException
+	 */
+	public void persist() throws DatasetException {
 		DataAccess.getInstance().persist(this);
 	}
-	
-	public void update() throws DatasetException{
+
+	/**
+	 * Aktualisiert dieses Objekt in der Datenbank. Tritt dabei ein Fehler auf,
+	 * wird eine {@linkplain DatasetException} geworfen.
+	 * 
+	 * @throws DatasetException
+	 */
+	public void update() throws DatasetException {
 		DataAccess.getInstance().update(this);
 	}
-	
-	public void delete() throws DatasetException{
+
+	/**
+	 * Löscht dieses Objekt aus der Datenbank. Tritt dabei ein Fehler auf, wird
+	 * eine {@linkplain DatasetException} geworfen.
+	 * 
+	 * @throws DatasetException
+	 */
+	public void delete() throws DatasetException {
 		DataAccess.getInstance().delete(this);
 	}
-	
+
 }

@@ -11,6 +11,9 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 
+import org.woym.spec.objects.IMemento;
+import org.woym.spec.objects.IMementoObject;
+
 /**
  * Diese Klasse repräsentiert einen Standort.
  * 
@@ -18,7 +21,7 @@ import javax.persistence.OneToMany;
  *
  */
 @Entity
-public class Location extends org.woym.objects.Entity {
+public class Location extends org.woym.objects.Entity implements IMementoObject {
 
 	/**
 	 * 
@@ -118,29 +121,38 @@ public class Location extends org.woym.objects.Entity {
 	}
 
 	/**
-	 * Erzeugt ein neues {@linkplain Memento} und gibt es zurück.
-	 * 
-	 * @return ein {@linkplain Memento} mit dem aktuellen Zustand des Objektes
+	 * {@inheritDoc}
 	 */
+	@Override
 	public Memento createMemento() {
 		return new Memento(this);
 	}
 
 	/**
-	 * Setzt den Status des {@linkplain Location}-Objektes auf den Status des
-	 * übergebenen {@linkplain Memento}-Objektes.
+	 * Bei Übergabe von {@code null} oder einem Parameter, der nicht vom Typ
+	 * {@linkplain Memento} ist, wird eine {@linkplain IllegalArgumentException}
+	 * geworfen. Ansonsten wird der Status des Objektes auf den des übergebenen
+	 * Memento-Objektes gesetzt.
 	 * 
 	 * @param memento
-	 *            - das Memento-Objekt, von welchem das {@linkplain Location}
-	 *            -Objekt den Status annehmen soll
+	 *            - das {@linkplain Memento}-Objekt, von welchem dieses Objekt
+	 *            den Status annehmen soll
 	 */
-	public void setMemento(Memento memento) {
+	@Override
+	public void setMemento(IMemento memento) {
 		if (memento == null) {
-			throw new IllegalArgumentException();
+			throw new IllegalArgumentException("Parameter is null");
 		}
-		id = memento.id;
-		name = memento.name;
-		rooms = memento.rooms;
+		if (memento instanceof Memento) {
+			Memento actualMemento = (Memento) memento;
+			id = actualMemento.id;
+			name = actualMemento.name;
+			rooms = actualMemento.rooms;
+		} else {
+			throw new IllegalArgumentException(
+					"Only org.woym.objects.Location.Memento as parameter allowed.");
+		}
+
 	}
 
 	/**
@@ -149,7 +161,7 @@ public class Location extends org.woym.objects.Entity {
 	 * @author adrian
 	 *
 	 */
-	public static class Memento {
+	public static class Memento implements IMemento {
 
 		private final Long id;
 
@@ -157,7 +169,7 @@ public class Location extends org.woym.objects.Entity {
 
 		private final List<Room> rooms;
 
-		public Memento(Location originator) {
+		Memento(Location originator) {
 			if (originator == null) {
 				throw new IllegalArgumentException();
 			}

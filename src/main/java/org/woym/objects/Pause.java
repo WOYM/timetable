@@ -3,6 +3,8 @@ package org.woym.objects;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 
+import org.woym.spec.objects.IMemento;
+
 /**
  * Diese Klasse repräsentiert eine Pause.
  * 
@@ -22,24 +24,25 @@ public class Pause extends Activity {
 	}
 
 	/**
-	 * Erzeugt ein neues {@linkplain Memento} und gibt es zurück.
-	 * 
-	 * @return ein {@linkplain Memento} mit dem aktuellen Zustand des Objektes
+	 * {@inheritDoc}
 	 */
+	@Override
 	public Memento createMemento() {
 		return new Memento(this);
 	}
 
 	/**
-	 * Setzt den Status des {@linkplain Pause}-Objektes auf den Status des
-	 * übergebenen {@linkplain Memento}-Objektes.
+	 * Bei Übergabe von {@code null} oder einem Parameter, der nicht vom Typ
+	 * {@linkplain Memento} ist, wird eine {@linkplain IllegalArgumentException}
+	 * geworfen. Ansonsten wird der Status des Objektes auf den des übergebenen
+	 * Memento-Objektes gesetzt.
 	 * 
 	 * @param memento
-	 *            - das Memento-Objekt, von welchem das {@linkplain Pause}
-	 *            -Objekt den Status annehmen soll
+	 *            - das {@linkplain Memento}-Objekt, von welchem dieses Objekt
+	 *            den Status annehmen soll
 	 */
 	@Override
-	public void setMemento(Memento memento) {
+	public void setMemento(IMemento memento) {
 		super.setMemento(memento);
 	}
 }

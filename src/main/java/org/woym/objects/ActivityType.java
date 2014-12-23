@@ -14,6 +14,9 @@ import javax.persistence.Inheritance;
 import javax.persistence.ManyToMany;
 import javax.persistence.OrderBy;
 
+import org.woym.spec.objects.IMemento;
+import org.woym.spec.objects.IMementoObject;
+
 /**
  * Diese abstrakte Klasse dient als Superklasse für konkrete Aktivitätstypen.
  * Damit sind z.B. Projekte oder Schulfächer gemeint.
@@ -24,7 +27,8 @@ import javax.persistence.OrderBy;
 @Inheritance
 @Entity
 @DiscriminatorColumn(name = "TYPE", discriminatorType = DiscriminatorType.STRING, length = 20)
-public abstract class ActivityType extends org.woym.objects.Entity {
+public abstract class ActivityType extends org.woym.objects.Entity implements
+		IMementoObject {
 
 	/**
 	 * 
@@ -217,32 +221,40 @@ public abstract class ActivityType extends org.woym.objects.Entity {
 	}
 
 	/**
-	 * Erzeugt ein neues {@linkplain Memento} und gibt es zurück.
-	 * 
-	 * @return ein {@linkplain Memento} mit dem aktuellen Zustand
-	 *         des Objektes
+	 * {@inheritDoc}
 	 */
+	@Override
 	public Memento createMemento() {
 		return new Memento(this);
 	}
 
 	/**
-	 * Setzt den Status des {@linkplain ActivityType}-Objektes auf den Status
-	 * des übergebenen {@linkplain Memento}-Objektes.
+	 * Bei Übergabe von {@code null} oder einem Parameter, der nicht vom Typ
+	 * {@linkplain Memento} ist, wird eine {@linkplain IllegalArgumentException}
+	 * geworfen. Ansonsten wird der Status des Objektes auf den des übergebenen
+	 * Memento-Objektes gesetzt.
 	 * 
 	 * @param memento
-	 *            - das Memento-Objekt, von welchem das
-	 *            {@linkplain ActivityType} -Objekt den Status annehmen soll
+	 *            - das {@linkplain Memento}-Objekt, von welchem dieses Objekt
+	 *            den Status annehmen soll
 	 */
-	public void setMemento(Memento memento) {
+	@Override
+	public void setMemento(IMemento memento) {
 		if (memento == null) {
-			throw new IllegalArgumentException();
+			throw new IllegalArgumentException("Parameter is null.");
 		}
-		id = memento.id;
-		name = memento.name;
-		typicalDuration = memento.typicalDuration;
-		rooms = memento.rooms;
-		hexColor = memento.hexColor;
+		if (memento instanceof Memento) {
+			Memento actualMemento = (Memento) memento;
+			id = actualMemento.id;
+			name = actualMemento.name;
+			typicalDuration = actualMemento.typicalDuration;
+			rooms = actualMemento.rooms;
+			hexColor = actualMemento.hexColor;
+		} else {
+			throw new IllegalArgumentException(
+					"Only org.woym.objects.ActivityType.Memento as parameter allowed.");
+		}
+
 	}
 
 	/**
@@ -251,7 +263,7 @@ public abstract class ActivityType extends org.woym.objects.Entity {
 	 * @author adrian
 	 *
 	 */
-	public static class Memento {
+	public static class Memento implements IMemento {
 
 		private final Long id;
 
@@ -263,7 +275,7 @@ public abstract class ActivityType extends org.woym.objects.Entity {
 
 		private final String hexColor;
 
-		public Memento(ActivityType originator) {
+		Memento(ActivityType originator) {
 			if (originator == null) {
 				throw new IllegalArgumentException();
 			}

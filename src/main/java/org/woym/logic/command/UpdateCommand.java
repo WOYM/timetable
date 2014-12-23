@@ -8,6 +8,7 @@ import org.woym.messages.SpecificStatusMessage;
 import org.woym.objects.Entity;
 import org.woym.spec.logic.ICommand;
 import org.woym.spec.logic.IStatus;
+import org.woym.spec.objects.IMemento;
 
 /**
  * 
@@ -16,13 +17,16 @@ import org.woym.spec.logic.IStatus;
  */
 public class UpdateCommand<E extends Entity> implements ICommand {
 
-	private E entity;
+	private final E entity;
+	
+	private final IMemento memento;
 
 	public UpdateCommand(E entity) {
 		if (entity == null) {
 			throw new IllegalArgumentException("Entity was null");
 		}
 		this.entity = entity;
+		memento = entity.createMemento();
 	}
 
 	@Override
@@ -42,7 +46,8 @@ public class UpdateCommand<E extends Entity> implements ICommand {
 
 	@Override
 	public IStatus undo() {
-		// TODO Auto-generated method stub
+		entity.setMemento(memento);
+		//TODO:
 		return null;
 	}
 

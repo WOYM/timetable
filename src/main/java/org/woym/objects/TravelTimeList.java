@@ -12,6 +12,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.woym.exceptions.DatasetException;
 import org.woym.persistence.DataAccess;
+import org.woym.spec.objects.IMemento;
+import org.woym.spec.objects.IMementoObject;
 
 /**
  * Diese Singleton-Klasse speichert eine Liste von Kanten, welche die Wegzeiten
@@ -21,7 +23,8 @@ import org.woym.persistence.DataAccess;
  *
  */
 @Entity
-public final class TravelTimeList extends org.woym.objects.Entity {
+public final class TravelTimeList extends org.woym.objects.Entity implements
+		IMementoObject {
 
 	/**
 	 * 
@@ -195,27 +198,35 @@ public final class TravelTimeList extends org.woym.objects.Entity {
 	}
 
 	/**
-	 * Erzeugt ein neues {@linkplain Memento} und gibt es zurück.
-	 * 
-	 * @return ein {@linkplain Memento} mit dem aktuellen Zustand des Objektes
+	 * {@inheritDoc}
 	 */
+	@Override
 	public Memento createMemento() {
 		return new Memento(this);
 	}
 
 	/**
-	 * Setzt den Status des {@linkplain TravelTimeList}-Objektes auf den Status
-	 * des übergebenen {@linkplain Memento}-Objektes.
+	 * Bei Übergabe von {@code null} oder einem Parameter, der nicht vom Typ
+	 * {@linkplain Memento} ist, wird eine {@linkplain IllegalArgumentException}
+	 * geworfen. Ansonsten wird der Status des Objektes auf den des übergebenen
+	 * Memento-Objektes gesetzt.
 	 * 
 	 * @param memento
-	 *            - das Memento-Objekt, von welchem das
-	 *            {@linkplain TravelTimeList} -Objekt den Status annehmen soll
+	 *            - das {@linkplain Memento}-Objekt, von welchem dieses Objekt
+	 *            den Status annehmen soll
 	 */
-	public void setMemento(Memento memento) {
+	@Override
+	public void setMemento(IMemento memento) {
 		if (memento == null) {
-			throw new IllegalArgumentException();
+			throw new IllegalArgumentException("Parameter is null.");
 		}
-		edges = memento.edges;
+		if (memento instanceof Memento) {
+			Memento actualMemento = (Memento) memento;
+			edges = actualMemento.edges;
+		} else {
+			throw new IllegalArgumentException(
+					"Only org.woym.objects.TravelTimeList.Memento as parameter allowed.");
+		}
 	}
 
 	/**
@@ -224,11 +235,11 @@ public final class TravelTimeList extends org.woym.objects.Entity {
 	 * @author adrian
 	 *
 	 */
-	public static class Memento {
+	public static class Memento implements IMemento {
 
 		private final List<Edge> edges;
 
-		public Memento(TravelTimeList originator) {
+		Memento(TravelTimeList originator) {
 			if (originator == null) {
 				throw new IllegalArgumentException();
 			}

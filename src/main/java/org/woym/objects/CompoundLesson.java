@@ -7,6 +7,8 @@ import javax.persistence.Entity;
 import javax.persistence.ManyToMany;
 import javax.persistence.OrderBy;
 
+import org.woym.spec.objects.IMemento;
+
 /**
  * Eine "zusammengesetzte" Unterrichtsstunde. Repräsentiert den Bandunterricht
  * der Schule, bei dem mehrere Schulklassen und Lehrer auf mehrere Räume und
@@ -40,25 +42,33 @@ public class CompoundLesson extends Activity {
 	}
 
 	/**
-	 * Erzeugt ein neues {@linkplain Memento} und gibt es zurück.
-	 * 
-	 * @return ein {@linkplain Memento} mit dem aktuellen Zustand des Objektes
+	 * {@inheritDoc}
 	 */
+	@Override
 	public Memento createMemento() {
 		return new Memento(this);
 	}
 
 	/**
-	 * Setzt den Status des {@linkplain CompoundLesson}-Objektes auf den Status
-	 * des übergebenen {@linkplain Memento}-Objektes.
+	 * Bei Übergabe von {@code null} oder einem Parameter, der nicht vom Typ
+	 * {@linkplain Memento} ist, wird eine {@linkplain IllegalArgumentException}
+	 * geworfen. Ansonsten wird der Status des Objektes auf den des übergebenen
+	 * Memento-Objektes gesetzt.
 	 * 
 	 * @param memento
-	 *            - das Memento-Objekt, von welchem das
-	 *            {@linkplain CompoundLesson}-Objekt den Status annehmen soll
+	 *            - das {@linkplain Memento}-Objekt, von welchem dieses Objekt
+	 *            den Status annehmen soll
 	 */
-	public void setMemento(Memento memento) {
+	@Override
+	public void setMemento(IMemento memento) {
 		super.setMemento(memento);
-		lessonTypes = memento.lessonTypes;
+		if (memento instanceof Memento) {
+			Memento actualMemento = (Memento) memento;
+			lessonTypes = actualMemento.lessonTypes;
+		} else {
+			throw new IllegalArgumentException(
+					"Only org.woym.objects.CompoundLesson.Memento as parameter allowed.");
+		}
 	}
 
 	/**
@@ -72,9 +82,10 @@ public class CompoundLesson extends Activity {
 
 		private final List<LessonType> lessonTypes;
 
-		public Memento(CompoundLesson originator) {
+		Memento(CompoundLesson originator) {
 			super(originator);
 			lessonTypes = originator.lessonTypes;
 		}
 	}
+
 }

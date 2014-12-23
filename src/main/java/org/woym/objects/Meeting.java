@@ -3,6 +3,8 @@ package org.woym.objects;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 
+import org.woym.spec.objects.IMemento;
+
 /**
  * Diese Klasse repräsentiert eine Sitzung des Personals.
  * 
@@ -32,25 +34,34 @@ public class Meeting extends Activity {
 	}
 
 	/**
-	 * Erzeugt ein neues {@linkplain Memento} und gibt es zurück.
-	 * 
-	 * @return ein {@linkplain Memento} mit dem aktuellen Zustand des Objektes
+	 * {@inheritDoc}
 	 */
+	@Override
 	public Memento createMemento() {
 		return new Memento(this);
 	}
 
 	/**
-	 * Setzt den Status des {@linkplain Meeting}-Objektes auf den Status des
-	 * übergebenen {@linkplain Memento}-Objektes.
+	 * Bei Übergabe von {@code null} oder einem Parameter, der nicht vom Typ
+	 * {@linkplain Memento} ist, wird eine {@linkplain IllegalArgumentException}
+	 * geworfen. Ansonsten wird der Status des Objektes auf den des übergebenen
+	 * Memento-Objektes gesetzt.
 	 * 
 	 * @param memento
-	 *            - das Memento-Objekt, von welchem das {@linkplain Meeting}
-	 *            -Objekt den Status annehmen soll
+	 *            - das {@linkplain Memento}-Objekt, von welchem dieses Objekt
+	 *            den Status annehmen soll
 	 */
-	public void setMemento(Memento memento) {
+	@Override
+	public void setMemento(IMemento memento) {
 		super.setMemento(memento);
-		meetingType = memento.meetingType;
+		if (memento instanceof Memento) {
+			Memento actualMemento = (Memento) memento;
+			meetingType = actualMemento.meetingType;
+		} else {
+			throw new IllegalArgumentException(
+					"Only org.woym.objects.Meeting.Memento as parameter allowed.");
+		}
+
 	}
 
 	/**
@@ -63,7 +74,7 @@ public class Meeting extends Activity {
 
 		private final MeetingType meetingType;
 
-		public Memento(Meeting originator) {
+		Memento(Meeting originator) {
 			super(originator);
 			meetingType = originator.meetingType;
 		}

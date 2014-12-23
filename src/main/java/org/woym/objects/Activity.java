@@ -16,6 +16,9 @@ import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
 
+import org.woym.spec.objects.IMemento;
+import org.woym.spec.objects.IMementoObject;
+
 /**
  * Diese Klasse repräsentiert eine Aktivität innerhalb eines Stundenplans.
  * 
@@ -25,7 +28,8 @@ import javax.persistence.OrderBy;
 @Entity
 @Inheritance
 @DiscriminatorColumn(name = "TYPE", discriminatorType = DiscriminatorType.STRING, length = 20)
-public abstract class Activity extends org.woym.objects.Entity {
+public abstract class Activity extends org.woym.objects.Entity implements
+		IMementoObject {
 
 	/**
 	 * 
@@ -213,15 +217,34 @@ public abstract class Activity extends org.woym.objects.Entity {
 		return this.employeeTimePeriods.contains(employeeTimePeriods);
 	}
 
-	protected void setMemento(Memento memento) {
+	/**
+	 * Bei Übergabe von {@code null} oder einem Parameter, der nicht vom Typ
+	 * {@linkplain Memento} ist, wird eine {@linkplain IllegalArgumentException}
+	 * geworfen. Ansonsten wird der Status des Objektes auf den des übergebenen
+	 * Memento-Objektes gesetzt.
+	 * 
+	 * @param memento
+	 *            - das {@linkplain Memento}-Objekt, von welchem dieses Objekt
+	 *            den Status annehmen soll
+	 */
+	@Override
+	public void setMemento(IMemento memento) {
 		if (memento == null) {
-			throw new IllegalArgumentException();
+			throw new IllegalArgumentException("Paramater is null.");
 		}
-		id = memento.id;
-		time = memento.time;
-		rooms = memento.rooms;
-		schoolclasses = memento.schoolclasses;
-		employeeTimePeriods = memento.employeeTimePeriods;
+		if (memento instanceof Memento) {
+			Memento actualMemento = (Memento) memento;
+			id = actualMemento.id;
+			time = actualMemento.time;
+			rooms = actualMemento.rooms;
+			schoolclasses = actualMemento.schoolclasses;
+			employeeTimePeriods = actualMemento.employeeTimePeriods;
+		} else {
+			throw new IllegalArgumentException(
+					"Parameter must from type org.woym.objects.Activity.Memento");
+
+		}
+
 	}
 
 	/**
@@ -230,7 +253,7 @@ public abstract class Activity extends org.woym.objects.Entity {
 	 * @author adrian
 	 *
 	 */
-	public static class Memento {
+	public static class Memento implements IMemento {
 
 		private final Long id;
 
@@ -242,7 +265,7 @@ public abstract class Activity extends org.woym.objects.Entity {
 
 		private final List<EmployeeTimePeriods> employeeTimePeriods;
 
-		public Memento(Activity originator) {
+		Memento(Activity originator) {
 			if (originator == null) {
 				throw new IllegalArgumentException();
 			}

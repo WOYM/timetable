@@ -14,6 +14,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.MapKeyJoinColumn;
 
 import org.woym.spec.objects.IActivityObject;
+import org.woym.spec.objects.IMemento;
+import org.woym.spec.objects.IMementoObject;
 
 /**
  * Diese Klasse repräsentiert eine Schulklasse.
@@ -23,7 +25,7 @@ import org.woym.spec.objects.IActivityObject;
  */
 @Entity
 public class Schoolclass extends org.woym.objects.Entity implements
-		IActivityObject {
+		IActivityObject, IMementoObject {
 
 	/**
 	 * 
@@ -158,31 +160,40 @@ public class Schoolclass extends org.woym.objects.Entity implements
 	}
 
 	/**
-	 * Erzeugt ein neues {@linkplain Memento} und gibt es zurück.
-	 * 
-	 * @return ein {@linkplain Memento} mit dem aktuellen Zustand des Objektes
+	 * {@inheritDoc}
 	 */
+	@Override
 	public Memento createMemento() {
 		return new Memento(this);
 	}
 
 	/**
-	 * Setzt den Status des {@linkplain Schoolclass}-Objektes auf den Status des
-	 * übergebenen {@linkplain Memento}-Objektes.
+	 * Bei Übergabe von {@code null} oder einem Parameter, der nicht vom Typ
+	 * {@linkplain Memento} ist, wird eine {@linkplain IllegalArgumentException}
+	 * geworfen. Ansonsten wird der Status des Objektes auf den des übergebenen
+	 * Memento-Objektes gesetzt.
 	 * 
 	 * @param memento
-	 *            - das Memento-Objekt, von welchem das {@linkplain Schoolclass}
-	 *            -Objekt den Status annehmen soll
+	 *            - das {@linkplain Memento}-Objekt, von welchem dieses Objekt
+	 *            den Status annehmen soll
 	 */
-	public void setMemento(Memento memento) {
+	@Override
+	public void setMemento(IMemento memento) {
 		if (memento == null) {
-			throw new IllegalArgumentException();
+			throw new IllegalArgumentException("Parameter is null.");
 		}
-		id = memento.id;
-		identifier = memento.identifier;
-		lessonDemands = memento.lessonDemands;
-		room = memento.room;
-		teacher = memento.teacher;
+		if (memento instanceof Memento) {
+			Memento actualMemento = (Memento) memento;
+			id = actualMemento.id;
+			identifier = actualMemento.identifier;
+			lessonDemands = actualMemento.lessonDemands;
+			room = actualMemento.room;
+			teacher = actualMemento.teacher;
+		} else {
+			throw new IllegalArgumentException(
+					"Only org.woym.objects.Schooclass.Memento as parameter allowed.");
+		}
+
 	}
 
 	/**
@@ -191,7 +202,7 @@ public class Schoolclass extends org.woym.objects.Entity implements
 	 * @author adrian
 	 *
 	 */
-	public static class Memento {
+	public static class Memento implements IMemento {
 
 		private final Long id;
 
@@ -203,7 +214,7 @@ public class Schoolclass extends org.woym.objects.Entity implements
 
 		private final Teacher teacher;
 
-		public Memento(Schoolclass originator) {
+		Memento(Schoolclass originator) {
 			if (originator == null) {
 				throw new IllegalArgumentException();
 			}

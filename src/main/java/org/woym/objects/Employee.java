@@ -18,6 +18,8 @@ import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
 
 import org.woym.spec.objects.IActivityObject;
+import org.woym.spec.objects.IMemento;
+import org.woym.spec.objects.IMementoObject;
 
 /**
  * Superklasse für alle Personen des Personals.
@@ -29,7 +31,7 @@ import org.woym.spec.objects.IActivityObject;
 @Inheritance
 @DiscriminatorColumn(name = "TYPE", discriminatorType = DiscriminatorType.STRING, length = 20)
 public abstract class Employee extends org.woym.objects.Entity implements
-		IActivityObject {
+		IActivityObject, IMementoObject {
 
 	/**
 	 * 
@@ -333,31 +335,42 @@ public abstract class Employee extends org.woym.objects.Entity implements
 	}
 
 	/**
-	 * Erzeugt ein neues {@linkplain Memento} und gibt es zurück.
-	 * 
-	 * @return ein {@linkplain Memento} mit dem aktuellen Zustand des Objektes
+	 * {@inheritDoc}
 	 */
+	@Override
 	public Memento createMemento() {
 		return new Memento(this);
 	}
 
 	/**
-	 * Setzt den Status des {@linkplain Employee}-Objektes auf den Status des
-	 * übergebenen {@linkplain Memento}-Objektes.
+	 * Bei Übergabe von {@code null} oder einem Parameter, der nicht vom Typ
+	 * {@linkplain Memento} ist, wird eine {@linkplain IllegalArgumentException}
+	 * geworfen. Ansonsten wird der Status des Objektes auf den des übergebenen
+	 * Memento-Objektes gesetzt.
 	 * 
 	 * @param memento
-	 *            - das Memento-Objekt, von welchem das {@linkplain Employee}
-	 *            -Objekt den Status annehmen soll
+	 *            - das {@linkplain Memento}-Objekt, von welchem dieses Objekt
+	 *            den Status annehmen soll
 	 */
-	public void setMemento(Memento memento) {
-		id = memento.id;
-		name = memento.name;
-		symbol = memento.symbol;
-		hoursPerWeek = memento.hoursPerWeek;
-		allocatedHours = memento.allocatedHours;
-		compensations = memento.compensations;
-		possibleActivityTypes = memento.possibleActivityTypes;
-		timeWishes = memento.timeWishes;
+	@Override
+	public void setMemento(IMemento memento) {
+		if (memento == null) {
+			throw new IllegalArgumentException("Parameter is null.");
+		}
+		if (memento instanceof Memento) {
+			Memento actualMemento = (Memento) memento;
+			id = actualMemento.id;
+			name = actualMemento.name;
+			symbol = actualMemento.symbol;
+			hoursPerWeek = actualMemento.hoursPerWeek;
+			allocatedHours = actualMemento.allocatedHours;
+			compensations = actualMemento.compensations;
+			possibleActivityTypes = actualMemento.possibleActivityTypes;
+			timeWishes = actualMemento.timeWishes;
+		} else {
+			throw new IllegalArgumentException(
+					"Only org.woym.objects.Employee.Memento as parameter allowed.");
+		}
 	}
 
 	/**
@@ -366,7 +379,7 @@ public abstract class Employee extends org.woym.objects.Entity implements
 	 * @author adrian
 	 *
 	 */
-	public static class Memento {
+	public static class Memento implements IMemento {
 
 		private final Long id;
 
@@ -384,7 +397,7 @@ public abstract class Employee extends org.woym.objects.Entity implements
 
 		private final List<TimePeriod> timeWishes;
 
-		public Memento(Employee originator) {
+		Memento(Employee originator) {
 			if (originator == null) {
 				throw new IllegalArgumentException();
 			}

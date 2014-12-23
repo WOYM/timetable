@@ -7,6 +7,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
 import org.woym.spec.objects.IActivityObject;
+import org.woym.spec.objects.IMemento;
+import org.woym.spec.objects.IMementoObject;
 
 /**
  * Diese Klasse repräsentiert einen Raum.
@@ -15,7 +17,8 @@ import org.woym.spec.objects.IActivityObject;
  *
  */
 @Entity
-public class Room extends org.woym.objects.Entity implements IActivityObject {
+public class Room extends org.woym.objects.Entity implements IActivityObject,
+		IMementoObject {
 
 	/**
 	 * 
@@ -85,27 +88,39 @@ public class Room extends org.woym.objects.Entity implements IActivityObject {
 	}
 
 	/**
-	 * Erzeugt ein neues {@linkplain Memento} und gibt es zurück.
-	 * 
-	 * @return ein {@linkplain Memento} mit dem aktuellen Zustand des Objektes
+	 * {@inheritDoc}
 	 */
+	@Override
 	public Memento createMemento() {
 		return new Memento(this);
 	}
 
 	/**
-	 * Setzt den Status des {@linkplain Room}-Objektes auf den Status des
-	 * übergebenen {@linkplain Memento}-Objektes.
+	 * Bei Übergabe von {@code null} oder einem Parameter, der nicht vom Typ
+	 * {@linkplain Memento} ist, wird eine {@linkplain IllegalArgumentException}
+	 * geworfen. Ansonsten wird der Status des Objektes auf den des übergebenen
+	 * Memento-Objektes gesetzt.
 	 * 
 	 * @param memento
-	 *            - das Memento-Objekt, von welchem das {@linkplain Room}
-	 *            -Objekt den Status annehmen soll
+	 *            - das {@linkplain Memento}-Objekt, von welchem dieses Objekt
+	 *            den Status annehmen soll
 	 */
-	public void setMemento(Memento memento) {
-		id = memento.id;
-		name = memento.name;
-		purpose = memento.purpose;
-		additionalInformation = memento.additionalInformation;
+	@Override
+	public void setMemento(IMemento memento) {
+		if (memento == null) {
+			throw new IllegalArgumentException("Parameter is null.");
+		}
+		if (memento instanceof Memento) {
+			Memento actualMemento = (Memento) memento;
+			id = actualMemento.id;
+			name = actualMemento.name;
+			purpose = actualMemento.purpose;
+			additionalInformation = actualMemento.additionalInformation;
+		} else {
+			throw new IllegalArgumentException(
+					"Only org.woym.objects.Room.Memento as parameter allowed.");
+		}
+
 	}
 
 	/**
@@ -114,7 +129,7 @@ public class Room extends org.woym.objects.Entity implements IActivityObject {
 	 * @author adrian
 	 *
 	 */
-	public static class Memento {
+	public static class Memento implements IMemento {
 
 		private final Long id;
 
@@ -124,7 +139,7 @@ public class Room extends org.woym.objects.Entity implements IActivityObject {
 
 		private final String additionalInformation;
 
-		public Memento(Room originator) {
+		Memento(Room originator) {
 			if (originator == null) {
 				throw new IllegalArgumentException();
 			}
