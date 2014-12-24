@@ -16,6 +16,9 @@ import org.primefaces.context.RequestContext;
 import org.woym.config.Config;
 import org.woym.config.DefaultConfigEnum;
 import org.woym.exceptions.DatasetException;
+import org.woym.messages.GenericErrorMessage;
+import org.woym.messages.MessageHelper;
+import org.woym.messages.SuccessMessage;
 import org.woym.objects.LessonType;
 import org.woym.persistence.DataAccess;
 
@@ -55,10 +58,13 @@ public class LessonTypeController implements Serializable {
 		try {
 			return dataAccess.getAllLessonTypes();
 		} catch (DatasetException e) {
-			FacesMessage message = new FacesMessage(
-					FacesMessage.SEVERITY_ERROR, "Datenbankfehler",
-					"Bei der Kommunikation mit der Datenbank ist ein Fehler aufgetreten.");
-			FacesContext.getCurrentInstance().addMessage(null, message);
+			LOGGER.error(e);
+			FacesMessage msg = new FacesMessage(
+					GenericErrorMessage.DATABASE_COMMUNICATION_ERROR
+							.getSummary(),
+					GenericErrorMessage.DATABASE_COMMUNICATION_ERROR
+							.getStatusMessage());
+			msg.setSeverity(FacesMessage.SEVERITY_ERROR);
 			return new ArrayList<LessonType>();
 		}
 	}
@@ -82,15 +88,16 @@ public class LessonTypeController implements Serializable {
 		if (lessonType != null) {
 			try {
 				dataAccess.delete(lessonType);
-				FacesMessage message = new FacesMessage(
-						FacesMessage.SEVERITY_INFO,
-						"Unterrichtsinhalt gelöscht", lessonType.getName());
-				FacesContext.getCurrentInstance().addMessage(null, message);
+				FacesMessage msg = MessageHelper.generateMessage(SuccessMessage.DELETE_OBJECT_SUCCESS, lessonType, FacesMessage.SEVERITY_INFO);
+				FacesContext.getCurrentInstance().addMessage(null, msg);
 			} catch (DatasetException e) {
-				FacesMessage message = new FacesMessage(
-						FacesMessage.SEVERITY_ERROR,
-						"Fehler beim Löschen des Unterrichtsinhaltes", "");
-				FacesContext.getCurrentInstance().addMessage(null, message);
+				LOGGER.error(e);
+				FacesMessage msg = new FacesMessage(
+						GenericErrorMessage.DATABASE_COMMUNICATION_ERROR
+								.getSummary(),
+						GenericErrorMessage.DATABASE_COMMUNICATION_ERROR
+								.getStatusMessage());
+				msg.setSeverity(FacesMessage.SEVERITY_ERROR);
 			}
 		}
 	}
@@ -101,11 +108,16 @@ public class LessonTypeController implements Serializable {
 	public void editLessonType() {
 		try {
 			dataAccess.update(lessonType);
-			FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO,
-					"Unterrichtsinhalt aktualisiert", lessonType.getName());
-			FacesContext.getCurrentInstance().addMessage(null, message);
+			FacesMessage msg = MessageHelper.generateMessage(SuccessMessage.UPDATE_OBJECT_SUCCESS, lessonType, FacesMessage.SEVERITY_INFO);
+			FacesContext.getCurrentInstance().addMessage(null, msg);
 		} catch (DatasetException e) {
 			LOGGER.error(e);
+			FacesMessage msg = new FacesMessage(
+					GenericErrorMessage.DATABASE_COMMUNICATION_ERROR
+							.getSummary(),
+					GenericErrorMessage.DATABASE_COMMUNICATION_ERROR
+							.getStatusMessage());
+			msg.setSeverity(FacesMessage.SEVERITY_ERROR);
 		}
 	}
 
@@ -116,16 +128,18 @@ public class LessonTypeController implements Serializable {
 
 		try {
 			dataAccess.persist(lessonType);
-			FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO,
-					"Unterrichtsinhalt hinzugefügt", lessonType.getName());
-			FacesContext.getCurrentInstance().addMessage(null, message);
+			FacesMessage msg = MessageHelper.generateMessage(SuccessMessage.ADD_OBJECT_SUCCESS, lessonType, FacesMessage.SEVERITY_INFO);
+			FacesContext.getCurrentInstance().addMessage(null, msg);
 			lessonType = new LessonType();
 			lessonType.setTypicalDuration(getTypicalDuration());
 		} catch (DatasetException e) {
-			FacesMessage message = new FacesMessage(
-					FacesMessage.SEVERITY_ERROR, "Datenbankfehler",
-					"Bei der Kommunikation mit der Datenbank ist ein Fehler aufgetreten.");
-			FacesContext.getCurrentInstance().addMessage(null, message);
+			LOGGER.error(e);
+			FacesMessage msg = new FacesMessage(
+					GenericErrorMessage.DATABASE_COMMUNICATION_ERROR
+							.getSummary(),
+					GenericErrorMessage.DATABASE_COMMUNICATION_ERROR
+							.getStatusMessage());
+			msg.setSeverity(FacesMessage.SEVERITY_ERROR);
 			return;
 		}
 
@@ -150,8 +164,8 @@ public class LessonTypeController implements Serializable {
 		if (typicalDurationString.length == 1) {
 			try {
 				typicalDuration = Integer.parseInt(typicalDurationString[0]);
-				// Do nothing
 			} catch (NumberFormatException e) {
+				// Do nothing
 			}
 		}
 
