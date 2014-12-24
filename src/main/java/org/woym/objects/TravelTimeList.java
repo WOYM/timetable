@@ -62,7 +62,7 @@ public final class TravelTimeList extends org.woym.objects.Entity implements
 	 * 
 	 * @return die Singleton-Instanz
 	 */
-	public static TravelTimeList getInstance() {
+	public static synchronized TravelTimeList getInstance() {
 		if (INSTANCE == null) {
 			try {
 				TravelTimeList list = DataAccess.getInstance()
@@ -104,7 +104,7 @@ public final class TravelTimeList extends org.woym.objects.Entity implements
 	 * @return {@code true}, wenn die übergebene Kante noch nicht vorhanden war
 	 *         und hinzugefügt wurde
 	 */
-	public boolean addEdge(Edge edge) {
+	public boolean add(Edge edge) {
 		if (!edges.contains(edge)) {
 			edges.add(edge);
 			return true;
@@ -120,7 +120,7 @@ public final class TravelTimeList extends org.woym.objects.Entity implements
 	 *            - die zu löschende Kante
 	 * @return {@code true}, wenn sie vorhanden war, ansonsten {@code false}
 	 */
-	public boolean removeEdge(Edge edge) {
+	public boolean remove(Edge edge) {
 		return edges.remove(edge);
 	}
 
@@ -222,7 +222,7 @@ public final class TravelTimeList extends org.woym.objects.Entity implements
 		}
 		if (memento instanceof Memento) {
 			Memento actualMemento = (Memento) memento;
-			edges = actualMemento.edges;
+			edges = new ArrayList<TravelTimeList.Edge>(actualMemento.edges);
 		} else {
 			throw new IllegalArgumentException(
 					"Only org.woym.objects.TravelTimeList.Memento as parameter allowed.");
@@ -243,7 +243,7 @@ public final class TravelTimeList extends org.woym.objects.Entity implements
 			if (originator == null) {
 				throw new IllegalArgumentException();
 			}
-			edges = originator.edges;
+			edges = new ArrayList<TravelTimeList.Edge>(originator.edges);
 		}
 	}
 

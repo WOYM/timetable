@@ -104,7 +104,7 @@ public class Location extends org.woym.objects.Entity implements IMementoObject 
 		return true;
 	}
 
-	public boolean addRoom(final Room room) {
+	public boolean add(final Room room) {
 		if (!rooms.contains(room)) {
 			rooms.add(room);
 			return true;
@@ -112,11 +112,11 @@ public class Location extends org.woym.objects.Entity implements IMementoObject 
 		return false;
 	}
 
-	public boolean removeRoom(final Room room) {
+	public boolean remove(final Room room) {
 		return rooms.remove(room);
 	}
 
-	public boolean containsRoom(final Room room) {
+	public boolean contains(final Room room) {
 		return rooms.contains(room);
 	}
 
@@ -147,7 +147,7 @@ public class Location extends org.woym.objects.Entity implements IMementoObject 
 			Memento actualMemento = (Memento) memento;
 			id = actualMemento.id;
 			name = actualMemento.name;
-			rooms = actualMemento.rooms;
+			rooms = new ArrayList<Room>(actualMemento.rooms);
 		} else {
 			throw new IllegalArgumentException(
 					"Only org.woym.objects.Location.Memento as parameter allowed.");
@@ -175,7 +175,7 @@ public class Location extends org.woym.objects.Entity implements IMementoObject 
 			}
 			id = originator.id;
 			name = originator.name;
-			rooms = originator.rooms;
+			rooms = new ArrayList<Room>(originator.rooms);
 		}
 	}
 }

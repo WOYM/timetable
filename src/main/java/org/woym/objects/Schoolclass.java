@@ -199,7 +199,8 @@ public class Schoolclass extends org.woym.objects.Entity implements
 			Memento actualMemento = (Memento) memento;
 			id = actualMemento.id;
 			identifier = actualMemento.identifier;
-			lessonDemands = actualMemento.lessonDemands;
+			lessonDemands = new HashMap<LessonType, Integer>(
+					actualMemento.lessonDemands);
 			room = actualMemento.room;
 			teacher = actualMemento.teacher;
 		} else {
@@ -233,7 +234,8 @@ public class Schoolclass extends org.woym.objects.Entity implements
 			}
 			id = originator.id;
 			identifier = originator.identifier;
-			lessonDemands = originator.lessonDemands;
+			lessonDemands = new HashMap<LessonType, Integer>(
+					originator.lessonDemands);
 			room = originator.room;
 			teacher = originator.teacher;
 		}
