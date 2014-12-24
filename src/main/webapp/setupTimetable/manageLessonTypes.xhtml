@@ -40,17 +40,16 @@
 		<p:dataTable emptyMessage="Keine Unterrichtsinhalte vorhanden"
 			id="lessonTypeTable" var="lessonType"
 			selection="#{lessonTypeController.lessonType}"
-			value="#{lessonTypeController.getLessonTypes()}"
-			selectionMode="single" rowKey="#{lessonType.name}" scrollable="true"
-			scrollHeight="500">
+			value="#{lessonTypeController.lessonTypes}" selectionMode="single"
+			rowKey="#{lessonType.name}" scrollable="true" scrollHeight="500">
 			<p:column headerText="Name">
 				<h:outputText value="#{lessonType.name}" />
 			</p:column>
 			<p:column headerText="Standarddauer">
-				<h:outputText value="#{lessonType.getReadableDuration()}" />
+				<h:outputText value="#{lessonType.readableDuration}" />
 			</p:column>
 			<p:column headerText="Standardräume">
-				<ui:repeat var="room" value="#{lessonType.getRooms()}">
+				<ui:repeat var="room" value="#{lessonType.rooms}">
 					<h:outputText value="#{room.name}, " />
 				</ui:repeat>
 			</p:column>
@@ -88,11 +87,11 @@
 					<p:outputPanel id="addLessonTypeButton" style="float:right">
 						<p:commandButton value="Hinzufügen"
 							actionListener="#{lessonTypeController.addLessonType}"
-							process="addName,addDuration,@this" update="addLessonTypePanel" />
+							process="addName,addDuration,@this" update="addLessonTypePanel,lessonTypeTable" />
 					</p:outputPanel>
 					<p:defaultCommand target="addLessonTypeButton" />
 				</h:panelGrid>
-				<p:messages showDetail="true" />
+				<p:messages showDetail="true" autoUpdate="true" closable="false" />
 			</p:outputPanel>
 		</p:dialog>
 
@@ -118,10 +117,10 @@
 						value="#{lessonTypeController.lessonType.typicalDuration}" />
 					<p:spacer />
 					<p:outputPanel style="margin-top:10px; float:right">
-						<p:commandButton id="editLessonTypeButton" value="Bearbeiten"
+						<p:commandButton id="editLessonTypeButton" value="Aktualisieren"
 							actionListener="#{lessonTypeController.editLessonType}"
 							process="editName,editDuration,@this"
-							update="editLessonTypePanel" />
+							update="editLessonTypePanel, lessonTypeTable" />
 					</p:outputPanel>
 					<p:defaultCommand target="editLessonTypeButton" />
 				</h:panelGrid>
