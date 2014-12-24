@@ -1,13 +1,13 @@
 package org.woym.controller.manage;
 
+import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
+import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
-import javax.faces.bean.SessionScoped;
+import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
 
 import org.apache.logging.log4j.LogManager;
@@ -30,22 +30,29 @@ import org.woym.persistence.DataAccess;
  * @author Tim Hansen (tihansen)
  *
  */
-@SessionScoped
+@ViewScoped
 @ManagedBean(name = "teacherController")
-public class TeacherController{
+public class TeacherController implements Serializable {
+
+	private static final long serialVersionUID = 1L;
 
 	private static Logger LOGGER = LogManager
 			.getLogger(TeacherController.class);
-	
+
 	private DataAccess dataAccess = DataAccess.getInstance();
 
-	private Teacher teacher = new Teacher();
+	private Teacher teacher;
 
 	// TODO Move to planningController
 	private Teacher selectedTeacherForSearch;
 	private String searchSymbol;
 
 	private DualListModel<ActivityType> activityTypes;
+
+	@PostConstruct
+	public void init() {
+		teacher = new Teacher();
+	}
 
 	/**
 	 * Diese Methode liefert ein Modell zweier Listen zurück. In diesen Listen
@@ -63,8 +70,7 @@ public class TeacherController{
 			allActivityTypes = new ArrayList<>();
 			possibleActivityTypes = teacher.getPossibleActivityTypes();
 
-			for (ActivityType activityType : dataAccess
-					.getAllActivityTypes()) {
+			for (ActivityType activityType : dataAccess.getAllActivityTypes()) {
 				if (!possibleActivityTypes.contains(activityType)) {
 					allActivityTypes.add(activityType);
 				}
@@ -87,6 +93,12 @@ public class TeacherController{
 		this.activityTypes = activityTypes;
 	}
 
+	/**
+	 * Event wird beim Transfer im Dialog gefeuert. Enthält Aktivitätstypen.
+	 * 
+	 * @param event
+	 *            Das Event
+	 */
 	public void onTransfer(TransferEvent event) {
 		teacher.setPossibleActivityTypes(activityTypes.getTarget());
 	}
@@ -111,30 +123,10 @@ public class TeacherController{
 	/**
 	 * Öffnet einen neuen Dialog, mit dem sich ein Lehrer hinzufügen lässt.
 	 */
-	public void openDialogAddTeacher() {
+	public void addTeacherDialog() {
 		teacher = new Teacher();
-
-		openDialog("addTeacherDialog");
-	}
-
-	/**
-	 * Öffnet einen neuen Dialog, mit dem sich der momentane Lehrer bearbeiten
-	 * lässt.
-	 */
-	public void openDialogEditTeacher() {
-		openDialog("editTeacherDialog");
-	}
-
-	private void openDialog(String dialog) {
-		Map<String, Object> options = new HashMap<String, Object>();
-		options.put("modal", true);
-		options.put("draggable", false);
-		options.put("resizable", false);
-		options.put("contentHeight", 600);
-		options.put("contentWidth", 800);
-
-		RequestContext rc = RequestContext.getCurrentInstance();
-		rc.openDialog(dialog, options, null);
+		RequestContext context = RequestContext.getCurrentInstance();
+		context.execute("PF('wAddTeacherDialog').show();");
 	}
 
 	/**
@@ -177,7 +169,7 @@ public class TeacherController{
 	 * Returns a list of teachers that match the given search-symbol. If no
 	 * search-symbol is set the first 5 teachers will be returned.
 	 * 
-	 * TODO: Move to planningController (Maybe) TODO: Make it search for real
+	 * TODO: Move to planningController (Maybe)
 	 * 
 	 * @return
 	 */
@@ -213,9 +205,10 @@ public class TeacherController{
 	}
 
 	/**
-	 * Closes the dialog to add a teacher with a null-event.
+	 * Fügt einen Lehrer der Persistenz hinzu. Der momentane Lehrer im
+	 * Zwischenspeicher wird mit einem neuen Objekt ersetzt.
 	 */
-	public void addTeacherFromDialog() {
+	public void addTeacher() {
 		try {
 			dataAccess.persist(teacher);
 			FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO,
