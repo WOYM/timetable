@@ -5,7 +5,8 @@ import javax.faces.application.FacesMessage;
 import org.woym.exceptions.DatasetException;
 import org.woym.logic.FailureStatus;
 import org.woym.logic.SuccessStatus;
-import org.woym.messages.SpecificStatusMessage;
+import org.woym.messages.SpecificErrorMessage;
+import org.woym.messages.SuccessMessage;
 import org.woym.objects.Entity;
 import org.woym.spec.logic.ICommand;
 import org.woym.spec.logic.IStatus;
@@ -32,10 +33,11 @@ public class DeleteCommand<E extends Entity> implements ICommand {
 
 		try {
 			entity.delete();
-			status = new SuccessStatus();
+			status = new SuccessStatus(SuccessMessage.DELETE_OBJECT_SUCCESS,
+					entity, FacesMessage.SEVERITY_INFO);
 		} catch (DatasetException e) {
 			status = new FailureStatus(
-					SpecificStatusMessage.DELETE_OBJECT_DATASET_EXCEPTION,
+					SpecificErrorMessage.DELETE_OBJECT_DATASET_EXCEPTION,
 					entity.getClass(), FacesMessage.SEVERITY_ERROR);
 		}
 		return status;

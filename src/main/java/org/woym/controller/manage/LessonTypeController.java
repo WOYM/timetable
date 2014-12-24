@@ -1,10 +1,10 @@
 package org.woym.controller.manage;
 
+import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
+import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
@@ -29,14 +29,22 @@ import org.woym.persistence.DataAccess;
  */
 @SessionScoped
 @ManagedBean(name = "lessonTypeController")
-public class LessonTypeController {
+public class LessonTypeController implements Serializable {
+
+	private static final long serialVersionUID = 1L;
 
 	private static Logger LOGGER = LogManager
 			.getLogger(LessonTypeController.class);
 
 	private LessonType lessonType;
-	
+
 	private DataAccess dataAccess = DataAccess.getInstance();
+
+	@PostConstruct
+	public void init() {
+		lessonType = new LessonType();
+		lessonType.setTypicalDuration(getTypicalDuration());
+	}
 
 	/**
 	 * Liefert eine Liste mit allen Unterrichtsinhalten zurück.
@@ -56,33 +64,15 @@ public class LessonTypeController {
 	}
 
 	/**
-	 * Öffnet einen neuen Dialog, in dem ein Unterrichtsinhalt hinzugefügt
-	 * werden kann.
+	 * Setzt die Werte zum Bearbeiten eines neuen Unterrichtstypen
 	 */
 	public void addLessonTypeDialog() {
 
 		lessonType = new LessonType();
 		lessonType.setTypicalDuration(getTypicalDuration());
+		RequestContext context = RequestContext.getCurrentInstance();
+		context.execute("PF('wAddLessonTypeDialog').show();");
 
-		openDialog("addLessonTypeDialog");
-	}
-
-	public void editLessonTypeDialog() {
-
-		openDialog("editLessonTypeDialog");
-	}
-
-	private void openDialog(String dialog) {
-
-		Map<String, Object> options = new HashMap<String, Object>();
-		options.put("modal", true);
-		options.put("draggable", false);
-		options.put("resizable", false);
-		options.put("contentHeight", 400);
-		options.put("contentWidth", 600);
-
-		RequestContext rc = RequestContext.getCurrentInstance();
-		rc.openDialog(dialog, options, null);
 	}
 
 	/**
@@ -122,7 +112,7 @@ public class LessonTypeController {
 	/**
 	 * Fügt einen neuen Unterrichtsinhalt hinzu
 	 */
-	public void addLessonTypeFromDialog() {
+	public void addLessonType() {
 
 		try {
 			dataAccess.persist(lessonType);
@@ -139,7 +129,6 @@ public class LessonTypeController {
 			return;
 		}
 
-		// RequestContext.getCurrentInstance().closeDialog(addTeacher);
 	}
 
 	public LessonType getLessonType() {
@@ -147,9 +136,7 @@ public class LessonTypeController {
 	}
 
 	public void setLessonType(LessonType lessonType) {
-		if (lessonType != null) {
-			this.lessonType = lessonType;
-		}
+		this.lessonType = lessonType;
 	}
 
 	private int getTypicalDuration() {

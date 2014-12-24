@@ -4,7 +4,8 @@ import javax.faces.application.FacesMessage;
 
 import org.woym.logic.FailureStatus;
 import org.woym.logic.SuccessStatus;
-import org.woym.messages.SpecificStatusMessage;
+import org.woym.messages.SpecificErrorMessage;
+import org.woym.messages.SuccessMessage;
 import org.woym.objects.Entity;
 import org.woym.spec.logic.ICommand;
 import org.woym.spec.logic.IStatus;
@@ -18,7 +19,7 @@ import org.woym.spec.objects.IMemento;
 public class UpdateCommand<E extends Entity> implements ICommand {
 
 	private final E entity;
-	
+
 	private final IMemento memento;
 
 	public UpdateCommand(E entity) {
@@ -35,10 +36,11 @@ public class UpdateCommand<E extends Entity> implements ICommand {
 
 		try {
 			entity.update();
-			status = new SuccessStatus();
+			status = new SuccessStatus(SuccessMessage.UPDATE_OBJECT_SUCCESS,
+					entity, FacesMessage.SEVERITY_INFO);
 		} catch (Exception e) {
 			status = new FailureStatus(
-					SpecificStatusMessage.UPDATE_OBJECT_DATASET_EXCEPTION,
+					SpecificErrorMessage.UPDATE_OBJECT_DATASET_EXCEPTION,
 					entity.getClass(), FacesMessage.SEVERITY_ERROR);
 		}
 		return status;
@@ -47,7 +49,7 @@ public class UpdateCommand<E extends Entity> implements ICommand {
 	@Override
 	public IStatus undo() {
 		entity.setMemento(memento);
-		//TODO:
+		// TODO:
 		return null;
 	}
 

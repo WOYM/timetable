@@ -81,6 +81,21 @@ public interface IDataAccess {
 	public AcademicYear getOneAcademicYear(int year) throws DatasetException;
 
 	/**
+	 * Gibt den Jahrgang zurück, zu welchem die übergebene Schulklasse gehört.
+	 * Gehört die Klasse zu keinem Jahrgang, wird {@code null} zurückgegeben.
+	 * Tritt bei der Datenbankanfrage ein Fehler auf, wirde eine
+	 * {@linkplain DatasetException} geworfen.
+	 * 
+	 * @param schoolclass
+	 *            - die Schulklasse, zu welcher der Jahrgang gesucht wird
+	 * @return den Jahrgang, zu dem die übergebene Schulklasse gehört oder
+	 *         {@code null}, wenn kein solcher existiert
+	 * @throws DatasetException
+	 */
+	public AcademicYear getOneAcademicYear(Schoolclass schoolclass)
+			throws DatasetException;
+
+	/**
 	 * Gibt eine Liste aller in der Datenbank vorhandenen
 	 * {@linkplain Schoolclass} -Objekte zurück. Sind keine vorhanden wird, eine
 	 * leere Liste zurückgegeben. Tritt bei der Anfrage ein Fehler auf, wird

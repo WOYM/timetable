@@ -166,7 +166,11 @@ public abstract class Employee extends org.woym.objects.Entity implements
 	 */
 	@Override
 	public String toString() {
-		return getName() + ", " + symbol + ", " + hoursPerWeek + "hpw";
+		String hpw = hoursPerWeek.setScale(2).toPlainString();
+		if(name == null){
+			return symbol + " (" + hpw + " Wochenstunden)";
+		}
+		return name + ", " + symbol + " (" + hpw + " Wochenstunden)";
 	}
 
 	@Override
