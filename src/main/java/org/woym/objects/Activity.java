@@ -1,5 +1,6 @@
 package org.woym.objects;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -113,6 +114,15 @@ public abstract class Activity extends org.woym.objects.Entity implements
 	public void setEmployeeTimePeriods(
 			List<EmployeeTimePeriods> employeeTimePeriods) {
 		this.employeeTimePeriods = employeeTimePeriods;
+	}
+	
+	@Override
+	public String toString(){
+		String day = time.getDay().toString();
+		SimpleDateFormat df = new SimpleDateFormat("HH:mm");
+		String starttime = df.format(time.getStartTime());
+		String endtime = df.format(time.getEndTime());
+		return String.format("%s (%s-%s Uhr)", day, starttime, endtime);
 	}
 
 	/**

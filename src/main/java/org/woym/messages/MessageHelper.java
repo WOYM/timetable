@@ -23,25 +23,25 @@ import org.woym.objects.Teacher;
 public abstract class MessageHelper {
 
 	/**
-	 * Generiert aus der übergebenen {@linkplain SpecificStatusMessage}, der
+	 * Generiert aus der übergebenen {@linkplain SpecificErrorMessage}, der
 	 * übergebenen Klasse und {@linkplain FacesMessage.Severity} eine
 	 * {@linkplain FacesMessage} und gibt diese zurück.
 	 * 
 	 * @param message
 	 *            - die Statusnachricht aus dem
-	 *            {@linkplain SpecificStatusMessage}-Enum
+	 *            {@linkplain SpecificErrorMessage}-Enum
 	 * @param clazz
 	 *            -die Klasse, welche betroffen ist
 	 * @param severity
 	 *            - die Art der Meldung (Info, Warnung, Fehler)
 	 * @return die generierte {@linkplain FacesMessage}
 	 */
-	public static FacesMessage generateMessage(SpecificStatusMessage message,
+	public static FacesMessage generateMessage(SpecificErrorMessage message,
 			Class<? extends Entity> clazz, FacesMessage.Severity severity) {
 		if (message == null || clazz == null || severity == null) {
 			throw new IllegalArgumentException();
 		}
-		String toInsert = getInsertString(clazz);
+		String toInsert = getInsertString(clazz, false);
 		FacesMessage facesMessage = new FacesMessage();
 		facesMessage.setSummary(message.getSummary());
 		facesMessage.setDetail(String.format(message.getStatusMessage(),
@@ -51,18 +51,18 @@ public abstract class MessageHelper {
 	}
 
 	/**
-	 * Generiert aus der übergebenen {@linkplain GenericStatusMessage} und der
+	 * Generiert aus der übergebenen {@linkplain GenericErrorMessage} und der
 	 * übergebenen {@linkplain FacesMessage.Severity} eine
 	 * {@linkplain FacesMessage} und gibt diese zurück.
 	 * 
 	 * @param message
-	 *            - die Statusnachricht aus dem
-	 *            {@linkplain GenericStatusMessage}-Enum
+	 *            - die Statusnachricht aus dem {@linkplain GenericErrorMessage}
+	 *            -Enum
 	 * @param severity
 	 *            - die Art der Meldung (Info, Warnung, Fehler)
 	 * @return die generierte {@linkplain FacesMessage}
 	 */
-	public static FacesMessage generateMessage(GenericStatusMessage message,
+	public static FacesMessage generateMessage(GenericErrorMessage message,
 			FacesMessage.Severity severity) {
 		if (message == null || severity == null) {
 			throw new IllegalArgumentException();
@@ -75,6 +75,36 @@ public abstract class MessageHelper {
 	}
 
 	/**
+	 * Generiert aus der übergebenen {@linkplain SuccessMessage}, dem
+	 * übergebenen Objekt einer {@linkplain Entity} erweiternden Klasse und der
+	 * übergebenen {@linkplain FacesMessage.Severity} eine
+	 * {@linkplain FacesMessage} für einen Erfolgsfall. Wird für einen der
+	 * Parameter {@code null} übergeben, wird eine
+	 * {@linkplain IllegalArgumentException} geworfen.
+	 * 
+	 * @param message
+	 *            - die Erfolgsmeldung
+	 * @param entity
+	 *            - das Objekt einer {@linkplain Entity} erweiternden Klasse,
+	 *            welches die Meldung betrifft
+	 * @param severity
+	 *            - die Art der Meldung (Info, Warnung, Fehler)
+	 * @return die generierte {@linkplain FacesMessage}
+	 */
+	public static FacesMessage generateMessage(SuccessMessage message,
+			Entity entity, FacesMessage.Severity severity) {
+		if (message == null || entity == null || severity == null) {
+			throw new IllegalArgumentException();
+		}
+		String toInsert = getInsertString(entity.getClass(), true);
+		String summary = String.format(message.getSummary(), toInsert);
+		String msg = String.format(message.getMessage(), toInsert,
+				entity.toString());
+		FacesMessage facesMessage = new FacesMessage(severity, summary, msg);
+		return facesMessage;
+	}
+
+	/**
 	 * Gibt je nach übergebener Klasse einen passenden String zurück, der in die
 	 * Statusnachricht eingefügt wird. Ist die Klasse unbekannt, wird
 	 * {@code null} zurückgegeben.
@@ -82,31 +112,35 @@ public abstract class MessageHelper {
 	 * @param clazz
 	 *            - die Klasse, für welche der einzufügende Text zurückgegeben
 	 *            werden soll
+	 * @param success
+	 *            - {@code true}, wenn ein String für eine Erfolgsnachricht
+	 *            benötigt wird, {@code false} für eine Fehlernachrichts
 	 * @return der entsprechende Text für die übergebene Klasse oder
 	 *         {@code null}, wenn die Klasse unbekannt ist
 	 */
-	private static String getInsertString(Class<? extends Entity> clazz) {
+	private static String getInsertString(Class<? extends Entity> clazz,
+			boolean success) {
 		if (clazz == AcademicYear.class) {
-			return "des Jahrgangs";
+			return !success ? "des Jahrgangs" : "Jahrgang";
 		} else if (clazz == Activity.class
 				|| clazz.getSuperclass() == Activity.class) {
-			return "der Aktivität";
+			return !success ? "der Aktivität" : "Aktivität";
 		} else if (clazz == LessonType.class) {
-			return "des Unterrichtsinhalts";
+			return !success ? "des Unterrichtsinhalts" : "Unterrichtsinhalt";
 		} else if (clazz == Location.class) {
-			return "des Standortes";
+			return !success ? "des Standortes" : "Standort";
 		} else if (clazz == MeetingType.class) {
-			return "der Sitzung";
+			return !success ? "der Team-Sitzung" : "Team-Sitzung";
 		} else if (clazz == PedagogicAssistant.class) {
-			return "des päd. Mitarbeiters";
+			return !success ? "des päd. Mitarbeiters" : "Päd. Mitarbeiter";
 		} else if (clazz == ProjectType.class) {
-			return "des Projektes";
+			return !success ? "des Projektes" : "Projekt";
 		} else if (clazz == Room.class) {
-			return "des Raumes";
+			return !success ? "des Raumes" : "Raum";
 		} else if (clazz == Schoolclass.class) {
-			return "der Schulklasse";
+			return !success ? "der Schulklasse" : "Schulklasse";
 		} else if (clazz == Teacher.class) {
-			return "der Lehrkraft";
+			return !success ? "der Lehrkraft" : "Lehrkraft";
 		}
 		return null;
 	}
