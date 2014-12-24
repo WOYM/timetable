@@ -6,25 +6,21 @@ import java.util.List;
 
 import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
-import javax.faces.application.FacesMessage.Severity;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.h2.util.StringUtils;
 import org.primefaces.context.RequestContext;
 import org.primefaces.event.TransferEvent;
 import org.primefaces.model.DualListModel;
 import org.woym.exceptions.DatasetException;
 import org.woym.messages.GenericErrorMessage;
 import org.woym.messages.MessageHelper;
-import org.woym.messages.SpecificErrorMessage;
 import org.woym.messages.SuccessMessage;
 import org.woym.objects.ActivityType;
 import org.woym.objects.PedagogicAssistant;
-import org.woym.objects.Teacher;
 import org.woym.persistence.DataAccess;
 
 /**
