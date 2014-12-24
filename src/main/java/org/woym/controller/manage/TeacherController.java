@@ -17,7 +17,7 @@ import org.primefaces.context.RequestContext;
 import org.primefaces.event.TransferEvent;
 import org.primefaces.model.DualListModel;
 import org.woym.exceptions.DatasetException;
-import org.woym.messages.GenericStatusMessage;
+import org.woym.messages.GenericErrorMessage;
 import org.woym.objects.ActivityType;
 import org.woym.objects.Teacher;
 import org.woym.persistence.DataAccess;
@@ -165,8 +165,8 @@ public class TeacherController{
 				FacesContext.getCurrentInstance().addMessage(null, message);
 			} catch (DatasetException e) {
 				FacesMessage msg = new FacesMessage(
-						GenericStatusMessage.DATABASE_COMMUNICATION_ERROR.getSummary(),
-						GenericStatusMessage.DATABASE_COMMUNICATION_ERROR
+						GenericErrorMessage.DATABASE_COMMUNICATION_ERROR.getSummary(),
+						GenericErrorMessage.DATABASE_COMMUNICATION_ERROR
 								.getStatusMessage());
 				msg.setSeverity(FacesMessage.SEVERITY_ERROR);
 			}
@@ -225,8 +225,8 @@ public class TeacherController{
 			teacher = new Teacher();
 		} catch (DatasetException e) {
 			FacesMessage msg = new FacesMessage(
-					GenericStatusMessage.DATABASE_COMMUNICATION_ERROR.getSummary(),
-					GenericStatusMessage.DATABASE_COMMUNICATION_ERROR
+					GenericErrorMessage.DATABASE_COMMUNICATION_ERROR.getSummary(),
+					GenericErrorMessage.DATABASE_COMMUNICATION_ERROR
 							.getStatusMessage());
 			msg.setSeverity(FacesMessage.SEVERITY_ERROR);
 		}

@@ -17,7 +17,7 @@ import org.woym.objects.ActivityType;
 import org.woym.objects.Employee;
 import org.woym.objects.Location;
 import org.woym.persistence.DataAccess;
-import org.woym.messages.GenericStatusMessage;
+import org.woym.messages.GenericErrorMessage;
 
 /**
  * <h1>LocationNameValidator</h1>
@@ -94,8 +94,8 @@ public class NameValidator implements Validator {
 		} catch (DatasetException e) {
 			LOGGER.error(e);
 			FacesMessage msg = new FacesMessage(
-					GenericStatusMessage.DATABASE_COMMUNICATION_ERROR.getSummary(),
-					GenericStatusMessage.DATABASE_COMMUNICATION_ERROR
+					GenericErrorMessage.DATABASE_COMMUNICATION_ERROR.getSummary(),
+					GenericErrorMessage.DATABASE_COMMUNICATION_ERROR
 							.getStatusMessage());
 			msg.setSeverity(FacesMessage.SEVERITY_ERROR);
 			throw new ValidatorException(msg);
@@ -105,8 +105,8 @@ public class NameValidator implements Validator {
 	
 	private FacesMessage getNameIsEmptyMessage() {
 		FacesMessage msg = new FacesMessage(
-				GenericStatusMessage.NAME_IS_EMPTY.getSummary(),
-				GenericStatusMessage.NAME_IS_EMPTY.getStatusMessage());
+				GenericErrorMessage.NAME_IS_EMPTY.getSummary(),
+				GenericErrorMessage.NAME_IS_EMPTY.getStatusMessage());
 		msg.setSeverity(FacesMessage.SEVERITY_ERROR);
 		
 		return msg;
@@ -114,8 +114,8 @@ public class NameValidator implements Validator {
 	
 	private FacesMessage getNameAlreadyExistsMessage() {
 		FacesMessage msg = new FacesMessage(
-				GenericStatusMessage.NAME_ALREADY_EXISTS.getSummary(),
-				GenericStatusMessage.NAME_ALREADY_EXISTS
+				GenericErrorMessage.NAME_ALREADY_EXISTS.getSummary(),
+				GenericErrorMessage.NAME_ALREADY_EXISTS
 						.getStatusMessage());
 		msg.setSeverity(FacesMessage.SEVERITY_ERROR);
 		

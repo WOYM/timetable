@@ -5,7 +5,8 @@ import javax.faces.application.FacesMessage;
 public interface IStatus {
 
 	/**
-	 * Erzeugt eine {@linkplain FacesMessage}, welche dem Kunden angezeigt wird.
+	 * Gibt die bei Erzeugung des IStatus-Objektes generierte
+	 * {@linkplain FacesMessage} zurück
 	 * 
 	 * @return eine FacesMessage
 	 * 

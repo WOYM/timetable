@@ -13,6 +13,8 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.MapKeyJoinColumn;
 
+import org.woym.exceptions.DatasetException;
+import org.woym.persistence.DataAccess;
 import org.woym.spec.objects.IActivityObject;
 import org.woym.spec.objects.IMemento;
 import org.woym.spec.objects.IMementoObject;
@@ -109,6 +111,17 @@ public class Schoolclass extends org.woym.objects.Entity implements
 
 	public void setTeacher(Teacher teacher) {
 		this.teacher = teacher;
+	}
+
+	@Override
+	public String toString() {
+		try {
+			AcademicYear year = DataAccess.getInstance().getOneAcademicYear(
+					this);
+			return year.toString() + identifier;
+		} catch (DatasetException e) {
+			return String.valueOf(identifier);
+		}
 	}
 
 	/**
