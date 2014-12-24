@@ -20,14 +20,16 @@ public class UpdateCommand<E extends Entity> implements ICommand {
 
 	private final E entity;
 
-	private final IMemento memento;
+	private IMemento memento;
 
-	public UpdateCommand(E entity) {
+	public UpdateCommand(E entity, IMemento memento) {
 		if (entity == null) {
 			throw new IllegalArgumentException("Entity was null");
+		} else if(memento == null) {
+			throw new IllegalArgumentException("Memento was null");
 		}
 		this.entity = entity;
-		memento = entity.createMemento();
+		this.memento = memento;
 	}
 
 	@Override
@@ -48,15 +50,42 @@ public class UpdateCommand<E extends Entity> implements ICommand {
 
 	@Override
 	public IStatus undo() {
+		IStatus status;
+		IMemento placeholder = entity.createMemento();
 		entity.setMemento(memento);
-		// TODO:
-		return null;
+		
+		
+		try {
+			entity.update();
+			status = new SuccessStatus(SuccessMessage.UPDATE_OBJECT_SUCCESS,
+					entity, FacesMessage.SEVERITY_INFO);
+			memento = placeholder;
+		} catch (Exception e) {
+			status = new FailureStatus(
+					SpecificErrorMessage.UPDATE_OBJECT_DATASET_EXCEPTION,
+					entity.getClass(), FacesMessage.SEVERITY_ERROR);
+		}
+		return status;
 	}
 
 	@Override
 	public IStatus redo() {
-		// TODO Auto-generated method stub
-		return null;
+		IStatus status;
+		IMemento placeholder = entity.createMemento();
+		entity.setMemento(memento);
+		
+		
+		try {
+			entity.update();
+			status = new SuccessStatus(SuccessMessage.UPDATE_OBJECT_SUCCESS,
+					entity, FacesMessage.SEVERITY_INFO);
+			memento = placeholder;
+		} catch (Exception e) {
+			status = new FailureStatus(
+					SpecificErrorMessage.UPDATE_OBJECT_DATASET_EXCEPTION,
+					entity.getClass(), FacesMessage.SEVERITY_ERROR);
+		}
+		return status;
 	}
 
 }
