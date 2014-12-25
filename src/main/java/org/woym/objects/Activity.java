@@ -115,9 +115,9 @@ public abstract class Activity extends org.woym.objects.Entity implements
 			List<EmployeeTimePeriods> employeeTimePeriods) {
 		this.employeeTimePeriods = employeeTimePeriods;
 	}
-	
+
 	@Override
-	public String toString(){
+	public String toString() {
 		String day = time.getDay().toString();
 		SimpleDateFormat df = new SimpleDateFormat("HH:mm");
 		String starttime = df.format(time.getStartTime());
@@ -134,7 +134,7 @@ public abstract class Activity extends org.woym.objects.Entity implements
 	 * @return {@code true}, wenn das Objekt sich noch nicht in der Liste
 	 *         befindet und hinzugefügt wurde, ansonsten {@code false}
 	 */
-	public boolean addSchoolclass(final Schoolclass schoolclass) {
+	public boolean add(final Schoolclass schoolclass) {
 		if (!schoolclasses.contains(schoolclass)) {
 			schoolclasses.add(schoolclass);
 			return true;
@@ -151,7 +151,7 @@ public abstract class Activity extends org.woym.objects.Entity implements
 	 * @return {@code true}, wenn das Objekt entfernt wurde, ansonsten
 	 *         {@code false}
 	 */
-	public boolean removeSchoolclass(final Schoolclass schoolclass) {
+	public boolean remove(final Schoolclass schoolclass) {
 		return schoolclasses.remove(schoolclass);
 	}
 
@@ -166,7 +166,7 @@ public abstract class Activity extends org.woym.objects.Entity implements
 	 * @return {@code true}, wenn das Objekt sich in der Liste befindet,
 	 *         ansonsten {@code false}
 	 */
-	public boolean containsSchoolclass(final Schoolclass schoolclass) {
+	public boolean contains(final Schoolclass schoolclass) {
 		return schoolclasses.contains(schoolclass);
 	}
 
@@ -182,8 +182,7 @@ public abstract class Activity extends org.woym.objects.Entity implements
 	 *         {@linkplain EmployeeTimePeriods}-Objekt noch nicht vorhanden war
 	 *         und neu hinzugefügt wurde, ansonsten {@code false}
 	 */
-	public boolean addEmployeeTimePeriods(
-			EmployeeTimePeriods employeeTimePeriods) {
+	public boolean add(EmployeeTimePeriods employeeTimePeriods) {
 		if (!this.employeeTimePeriods.contains(employeeTimePeriods)) {
 			this.employeeTimePeriods.add(employeeTimePeriods);
 			return true;
@@ -202,8 +201,7 @@ public abstract class Activity extends org.woym.objects.Entity implements
 	 * @return {@code true}, wenn übergebenes Objekt gelöscht, ansonsten
 	 *         {@code false}
 	 */
-	public boolean removeEmployeeTimePeriods(
-			EmployeeTimePeriods employeeTimePeriods) {
+	public boolean remove(EmployeeTimePeriods employeeTimePeriods) {
 		return this.employeeTimePeriods.remove(employeeTimePeriods);
 	}
 
@@ -221,7 +219,7 @@ public abstract class Activity extends org.woym.objects.Entity implements
 	 * @return {@code true}, wenn ein {@linkplain EmployeeTimePeriods}-Objekt
 	 *         vorhanden ist, ansonsten {@code false}
 	 */
-	public boolean containsEmployee(final Employee employee) {
+	public boolean contains(final Employee employee) {
 		EmployeeTimePeriods employeeTimePeriods = new EmployeeTimePeriods();
 		employeeTimePeriods.setEmployee(employee);
 		return this.employeeTimePeriods.contains(employeeTimePeriods);
@@ -246,9 +244,11 @@ public abstract class Activity extends org.woym.objects.Entity implements
 			Memento actualMemento = (Memento) memento;
 			id = actualMemento.id;
 			time = actualMemento.time;
-			rooms = actualMemento.rooms;
-			schoolclasses = actualMemento.schoolclasses;
-			employeeTimePeriods = actualMemento.employeeTimePeriods;
+			rooms = new ArrayList<Room>(actualMemento.rooms);
+			schoolclasses = new ArrayList<Schoolclass>(
+					actualMemento.schoolclasses);
+			employeeTimePeriods = new ArrayList<EmployeeTimePeriods>(
+					actualMemento.employeeTimePeriods);
 		} else {
 			throw new IllegalArgumentException(
 					"Parameter must from type org.woym.objects.Activity.Memento");
@@ -281,9 +281,10 @@ public abstract class Activity extends org.woym.objects.Entity implements
 			}
 			id = originator.id;
 			time = originator.time;
-			rooms = originator.rooms;
-			schoolclasses = originator.schoolclasses;
-			employeeTimePeriods = originator.employeeTimePeriods;
+			rooms = new ArrayList<Room>(originator.rooms);
+			schoolclasses = new ArrayList<Schoolclass>(originator.schoolclasses);
+			employeeTimePeriods = new ArrayList<EmployeeTimePeriods>(
+					originator.employeeTimePeriods);
 		}
 
 		Long getId() {

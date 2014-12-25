@@ -12,7 +12,6 @@ import javax.faces.context.FacesContext;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.h2.util.StringUtils;
 import org.primefaces.context.RequestContext;
 import org.primefaces.event.TransferEvent;
 import org.primefaces.model.DualListModel;
@@ -25,51 +24,46 @@ import org.woym.messages.GenericErrorMessage;
 import org.woym.messages.MessageHelper;
 import org.woym.messages.SuccessMessage;
 import org.woym.objects.ActivityType;
-import org.woym.objects.Teacher;
+import org.woym.objects.PedagogicAssistant;
 import org.woym.persistence.DataAccess;
 import org.woym.spec.logic.IStatus;
 import org.woym.spec.objects.IMemento;
 
 /**
- * <h1>TeacherController</h1>
+ * <h1>PedagogicAssistantController</h1>
  * <p>
- * Dieser Controller ist für die allgemeine Lehrkraftverwaltung zuständig.
+ * Dieser Controller ist für die allgemeine Mitarbeiterverwaltung zuständig.
  * 
  * @author Tim Hansen (tihansen)
  *
  */
 @ViewScoped
-@ManagedBean(name = "teacherController")
-public class TeacherController implements Serializable {
+@ManagedBean(name = "pedagogicAssistantController")
+public class PedagogicAssistantController implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
 	private static Logger LOGGER = LogManager
-			.getLogger(TeacherController.class);
+			.getLogger(PedagogicAssistantController.class);
 
 	private DataAccess dataAccess = DataAccess.getInstance();
 	
 	private CommandHandler commandHandler = CommandHandler.getInstance();
 
-	private Teacher teacher;
-	
-	private IMemento teacherMemento;
-
-	// TODO Move to planningController
-	private Teacher selectedTeacherForSearch;
-	private String searchSymbol;
+	private PedagogicAssistant pedagogicAssistant;
+	private IMemento pedagogicAssistantMemento;
 
 	private DualListModel<ActivityType> activityTypes;
-
+	
 	@PostConstruct
 	public void init() {
-		teacher = new Teacher();
+		pedagogicAssistant = new PedagogicAssistant();
 	}
 
 	/**
 	 * Diese Methode liefert ein Modell zweier Listen zurück. In diesen Listen
 	 * befinden sich die verfügbaren und die gewählten Unterrichtsinhalte für
-	 * einen Lehrer
+	 * einen Mitarbeiter
 	 * 
 	 * @return Liste mit Unterrichtstypen
 	 */
@@ -80,7 +74,7 @@ public class TeacherController implements Serializable {
 		// Logic to display correct lists
 		try {
 			allActivityTypes = new ArrayList<>();
-			possibleActivityTypes = teacher.getPossibleActivityTypes();
+			possibleActivityTypes = pedagogicAssistant.getPossibleActivityTypes();
 
 			for (ActivityType activityType : dataAccess.getAllActivityTypes()) {
 				if (!possibleActivityTypes.contains(activityType)) {
@@ -114,7 +108,7 @@ public class TeacherController implements Serializable {
 	 *            Das Event
 	 */
 	public void onTransfer(TransferEvent event) {
-		teacher.setPossibleActivityTypes(activityTypes.getTarget());
+		pedagogicAssistant.setPossibleActivityTypes(activityTypes.getTarget());
 	}
 
 	/**
@@ -122,39 +116,39 @@ public class TeacherController implements Serializable {
 	 * 
 	 * @return Liste mit allen Lehrkräften
 	 */
-	public List<Teacher> getTeachers() {
+	public List<PedagogicAssistant> getPedagogicAssistants() {
 		try {
-			return dataAccess.getAllTeachers();
+			return dataAccess.getAllPAs();
 		} catch (DatasetException e) {
 			LOGGER.error(e);
 			FacesMessage msg = new FacesMessage(
-					GenericErrorMessage.DATABASE_COMMUNICATION_ERROR
-							.getSummary(),
+					GenericErrorMessage.DATABASE_COMMUNICATION_ERROR.getSummary(),
 					GenericErrorMessage.DATABASE_COMMUNICATION_ERROR
 							.getStatusMessage());
 			msg.setSeverity(FacesMessage.SEVERITY_ERROR);
-			return new ArrayList<Teacher>();
+			FacesContext.getCurrentInstance().addMessage(null, msg);
+			return new ArrayList<PedagogicAssistant>();
 		}
 	}
 
 	/**
 	 * Öffnet einen neuen Dialog, mit dem sich ein Lehrer hinzufügen lässt.
 	 */
-	public void addTeacherDialog() {
-		teacher = new Teacher();
+	public void addPedagogicAssistantDialog() {
+		pedagogicAssistant = new PedagogicAssistant();
 		RequestContext context = RequestContext.getCurrentInstance();
-		context.execute("PF('wAddTeacherDialog').show();");
-	}
-
-	public void generateTeacherMemento() {
-		teacherMemento = teacher.createMemento();
+		context.execute("PF('wAddPedagogicAssistantDialog').show();");
 	}
 	
+	public void generatePedagogicAssistantMemento() {
+		pedagogicAssistantMemento = pedagogicAssistant.createMemento();
+	}
+
 	/**
-	 * Speichert einen aktualisierten Lehrer.
+	 * Speichert einen aktualisierten Mitarbeiter.
 	 */
-	public void editTeacher() {
-		UpdateCommand<Teacher> command = new UpdateCommand<>(teacher, teacherMemento);			
+	public void editPedagogicAssistant() {
+		UpdateCommand<PedagogicAssistant> command = new UpdateCommand<>(pedagogicAssistant, pedagogicAssistantMemento);			
 		IStatus status = commandHandler.execute(command);
 		FacesMessage msg = status.report();
 		
@@ -162,106 +156,49 @@ public class TeacherController implements Serializable {
 	}
 
 	/**
-	 * Löscht den selektierten Lehrer.
+	 * Löscht den selektierten Mitarbeiter.
 	 */
-	public void deleteTeacher() {
-		if (teacher != null) {
+	public void deletePedagogicAssistant() {
+		if (pedagogicAssistant != null) {
 			try {
-				dataAccess.delete(teacher);
-				FacesMessage msg = MessageHelper.generateMessage(
-						SuccessMessage.DELETE_OBJECT_SUCCESS, teacher,
-						FacesMessage.SEVERITY_INFO);
+				dataAccess.delete(pedagogicAssistant);
+				FacesMessage msg = MessageHelper.generateMessage(SuccessMessage.DELETE_OBJECT_SUCCESS, pedagogicAssistant, FacesMessage.SEVERITY_INFO);
 				FacesContext.getCurrentInstance().addMessage(null, msg);
 			} catch (DatasetException e) {
 				LOGGER.error(e);
 				FacesMessage msg = new FacesMessage(
-						GenericErrorMessage.DATABASE_COMMUNICATION_ERROR
-								.getSummary(),
+						GenericErrorMessage.DATABASE_COMMUNICATION_ERROR.getSummary(),
 						GenericErrorMessage.DATABASE_COMMUNICATION_ERROR
 								.getStatusMessage());
 				msg.setSeverity(FacesMessage.SEVERITY_ERROR);
+				FacesContext.getCurrentInstance().addMessage(null, msg);
 			}
 		}
 	}
 
 	/**
-	 * Returns a list of teachers that match the given search-symbol. If no
-	 * search-symbol is set the first 5 teachers will be returned.
-	 * 
-	 * TODO: Move to planningController (Maybe)
-	 * 
-	 * @return
-	 */
-	public ArrayList<Teacher> getTeachersForSearch() {
-
-		ArrayList<Teacher> tempList = new ArrayList<>();
-		if (StringUtils.isNullOrEmpty(searchSymbol)) {
-			for (Teacher teacher : getTeachers()) {
-				tempList.add(teacher);
-
-				if (tempList.size() >= 5) {
-					return tempList;
-				}
-
-			}
-
-			return tempList;
-		}
-
-		for (Teacher teacher : getTeachers()) {
-
-			if (teacher.getSymbol().contains(searchSymbol)) {
-
-				tempList.add(teacher);
-
-				if (tempList.size() >= 5) {
-					return tempList;
-				}
-			}
-		}
-
-		return tempList;
-	}
-
-	/**
-	 * Fügt einen Lehrer der Persistenz hinzu. Der momentane Lehrer im
+	 * Fügt einen Mitarbeiter der Persistenz hinzu. Der momentane Mitarbeiter im
 	 * Zwischenspeicher wird mit einem neuen Objekt ersetzt.
 	 */
-	public void addTeacher() {
-		AddCommand<Teacher> command = new AddCommand<>(teacher);			
+	public void addPedagogicAssistant() {
+		AddCommand<PedagogicAssistant> command = new AddCommand<>(pedagogicAssistant);			
 		IStatus status = commandHandler.execute(command);
 		FacesMessage msg = status.report();
 		
 		if(status instanceof SuccessStatus) {
-			teacher = new Teacher();
+			pedagogicAssistant = new PedagogicAssistant();
 		}
 		
 		FacesContext.getCurrentInstance().addMessage(null, msg);
 	}
 
-	public Teacher getTeacher() {
-		return teacher;
+	public PedagogicAssistant getPedagogicAssistant() {
+		return pedagogicAssistant;
 	}
 
-	public void setTeacher(Teacher teacher) {
-		if (teacher != null) {
-			this.teacher = teacher;
-		}
+	public void setPedagogicAssistant(PedagogicAssistant pedagogicAssistant) {
+		this.pedagogicAssistant = pedagogicAssistant;
 	}
-
-	public String getSearchSymbol() {
-		return searchSymbol;
-	}
-
-	public void setSearchSymbol(String searchSymbol) {
-		this.searchSymbol = searchSymbol;
-	}
-
-	public Teacher getSelectedTeacherForSearch() {
-		return selectedTeacherForSearch;
-	}
-
-	public void setSelectedTeacherForSearch(Teacher selectedTeacherForSearch) {
-		this.selectedTeacherForSearch = selectedTeacherForSearch;
-	}
+	
+	
 }

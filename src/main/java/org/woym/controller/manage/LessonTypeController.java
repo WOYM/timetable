@@ -16,8 +16,17 @@ import org.primefaces.context.RequestContext;
 import org.woym.config.Config;
 import org.woym.config.DefaultConfigEnum;
 import org.woym.exceptions.DatasetException;
+import org.woym.logic.CommandHandler;
+import org.woym.logic.SuccessStatus;
+import org.woym.logic.command.AddCommand;
+import org.woym.logic.command.UpdateCommand;
+import org.woym.messages.GenericErrorMessage;
+import org.woym.messages.MessageHelper;
+import org.woym.messages.SuccessMessage;
 import org.woym.objects.LessonType;
 import org.woym.persistence.DataAccess;
+import org.woym.spec.logic.IStatus;
+import org.woym.spec.objects.IMemento;
 
 /**
  * <h1>LessonTypeController</h1>
@@ -39,6 +48,10 @@ public class LessonTypeController implements Serializable {
 	private LessonType lessonType;
 
 	private DataAccess dataAccess = DataAccess.getInstance();
+	
+	private CommandHandler commandHandler = CommandHandler.getInstance();
+	
+	private IMemento lessonTypeMemento;
 
 	@PostConstruct
 	public void init() {
@@ -55,10 +68,13 @@ public class LessonTypeController implements Serializable {
 		try {
 			return dataAccess.getAllLessonTypes();
 		} catch (DatasetException e) {
-			FacesMessage message = new FacesMessage(
-					FacesMessage.SEVERITY_ERROR, "Datenbankfehler",
-					"Bei der Kommunikation mit der Datenbank ist ein Fehler aufgetreten.");
-			FacesContext.getCurrentInstance().addMessage(null, message);
+			LOGGER.error(e);
+			FacesMessage msg = new FacesMessage(
+					GenericErrorMessage.DATABASE_COMMUNICATION_ERROR
+							.getSummary(),
+					GenericErrorMessage.DATABASE_COMMUNICATION_ERROR
+							.getStatusMessage());
+			msg.setSeverity(FacesMessage.SEVERITY_ERROR);
 			return new ArrayList<LessonType>();
 		}
 	}
@@ -82,53 +98,52 @@ public class LessonTypeController implements Serializable {
 		if (lessonType != null) {
 			try {
 				dataAccess.delete(lessonType);
-				FacesMessage message = new FacesMessage(
-						FacesMessage.SEVERITY_INFO,
-						"Unterrichtsinhalt gelöscht", lessonType.getName());
-				FacesContext.getCurrentInstance().addMessage(null, message);
+				FacesMessage msg = MessageHelper.generateMessage(SuccessMessage.DELETE_OBJECT_SUCCESS, lessonType, FacesMessage.SEVERITY_INFO);
+				FacesContext.getCurrentInstance().addMessage(null, msg);
 			} catch (DatasetException e) {
-				FacesMessage message = new FacesMessage(
-						FacesMessage.SEVERITY_ERROR,
-						"Fehler beim Löschen des Unterrichtsinhaltes", "");
-				FacesContext.getCurrentInstance().addMessage(null, message);
+				LOGGER.error(e);
+				FacesMessage msg = new FacesMessage(
+						GenericErrorMessage.DATABASE_COMMUNICATION_ERROR
+								.getSummary(),
+						GenericErrorMessage.DATABASE_COMMUNICATION_ERROR
+								.getStatusMessage());
+				msg.setSeverity(FacesMessage.SEVERITY_ERROR);
 			}
 		}
+	}
+	
+	/**
+	 * Erzeugt ein neues Memento des momentan selektierten Objektes
+	 */
+	public void generateLessonTypeMemento() {
+		lessonTypeMemento = lessonType.createMemento();
 	}
 
 	/**
 	 * Bearbeitet einen Unterrichtsinhalt
 	 */
 	public void editLessonType() {
-		try {
-			dataAccess.update(lessonType);
-			FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO,
-					"Unterrichtsinhalt aktualisiert", lessonType.getName());
-			FacesContext.getCurrentInstance().addMessage(null, message);
-		} catch (DatasetException e) {
-			LOGGER.error(e);
-		}
+		UpdateCommand<LessonType> command = new UpdateCommand<>(lessonType, lessonTypeMemento);			
+		IStatus status = commandHandler.execute(command);
+		FacesMessage msg = status.report();
+		
+		FacesContext.getCurrentInstance().addMessage(null, msg);
 	}
 
 	/**
 	 * Fügt einen neuen Unterrichtsinhalt hinzu
 	 */
 	public void addLessonType() {
-
-		try {
-			dataAccess.persist(lessonType);
-			FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO,
-					"Unterrichtsinhalt hinzugefügt", lessonType.getName());
-			FacesContext.getCurrentInstance().addMessage(null, message);
+		AddCommand<LessonType> command = new AddCommand<>(lessonType);			
+		IStatus status = commandHandler.execute(command);
+		FacesMessage msg = status.report();
+		
+		if(status instanceof SuccessStatus) {
 			lessonType = new LessonType();
 			lessonType.setTypicalDuration(getTypicalDuration());
-		} catch (DatasetException e) {
-			FacesMessage message = new FacesMessage(
-					FacesMessage.SEVERITY_ERROR, "Datenbankfehler",
-					"Bei der Kommunikation mit der Datenbank ist ein Fehler aufgetreten.");
-			FacesContext.getCurrentInstance().addMessage(null, message);
-			return;
 		}
-
+		
+		FacesContext.getCurrentInstance().addMessage(null, msg);
 	}
 
 	public LessonType getLessonType() {
@@ -150,8 +165,8 @@ public class LessonTypeController implements Serializable {
 		if (typicalDurationString.length == 1) {
 			try {
 				typicalDuration = Integer.parseInt(typicalDurationString[0]);
-				// Do nothing
 			} catch (NumberFormatException e) {
+				// Do nothing
 			}
 		}
 

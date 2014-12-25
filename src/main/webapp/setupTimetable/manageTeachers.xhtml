@@ -17,7 +17,7 @@
 				<h:outputText value="Lehrkraftverwaltung" />
 			</h1>
 			<h:outputText
-				value="In dieser Ansicht werden Lehrkräfte und pädagogisches Personal verwaltet." />
+				value="In dieser Ansicht werden Lehrkräfte verwaltet." />
 		</p:outputPanel>
 
 		<p:spacer style="height:50px;" />
@@ -31,7 +31,7 @@
 
 		<!-- Existierende Lehrkräfte -->
 		<p:contextMenu for="teacherTable">
-			<p:menuitem value="Bearbeiten"
+			<p:menuitem value="Bearbeiten" actionListener="#{teacherController.generateTeacherMemento}"
 				oncomplete="PF('wEditTeacherDialog').show();" icon="ui-icon-pencil" />
 			<p:menuitem value="Löschen" update="@form" icon="ui-icon-close"
 				actionListener="#{teacherController.deleteTeacher}" />
@@ -65,7 +65,7 @@
 
 		<!-- Add-Dialog -->
 		<p:dialog header="Hinzufügen von Lehrkräften" id="addTeacherDialog"
-			widgetVar="wAddTeacherDialog" width="600" modal="true"
+			widgetVar="wAddTeacherDialog" width="550" modal="true"
 			draggable="true" resizable="false" appendToBody="true" dynamic="true">
 			<p:ajax event="close" update="@form" />
 			<p:outputPanel id="addTeacherPanel">
@@ -124,7 +124,7 @@
 
 		<!-- Edit-Dialog -->
 		<p:dialog header="Bearbeiten von Lehrkraft" id="editTeacherDialog"
-			widgetVar="wEditTeacherDialog" width="600" modal="true"
+			widgetVar="wEditTeacherDialog" width="550" modal="true"
 			draggable="true" resizable="false" appendToBody="true" dynamic="true">
 			<p:ajax event="close" update="@form" />
 			<p:outputPanel id="editTeacherPanel">
