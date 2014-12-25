@@ -17,12 +17,16 @@ import org.primefaces.context.RequestContext;
 import org.primefaces.event.TransferEvent;
 import org.primefaces.model.DualListModel;
 import org.woym.exceptions.DatasetException;
+import org.woym.logic.CommandHandler;
+import org.woym.logic.SuccessStatus;
+import org.woym.logic.command.AddCommand;
 import org.woym.messages.GenericErrorMessage;
 import org.woym.messages.MessageHelper;
 import org.woym.messages.SuccessMessage;
 import org.woym.objects.ActivityType;
 import org.woym.objects.Teacher;
 import org.woym.persistence.DataAccess;
+import org.woym.spec.logic.IStatus;
 
 /**
  * <h1>TeacherController</h1>
@@ -42,6 +46,8 @@ public class TeacherController implements Serializable {
 			.getLogger(TeacherController.class);
 
 	private DataAccess dataAccess = DataAccess.getInstance();
+	
+	private CommandHandler commandHandler = CommandHandler.getInstance();
 
 	private Teacher teacher;
 
@@ -222,22 +228,15 @@ public class TeacherController implements Serializable {
 	 * Zwischenspeicher wird mit einem neuen Objekt ersetzt.
 	 */
 	public void addTeacher() {
-		try {
-			dataAccess.persist(teacher);
-			FacesMessage msg = MessageHelper.generateMessage(
-					SuccessMessage.ADD_OBJECT_SUCCESS, teacher,
-					FacesMessage.SEVERITY_INFO);
-			FacesContext.getCurrentInstance().addMessage(null, msg);
+		AddCommand<Teacher> command = new AddCommand<>(teacher);			
+		IStatus status = commandHandler.execute(command);
+		FacesMessage msg = status.report();
+		
+		if(status instanceof SuccessStatus) {
 			teacher = new Teacher();
-		} catch (DatasetException e) {
-			LOGGER.error(e);
-			FacesMessage msg = new FacesMessage(
-					GenericErrorMessage.DATABASE_COMMUNICATION_ERROR
-							.getSummary(),
-					GenericErrorMessage.DATABASE_COMMUNICATION_ERROR
-							.getStatusMessage());
-			msg.setSeverity(FacesMessage.SEVERITY_ERROR);
 		}
+		
+		FacesContext.getCurrentInstance().addMessage(null, msg);
 	}
 
 	public Teacher getTeacher() {

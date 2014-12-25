@@ -31,7 +31,7 @@
 
         <!-- Existierende Lehrkräfte -->
         <p:contextMenu for="pedagogicAssistantsTable">
-            <p:menuitem value="Bearbeiten"
+            <p:menuitem value="Bearbeiten" actionListener="#{pedagogicAssistantController.generatePedagogicAssistantMemento}"
                 oncomplete="PF('wEditPedagogicAssistantDialog').show();" icon="ui-icon-pencil" />
             <p:menuitem value="Löschen" update="@form" icon="ui-icon-close"
                 actionListener="#{pedagogicAssistantController.deletePedagogicAssistant}" />

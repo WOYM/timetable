@@ -131,8 +131,7 @@ public class LessonTypeController implements Serializable {
 	 * Fügt einen neuen Unterrichtsinhalt hinzu
 	 */
 	public void addLessonType() {
-		// Usage of command
-		AddCommand<LessonType> command = new AddCommand<LessonType>(lessonType);			
+		AddCommand<LessonType> command = new AddCommand<>(lessonType);			
 		IStatus status = commandHandler.execute(command);
 		FacesMessage msg = status.report();
 		
@@ -142,7 +141,6 @@ public class LessonTypeController implements Serializable {
 		}
 		
 		FacesContext.getCurrentInstance().addMessage(null, msg);
-
 	}
 
 	public LessonType getLessonType() {
