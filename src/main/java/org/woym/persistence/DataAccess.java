@@ -349,6 +349,30 @@ public class DataAccess implements IDataAccess, Observer {
 	/**
 	 * {@inheritDoc}
 	 */
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Room> getAllRooms(String purpose) throws DatasetException {
+		if (purpose == null) {
+			throw new IllegalArgumentException();
+		}
+		try {
+			final Query query = em
+					.createQuery("SELECT r FROM Room r WHERE UPPER(r.purpose) = ?1");
+			query.setParameter(1, purpose.toUpperCase());
+			List<Room> result = query.getResultList();
+			return result;
+		} catch (Exception e) {
+			LOGGER.error("Exception while getting all rooms with purpose "
+					+ purpose, e);
+			throw new DatasetException(
+					"Error while getting all rooms with purpose " + purpose
+							+ ": " + e.getMessage());
+		}
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	@SuppressWarnings("unchecked")
 	public Room getOneRoom(String locationName, String roomName)
@@ -582,6 +606,24 @@ public class DataAccess implements IDataAccess, Observer {
 	}
 
 	/**
+	 * {@inheritDoc}
+	 */
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<String> getRoomPurposes() throws DatasetException {
+		try {
+			final Query query = em
+					.createQuery("SELECT DISTINCT r.purpose FROM Room r");
+			List<String> result = query.getResultList();
+			return result;
+		} catch (Exception e) {
+			LOGGER.error("Exception while getting all room purposes.", e);
+			throw new DatasetException(
+					"Error while getting all room purposes: " + e.getMessage());
+		}
+	}
+
+	/**
 	 * Allgemeine Implementierung einer Methode die alle Objekte der übergebenen
 	 * Klasse in der Datenbank sucht und als Liste zurückgibt.
 	 * 
@@ -641,4 +683,5 @@ public class DataAccess implements IDataAccess, Observer {
 					+ e.getMessage());
 		}
 	}
+
 }

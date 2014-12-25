@@ -1,5 +1,6 @@
 package org.woym.objects;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.DiscriminatorValue;
@@ -28,7 +29,7 @@ public class CompoundLesson extends Activity {
 
 	@ManyToMany
 	@OrderBy("name")
-	private List<LessonType> lessonTypes;
+	private List<LessonType> lessonTypes = new ArrayList<LessonType>();
 
 	public CompoundLesson() {
 	}
@@ -39,6 +40,21 @@ public class CompoundLesson extends Activity {
 
 	public void setLessonTypes(List<LessonType> lessonTypes) {
 		this.lessonTypes = lessonTypes;
+	}
+
+	public boolean add(LessonType lessonType) {
+		if (!lessonTypes.contains(lessonType)) {
+			return lessonTypes.add(lessonType);
+		}
+		return false;
+	}
+
+	public boolean contains(LessonType lessonType) {
+		return lessonTypes.contains(lessonType);
+	}
+
+	public boolean remove(LessonType lessonType) {
+		return lessonTypes.remove(lessonType);
 	}
 
 	/**
@@ -64,7 +80,7 @@ public class CompoundLesson extends Activity {
 		super.setMemento(memento);
 		if (memento instanceof Memento) {
 			Memento actualMemento = (Memento) memento;
-			lessonTypes = actualMemento.lessonTypes;
+			lessonTypes = new ArrayList<LessonType>(actualMemento.lessonTypes);
 		} else {
 			throw new IllegalArgumentException(
 					"Only org.woym.objects.CompoundLesson.Memento as parameter allowed.");
@@ -84,7 +100,7 @@ public class CompoundLesson extends Activity {
 
 		Memento(CompoundLesson originator) {
 			super(originator);
-			lessonTypes = originator.lessonTypes;
+			lessonTypes = new ArrayList<LessonType>(originator.lessonTypes);
 		}
 	}
 

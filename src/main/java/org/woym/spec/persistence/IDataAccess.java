@@ -228,6 +228,18 @@ public interface IDataAccess {
 	public Location getOneLocation(String name) throws DatasetException;
 
 	/**
+	 * Gibt eine Liste aller Räume zurück, die den übergebenen String als
+	 * Funktion besitzen. Groß- und Kleinschreibung wird ignoriert.
+	 * 
+	 * @param purpose
+	 *            - Funktion, für welche alle Räume gesucht sind
+	 * @return eine Liste aller Räume, die den übergebenen String als Funktion
+	 *         besitzen
+	 * @throws DatasetException
+	 */
+	public List<Room> getAllRooms(String purpose) throws DatasetException;
+
+	/**
 	 * Sucht nach einem Raum mit dem übergebenen Namen an einem Standort mit dem
 	 * übergebenen Namen. Wird für einen der beiden Parameter {@code null}
 	 * übergeben, wirde eine {@linkplain IllegalArgumentException} geworfen.
@@ -399,4 +411,14 @@ public interface IDataAccess {
 	 * @throws DatasetException
 	 */
 	public TravelTimeList getTravelTimeList() throws DatasetException;
+
+	/**
+	 * Gibt eine Liste aller disjunkten für Räume angegebene Funktionen zurück.
+	 * Tritt dabei ein Fehler auf, wird eine {@linkplain DatasetException}
+	 * geworfen.
+	 * 
+	 * @return Liste von Strings aller für Räume angegebenen Funktionen
+	 * @throws DatasetException
+	 */
+	public List<String> getRoomPurposes() throws DatasetException;
 }

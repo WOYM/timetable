@@ -11,8 +11,6 @@ import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
 import javax.faces.context.FacesContext;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.primefaces.context.RequestContext;
 import org.woym.exceptions.DatasetException;
 import org.woym.messages.GenericErrorMessage;
@@ -38,9 +36,6 @@ public class LocationController implements Serializable {
 	 * Datenbankinstanz
 	 */
 	private DataAccess dataAccess = DataAccess.getInstance();
-	
-	private static Logger LOGGER = LogManager
-			.getLogger(LocationController.class);
 
 	private Location location;
 	private Room room;
@@ -177,7 +172,6 @@ public class LocationController implements Serializable {
 					"Lehrer hinzugefügt", location.getName());
 			FacesContext.getCurrentInstance().addMessage(null, message);
 		} catch (DatasetException e) {
-			LOGGER.error(e);
 			FacesMessage msg = new FacesMessage(
 					GenericErrorMessage.DATABASE_COMMUNICATION_ERROR
 							.getSummary(),
@@ -204,7 +198,7 @@ public class LocationController implements Serializable {
 	public void addRoomDialog() {
 		room = new Room();
 		// TODO: In persist(room)
-		location.addRoom(room);
+		location.add(room);
 		openDialog("addRoomDialog");
 	}
 
