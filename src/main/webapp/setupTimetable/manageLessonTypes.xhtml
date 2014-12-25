@@ -31,7 +31,7 @@
 
 		<!-- Existierende Unterrichtsinhalte -->
 		<p:contextMenu for="lessonTypeTable">
-			<p:menuitem value="Bearbeiten"
+			<p:menuitem value="Bearbeiten" actionListener="#{lessonTypeController.generateLessonTypeMemento}"
 				oncomplete="PF('wEditLessonTypeDialog').show();"
 				icon="ui-icon-pencil" />
 			<p:menuitem value="Löschen" update="@form" icon="ui-icon-close"

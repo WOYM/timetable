@@ -20,6 +20,7 @@ import org.woym.exceptions.DatasetException;
 import org.woym.logic.CommandHandler;
 import org.woym.logic.SuccessStatus;
 import org.woym.logic.command.AddCommand;
+import org.woym.logic.command.UpdateCommand;
 import org.woym.messages.GenericErrorMessage;
 import org.woym.messages.MessageHelper;
 import org.woym.messages.SuccessMessage;
@@ -27,6 +28,7 @@ import org.woym.objects.ActivityType;
 import org.woym.objects.Teacher;
 import org.woym.persistence.DataAccess;
 import org.woym.spec.logic.IStatus;
+import org.woym.spec.objects.IMemento;
 
 /**
  * <h1>TeacherController</h1>
@@ -50,6 +52,8 @@ public class TeacherController implements Serializable {
 	private CommandHandler commandHandler = CommandHandler.getInstance();
 
 	private Teacher teacher;
+	
+	private IMemento teacherMemento;
 
 	// TODO Move to planningController
 	private Teacher selectedTeacherForSearch;
@@ -142,23 +146,19 @@ public class TeacherController implements Serializable {
 		context.execute("PF('wAddTeacherDialog').show();");
 	}
 
+	public void generateTeacherMemento() {
+		teacherMemento = teacher.createMemento();
+	}
+	
 	/**
 	 * Speichert einen aktualisierten Lehrer.
 	 */
 	public void editTeacher() {
-		try {
-			dataAccess.update(teacher);
-			FacesMessage msg = MessageHelper.generateMessage(SuccessMessage.UPDATE_OBJECT_SUCCESS, teacher, FacesMessage.SEVERITY_INFO);
-			FacesContext.getCurrentInstance().addMessage(null, msg);
-		} catch (DatasetException e) {
-			LOGGER.error(e);
-			FacesMessage msg = new FacesMessage(
-					GenericErrorMessage.DATABASE_COMMUNICATION_ERROR
-							.getSummary(),
-					GenericErrorMessage.DATABASE_COMMUNICATION_ERROR
-							.getStatusMessage());
-			msg.setSeverity(FacesMessage.SEVERITY_ERROR);
-		}
+		UpdateCommand<Teacher> command = new UpdateCommand<>(teacher, teacherMemento);			
+		IStatus status = commandHandler.execute(command);
+		FacesMessage msg = status.report();
+		
+		FacesContext.getCurrentInstance().addMessage(null, msg);
 	}
 
 	/**
