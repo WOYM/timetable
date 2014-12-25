@@ -9,3 +9,6 @@ Timetable
 =========
 
 Softwareprojekt 2 - Stundenplan
+
+Throughput (Waffle):
+[![Throughput Graph](https://graphs.waffle.io/woym/timetable/throughput.svg)](https://waffle.io/woym/timetable/metrics) 
