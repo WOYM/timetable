@@ -62,6 +62,9 @@ public class CommandHandler implements ICommandHandler {
 
 		if (status instanceof SuccessStatus) {
 			redo.add(command);
+		} else {
+			redo.clear();
+			undo.clear();
 		}
 
 		return status;
@@ -74,6 +77,9 @@ public class CommandHandler implements ICommandHandler {
 
 		if (status instanceof SuccessStatus) {
 			undo.add(command);
+		}  else {
+			redo.clear();
+			undo.clear();
 		}
 
 		return status;
