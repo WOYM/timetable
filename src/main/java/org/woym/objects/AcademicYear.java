@@ -133,7 +133,7 @@ public class AcademicYear extends org.woym.objects.Entity implements
 	 * @return {@code true}, wenn das Objekt sich noch nicht in der Liste
 	 *         befindet und hinzugefügt wurde, ansonsten {@code false}
 	 */
-	public boolean addSchoolclass(final Schoolclass schoolclass) {
+	public boolean add(final Schoolclass schoolclass) {
 		if (!schoolclasses.contains(schoolclass)) {
 			schoolclasses.add(schoolclass);
 			return true;
@@ -150,7 +150,7 @@ public class AcademicYear extends org.woym.objects.Entity implements
 	 * @return {@code true}, wenn das Objekt entfernt wurde, ansonsten
 	 *         {@code false}
 	 */
-	public boolean removeSchoolclass(final Schoolclass schoolclass) {
+	public boolean remove(final Schoolclass schoolclass) {
 		return schoolclasses.remove(schoolclass);
 	}
 
@@ -165,7 +165,7 @@ public class AcademicYear extends org.woym.objects.Entity implements
 	 * @return {@code true}, wenn das Objekt sich in der Liste befindet,
 	 *         ansonsten {@code false}
 	 */
-	public boolean containsSchoolclass(final Schoolclass schoolclass) {
+	public boolean contains(final Schoolclass schoolclass) {
 		return schoolclasses.contains(schoolclass);
 	}
 
@@ -179,16 +179,31 @@ public class AcademicYear extends org.woym.objects.Entity implements
 	 * @param lessonType
 	 *            - der Unterrichtstyp, für den ein Bedarf angegeben werden soll
 	 * @param demand
-	 *            - der zu mappende Bedarf
+	 *            - der zu mappende Bedarf (in Unterrichsstunden)
 	 * @return {@code true}, wenn noch kein Mapping vorhanden war und eins
 	 *         hinzugefügt wurde, ansonsten {@code false}
 	 */
-	public boolean addLessonDemand(final LessonType lessonType, int demand) {
+	public boolean add(final LessonType lessonType, int demand) {
 		if (!lessonDemands.containsKey(lessonType)) {
 			lessonDemands.put(lessonType, demand);
 			return true;
 		}
 		return false;
+	}
+
+	/**
+	 * Ersetzt den Wert zu dem übergebenen Key durch den übergebenen Wert. Ist
+	 * kein Mapping vorhanden, wird {@code false}, ansonsten {@code true}
+	 * zurückgegeben.
+	 * 
+	 * @param lessonType
+	 *            - der Unterrichtstyp, für den der Wert ersetzt werden soll
+	 * @param demand
+	 *            - der neue Bedarf (in Unterrichtsstunden)
+	 * @return
+	 */
+	public boolean replace(final LessonType lessonType, int demand) {
+		return lessonDemands.put(lessonType, demand) != null ? true : false;
 	}
 
 	/**
@@ -199,8 +214,8 @@ public class AcademicYear extends org.woym.objects.Entity implements
 	 *            soll werden soll
 	 * @return Integer (Value), wenn ein Mapping bestand, ansonsten {@code null}
 	 */
-	public Integer removeSubjectDemand(final LessonType lessonType) {
-		return lessonDemands.remove(lessonType);
+	public boolean remove(final LessonType lessonType) {
+		return lessonDemands.remove(lessonType) != null ? true : false;
 	}
 
 	/**
@@ -213,7 +228,7 @@ public class AcademicYear extends org.woym.objects.Entity implements
 	 * @return {@code true}, wenn ein Mapping vorhanden ist, ansonsten
 	 *         {@code false}
 	 */
-	public boolean containsSubjectDemand(final LessonType lessonType) {
+	public boolean contains(final LessonType lessonType) {
 		return lessonDemands.containsKey(lessonType);
 	}
 
@@ -262,8 +277,10 @@ public class AcademicYear extends org.woym.objects.Entity implements
 			Memento actualMemento = (Memento) memento;
 			id = actualMemento.id;
 			academicYear = actualMemento.academicYear;
-			schoolclasses = actualMemento.schoolclasses;
-			lessonDemands = actualMemento.lessonDemands;
+			schoolclasses = new ArrayList<Schoolclass>(
+					actualMemento.schoolclasses);
+			lessonDemands = new HashMap<LessonType, Integer>(
+					actualMemento.lessonDemands);
 		} else {
 			throw new IllegalArgumentException(
 					"Only org.woym.objects.AcademicYear.Memento as parameter allowed.");
@@ -292,8 +309,9 @@ public class AcademicYear extends org.woym.objects.Entity implements
 			}
 			id = originator.id;
 			academicYear = originator.academicYear;
-			schoolclasses = originator.schoolclasses;
-			lessonDemands = originator.lessonDemands;
+			schoolclasses = new ArrayList<Schoolclass>(originator.schoolclasses);
+			lessonDemands = new HashMap<LessonType, Integer>(
+					originator.lessonDemands);
 		}
 
 		public Long getId() {

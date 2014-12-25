@@ -61,7 +61,7 @@ public abstract class Employee extends org.woym.objects.Entity implements
 	 * Anzahl der Wochenstunden. Darf nicht null sein.
 	 */
 	@Column(nullable = false)
-	private BigDecimal hoursPerWeek;
+	private BigDecimal hoursPerWeek = new BigDecimal("0");
 
 	/**
 	 * Anzahl der Stunden, die die Person des Personals auf Aktivitäten verteilt
@@ -167,7 +167,7 @@ public abstract class Employee extends org.woym.objects.Entity implements
 	@Override
 	public String toString() {
 		String hpw = hoursPerWeek.setScale(2).toPlainString();
-		if(name == null){
+		if (name == null) {
 			return symbol + " (" + hpw + " Wochenstunden)";
 		}
 		return name + ", " + symbol + " (" + hpw + " Wochenstunden)";
@@ -207,7 +207,7 @@ public abstract class Employee extends org.woym.objects.Entity implements
 	 * @return {@code true}, wenn das Objekt sich noch nicht in der Liste
 	 *         befindet und hinzugefügt wurde, ansonsten {@code false}
 	 */
-	public boolean addCompensation(final ChargeableCompensation compensation) {
+	public boolean add(final ChargeableCompensation compensation) {
 		if (!compensations.contains(compensation)) {
 			compensations.add(compensation);
 			return true;
@@ -224,7 +224,7 @@ public abstract class Employee extends org.woym.objects.Entity implements
 	 * @return {@code true}, wenn das Objekt entfernt wurde, ansonsten
 	 *         {@code false}
 	 */
-	public boolean removeCompensation(final ChargeableCompensation compensation) {
+	public boolean remove(final ChargeableCompensation compensation) {
 		return compensations.remove(compensation);
 	}
 
@@ -239,8 +239,7 @@ public abstract class Employee extends org.woym.objects.Entity implements
 	 * @return {@code true}, wenn das Objekt sich in der Liste befindet,
 	 *         ansonsten {@code false}
 	 */
-	public boolean containsCompensation(
-			final ChargeableCompensation compensation) {
+	public boolean contains(final ChargeableCompensation compensation) {
 		return compensations.contains(compensation);
 	}
 
@@ -253,7 +252,7 @@ public abstract class Employee extends org.woym.objects.Entity implements
 	 * @return {@code true}, wenn das Objekt sich noch nicht in der Liste
 	 *         befindet und hinzugefügt wurde, ansonsten {@code false}
 	 */
-	public boolean addActivityType(ActivityType activityType) {
+	public boolean add(ActivityType activityType) {
 		if (activityType == null) {
 			return false;
 		}
@@ -274,7 +273,7 @@ public abstract class Employee extends org.woym.objects.Entity implements
 	 * @return {@code true}, wenn das Objekt entfernt wurde, ansonsten
 	 *         {@code false}
 	 */
-	public boolean removeActivityType(final ActivityType activityType) {
+	public boolean remove(final ActivityType activityType) {
 		return possibleActivityTypes.remove(activityType);
 	}
 
@@ -289,7 +288,7 @@ public abstract class Employee extends org.woym.objects.Entity implements
 	 * @return {@code true}, wenn das Objekt sich in der Liste befindet,
 	 *         ansonsten {@code false}
 	 */
-	public boolean containsActivityType(final ActivityType activityType) {
+	public boolean contains(final ActivityType activityType) {
 		return possibleActivityTypes.contains(activityType);
 	}
 
@@ -302,7 +301,7 @@ public abstract class Employee extends org.woym.objects.Entity implements
 	 * @return {@code true}, wenn das Objekt sich noch nicht in der Liste
 	 *         befindet und hinzugefügt wurde, ansonsten {@code false}
 	 */
-	public boolean addTimeWish(final TimePeriod timePeriod) {
+	public boolean add(final TimePeriod timePeriod) {
 		if (!timeWishes.contains(timePeriod)) {
 			timeWishes.add(timePeriod);
 			return true;
@@ -319,7 +318,7 @@ public abstract class Employee extends org.woym.objects.Entity implements
 	 * @return {@code true}, wenn das Objekt entfernt wurde, ansonsten
 	 *         {@code false}
 	 */
-	public boolean removeTimeWish(final TimePeriod timePeriod) {
+	public boolean remove(final TimePeriod timePeriod) {
 		return timeWishes.remove(timePeriod);
 	}
 
@@ -334,7 +333,7 @@ public abstract class Employee extends org.woym.objects.Entity implements
 	 * @return {@code true}, wenn das Objekt sich in der Liste befindet,
 	 *         ansonsten {@code false}
 	 */
-	public boolean containsTimeWish(final TimePeriod timePeriod) {
+	public boolean contains(final TimePeriod timePeriod) {
 		return timeWishes.contains(timePeriod);
 	}
 
@@ -368,9 +367,11 @@ public abstract class Employee extends org.woym.objects.Entity implements
 			symbol = actualMemento.symbol;
 			hoursPerWeek = actualMemento.hoursPerWeek;
 			allocatedHours = actualMemento.allocatedHours;
-			compensations = actualMemento.compensations;
-			possibleActivityTypes = actualMemento.possibleActivityTypes;
-			timeWishes = actualMemento.timeWishes;
+			compensations = new ArrayList<ChargeableCompensation>(
+					actualMemento.compensations);
+			possibleActivityTypes = new ArrayList<ActivityType>(
+					actualMemento.possibleActivityTypes);
+			timeWishes = new ArrayList<TimePeriod>(actualMemento.timeWishes);
 		} else {
 			throw new IllegalArgumentException(
 					"Only org.woym.objects.Employee.Memento as parameter allowed.");
@@ -410,9 +411,11 @@ public abstract class Employee extends org.woym.objects.Entity implements
 			symbol = originator.symbol;
 			hoursPerWeek = originator.hoursPerWeek;
 			allocatedHours = originator.allocatedHours;
-			compensations = originator.compensations;
-			possibleActivityTypes = originator.possibleActivityTypes;
-			timeWishes = originator.timeWishes;
+			compensations = new ArrayList<ChargeableCompensation>(
+					originator.compensations);
+			possibleActivityTypes = new ArrayList<ActivityType>(
+					originator.possibleActivityTypes);
+			timeWishes = new ArrayList<TimePeriod>(originator.timeWishes);
 		}
 	}
 

@@ -248,7 +248,7 @@ public abstract class ActivityType extends org.woym.objects.Entity implements
 			id = actualMemento.id;
 			name = actualMemento.name;
 			typicalDuration = actualMemento.typicalDuration;
-			rooms = actualMemento.rooms;
+			rooms = new ArrayList<Room>(actualMemento.rooms);
 			hexColor = actualMemento.hexColor;
 		} else {
 			throw new IllegalArgumentException(
@@ -282,7 +282,7 @@ public abstract class ActivityType extends org.woym.objects.Entity implements
 			id = originator.id;
 			name = originator.name;
 			typicalDuration = originator.typicalDuration;
-			rooms = originator.rooms;
+			rooms = new ArrayList<Room>(originator.rooms);
 			hexColor = originator.hexColor;
 		}
 

@@ -198,7 +198,7 @@ public class LocationController implements Serializable {
 	public void addRoomDialog() {
 		room = new Room();
 		// TODO: In persist(room)
-		location.addRoom(room);
+		location.add(room);
 		openDialog("addRoomDialog");
 	}
 

@@ -3,6 +3,9 @@
  */
 package org.woym.logic;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.faces.application.FacesMessage;
 
 import org.woym.messages.GenericErrorMessage;
@@ -21,6 +24,8 @@ public class FailureStatus implements IStatus {
 	 * Die FacesMessage zum aufgetretenen Fehler.
 	 */
 	private final FacesMessage facesMessage;
+
+	private List<Exception> exceptions = new ArrayList<Exception>();
 
 	/**
 	 * Erzeugt ein neues {@linkplain FailureStatus}-Objekt. Wird für einen der
@@ -60,11 +65,19 @@ public class FailureStatus implements IStatus {
 		facesMessage = MessageHelper.generateMessage(message, severity);
 	}
 
+	public List<Exception> getExceptions() {
+		return exceptions;
+	}
+
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
 	public FacesMessage report() {
 		return facesMessage;
+	}
+
+	public void add(Exception exception) {
+		exceptions.add(exception);
 	}
 }

@@ -40,7 +40,7 @@ public class Room extends org.woym.objects.Entity implements IActivityObject,
 	/**
 	 * Funktion des Raumes.
 	 */
-	private String purpose;
+	private String purpose = "Standardraum";
 
 	/**
 	 * Zusätzliche Informationen zu dem Raum.
