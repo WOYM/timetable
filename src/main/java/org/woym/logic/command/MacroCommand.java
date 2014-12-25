@@ -30,9 +30,9 @@ public class MacroCommand implements ICommand {
 	@Override
 	public IStatus execute() {
 		LinkedList<ICommand> commandsToRevert = new LinkedList<>();
+		IStatus status = null;
 		for (ICommand c : commands) {
-			// TODO zusammenfügen von Status_Objecten
-			IStatus status = c.execute();
+			status = c.execute();
 
 			if (status instanceof FailureStatus) {
 				for (ICommand ctr : commandsToRevert) {
@@ -42,16 +42,15 @@ public class MacroCommand implements ICommand {
 			}
 			commandsToRevert.addFirst(c);
 		}
-		//TODO ausgabe eines sinnvollen Status-Objects
-		return null;
+		return status;
 	}
 
 	@Override
 	public IStatus undo() {
 		LinkedList<ICommand> commandsToRevert = new LinkedList<>();
+		IStatus status = null;
 		for (ICommand c : commands) {
-			// TODO zusammenfügen von Status_Objecten
-			IStatus status = c.undo();
+			status = c.undo();
 
 			if (status instanceof FailureStatus) {
 				for (ICommand ctr : commandsToRevert) {
@@ -61,16 +60,15 @@ public class MacroCommand implements ICommand {
 			}
 			commandsToRevert.addFirst(c);
 		}
-		//TODO ausgabe eines sinnvollen Status-Objects
-		return null;
+		return status;
 	}
 
 	@Override
 	public IStatus redo() {
 		LinkedList<ICommand> commandsToRevert = new LinkedList<>();
+		IStatus status = null;
 		for (ICommand c : commands) {
-			// TODO zusammenfügen von Status_Objecten
-			IStatus status = c.redo();
+			status = c.redo();
 
 			if (status instanceof FailureStatus) {
 				for (ICommand ctr : commandsToRevert) {
@@ -80,8 +78,7 @@ public class MacroCommand implements ICommand {
 			}
 			commandsToRevert.addFirst(c);
 		}
-		//TODO ausgabe eines sinnvollen Status-Objects
-		return null;
+		return status;
 	}
 
 }
