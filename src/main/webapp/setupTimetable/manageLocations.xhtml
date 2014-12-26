@@ -32,9 +32,6 @@
 
 				<!-- Existierende Standorte -->
 				<p:contextMenu for="locationTable">
-					<p:menuitem value="Zeige Räume" action="manageRooms">
-					</p:menuitem>
-					<p:separator />
 					<p:menuitem value="Bearbeiten"
 						actionListener="#{locationController.generateLocationMemento}"
 						oncomplete="PF('wEditLocationDialog').show();"
