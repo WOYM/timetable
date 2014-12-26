@@ -48,11 +48,11 @@ public class TeacherController implements Serializable {
 			.getLogger(TeacherController.class);
 
 	private DataAccess dataAccess = DataAccess.getInstance();
-	
+
 	private CommandHandler commandHandler = CommandHandler.getInstance();
 
 	private Teacher teacher;
-	
+
 	private IMemento teacherMemento;
 
 	// TODO Move to planningController
@@ -92,14 +92,13 @@ public class TeacherController implements Serializable {
 					possibleActivityTypes);
 		} catch (DatasetException e) {
 			LOGGER.error(e);
-			FacesMessage msg = new FacesMessage(
-					GenericErrorMessage.DATABASE_COMMUNICATION_ERROR
-							.getSummary(),
-					GenericErrorMessage.DATABASE_COMMUNICATION_ERROR
-							.getStatusMessage());
-			msg.setSeverity(FacesMessage.SEVERITY_ERROR);
+			FacesMessage msg = MessageHelper.generateMessage(
+					GenericErrorMessage.DATABASE_COMMUNICATION_ERROR,
+					FacesMessage.SEVERITY_ERROR);
+			FacesContext.getCurrentInstance().addMessage(null, msg);
+			activityTypes = new DualListModel<>();
 		}
-
+		// Can return null, that is okay
 		return activityTypes;
 	}
 
@@ -127,12 +126,10 @@ public class TeacherController implements Serializable {
 			return dataAccess.getAllTeachers();
 		} catch (DatasetException e) {
 			LOGGER.error(e);
-			FacesMessage msg = new FacesMessage(
-					GenericErrorMessage.DATABASE_COMMUNICATION_ERROR
-							.getSummary(),
-					GenericErrorMessage.DATABASE_COMMUNICATION_ERROR
-							.getStatusMessage());
-			msg.setSeverity(FacesMessage.SEVERITY_ERROR);
+			FacesMessage msg = MessageHelper.generateMessage(
+					GenericErrorMessage.DATABASE_COMMUNICATION_ERROR,
+					FacesMessage.SEVERITY_ERROR);
+			FacesContext.getCurrentInstance().addMessage(null, msg);
 			return new ArrayList<Teacher>();
 		}
 	}
@@ -149,15 +146,16 @@ public class TeacherController implements Serializable {
 	public void generateTeacherMemento() {
 		teacherMemento = teacher.createMemento();
 	}
-	
+
 	/**
 	 * Speichert einen aktualisierten Lehrer.
 	 */
 	public void editTeacher() {
-		UpdateCommand<Teacher> command = new UpdateCommand<>(teacher, teacherMemento);			
+		UpdateCommand<Teacher> command = new UpdateCommand<>(teacher,
+				teacherMemento);
 		IStatus status = commandHandler.execute(command);
 		FacesMessage msg = status.report();
-		
+
 		FacesContext.getCurrentInstance().addMessage(null, msg);
 	}
 
@@ -165,22 +163,18 @@ public class TeacherController implements Serializable {
 	 * Löscht den selektierten Lehrer.
 	 */
 	public void deleteTeacher() {
+		FacesMessage msg;
 		if (teacher != null) {
 			try {
 				dataAccess.delete(teacher);
-				FacesMessage msg = MessageHelper.generateMessage(
+				msg = MessageHelper.generateMessage(
 						SuccessMessage.DELETE_OBJECT_SUCCESS, teacher,
 						FacesMessage.SEVERITY_INFO);
-				FacesContext.getCurrentInstance().addMessage(null, msg);
 			} catch (DatasetException e) {
 				LOGGER.error(e);
-				FacesMessage msg = new FacesMessage(
-						GenericErrorMessage.DATABASE_COMMUNICATION_ERROR
-								.getSummary(),
-						GenericErrorMessage.DATABASE_COMMUNICATION_ERROR
-								.getStatusMessage());
-				msg.setSeverity(FacesMessage.SEVERITY_ERROR);
+				msg = MessageHelper.generateMessage(GenericErrorMessage.DATABASE_COMMUNICATION_ERROR, FacesMessage.SEVERITY_ERROR);
 			}
+			FacesContext.getCurrentInstance().addMessage(null, msg);
 		}
 	}
 
@@ -228,14 +222,14 @@ public class TeacherController implements Serializable {
 	 * Zwischenspeicher wird mit einem neuen Objekt ersetzt.
 	 */
 	public void addTeacher() {
-		AddCommand<Teacher> command = new AddCommand<>(teacher);			
+		AddCommand<Teacher> command = new AddCommand<>(teacher);
 		IStatus status = commandHandler.execute(command);
 		FacesMessage msg = status.report();
-		
-		if(status instanceof SuccessStatus) {
+
+		if (status instanceof SuccessStatus) {
 			teacher = new Teacher();
 		}
-		
+
 		FacesContext.getCurrentInstance().addMessage(null, msg);
 	}
 

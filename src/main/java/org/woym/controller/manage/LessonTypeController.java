@@ -95,20 +95,18 @@ public class LessonTypeController implements Serializable {
 	 * Löscht den selektierten Unterrichtsinhalt
 	 */
 	public void deleteLessonType() {
+		FacesMessage msg;
+
 		if (lessonType != null) {
 			try {
 				dataAccess.delete(lessonType);
-				FacesMessage msg = MessageHelper.generateMessage(SuccessMessage.DELETE_OBJECT_SUCCESS, lessonType, FacesMessage.SEVERITY_INFO);
-				FacesContext.getCurrentInstance().addMessage(null, msg);
+				msg = MessageHelper.generateMessage(SuccessMessage.DELETE_OBJECT_SUCCESS, lessonType, FacesMessage.SEVERITY_INFO);
 			} catch (DatasetException e) {
 				LOGGER.error(e);
-				FacesMessage msg = new FacesMessage(
-						GenericErrorMessage.DATABASE_COMMUNICATION_ERROR
-								.getSummary(),
-						GenericErrorMessage.DATABASE_COMMUNICATION_ERROR
-								.getStatusMessage());
-				msg.setSeverity(FacesMessage.SEVERITY_ERROR);
+				msg = MessageHelper.generateMessage(GenericErrorMessage.DATABASE_COMMUNICATION_ERROR, FacesMessage.SEVERITY_ERROR);
 			}
+			
+			FacesContext.getCurrentInstance().addMessage(null, msg);
 		}
 	}
 	
