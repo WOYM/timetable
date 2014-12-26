@@ -31,7 +31,7 @@
 
 		<!-- Existierende Unterrichtsinhalte -->
 		<p:contextMenu for="lessonTypeTable">
-			<p:menuitem value="Bearbeiten"
+			<p:menuitem value="Bearbeiten" actionListener="#{lessonTypeController.generateLessonTypeMemento}"
 				oncomplete="PF('wEditLessonTypeDialog').show();"
 				icon="ui-icon-pencil" />
 			<p:menuitem value="Löschen" update="@form" icon="ui-icon-close"
@@ -66,16 +66,17 @@
 
 		<!-- Add-Dialog -->
 		<p:dialog header="Hinzufügen von Unterrichtsinhalten"
-			id="addLessonTypeDialog" widgetVar="wAddLessonTypeDialog"
-			minHeight="600" modal="true" draggable="true" resizable="false"
-			appendToBody="true" dynamic="true">
+			id="addLessonTypeDialog" widgetVar="wAddLessonTypeDialog" width="500"
+			modal="true" draggable="true" resizable="false" appendToBody="true"
+			dynamic="true">
 			<p:ajax event="close" update="@form" />
 			<p:outputPanel id="addLessonTypePanel">
-			<b><h:outputText value="Neuer Unterrichtsinhalt" /></b>
+				<b><h:outputText value="Neuer Unterrichtsinhalt" /></b>
 				<h:panelGrid columns="2">
 					<p:outputLabel for="addName" value="Name:" />
 					<p:inputText id="addName"
-						value="#{lessonTypeController.lessonType.name}">
+						value="#{lessonTypeController.lessonType.name}" required="true"
+						requiredMessage="Ein leerer Name ist nicht gültig.">
 						<f:validator validatorId="org.woym.NameValidator" />
 						<f:attribute name="validateBean"
 							value="#{lessonTypeController.lessonType}" />
@@ -87,7 +88,8 @@
 					<p:outputPanel id="addLessonTypeButton" style="float:right">
 						<p:commandButton value="Hinzufügen"
 							actionListener="#{lessonTypeController.addLessonType}"
-							process="addName,addDuration,@this" update="addLessonTypePanel,lessonTypeTable" />
+							process="addName,addDuration,@this"
+							update="addLessonTypePanel,lessonTypeTable" />
 					</p:outputPanel>
 					<p:defaultCommand target="addLessonTypeButton" />
 				</h:panelGrid>
@@ -96,18 +98,19 @@
 		</p:dialog>
 
 		<!-- Edit-Dialog -->
-		<p:dialog
-			header="Bearbeiten von Unterrichtsinhalt"
+		<p:dialog header="Bearbeiten von Unterrichtsinhalt"
 			id="editLessonTypeDialog" widgetVar="wEditLessonTypeDialog"
-			minHeight="600" modal="true" draggable="true" resizable="false"
+			width="500" modal="true" draggable="true" resizable="false"
 			appendToBody="true" dynamic="true">
 			<p:ajax event="close" update="@form" />
 			<p:outputPanel id="editLessonTypePanel">
-			    <b><h:outputText value="Bearbeiten von #{lessonTypeController.lessonType.name}" /></b>
+				<b><h:outputText
+						value="Bearbeiten von #{lessonTypeController.lessonType.name}" /></b>
 				<h:panelGrid columns="2">
 					<p:outputLabel for="editName" value="Name:" />
 					<p:inputText id="editName"
-						value="#{lessonTypeController.lessonType.name}" >
+						value="#{lessonTypeController.lessonType.name}" required="true"
+						requiredMessage="Ein leerer Name ist nicht gültig.">
 						<f:validator validatorId="org.woym.NameValidator" />
 						<f:attribute name="validateBean"
 							value="#{lessonTypeController.lessonType}" />
