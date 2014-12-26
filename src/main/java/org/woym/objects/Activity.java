@@ -126,6 +126,19 @@ public abstract class Activity extends org.woym.objects.Entity implements
 	}
 
 	/**
+	 * Entfernt den übergebenen Raum aus der Liste der Räume, sofern er darin
+	 * vorhanden ist und gibt die Größe der Liste nach dem Entfernen zurück.
+	 * 
+	 * @param room
+	 *            - der zu entfernende Raum
+	 * @return die Größe der Liste nach dem Entfernen
+	 */
+	public int remove(Room room) {
+		rooms.remove(room);
+		return rooms.size();
+	}
+
+	/**
 	 * Fügt das übergebenene {@linkplain Schoolclass}-Objekt der entsprechenden
 	 * Liste hinzu, sofern es noch nicht darin vorhanden ist.
 	 * 
@@ -148,11 +161,11 @@ public abstract class Activity extends org.woym.objects.Entity implements
 	 * 
 	 * @param schoolclass
 	 *            - das zu entfernden Objekt
-	 * @return {@code true}, wenn das Objekt entfernt wurde, ansonsten
-	 *         {@code false}
+	 * @return die Größe der Liste nach dem Entfernen
 	 */
-	public boolean remove(final Schoolclass schoolclass) {
-		return schoolclasses.remove(schoolclass);
+	public int remove(final Schoolclass schoolclass) {
+		schoolclasses.remove(schoolclass);
+		return schoolclasses.size();
 	}
 
 	/**
@@ -191,18 +204,19 @@ public abstract class Activity extends org.woym.objects.Entity implements
 	}
 
 	/**
-	 * Entfernt das das übergebene {@linkplain EmployeeTimePeriods}-Objekt, gibt
-	 * {@code true} zurück, wenn das Entfernen erfolgreich war (das Objekt
-	 * vorhanden war), ansonsten {@code false}.
+	 * Entfernt das das zum übergebenen {@linkplain Employee}-Objekt gehörende
+	 * {@linkplain EmployeeTimePeriods}-Objekt aus der entsprechenden Liste.
 	 * 
-	 * @param employee
+	 * @param employeeTimePeriods
 	 *            - der Mitarbeiter, für welchen das Mapping entfernt werden
 	 *            soll
-	 * @return {@code true}, wenn übergebenes Objekt gelöscht, ansonsten
-	 *         {@code false}
+	 * @return die Größe der Liste nach dem Entfernen
 	 */
-	public boolean remove(EmployeeTimePeriods employeeTimePeriods) {
-		return this.employeeTimePeriods.remove(employeeTimePeriods);
+	public int remove(Employee employee) {
+		EmployeeTimePeriods employeeTimePeriods = new EmployeeTimePeriods();
+		employeeTimePeriods.setEmployee(employee);
+		this.employeeTimePeriods.remove(employeeTimePeriods);
+		return this.employeeTimePeriods.size();
 	}
 
 	/**
