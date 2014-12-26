@@ -92,6 +92,7 @@ public class PedagogicAssistantController implements Serializable {
 					GenericErrorMessage.DATABASE_COMMUNICATION_ERROR
 							.getStatusMessage());
 			msg.setSeverity(FacesMessage.SEVERITY_ERROR);
+			activityTypes = new DualListModel<>();
 		}
 
 		return activityTypes;

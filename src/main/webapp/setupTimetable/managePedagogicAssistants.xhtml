@@ -2,184 +2,201 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"
-    xmlns:f="http://java.sun.com/jsf/core"
-    xmlns:h="http://java.sun.com/jsf/html"
-    xmlns:ui="http://java.sun.com/jsf/facelets"
-    xmlns:p="http://primefaces.org/ui">
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
 <h:head>
 
 </h:head>
 
 <h:body>
-    <h:form id="managePedagogicAssistantsForm">
-        <p:outputPanel>
-            <h1>
-                <h:outputText value="Mitarbeiterverwaltung" />
-            </h1>
-            <h:outputText
-                value="In dieser Ansicht wird pädagogisches Personal verwaltet." />
-        </p:outputPanel>
+	<ui:composition template="index.xhtml">
 
-        <p:spacer style="height:50px;" />
+		<ui:define name="setupContent">
+			<p:outputPanel>
+				<p:outputPanel>
+					<h1>
+						<h:outputText value="Mitarbeiterverwaltung" />
+					</h1>
+					<h:outputText
+						value="In dieser Ansicht wird pädagogisches Personal verwaltet." />
+				</p:outputPanel>
 
-        <p:outputPanel style="float:right">
-            <p:commandButton value="Hinzufügen" icon="ui-icon-plusthick"
-                actionListener="#{pedagogicAssistantController.addPedagogicAssistantDialog}"
-                process="@this" update="addPedagogicAssistantPanel">
-            </p:commandButton>
-        </p:outputPanel>
+				<p:spacer style="height:50px;" />
 
-        <!-- Existierende Lehrkräfte -->
-        <p:contextMenu for="pedagogicAssistantsTable">
-            <p:menuitem value="Bearbeiten" actionListener="#{pedagogicAssistantController.generatePedagogicAssistantMemento}"
-                oncomplete="PF('wEditPedagogicAssistantDialog').show();" icon="ui-icon-pencil" />
-            <p:menuitem value="Löschen" update="@form" icon="ui-icon-close"
-                actionListener="#{pedagogicAssistantController.deletePedagogicAssistant}" />
-        </p:contextMenu>
-        <p:dataTable emptyMessage="Keine Mitarbeiter vorhanden" id="pedagogicAssistantsTable"
-            var="pedagogicAssistant" selection="#{pedagogicAssistantController.pedagogicAssistant}"
-            value="#{pedagogicAssistantController.pedagogicAssistants}" selectionMode="single"
-            rowKey="#{pedagogicAssistant.symbol}" scrollable="true" scrollHeight="500">
-            <p:column headerText="Name">
-                <h:outputText value="#{pedagogicAssistant.name}" />
-            </p:column>
-            <p:column headerText="Kürzel">
-                <h:outputText value="#{pedagogicAssistant.symbol}" />
-            </p:column>
-            <p:column headerText="Wochenstunden">
-                <h:outputText value="#{pedagogicAssistant.hoursPerWeek} Stunden" />
-            </p:column>
-        </p:dataTable>
+				<p:outputPanel style="float:right">
+					<p:commandButton value="Hinzufügen" icon="ui-icon-plusthick"
+						actionListener="#{pedagogicAssistantController.addPedagogicAssistantDialog}"
+						process="@this" update="addPedagogicAssistantPanel">
+					</p:commandButton>
+				</p:outputPanel>
 
-        <p:fieldset legend="Information"
-            style="margin-bottom:20px; margin-top:20px;">
-            <h:panelGrid columns="2">
-                <h:outputText style="font-weight:bold;" value="Zeit:" />
-                <h:outputText
-                    value="Stunden in Zeitstunden, eine Stunde entspricht sechzig Minuten." />
-                <h:outputText style="font-weight:bold;" value="Kürzel:" />
-                <h:outputText
-                    value="Die Kürzel von Lehrern und pädagogischen Mitarbeitern müssen im gesamten System eindeutig sein." />
-            </h:panelGrid>
-        </p:fieldset>
+				<!-- Existierende Lehrkräfte -->
+				<p:contextMenu for="pedagogicAssistantsTable">
+					<p:menuitem value="Bearbeiten"
+						actionListener="#{pedagogicAssistantController.generatePedagogicAssistantMemento}"
+						oncomplete="PF('wEditPedagogicAssistantDialog').show();"
+						icon="ui-icon-pencil" />
+					<p:menuitem value="Löschen" update="@form" icon="ui-icon-close"
+						actionListener="#{pedagogicAssistantController.deletePedagogicAssistant}" />
+				</p:contextMenu>
+				<p:dataTable emptyMessage="Keine Mitarbeiter vorhanden"
+					id="pedagogicAssistantsTable" var="pedagogicAssistant"
+					selection="#{pedagogicAssistantController.pedagogicAssistant}"
+					value="#{pedagogicAssistantController.pedagogicAssistants}"
+					selectionMode="single" rowKey="#{pedagogicAssistant.symbol}"
+					scrollable="true" scrollHeight="500">
+					<p:column headerText="Name">
+						<h:outputText value="#{pedagogicAssistant.name}" />
+					</p:column>
+					<p:column headerText="Kürzel">
+						<h:outputText value="#{pedagogicAssistant.symbol}" />
+					</p:column>
+					<p:column headerText="Wochenstunden">
+						<h:outputText value="#{pedagogicAssistant.hoursPerWeek} Stunden" />
+					</p:column>
+				</p:dataTable>
 
-        <!-- Add-Dialog -->
-        <p:dialog header="Hinzufügen von Mitarbeiterm" id="addPedagogicAssistantDialog"
-            widgetVar="wAddPedagogicAssistantDialog" width="600" modal="true"
-            draggable="true" resizable="false" appendToBody="true" dynamic="true">
-            <p:ajax event="close" update="@form" />
-            <p:outputPanel id="addPedagogicAssistantPanel">
-                <b><h:outputText value="Neuer Mitarbeiter" /></b>
-                <h:panelGrid columns="2">
-                    <p:outputLabel for="addName" value="Name:" />
-                    <p:inputText id="addName" value="#{pedagogicAssistantController.pedagogicAssistant.name}"
-                        required="true"
-                        requiredMessage="Ein leerer Name ist nicht gültig.">
-                    </p:inputText>
-                    <p:outputLabel for="addSymbol" value="Kürzel:" />
-                    <p:inputText id="addSymbol"
-                        value="#{pedagogicAssistantController.pedagogicAssistant.symbol}" required="true"
-                        requiredMessage="Ein leeres Kürzel ist nicht gültig.">
-                        <f:validator validatorId="org.woym.NameValidator" />
-                        <f:attribute name="validateBean"
-                            value="#{pedagogicAssistantController.pedagogicAssistant}" />
-                    </p:inputText>
-                    <p:outputLabel for="addWeekhours" value="Wochenstunden:" />
-                    <p:spinner id="addWeekhours" min="0" max="100" stepFactor="0.01"
-                        value="#{pedagogicAssistantController.pedagogicAssistant.hoursPerWeek}" />
-                </h:panelGrid>
-                <p:fieldset legend="Schulfächer" toggleable="true" toggleSpeed="500"
-                    collapsed="true">
+				<p:fieldset legend="Information"
+					style="margin-bottom:20px; margin-top:20px;">
+					<h:panelGrid columns="2">
+						<h:outputText style="font-weight:bold;" value="Zeit:" />
+						<h:outputText
+							value="Stunden in Zeitstunden, eine Stunde entspricht sechzig Minuten." />
+						<h:outputText style="font-weight:bold;" value="Kürzel:" />
+						<h:outputText
+							value="Die Kürzel von Lehrern und pädagogischen Mitarbeitern müssen im gesamten System eindeutig sein." />
+					</h:panelGrid>
+				</p:fieldset>
+			</p:outputPanel>
+			<!-- Add-Dialog -->
+			<p:dialog header="Hinzufügen von Mitarbeiterm"
+				id="addPedagogicAssistantDialog"
+				widgetVar="wAddPedagogicAssistantDialog" width="600" modal="true"
+				draggable="true" resizable="false" appendToBody="true"
+				dynamic="true">
+				<p:ajax event="close" update="@form" />
+				<p:outputPanel id="addPedagogicAssistantPanel">
+					<b><h:outputText value="Neuer Mitarbeiter" /></b>
+					<h:panelGrid columns="2">
+						<p:outputLabel for="addName" value="Name:" />
+						<p:inputText id="addName"
+							value="#{pedagogicAssistantController.pedagogicAssistant.name}"
+							required="true"
+							requiredMessage="Ein leerer Name ist nicht gültig.">
+						</p:inputText>
+						<p:outputLabel for="addSymbol" value="Kürzel:" />
+						<p:inputText id="addSymbol"
+							value="#{pedagogicAssistantController.pedagogicAssistant.symbol}"
+							required="true"
+							requiredMessage="Ein leeres Kürzel ist nicht gültig.">
+							<f:validator validatorId="org.woym.NameValidator" />
+							<f:attribute name="validateBean"
+								value="#{pedagogicAssistantController.pedagogicAssistant}" />
+						</p:inputText>
+						<p:outputLabel for="addWeekhours" value="Wochenstunden:" />
+						<p:spinner id="addWeekhours" min="0" max="100" stepFactor="0.01"
+							value="#{pedagogicAssistantController.pedagogicAssistant.hoursPerWeek}" />
+					</h:panelGrid>
+					<p:fieldset legend="Schulfächer" toggleable="true"
+						toggleSpeed="500" collapsed="true">
 
-                    <p:pickList id="addLessonTypePickList"
-                        value="#{pedagogicAssistantController.activityTypes}" var="lessonType"
-                        itemValue="#{lessonType}" itemLabel="#{lessonType.name}"
-                        filterMatchMode="contains" converter="LessonTypeNameConverter">
+						<p:pickList id="addLessonTypePickList"
+							value="#{pedagogicAssistantController.activityTypes}"
+							var="lessonType" itemValue="#{lessonType}"
+							itemLabel="#{lessonType.name}" filterMatchMode="contains"
+							converter="LessonTypeNameConverter">
 
-                        <f:facet name="sourceCaption">Verfügbar</f:facet>
-                        <f:facet name="targetCaption">Gewählt</f:facet>
+							<f:facet name="sourceCaption">Verfügbar</f:facet>
+							<f:facet name="targetCaption">Gewählt</f:facet>
 
-                        <p:ajax event="transfer"
-                            listener="#{pedagogicAssistantController.onTransfer}" />
+							<p:ajax event="transfer"
+								listener="#{pedagogicAssistantController.onTransfer}" />
 
-                        <p:column>
-                            <h:outputText value="#{lessonType.name}" />
-                        </p:column>
-                    </p:pickList>
-                </p:fieldset>
+							<p:column>
+								<h:outputText value="#{lessonType.name}" />
+							</p:column>
+						</p:pickList>
+					</p:fieldset>
 
-                <p:outputPanel id="addPedagogicAssistantButton"
-                    style="float:right; margin-top:10px;">
-                    <p:commandButton value="Hinzufügen"
-                        actionListener="#{pedagogicAssistantController.addPedagogicAssistant}"
-                        process="addName,addSymbol,addWeekhours,addLessonTypePickList,@this"
-                        update="addPedagogicAssistantPanel,pedagogicAssistantsTable" />
-                </p:outputPanel>
-                <p:defaultCommand target="addPedagogicAssistantButton" />
-                <p:outputPanel style="clear:right; margin-top:60px;">
-                    <p:messages showDetail="true" autoUpdate="true" closable="false" />
-                </p:outputPanel>
-            </p:outputPanel>
-        </p:dialog>
+					<p:outputPanel id="addPedagogicAssistantButton"
+						style="float:right; margin-top:10px;">
+						<p:commandButton value="Hinzufügen"
+							actionListener="#{pedagogicAssistantController.addPedagogicAssistant}"
+							process="addName,addSymbol,addWeekhours,addLessonTypePickList,@this"
+							update="addPedagogicAssistantPanel,pedagogicAssistantsTable" />
+					</p:outputPanel>
+					<p:defaultCommand target="addPedagogicAssistantButton" />
+					<p:outputPanel style="clear:right; margin-top:60px;">
+						<p:messages showDetail="true" autoUpdate="true" closable="false" />
+					</p:outputPanel>
+				</p:outputPanel>
+			</p:dialog>
 
-        <!-- Edit-Dialog -->
-        <p:dialog header="Bearbeiten von Mitarbeiter" id="editPedagogicAssistantDialog"
-            widgetVar="wEditPedagogicAssistantDialog" width="600" modal="true"
-            draggable="true" resizable="false" appendToBody="true" dynamic="true">
-            <p:ajax event="close" update="@form" />
-            <p:outputPanel id="editPedagogicAssistantPanel">
-                <b><h:outputText
-                        value="Bearbeiten von #{pedagogicAssistantController.pedagogicAssistant.name}" /></b>
-                <h:panelGrid columns="2">
-                    <p:outputLabel for="editName" value="Name:" />
-                    <p:inputText id="editName"
-                        value="#{pedagogicAssistantController.pedagogicAssistant.name}" required="true"
-                        requiredMessage="Ein leerer Name ist nicht gültig.">
-                    </p:inputText>
-                    <p:outputLabel for="editSymbol" value="Kürzel:" />
-                    <p:inputText id="editSymbol"
-                        value="#{pedagogicAssistantController.pedagogicAssistant.symbol}" required="true"
-                        requiredMessage="Ein leeres Kürzel ist nicht gültig.">
-                        <f:validator validatorId="org.woym.NameValidator" />
-                        <f:attribute name="validateBean"
-                            value="#{pedagogicAssistantController.pedagogicAssistant}" />
-                    </p:inputText>
-                    <p:outputLabel for="editWeekhours" value="Wochenstunden:" />
-                    <p:spinner id="editWeekhours" min="0" max="100" stepFactor="0.01"
-                        value="#{pedagogicAssistantController.pedagogicAssistant.hoursPerWeek}" />
-                </h:panelGrid>
-                <p:fieldset legend="Schulfächer" toggleable="true" toggleSpeed="500"
-                    collapsed="true">
-                    <p:pickList id="editLessonTypePickList"
-                        value="#{pedagogicAssistantController.activityTypes}" var="lessonType"
-                        itemValue="#{lessonType}" itemLabel="#{lessonType.name}"
-                        filterMatchMode="contains" converter="LessonTypeNameConverter">
+			<!-- Edit-Dialog -->
+			<p:dialog header="Bearbeiten von Mitarbeiter"
+				id="editPedagogicAssistantDialog"
+				widgetVar="wEditPedagogicAssistantDialog" width="600" modal="true"
+				draggable="true" resizable="false" appendToBody="true"
+				dynamic="true">
+				<p:ajax event="close" update="@form" />
+				<p:outputPanel id="editPedagogicAssistantPanel">
+					<b><h:outputText
+							value="Bearbeiten von #{pedagogicAssistantController.pedagogicAssistant.name}" /></b>
+					<h:panelGrid columns="2">
+						<p:outputLabel for="editName" value="Name:" />
+						<p:inputText id="editName"
+							value="#{pedagogicAssistantController.pedagogicAssistant.name}"
+							required="true"
+							requiredMessage="Ein leerer Name ist nicht gültig.">
+						</p:inputText>
+						<p:outputLabel for="editSymbol" value="Kürzel:" />
+						<p:inputText id="editSymbol"
+							value="#{pedagogicAssistantController.pedagogicAssistant.symbol}"
+							required="true"
+							requiredMessage="Ein leeres Kürzel ist nicht gültig.">
+							<f:validator validatorId="org.woym.NameValidator" />
+							<f:attribute name="validateBean"
+								value="#{pedagogicAssistantController.pedagogicAssistant}" />
+						</p:inputText>
+						<p:outputLabel for="editWeekhours" value="Wochenstunden:" />
+						<p:spinner id="editWeekhours" min="0" max="100" stepFactor="0.01"
+							value="#{pedagogicAssistantController.pedagogicAssistant.hoursPerWeek}" />
+					</h:panelGrid>
+					<p:fieldset legend="Schulfächer" toggleable="true"
+						toggleSpeed="500" collapsed="true">
+						<p:pickList id="editLessonTypePickList"
+							value="#{pedagogicAssistantController.activityTypes}"
+							var="lessonType" itemValue="#{lessonType}"
+							itemLabel="#{lessonType.name}" filterMatchMode="contains"
+							converter="LessonTypeNameConverter">
 
-                        <f:facet name="sourceCaption">Verfügbar</f:facet>
-                        <f:facet name="targetCaption">Gewählt</f:facet>
+							<f:facet name="sourceCaption">Verfügbar</f:facet>
+							<f:facet name="targetCaption">Gewählt</f:facet>
 
-                        <p:ajax event="transfer"
-                            listener="#{pedagogicAssistantController.onTransfer}" />
+							<p:ajax event="transfer"
+								listener="#{pedagogicAssistantController.onTransfer}" />
 
-                        <p:column>
-                            <h:outputText value="#{lessonType.name}" />
-                        </p:column>
-                    </p:pickList>
-                </p:fieldset>
-                <p:outputPanel id="editPedagogicAssistantButton"
-                    style="float:right; margin-top:10px;">
-                    <p:commandButton value="Aktualisieren"
-                        actionListener="#{pedagogicAssistantController.editPedagogicAssistant}"
-                        process="editName,editSymbol,editWeekhours,editLessonTypePickList,@this"
-                        update="editPedagogicAssistantPanel,pedagogicAssistantsTable" />
-                </p:outputPanel>
-                <p:defaultCommand target="editPedagogicAssistantButton" />
-                <p:outputPanel style="clear:right; margin-top:60px;">
-                    <p:messages showDetail="true" autoUpdate="true" closable="false" />
-                </p:outputPanel>
-            </p:outputPanel>
-        </p:dialog>
-
-    </h:form>
+							<p:column>
+								<h:outputText value="#{lessonType.name}" />
+							</p:column>
+						</p:pickList>
+					</p:fieldset>
+					<p:outputPanel id="editPedagogicAssistantButton"
+						style="float:right; margin-top:10px;">
+						<p:commandButton value="Aktualisieren"
+							actionListener="#{pedagogicAssistantController.editPedagogicAssistant}"
+							process="editName,editSymbol,editWeekhours,editLessonTypePickList,@this"
+							update="editPedagogicAssistantPanel,pedagogicAssistantsTable" />
+					</p:outputPanel>
+					<p:defaultCommand target="editPedagogicAssistantButton" />
+					<p:outputPanel style="clear:right; margin-top:60px;">
+						<p:messages showDetail="true" autoUpdate="true" closable="false" />
+					</p:outputPanel>
+				</p:outputPanel>
+			</p:dialog>
+		</ui:define>
+	</ui:composition>
 </h:body>
 </html>

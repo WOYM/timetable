@@ -11,76 +11,111 @@
 </h:head>
 
 <h:body>
-	<h:form id="manageLocationsForm">
-		<p:outputPanel>
-			<h1>
-				<h:outputText value="Standortverwaltung" />
-			</h1>
-			<h:outputText
-				value="In dieser Ansicht werden Standorte und Räume verwaltet." />
-		</p:outputPanel>
+	<ui:composition template="index.xhtml">
+		<ui:define name="setupContent">
+			<p:outputPanel>
+				<p:outputPanel>
+					<h1>
+						<h:outputText value="Standortverwaltung" />
+					</h1>
+					<h:outputText value="In dieser Ansicht werden Standorte verwaltet." />
+				</p:outputPanel>
 
+				<p:outputPanel style="float:right">
+					<p:commandButton value="Hinzufügen" icon="ui-icon-plusthick"
+						actionListener="#{locationController.addLocationDialog}"
+						process="@this" update="addLocationPanel">
+					</p:commandButton>
+				</p:outputPanel>
 
-		<p:outputPanel style="float:right">
-			<p:commandButton value="Hinzufügen" icon="ui-icon-plusthick"
-				actionListener="#{locationController.addLocationDialog}">
-				<p:ajax event="dialogReturn" update="@form" />
-			</p:commandButton>
-		</p:outputPanel>
-		<h3 style="margin-top: 10px; margin-bottom: 15px;">Standorte</h3>
+				<p:spacer style="height:50px;" />
 
-		<!-- Existierende Standorte -->
-		<p:contextMenu for="locationTable">
-			<p:menuitem value="Bearbeiten"
-				actionListener="#{locationController.editLocationDialog}"
-				icon="ui-icon-pencil" />
-			<p:menuitem value="Löschen" update="@form" icon="ui-icon-close"
-				actionListener="#{locationController.deleteLocation}" />
-		</p:contextMenu>
-		<p:dataTable emptyMessage="Keine Standorte vorhanden"
-			id="locationTable" var="location"
-			value="#{locationController.getLocations()}"
-			selection="#{locationController.location}" selectionMode="single"
-			rowKey="#{location.name}">
-			<p:ajax event="rowSelect" update="@form" />
-			<p:column>
-				<h:outputText value="#{location.name}" />
-			</p:column>
-		</p:dataTable>
-
-		<p:outputPanel rendered="#{locationController.selected}">
-			<p:outputPanel style="float:right">
-				<p:commandButton value="Hinzufügen" icon="ui-icon-plusthick"
-					actionListener="#{locationController.addRoomDialog}">
-					<p:ajax event="dialogReturn" update="@form" />
-				</p:commandButton>
+				<!-- Existierende Standorte -->
+				<p:contextMenu for="locationTable">
+					<p:menuitem value="Zeige Räume" action="manageRooms">
+					</p:menuitem>
+					<p:separator />
+					<p:menuitem value="Bearbeiten"
+						actionListener="#{locationController.generateLocationMemento}"
+						oncomplete="PF('wEditLocationDialog').show();"
+						icon="ui-icon-pencil" />
+					<p:menuitem value="Löschen" update="@form" icon="ui-icon-close"
+						actionListener="#{locationController.deleteLocation}" />
+				</p:contextMenu>
+				<p:dataTable emptyMessage="Keine Standorte vorhanden"
+					id="locationTable" var="location"
+					selection="#{locationController.location}"
+					value="#{locationController.locations}" selectionMode="single"
+					rowKey="#{location.name}" scrollable="true" scrollHeight="500">
+					<p:column headerText="Name">
+						<h:outputText value="#{location.name}" />
+					</p:column>
+				</p:dataTable>
 			</p:outputPanel>
-			<h3 style="margin-top: 15px; margin-bottom: 20px;">
-				<h:outputText value="Räume von #{locationController.location.name}" />
-			</h3>
 
+			<!-- Location | Add-Dialog -->
+			<p:dialog header="Hinzufügen von Standorten" id="addLocationDialog"
+				widgetVar="wAddLocationDialog" width="550" modal="true"
+				draggable="true" resizable="false" appendToBody="true"
+				dynamic="true">
+				<p:ajax event="close" update="@form" />
+				<p:outputPanel id="addLocationPanel">
+					<b><h:outputText value="Neuer Standort" /></b>
+					<h:panelGrid columns="2">
+						<p:outputLabel for="addName" value="Name:" />
+						<p:inputText id="addName"
+							value="#{locationController.location.name}" required="true"
+							requiredMessage="Ein leerer Name ist nicht gültig.">
+							<f:validator validatorId="org.woym.NameValidator" />
+							<f:attribute name="validateBean"
+								value="#{locationController.location}" />
+						</p:inputText>
+					</h:panelGrid>
+					<p:outputPanel id="addLocationButton"
+						style="float:right; margin-top:10px;">
+						<p:commandButton value="Hinzufügen"
+							actionListener="#{locationController.addLocation}"
+							process="addName,@this" update="addLocationPanel,locationTable" />
+					</p:outputPanel>
+					<p:defaultCommand target="addLocationButton" />
+					<p:outputPanel style="clear:right; margin-top:60px;">
+						<p:messages showDetail="true" autoUpdate="true" closable="false" />
+					</p:outputPanel>
+				</p:outputPanel>
+			</p:dialog>
 
-			<!-- Existierende Räume -->
-
-			<p:contextMenu for="roomTable">
-				<p:menuitem value="Bearbeiten"
-					actionListener="#{locationController.editRoomDialog}"
-					icon="ui-icon-pencil" />
-				<p:menuitem value="Löschen" update="@form" icon="ui-icon-close"
-					actionListener="#{locationController.deleteRoom}" />
-			</p:contextMenu>
-			<p:dataTable emptyMessage="Keine Räume vorhanden" id="roomTable"
-				var="room" value="#{locationController.location.getRooms()}"
-				selection="#{locationController.room}" selectionMode="single"
-				rowKey="#{room.name}">
-				<p:column>
-					<h:outputText value="#{room.name}" />
-				</p:column>
-			</p:dataTable>
-		</p:outputPanel>
-
-		<p:poll interval="3" update="locationTable" />
-		<p:poll interval="3" update="roomTable" />
-	</h:form>
+			<!-- Edit-Dialog -->
+			<p:dialog header="Bearbeiten von Standort" id="editLocationDialog"
+				widgetVar="wEditLocationDialog" width="550" modal="true"
+				draggable="true" resizable="false" appendToBody="true"
+				dynamic="true">
+				<p:ajax event="close" update="@form" />
+				<p:outputPanel id="editLocationPanel">
+					<b><h:outputText
+							value="Bearbeiten von #{locationController.location.name}" /></b>
+					<h:panelGrid columns="2">
+						<p:outputLabel for="editName" value="Name:" />
+						<p:inputText id="editName"
+							value="#{locationController.location.name}" required="true"
+							requiredMessage="Ein leerer Name ist nicht gültig.">
+							<f:validator validatorId="org.woym.NameValidator" />
+							<f:attribute name="validateBean"
+								value="#{locationController.location}" />
+						</p:inputText>
+					</h:panelGrid>
+					<p:outputPanel id="editLocationButton"
+						style="float:right; margin-top:10px;">
+						<p:commandButton value="Aktualisieren"
+							actionListener="#{locationController.editLocation}"
+							process="editName,@this" update="editLocationPanel,locationTable" />
+					</p:outputPanel>
+					<p:defaultCommand target="editLocationButton" />
+					<p:outputPanel style="clear:right; margin-top:60px;">
+						<p:messages showDetail="true" autoUpdate="true" closable="false" />
+					</p:outputPanel>
+				</p:outputPanel>
+			</p:dialog>
+		</ui:define>
+	</ui:composition>
 </h:body>
 </html>
