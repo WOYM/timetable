@@ -45,14 +45,23 @@ public class DeleteCommand<E extends Entity> implements ICommand {
 
 	@Override
 	public IStatus undo() {
-		// TODO Auto-generated method stub
-		return null;
+		IStatus status;
+
+		try {
+			entity.persist();
+			status = new SuccessStatus(SuccessMessage.ADD_OBJECT_SUCCESS,
+					entity, FacesMessage.SEVERITY_INFO);
+		} catch (DatasetException e) {
+			status = new FailureStatus(
+					SpecificErrorMessage.ADD_OBJECT_DATASET_EXCEPTION,
+					entity.getClass(), FacesMessage.SEVERITY_ERROR);
+		}
+		return status;
 	}
 
 	@Override
 	public IStatus redo() {
-		// TODO Auto-generated method stub
-		return null;
+		return execute();
 	}
 
 }
