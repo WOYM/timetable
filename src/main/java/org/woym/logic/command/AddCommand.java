@@ -47,12 +47,24 @@ public class AddCommand<E extends Entity> implements ICommand {
 
 	@Override
 	public IStatus undo() {
-		throw new UnsupportedOperationException();
+		IStatus status;
+
+		try {
+			entity.delete();
+			status = new SuccessStatus(SuccessMessage.DELETE_OBJECT_SUCCESS,
+					entity, FacesMessage.SEVERITY_INFO);
+		} catch (DatasetException e) {
+			status = new FailureStatus(
+					SpecificErrorMessage.DELETE_OBJECT_DATASET_EXCEPTION,
+					entity.getClass(), FacesMessage.SEVERITY_ERROR);
+		}
+		
+		return status;
 	}
 
 	@Override
 	public IStatus redo() {
-		throw new UnsupportedOperationException();
+		return execute();
 	}
 
 }
