@@ -9,6 +9,7 @@ import javax.faces.convert.FacesConverter;
 
 import org.woym.exceptions.DatasetException;
 import org.woym.messages.GenericErrorMessage;
+import org.woym.messages.MessageHelper;
 import org.woym.objects.ActivityType;
 import org.woym.objects.LessonType;
 import org.woym.persistence.DataAccess;
@@ -36,11 +37,7 @@ public class LessonTypeNameConverter implements Converter {
 		try {
 			lessonType = dataAccess.getOneActivityType(value);
 		} catch (DatasetException e) {
-			FacesMessage msg = new FacesMessage(
-					GenericErrorMessage.DATABASE_COMMUNICATION_ERROR.getSummary(),
-					GenericErrorMessage.DATABASE_COMMUNICATION_ERROR
-							.getStatusMessage());
-			msg.setSeverity(FacesMessage.SEVERITY_ERROR);
+			FacesMessage msg = MessageHelper.generateMessage(GenericErrorMessage.DATABASE_COMMUNICATION_ERROR, FacesMessage.SEVERITY_ERROR);
 			throw new ConverterException(msg);
 		}
 

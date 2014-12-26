@@ -16,7 +16,7 @@ public class WhateverStatus implements IStatus {
 	FacesMessage message;
 
 	public WhateverStatus(final String text) {
-		message = new FacesMessage(text);
+		message = new FacesMessage(text,"");
 	}
 	
 	@Override
