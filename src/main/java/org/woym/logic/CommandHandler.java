@@ -57,6 +57,10 @@ public class CommandHandler implements ICommandHandler {
 
 	@Override
 	public IStatus undo() {
+		if(undo.size() == 0) {
+			return new WhateverStatus("Life is final, so is this undo functionality");
+		}
+		
 		ICommand command = undo.getLast();
 		IStatus status = command.execute();
 
@@ -72,6 +76,10 @@ public class CommandHandler implements ICommandHandler {
 
 	@Override
 	public IStatus redo() {
+		if(redo.size() == 0) {
+			return new WhateverStatus("Clear no no to this redo");
+		}
+		
 		ICommand command = redo.getLast();
 		IStatus status = command.execute();
 
