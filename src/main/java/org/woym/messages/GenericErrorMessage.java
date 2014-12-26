@@ -46,7 +46,19 @@ public enum GenericErrorMessage {
 	 * eingetragen wurde, der bereits im System existiert.
 	 */
 	SYMBOL_ALREADY_EXISTS("Ungültiges Kürzel.",
-			"Dieses Kürzel wird bereits verwendet.");
+			"Dieses Kürzel wird bereits verwendet."),
+
+	/**
+	 * Diese Statusnachricht wird gewählt, wenn die Undo-Liste leer ist.
+	 */
+	UNDO_EMPTY("Rückgängigmachen nicht möglich.",
+			"Es ist keine rückgängig zu machende Aktion vorhanden."),
+
+	/**
+	 * Diese Statusnachricht wird gewählt, wenn die Redo-Liste leer ist.
+	 */
+	REDO_EMPTY("Wiederholung nicht möglich.",
+			"Es ist keine zu wiederholende Aktion vorhanden.");
 
 	/**
 	 * Zusammenfassung der Nachricht.
