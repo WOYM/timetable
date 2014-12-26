@@ -10,6 +10,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
 
 import org.woym.spec.objects.IMemento;
 import org.woym.spec.objects.IMementoObject;
@@ -38,11 +39,23 @@ public class Classteam extends org.woym.objects.Entity implements Serializable,
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Long id;
 
+	/**
+	 * Der Lehrer, der verpflichtend Teil eines Klassenteams sein muss.
+	 */
 	@JoinColumn(nullable = false)
 	private Teacher teacher;
 
+	/**
+	 * Die zusätzlichen zugeordneten Mitarbeiter.
+	 */
 	@ManyToMany
 	private List<Employee> employees = new ArrayList<Employee>();
+
+	/**
+	 * Die Schulklassen, für die dieses Klassenteam besteht.
+	 */
+	@OneToMany
+	private List<Schoolclass> schoolclasses = new ArrayList<Schoolclass>();
 
 	public Long getId() {
 		return id;
@@ -66,6 +79,14 @@ public class Classteam extends org.woym.objects.Entity implements Serializable,
 
 	public void setEmployees(List<Employee> employees) {
 		this.employees = employees;
+	}
+
+	public List<Schoolclass> getSchoolclasses() {
+		return schoolclasses;
+	}
+
+	public void setSchoolclasses(List<Schoolclass> schoolclasses) {
+		this.schoolclasses = schoolclasses;
 	}
 
 	/**
@@ -96,6 +117,8 @@ public class Classteam extends org.woym.objects.Entity implements Serializable,
 			this.id = actualMemento.id;
 			this.teacher = actualMemento.teacher;
 			this.employees = new ArrayList<Employee>(actualMemento.employees);
+			this.schoolclasses = new ArrayList<Schoolclass>(
+					actualMemento.schoolclasses);
 		} else {
 			throw new IllegalArgumentException(
 					"Only org.woym.objects.Classteam.Memento as parameter allowed.");
@@ -117,6 +140,8 @@ public class Classteam extends org.woym.objects.Entity implements Serializable,
 
 		private final List<Employee> employees;
 
+		private final List<Schoolclass> schoolclasses;
+
 		Memento(Classteam originator) {
 			if (originator == null) {
 				throw new IllegalArgumentException();
@@ -124,6 +149,8 @@ public class Classteam extends org.woym.objects.Entity implements Serializable,
 			this.id = originator.id;
 			this.teacher = originator.teacher;
 			this.employees = new ArrayList<Employee>(originator.employees);
+			this.schoolclasses = new ArrayList<Schoolclass>(
+					originator.schoolclasses);
 		}
 
 	}
