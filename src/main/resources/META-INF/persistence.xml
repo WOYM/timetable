@@ -8,6 +8,7 @@
 		<class>org.woym.objects.Activity</class>
 		<class>org.woym.objects.ActivityType</class>
 		<class>org.woym.objects.ChargeableCompensation</class>
+		<class>org.woym.objects.Classteam</class>
 		<class>org.woym.objects.Employee</class>
 		<class>org.woym.objects.EmployeeTimePeriods</class>
 		<class>org.woym.objects.Lesson</class>
