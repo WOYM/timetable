@@ -38,6 +38,14 @@ public class CommandHandler implements ICommandHandler {
 	static public CommandHandler getInstance() {
 		return COMMAND_HANDLER;
 	}
+	
+	public Integer getUndoSize() {
+		return undo.size();
+	}
+	
+	public Integer getRedoSize() {
+		return redo.size();
+	}
 
 	@Override
 	public IStatus execute(ICommand command) {
@@ -62,7 +70,7 @@ public class CommandHandler implements ICommandHandler {
 		}
 		
 		ICommand command = undo.getLast();
-		IStatus status = command.execute();
+		IStatus status = command.undo();
 
 		if (status instanceof SuccessStatus) {
 			redo.add(command);
@@ -81,7 +89,7 @@ public class CommandHandler implements ICommandHandler {
 		}
 		
 		ICommand command = redo.getLast();
-		IStatus status = command.execute();
+		IStatus status = command.redo();
 
 		if (status instanceof SuccessStatus) {
 			undo.add(command);
