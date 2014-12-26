@@ -64,6 +64,7 @@ public class UpdateCommand<E extends Entity> implements ICommand {
 			status = new FailureStatus(
 					SpecificErrorMessage.UPDATE_OBJECT_DATASET_EXCEPTION,
 					entity.getClass(), FacesMessage.SEVERITY_ERROR);
+			entity.setMemento(placeholder);
 		}
 		return status;
 	}
@@ -84,6 +85,7 @@ public class UpdateCommand<E extends Entity> implements ICommand {
 			status = new FailureStatus(
 					SpecificErrorMessage.UPDATE_OBJECT_DATASET_EXCEPTION,
 					entity.getClass(), FacesMessage.SEVERITY_ERROR);
+			entity.setMemento(placeholder);
 		}
 		return status;
 	}

@@ -2,21 +2,26 @@ package org.woym.controller.manage;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
-import javax.faces.bean.SessionScoped;
+import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
 
 import org.primefaces.context.RequestContext;
 import org.woym.exceptions.DatasetException;
+import org.woym.logic.CommandHandler;
+import org.woym.logic.SuccessStatus;
+import org.woym.logic.command.AddCommand;
+import org.woym.logic.command.UpdateCommand;
 import org.woym.messages.GenericErrorMessage;
+import org.woym.messages.MessageHelper;
+import org.woym.messages.SuccessMessage;
 import org.woym.objects.Location;
-import org.woym.objects.Room;
 import org.woym.persistence.DataAccess;
+import org.woym.spec.logic.IStatus;
+import org.woym.spec.objects.IMemento;
 
 /**
  * <h1>LocationController</h1>
@@ -26,7 +31,7 @@ import org.woym.persistence.DataAccess;
  * @author Tim Hansen (tihansen)
  *
  */
-@SessionScoped
+@ViewScoped
 @ManagedBean(name = "locationController")
 public class LocationController implements Serializable {
 
@@ -37,224 +42,97 @@ public class LocationController implements Serializable {
 	 */
 	private DataAccess dataAccess = DataAccess.getInstance();
 
+	private CommandHandler commandHandler = CommandHandler.getInstance();
+
+	private IMemento locationMemento;
+
 	private Location location;
-	private Room room;
-
-	private Boolean selected = false;
-
+	
 	/**
 	 * Liefert eine Liste mit allen Standorten zurück.
 	 * 
 	 * @return Liste mit allen Standorten
 	 */
 	public List<Location> getLocations() {
+		FacesMessage msg;
 		try {
 			return dataAccess.getAllLocations();
 		} catch (DatasetException e) {
-			FacesMessage msg = new FacesMessage(
-					GenericErrorMessage.DATABASE_COMMUNICATION_ERROR
-							.getSummary(),
-					GenericErrorMessage.DATABASE_COMMUNICATION_ERROR
-							.getStatusMessage());
-			msg.setSeverity(FacesMessage.SEVERITY_ERROR);
+			msg = MessageHelper.generateMessage(
+					GenericErrorMessage.DATABASE_COMMUNICATION_ERROR,
+					FacesMessage.SEVERITY_ERROR);
+			FacesContext.getCurrentInstance().addMessage(null, msg);
 			return new ArrayList<Location>();
 		}
 	}
 
-	/**
-	 * Liefert eine Liste mit allen Räumen zurück.
-	 * 
-	 * @return Liste mit allen Räumen
-	 */
-	public List<Room> getRooms() {
-		try {
-			return dataAccess.getOneLocation(location.getName()).getRooms();
-		} catch (DatasetException e) {
-			FacesMessage msg = new FacesMessage(
-					GenericErrorMessage.DATABASE_COMMUNICATION_ERROR
-							.getSummary(),
-					GenericErrorMessage.DATABASE_COMMUNICATION_ERROR
-							.getStatusMessage());
-			msg.setSeverity(FacesMessage.SEVERITY_ERROR);
-			return new ArrayList<Room>();
-		}
+	public void generateLocationMemento() {
+		locationMemento = location.createMemento();
 	}
 
 	/**
 	 * Speichert einen bearbeiteten Standort in die Datenbank.
 	 */
 	public void editLocation() {
-		try {
-			dataAccess.update(location);
-			FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO,
-					"Standort aktualisiert", location.getName());
-			FacesContext.getCurrentInstance().addMessage(null, message);
-		} catch (DatasetException e) {
-			FacesMessage msg = new FacesMessage(
-					GenericErrorMessage.DATABASE_COMMUNICATION_ERROR
-							.getSummary(),
-					GenericErrorMessage.DATABASE_COMMUNICATION_ERROR
-							.getStatusMessage());
-			msg.setSeverity(FacesMessage.SEVERITY_ERROR);
-		}
-	}
+		UpdateCommand<Location> command = new UpdateCommand<>(location,
+				locationMemento);
+		IStatus status = commandHandler.execute(command);
+		FacesMessage msg = status.report();
 
-	/**
-	 * Speichert einen bearbeiteten Raum in die Datenbank.
-	 */
-	public void editRoom() {
-		try {
-			dataAccess.update(room);
-			FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO,
-					"Raum aktualisiert", room.getName());
-			FacesContext.getCurrentInstance().addMessage(null, message);
-		} catch (DatasetException e) {
-			FacesMessage msg = new FacesMessage(
-					GenericErrorMessage.DATABASE_COMMUNICATION_ERROR
-							.getSummary(),
-					GenericErrorMessage.DATABASE_COMMUNICATION_ERROR
-							.getStatusMessage());
-			msg.setSeverity(FacesMessage.SEVERITY_ERROR);
-		}
+		FacesContext.getCurrentInstance().addMessage(null, msg);
 	}
 
 	/**
 	 * Löscht einen Standort aus der Datenbank.
 	 */
 	public void deleteLocation() {
+		FacesMessage msg;
+		// For safety
 		if (location != null) {
 			try {
 				dataAccess.delete(location);
-				FacesMessage message = new FacesMessage(
-						FacesMessage.SEVERITY_INFO, "Standort gelöscht",
-						location.getName());
-				FacesContext.getCurrentInstance().addMessage(null, message);
+				msg = MessageHelper.generateMessage(
+						SuccessMessage.ADD_OBJECT_SUCCESS, location,
+						FacesMessage.SEVERITY_INFO);
 			} catch (DatasetException e) {
-				FacesMessage msg = new FacesMessage(
-						GenericErrorMessage.DATABASE_COMMUNICATION_ERROR
-								.getSummary(),
-						GenericErrorMessage.DATABASE_COMMUNICATION_ERROR
-								.getStatusMessage());
-				msg.setSeverity(FacesMessage.SEVERITY_ERROR);
+				msg = MessageHelper.generateMessage(
+						GenericErrorMessage.DATABASE_COMMUNICATION_ERROR,
+						FacesMessage.SEVERITY_ERROR);
 			}
-		}
-	}
-
-	/**
-	 * Löscht einen Standort aus der Datenbank.
-	 */
-	public void deleteRoom() {
-		if (room != null) {
-			try {
-				dataAccess.delete(room);
-				FacesMessage message = new FacesMessage(
-						FacesMessage.SEVERITY_INFO, "Raum gelöscht",
-						room.getName());
-				FacesContext.getCurrentInstance().addMessage(null, message);
-			} catch (DatasetException e) {
-				FacesMessage msg = new FacesMessage(
-						GenericErrorMessage.DATABASE_COMMUNICATION_ERROR
-								.getSummary(),
-						GenericErrorMessage.DATABASE_COMMUNICATION_ERROR
-								.getStatusMessage());
-				msg.setSeverity(FacesMessage.SEVERITY_ERROR);
-			}
+			
+			FacesContext.getCurrentInstance().addMessage(null, msg);
 		}
 	}
 
 	/**
 	 * Fügt einen Standort zur Datenbank hinzu
 	 */
-	public void addLocationFromDialog() {
-		try {
-			dataAccess.persist(location);
-			FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO,
-					"Lehrer hinzugefügt", location.getName());
-			FacesContext.getCurrentInstance().addMessage(null, message);
-		} catch (DatasetException e) {
-			FacesMessage msg = new FacesMessage(
-					GenericErrorMessage.DATABASE_COMMUNICATION_ERROR
-							.getSummary(),
-					GenericErrorMessage.DATABASE_COMMUNICATION_ERROR
-							.getStatusMessage());
-			msg.setSeverity(FacesMessage.SEVERITY_ERROR);
+	public void addLocation() {
+		AddCommand<Location> command = new AddCommand<>(location);
+		IStatus status = commandHandler.execute(command);
+		FacesMessage msg = status.report();
+
+		if (status instanceof SuccessStatus) {
+			location = new Location();
 		}
+
+		FacesContext.getCurrentInstance().addMessage(null, msg);
 	}
 
 	/**
-	 * Öffnet einen neuen Dialog, mit Hilfe dessen ein neuer Standort
-	 * hinzugefügt werden kann.
+	 * Öffnet einen neuen Dialog, mit dem sich ein Standort hinzufügen lässt.
 	 */
 	public void addLocationDialog() {
 		location = new Location();
-		selected = false;
-		openDialog("addLocationDialog");
+		RequestContext context = RequestContext.getCurrentInstance();
+		context.execute("PF('wAddLocationDialog').show();");
 	}
-
-	/**
-	 * Öffnet einen neuen Dialog, mit Hilfe dessen ein neuer Raum hinzugefügt
-	 * werden kann.
-	 */
-	public void addRoomDialog() {
-		room = new Room();
-		// TODO: In persist(room)
-		location.add(room);
-		openDialog("addRoomDialog");
-	}
-
-	/**
-	 * Öffnet einen neuen Dialog, mit Hilfe dessen ein neuer Standort bearbeitet
-	 * werden kann.
-	 */
-	public void editLocationDialog() {
-		openDialog("editLocationDialog");
-	}
-
-	/**
-	 * Öffnet einen neuen Dialog, mit Hilfe dessen ein neuer Standort bearbeitet
-	 * werden kann.
-	 */
-	public void editRoomDialog() {
-		openDialog("editRoomDialog");
-	}
-
-	private void openDialog(String dialog) {
-		Map<String, Object> options = new HashMap<String, Object>();
-		options.put("modal", true);
-		options.put("draggable", false);
-		options.put("resizable", false);
-		options.put("contentHeight", 300);
-		options.put("contentWidth", 600);
-
-		RequestContext rc = RequestContext.getCurrentInstance();
-		rc.openDialog(dialog, options, null);
-	}
-
+	
 	public Location getLocation() {
 		return location;
 	}
 
 	public void setLocation(Location location) {
-		if (location != null) {
-			this.location = location;
-			selected = true;
-		}
+		this.location = location;
 	}
-
-	public Room getRoom() {
-		return room;
-	}
-
-	public void setRoom(Room room) {
-		this.room = room;
-	}
-
-	public Boolean getSelected() {
-		return selected;
-	}
-
-	public void setSelected(Boolean selected) {
-		this.selected = selected;
-	}
-
 }

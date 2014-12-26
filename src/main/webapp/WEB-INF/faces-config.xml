@@ -17,17 +17,13 @@
    		<validator-id>NameValidator</validator-id>
    		<validator-class>org.woym.ui.validators.NameValidator</validator-class>
 	</validator>
-	<validator>
-   		<validator-id>SymbolValidator</validator-id>
-   		<validator-class>org.woym.ui.validators.SymbolValidator</validator-class>
-	</validator>
-	<validator>
-   		<validator-id>ActivityTypeNameValidator</validator-id>
-   		<validator-class>org.woym.ui.validators.ActivityTypeNameValidator</validator-class>
-	</validator>
 	<!-- Converters -->
 	<converter>
    		<converter-id>LessonTypeNameConverter</converter-id>
    		<converter-class>org.woym.ui.converters.LessonTypeNameConverter</converter-class>
 	</converter>
+	<converter>
+        <converter-id>LocationNameConverter</converter-id>
+        <converter-class>org.woym.ui.converters.LocationNameConverter</converter-class>
+    </converter>
 </faces-config>

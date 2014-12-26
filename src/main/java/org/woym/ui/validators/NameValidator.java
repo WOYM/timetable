@@ -16,6 +16,7 @@ import org.woym.exceptions.DatasetException;
 import org.woym.objects.ActivityType;
 import org.woym.objects.Employee;
 import org.woym.objects.Location;
+import org.woym.objects.Room;
 import org.woym.persistence.DataAccess;
 import org.woym.messages.GenericErrorMessage;
 
@@ -79,9 +80,22 @@ public class NameValidator implements Validator {
 				if (location != null && location != bean) {
 					throw new ValidatorException(getNameAlreadyExistsMessage());
 				}
+			} else if (bean instanceof Room) {
+				// Rooms can not be checked directly in database
+				ValueExpression locationExpression = uiComponent
+						.getValueExpression("locationBean");
+				Object locationBean = locationExpression.getValue(elContext);
+
+				for (Room room : ((Location) locationBean).getRooms()) {
+					if ((room.getName().equals(text)) && (room != bean)) {
+						throw new ValidatorException(
+								getNameAlreadyExistsMessage());
+					}
+				}
+
 			} else if (bean instanceof Employee) {
 				Employee employee = dataAccess.getOneEmployee(text);
-				if(employee != null && employee != bean) {
+				if (employee != null && employee != bean) {
 					throw new ValidatorException(getNameAlreadyExistsMessage());
 				}
 			} else if (bean instanceof ActivityType) {
@@ -94,7 +108,8 @@ public class NameValidator implements Validator {
 		} catch (DatasetException e) {
 			LOGGER.error(e);
 			FacesMessage msg = new FacesMessage(
-					GenericErrorMessage.DATABASE_COMMUNICATION_ERROR.getSummary(),
+					GenericErrorMessage.DATABASE_COMMUNICATION_ERROR
+							.getSummary(),
 					GenericErrorMessage.DATABASE_COMMUNICATION_ERROR
 							.getStatusMessage());
 			msg.setSeverity(FacesMessage.SEVERITY_ERROR);
@@ -102,23 +117,22 @@ public class NameValidator implements Validator {
 		}
 
 	}
-	
+
 	private FacesMessage getNameIsEmptyMessage() {
 		FacesMessage msg = new FacesMessage(
 				GenericErrorMessage.NAME_IS_EMPTY.getSummary(),
 				GenericErrorMessage.NAME_IS_EMPTY.getStatusMessage());
 		msg.setSeverity(FacesMessage.SEVERITY_ERROR);
-		
+
 		return msg;
 	}
-	
+
 	private FacesMessage getNameAlreadyExistsMessage() {
 		FacesMessage msg = new FacesMessage(
 				GenericErrorMessage.NAME_ALREADY_EXISTS.getSummary(),
-				GenericErrorMessage.NAME_ALREADY_EXISTS
-						.getStatusMessage());
+				GenericErrorMessage.NAME_ALREADY_EXISTS.getStatusMessage());
 		msg.setSeverity(FacesMessage.SEVERITY_ERROR);
-		
+
 		return msg;
 	}
 

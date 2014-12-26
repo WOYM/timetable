@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+<h:head>
+
+</h:head>
+
+<h:body>
+	<ui:composition template="index.xhtml">
+
+		<ui:define name="setupContent">
+			<p:outputPanel>
+				<p:outputPanel>
+					<h1>
+						<h:outputText value="Raumverwaltung" />
+					</h1>
+					<h:outputText value="In dieser Ansicht werden Räume verwaltet." />
+				</p:outputPanel>
+
+				<h:panelGrid columns="3" style="width:100%; margin-bottom:10px;">
+					<p:outputLabel for="selectLocation" value="Standort: " />
+					<p:selectOneMenu id="selectLocation"
+						value="#{roomController.location}"
+						converter="LocationNameConverter">
+						<p:ajax update="roomTable,addNewRoomButton" />
+						<f:selectItem value="#{null}" itemLabel="Bitte auswählen" />
+						<f:selectItems value="#{locationController.locations}"
+							var="location" itemLabel="#{location.name}" />
+					</p:selectOneMenu>
+					<p:outputPanel style="float:right;">
+						<p:commandButton id="addNewRoomButton" value="Hinzufügen"
+							icon="ui-icon-plusthick"
+							actionListener="#{roomController.addRoomDialog}" process="@this"
+							update="addRoomPanel"
+							disabled="#{roomController.location == null}">
+						</p:commandButton>
+					</p:outputPanel>
+				</h:panelGrid>
+
+				<!-- Existierende Standorte -->
+				<p:contextMenu for="roomTable">
+					<p:menuitem value="Bearbeiten"
+						actionListener="#{roomController.generateRoomMemento}"
+						oncomplete="PF('wEditRoomDialog').show();" icon="ui-icon-pencil" />
+					<p:menuitem value="Löschen" update="@form" icon="ui-icon-close"
+						actionListener="#{roomController.deleteRoom}" />
+				</p:contextMenu>
+				<p:dataTable emptyMessage="Keine Räume vorhanden" id="roomTable"
+					var="room" selection="#{roomController.room}"
+					value="#{roomController.rooms}" selectionMode="single"
+					rowKey="#{room.name}" scrollable="true" scrollHeight="500">
+					<p:column headerText="Name">
+						<h:outputText value="#{room.name}" />
+					</p:column>
+					<p:column headerText="Verwendung">
+						<h:outputText value="#{room.purpose}" />
+					</p:column>
+				</p:dataTable>
+			</p:outputPanel>
+
+			<!-- Add-Dialog -->
+			<p:dialog header="Hinzufügen von Räumen" id="addRoomDialog"
+				widgetVar="wAddRoomDialog" width="550" modal="true" draggable="true"
+				resizable="false" appendToBody="true" dynamic="true">
+				<p:ajax event="close" update="@form" />
+				<p:outputPanel id="addRoomPanel">
+					<b><h:outputText value="Neuer Raum" /></b>
+					<h:panelGrid columns="2">
+						<p:outputLabel for="addName" value="Name:" />
+						<p:inputText id="addName" value="#{roomController.room.name}"
+							required="true"
+							requiredMessage="Ein leerer Name ist nicht gültig.">
+							<f:validator validatorId="org.woym.NameValidator" />
+							<f:attribute name="validateBean" value="#{roomController.room}" />
+							<f:attribute name="locationBean" value="#{roomController.location}" />
+						</p:inputText>
+						<p:outputLabel for="addPurpose" value="Verwendung:" />
+						<p:inputText id="addPurpose"
+							value="#{roomController.room.purpose}" />
+					</h:panelGrid>
+					<p:outputPanel id="addRoomButton"
+						style="float:right; margin-top:10px;">
+						<p:commandButton value="Hinzufügen"
+							actionListener="#{roomController.addRoom}"
+							process="addName,addPurpose,@this"
+							update="addRoomPanel,roomTable" />
+					</p:outputPanel>
+					<p:defaultCommand target="addRoomButton" />
+					<p:outputPanel style="clear:right; margin-top:60px;">
+						<p:messages showDetail="true" autoUpdate="true" closable="false" />
+					</p:outputPanel>
+				</p:outputPanel>
+			</p:dialog>
+
+			<!-- Edit-Dialog -->
+			<p:dialog header="Bearbeiten von Raum" id="editRoomDialog"
+				widgetVar="wEditRoomDialog" width="550" modal="true"
+				draggable="true" resizable="false" appendToBody="true"
+				dynamic="true">
+				<p:ajax event="close" update="@form" />
+				<p:outputPanel id="editRoomPanel">
+					<b><h:outputText
+							value="Bearbeiten von #{roomController.room.name}" /></b>
+					<h:panelGrid columns="2">
+						<p:outputLabel for="editName" value="Name:" />
+						<p:inputText id="editName" value="#{roomController.room.name}"
+							required="true"
+							requiredMessage="Ein leerer Name ist nicht gültig.">
+							<f:validator validatorId="org.woym.NameValidator" />
+							<f:attribute name="validateBean" value="#{roomController.room}" />
+							<f:attribute name="locationBean" value="#{roomController.location}" />
+						</p:inputText>
+						<p:outputLabel for="editPurpose" value="Verwendung:" />
+						<p:inputText id="editPurpose"
+							value="#{roomController.room.purpose}" />
+					</h:panelGrid>
+					<p:outputPanel id="editRoomButton"
+						style="float:right; margin-top:10px;">
+						<p:commandButton value="Aktualisieren"
+							actionListener="#{roomController.editRoom}"
+							process="editName,editPurpose,@this"
+							update="editRoomPanel,roomTable" />
+					</p:outputPanel>
+					<p:defaultCommand target="editRoomButton" />
+					<p:outputPanel style="clear:right; margin-top:60px;">
+						<p:messages showDetail="true" autoUpdate="true" closable="false" />
+					</p:outputPanel>
+				</p:outputPanel>
+			</p:dialog>
+		</ui:define>
+	</ui:composition>
+</h:body>
+</html>

@@ -11,175 +11,182 @@
 </h:head>
 
 <h:body>
-	<h:form id="manageTeachersForm">
-		<p:outputPanel>
-			<h1>
-				<h:outputText value="Lehrkraftverwaltung" />
-			</h1>
-			<h:outputText
-				value="In dieser Ansicht werden Lehrkräfte verwaltet." />
-		</p:outputPanel>
+	<ui:composition template="index.xhtml">
 
-		<p:spacer style="height:50px;" />
+		<ui:define name="setupContent">
+			<p:outputPanel>
+				<p:outputPanel>
+					<h1>
+						<h:outputText value="Lehrkraftverwaltung" />
+					</h1>
+					<h:outputText
+						value="In dieser Ansicht werden Lehrkräfte verwaltet." />
+				</p:outputPanel>
 
-		<p:outputPanel style="float:right">
-			<p:commandButton value="Hinzufügen" icon="ui-icon-plusthick"
-				actionListener="#{teacherController.addTeacherDialog}"
-				process="@this" update="addTeacherPanel">
-			</p:commandButton>
-		</p:outputPanel>
+				<p:spacer style="height:50px;" />
 
-		<!-- Existierende Lehrkräfte -->
-		<p:contextMenu for="teacherTable">
-			<p:menuitem value="Bearbeiten" actionListener="#{teacherController.generateTeacherMemento}"
-				oncomplete="PF('wEditTeacherDialog').show();" icon="ui-icon-pencil" />
-			<p:menuitem value="Löschen" update="@form" icon="ui-icon-close"
-				actionListener="#{teacherController.deleteTeacher}" />
-		</p:contextMenu>
-		<p:dataTable emptyMessage="Keine Lehrer vorhanden" id="teacherTable"
-			var="teacher" selection="#{teacherController.teacher}"
-			value="#{teacherController.teachers}" selectionMode="single"
-			rowKey="#{teacher.symbol}" scrollable="true" scrollHeight="500">
-			<p:column headerText="Name">
-				<h:outputText value="#{teacher.name}" />
-			</p:column>
-			<p:column headerText="Kürzel">
-				<h:outputText value="#{teacher.symbol}" />
-			</p:column>
-			<p:column headerText="Wochenstunden">
-				<h:outputText value="#{teacher.hoursPerWeek} Stunden" />
-			</p:column>
-		</p:dataTable>
+				<p:outputPanel style="float:right">
+					<p:commandButton value="Hinzufügen" icon="ui-icon-plusthick"
+						actionListener="#{teacherController.addTeacherDialog}"
+						process="@this" update="addTeacherPanel">
+					</p:commandButton>
+				</p:outputPanel>
 
-		<p:fieldset legend="Information"
-			style="margin-bottom:20px; margin-top:20px;">
-			<h:panelGrid columns="2">
-				<h:outputText style="font-weight:bold;" value="Zeit:" />
-				<h:outputText
-					value="Stunden in Zeitstunden, eine Stunde entspricht sechzig Minuten." />
-				<h:outputText style="font-weight:bold;" value="Kürzel:" />
-				<h:outputText
-					value="Die Kürzel von Lehrern und pädagogischen Mitarbeitern müssen im gesamten System eindeutig sein." />
-			</h:panelGrid>
-		</p:fieldset>
+				<!-- Existierende Lehrkräfte -->
+				<p:contextMenu for="teacherTable">
+					<p:menuitem value="Bearbeiten"
+						actionListener="#{teacherController.generateTeacherMemento}"
+						oncomplete="PF('wEditTeacherDialog').show();"
+						icon="ui-icon-pencil" />
+					<p:menuitem value="Löschen" update="@form" icon="ui-icon-close"
+						actionListener="#{teacherController.deleteTeacher}" />
+				</p:contextMenu>
+				<p:dataTable emptyMessage="Keine Lehrer vorhanden" id="teacherTable"
+					var="teacher" selection="#{teacherController.teacher}"
+					value="#{teacherController.teachers}" selectionMode="single"
+					rowKey="#{teacher.symbol}" scrollable="true" scrollHeight="500">
+					<p:column headerText="Name">
+						<h:outputText value="#{teacher.name}" />
+					</p:column>
+					<p:column headerText="Kürzel">
+						<h:outputText value="#{teacher.symbol}" />
+					</p:column>
+					<p:column headerText="Wochenstunden">
+						<h:outputText value="#{teacher.hoursPerWeek} Stunden" />
+					</p:column>
+				</p:dataTable>
 
-		<!-- Add-Dialog -->
-		<p:dialog header="Hinzufügen von Lehrkräften" id="addTeacherDialog"
-			widgetVar="wAddTeacherDialog" width="550" modal="true"
-			draggable="true" resizable="false" appendToBody="true" dynamic="true">
-			<p:ajax event="close" update="@form" />
-			<p:outputPanel id="addTeacherPanel">
-				<b><h:outputText value="Neue Lehrkraft" /></b>
-				<h:panelGrid columns="2">
-					<p:outputLabel for="addName" value="Name:" />
-					<p:inputText id="addName" value="#{teacherController.teacher.name}"
-						required="true"
-						requiredMessage="Ein leerer Name ist nicht gültig.">
-					</p:inputText>
-					<p:outputLabel for="addSymbol" value="Kürzel:" />
-					<p:inputText id="addSymbol"
-						value="#{teacherController.teacher.symbol}" required="true"
-						requiredMessage="Ein leeres Kürzel ist nicht gültig.">
-						<f:validator validatorId="org.woym.NameValidator" />
-						<f:attribute name="validateBean"
-							value="#{teacherController.teacher}" />
-					</p:inputText>
-					<p:outputLabel for="addWeekhours" value="Wochenstunden:" />
-					<p:spinner id="addWeekhours" min="0" max="100" stepFactor="0.01"
-						value="#{teacherController.teacher.hoursPerWeek}" />
-				</h:panelGrid>
-				<p:fieldset legend="Schulfächer" toggleable="true" toggleSpeed="500"
-					collapsed="true">
-
-					<p:pickList id="addLessonTypePickList"
-						value="#{teacherController.activityTypes}" var="lessonType"
-						itemValue="#{lessonType}" itemLabel="#{lessonType.name}"
-						filterMatchMode="contains" converter="LessonTypeNameConverter">
-
-						<f:facet name="sourceCaption">Verfügbar</f:facet>
-						<f:facet name="targetCaption">Gewählt</f:facet>
-
-						<p:ajax event="transfer"
-							listener="#{teacherController.onTransfer}" />
-
-						<p:column>
-							<h:outputText value="#{lessonType.name}" />
-						</p:column>
-					</p:pickList>
+				<p:fieldset legend="Information"
+					style="margin-bottom:20px; margin-top:20px;">
+					<h:panelGrid columns="2">
+						<h:outputText style="font-weight:bold;" value="Zeit:" />
+						<h:outputText
+							value="Stunden in Zeitstunden, eine Stunde entspricht sechzig Minuten." />
+						<h:outputText style="font-weight:bold;" value="Kürzel:" />
+						<h:outputText
+							value="Die Kürzel von Lehrern und pädagogischen Mitarbeitern müssen im gesamten System eindeutig sein." />
+					</h:panelGrid>
 				</p:fieldset>
-
-				<p:outputPanel id="addTeacherButton"
-					style="float:right; margin-top:10px;">
-					<p:commandButton value="Hinzufügen"
-						actionListener="#{teacherController.addTeacher}"
-						process="addName,addSymbol,addWeekhours,addLessonTypePickList,@this"
-						update="addTeacherPanel,teacherTable" />
-				</p:outputPanel>
-				<p:defaultCommand target="addTeacherButton" />
-				<p:outputPanel style="clear:right; margin-top:60px;">
-					<p:messages showDetail="true" autoUpdate="true" closable="false" />
-				</p:outputPanel>
 			</p:outputPanel>
-		</p:dialog>
+			<!-- Add-Dialog -->
+			<p:dialog header="Hinzufügen von Lehrkräften" id="addTeacherDialog"
+				widgetVar="wAddTeacherDialog" width="550" modal="true"
+				draggable="true" resizable="false" appendToBody="true"
+				dynamic="true">
+				<p:ajax event="close" update="@form" />
+				<p:outputPanel id="addTeacherPanel">
+					<b><h:outputText value="Neue Lehrkraft" /></b>
+					<h:panelGrid columns="2">
+						<p:outputLabel for="addName" value="Name:" />
+						<p:inputText id="addName"
+							value="#{teacherController.teacher.name}" required="true"
+							requiredMessage="Ein leerer Name ist nicht gültig.">
+						</p:inputText>
+						<p:outputLabel for="addSymbol" value="Kürzel:" />
+						<p:inputText id="addSymbol"
+							value="#{teacherController.teacher.symbol}" required="true"
+							requiredMessage="Ein leeres Kürzel ist nicht gültig.">
+							<f:validator validatorId="org.woym.NameValidator" />
+							<f:attribute name="validateBean"
+								value="#{teacherController.teacher}" />
+						</p:inputText>
+						<p:outputLabel for="addWeekhours" value="Wochenstunden:" />
+						<p:spinner id="addWeekhours" min="0" max="100" stepFactor="0.01"
+							value="#{teacherController.teacher.hoursPerWeek}" />
+					</h:panelGrid>
+					<p:fieldset legend="Schulfächer" toggleable="true"
+						toggleSpeed="500" collapsed="true">
 
-		<!-- Edit-Dialog -->
-		<p:dialog header="Bearbeiten von Lehrkraft" id="editTeacherDialog"
-			widgetVar="wEditTeacherDialog" width="550" modal="true"
-			draggable="true" resizable="false" appendToBody="true" dynamic="true">
-			<p:ajax event="close" update="@form" />
-			<p:outputPanel id="editTeacherPanel">
-				<b><h:outputText
-						value="Bearbeiten von #{teacherController.teacher.name}" /></b>
-				<h:panelGrid columns="2">
-					<p:outputLabel for="editName" value="Name:" />
-					<p:inputText id="editName"
-						value="#{teacherController.teacher.name}" required="true"
-						requiredMessage="Ein leerer Name ist nicht gültig.">
-					</p:inputText>
-					<p:outputLabel for="editSymbol" value="Kürzel:" />
-					<p:inputText id="editSymbol"
-						value="#{teacherController.teacher.symbol}" required="true"
-						requiredMessage="Ein leeres Kürzel ist nicht gültig.">
-						<f:validator validatorId="org.woym.NameValidator" />
-						<f:attribute name="validateBean"
-							value="#{teacherController.teacher}" />
-					</p:inputText>
-					<p:outputLabel for="editWeekhours" value="Wochenstunden:" />
-					<p:spinner id="editWeekhours" min="0" max="100" stepFactor="0.01"
-						value="#{teacherController.teacher.hoursPerWeek}" />
-				</h:panelGrid>
-				<p:fieldset legend="Schulfächer" toggleable="true" toggleSpeed="500"
-					collapsed="true">
-					<p:pickList id="editLessonTypePickList"
-						value="#{teacherController.activityTypes}" var="lessonType"
-						itemValue="#{lessonType}" itemLabel="#{lessonType.name}"
-						filterMatchMode="contains" converter="LessonTypeNameConverter">
+						<p:pickList id="addLessonTypePickList"
+							value="#{teacherController.activityTypes}" var="lessonType"
+							itemValue="#{lessonType}" itemLabel="#{lessonType.name}"
+							filterMatchMode="contains" converter="LessonTypeNameConverter">
 
-						<f:facet name="sourceCaption">Verfügbar</f:facet>
-						<f:facet name="targetCaption">Gewählt</f:facet>
+							<f:facet name="sourceCaption">Verfügbar</f:facet>
+							<f:facet name="targetCaption">Gewählt</f:facet>
 
-						<p:ajax event="transfer"
-							listener="#{teacherController.onTransfer}" />
+							<p:ajax event="transfer"
+								listener="#{teacherController.onTransfer}" />
 
-						<p:column>
-							<h:outputText value="#{lessonType.name}" />
-						</p:column>
-					</p:pickList>
-				</p:fieldset>
-				<p:outputPanel id="editTeacherButton"
-					style="float:right; margin-top:10px;">
-					<p:commandButton value="Aktualisieren"
-						actionListener="#{teacherController.editTeacher}"
-						process="editName,editSymbol,editWeekhours,editLessonTypePickList,@this"
-						update="editTeacherPanel,teacherTable" />
+							<p:column>
+								<h:outputText value="#{lessonType.name}" />
+							</p:column>
+						</p:pickList>
+					</p:fieldset>
+
+					<p:outputPanel id="addTeacherButton"
+						style="float:right; margin-top:10px;">
+						<p:commandButton value="Hinzufügen"
+							actionListener="#{teacherController.addTeacher}"
+							process="addName,addSymbol,addWeekhours,addLessonTypePickList,@this"
+							update="addTeacherPanel,teacherTable" />
+					</p:outputPanel>
+					<p:defaultCommand target="addTeacherButton" />
+					<p:outputPanel style="clear:right; margin-top:60px;">
+						<p:messages showDetail="true" autoUpdate="true" closable="false" />
+					</p:outputPanel>
 				</p:outputPanel>
-				<p:defaultCommand target="editTeacherButton" />
-				<p:outputPanel style="clear:right; margin-top:60px;">
-					<p:messages showDetail="true" autoUpdate="true" closable="false" />
-				</p:outputPanel>
-			</p:outputPanel>
-		</p:dialog>
+			</p:dialog>
 
-	</h:form>
+			<!-- Edit-Dialog -->
+			<p:dialog header="Bearbeiten von Lehrkraft" id="editTeacherDialog"
+				widgetVar="wEditTeacherDialog" width="550" modal="true"
+				draggable="true" resizable="false" appendToBody="true"
+				dynamic="true">
+				<p:ajax event="close" update="@form" />
+				<p:outputPanel id="editTeacherPanel">
+					<b><h:outputText
+							value="Bearbeiten von #{teacherController.teacher.name}" /></b>
+					<h:panelGrid columns="2">
+						<p:outputLabel for="editName" value="Name:" />
+						<p:inputText id="editName"
+							value="#{teacherController.teacher.name}" required="true"
+							requiredMessage="Ein leerer Name ist nicht gültig.">
+						</p:inputText>
+						<p:outputLabel for="editSymbol" value="Kürzel:" />
+						<p:inputText id="editSymbol"
+							value="#{teacherController.teacher.symbol}" required="true"
+							requiredMessage="Ein leeres Kürzel ist nicht gültig.">
+							<f:validator validatorId="org.woym.NameValidator" />
+							<f:attribute name="validateBean"
+								value="#{teacherController.teacher}" />
+						</p:inputText>
+						<p:outputLabel for="editWeekhours" value="Wochenstunden:" />
+						<p:spinner id="editWeekhours" min="0" max="100" stepFactor="0.01"
+							value="#{teacherController.teacher.hoursPerWeek}" />
+					</h:panelGrid>
+					<p:fieldset legend="Schulfächer" toggleable="true"
+						toggleSpeed="500" collapsed="true">
+						<p:pickList id="editLessonTypePickList"
+							value="#{teacherController.activityTypes}" var="lessonType"
+							itemValue="#{lessonType}" itemLabel="#{lessonType.name}"
+							filterMatchMode="contains" converter="LessonTypeNameConverter">
+
+							<f:facet name="sourceCaption">Verfügbar</f:facet>
+							<f:facet name="targetCaption">Gewählt</f:facet>
+
+							<p:ajax event="transfer"
+								listener="#{teacherController.onTransfer}" />
+
+							<p:column>
+								<h:outputText value="#{lessonType.name}" />
+							</p:column>
+						</p:pickList>
+					</p:fieldset>
+					<p:outputPanel id="editTeacherButton"
+						style="float:right; margin-top:10px;">
+						<p:commandButton value="Aktualisieren"
+							actionListener="#{teacherController.editTeacher}"
+							process="editName,editSymbol,editWeekhours,editLessonTypePickList,@this"
+							update="editTeacherPanel,teacherTable" />
+					</p:outputPanel>
+					<p:defaultCommand target="editTeacherButton" />
+					<p:outputPanel style="clear:right; margin-top:60px;">
+						<p:messages showDetail="true" autoUpdate="true" closable="false" />
+					</p:outputPanel>
+				</p:outputPanel>
+			</p:dialog>
+		</ui:define>
+	</ui:composition>
 </h:body>
 </html>
