@@ -20,10 +20,10 @@ import org.woym.exceptions.DatasetException;
 import org.woym.logic.CommandHandler;
 import org.woym.logic.SuccessStatus;
 import org.woym.logic.command.AddCommand;
+import org.woym.logic.command.DeleteCommand;
 import org.woym.logic.command.UpdateCommand;
 import org.woym.messages.GenericErrorMessage;
 import org.woym.messages.MessageHelper;
-import org.woym.messages.SuccessMessage;
 import org.woym.objects.ActivityType;
 import org.woym.objects.Teacher;
 import org.woym.persistence.DataAccess;
@@ -163,19 +163,11 @@ public class TeacherController implements Serializable {
 	 * Löscht den selektierten Lehrer.
 	 */
 	public void deleteTeacher() {
-		FacesMessage msg;
-		if (teacher != null) {
-			try {
-				dataAccess.delete(teacher);
-				msg = MessageHelper.generateMessage(
-						SuccessMessage.DELETE_OBJECT_SUCCESS, teacher,
-						FacesMessage.SEVERITY_INFO);
-			} catch (DatasetException e) {
-				LOGGER.error(e);
-				msg = MessageHelper.generateMessage(GenericErrorMessage.DATABASE_COMMUNICATION_ERROR, FacesMessage.SEVERITY_ERROR);
-			}
-			FacesContext.getCurrentInstance().addMessage(null, msg);
-		}
+		DeleteCommand<Teacher> command = new DeleteCommand<>(teacher);
+		IStatus status = commandHandler.execute(command);
+		FacesMessage msg = status.report();
+
+		FacesContext.getCurrentInstance().addMessage(null, msg);
 	}
 
 	/**
