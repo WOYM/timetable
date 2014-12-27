@@ -3,10 +3,7 @@
  */
 package org.woym.logic;
 
-import javax.faces.application.FacesMessage;
-
 import org.woym.logic.util.LimitedQueue;
-import org.woym.messages.GenericErrorMessage;
 import org.woym.spec.logic.ICommand;
 import org.woym.spec.logic.ICommandHandler;
 import org.woym.spec.logic.ILimitedQueue;
@@ -41,6 +38,14 @@ public class CommandHandler implements ICommandHandler {
 	static public CommandHandler getInstance() {
 		return COMMAND_HANDLER;
 	}
+	
+	public Integer getUndoSize() {
+		return undo.size();
+	}
+	
+	public Integer getRedoSize() {
+		return redo.size();
+	}
 
 	@Override
 	public IStatus execute(ICommand command) {
@@ -60,13 +65,12 @@ public class CommandHandler implements ICommandHandler {
 
 	@Override
 	public IStatus undo() {
-		if (undo.size() == 0) {
-			return new FailureStatus(GenericErrorMessage.UNDO_EMPTY,
-					FacesMessage.SEVERITY_INFO);
+		if(undo.size() == 0) {
+			return new WhateverStatus("Life is final, so is this undo functionality");
 		}
-
+		
 		ICommand command = undo.getLast();
-		IStatus status = command.execute();
+		IStatus status = command.undo();
 
 		if (status instanceof SuccessStatus) {
 			redo.add(command);
@@ -80,16 +84,16 @@ public class CommandHandler implements ICommandHandler {
 
 	@Override
 	public IStatus redo() {
-		if (redo.size() == 0) {
-			return new FailureStatus(GenericErrorMessage.REDO_EMPTY, FacesMessage.SEVERITY_INFO);
+		if(redo.size() == 0) {
+			return new WhateverStatus("Clear no no to this redo");
 		}
-
+		
 		ICommand command = redo.getLast();
-		IStatus status = command.execute();
+		IStatus status = command.redo();
 
 		if (status instanceof SuccessStatus) {
 			undo.add(command);
-		} else {
+		}  else {
 			redo.clear();
 			undo.clear();
 		}

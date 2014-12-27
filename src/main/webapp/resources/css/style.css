@@ -6,6 +6,11 @@ div[id$="searchTeacherTable"]>div>table>thead {
 	display: none;
 }
 
+.ui-growl {
+    top:60px !important;
+    right:10px !important;
+}
+
 .blueActivity {
 	background: -webkit-repeating-linear-gradient(45deg, #606dbc, #606dbc 10px, #465298
 		10px, #465298 20px);
