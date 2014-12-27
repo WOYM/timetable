@@ -17,6 +17,8 @@ import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
 
+import org.woym.exceptions.DatasetException;
+import org.woym.spec.objects.IActivityObject;
 import org.woym.spec.objects.IMemento;
 import org.woym.spec.objects.IMementoObject;
 
@@ -153,6 +155,30 @@ public abstract class Activity extends org.woym.objects.Entity implements
 			return true;
 		}
 		return false;
+	}
+	
+	/**
+	 * Wrapper Zugriffsklasse.
+	 * 
+	 * @param object
+	 * 		Zu löschende {@link IActivityObject}
+	 * 
+	 * @return
+	 * 		Im erfollgt {@code >= 0},
+	 * 		beim misserfolgt {@code -1}
+	 * @throws DatasetException
+	 */
+	public int remove(final IActivityObject object)
+			throws DatasetException {
+		if (object instanceof Employee) {
+			return remove((Employee) object);
+		} else if (object instanceof Schoolclass) {
+			return remove((Schoolclass) object);
+		} else if (object instanceof Room) {
+			return remove((Room) object);
+		} else {
+			return -1;
+		}
 	}
 
 	/**
