@@ -19,6 +19,7 @@ import org.woym.objects.Location;
 import org.woym.objects.Room;
 import org.woym.persistence.DataAccess;
 import org.woym.messages.GenericErrorMessage;
+import org.woym.messages.MessageHelper;
 
 /**
  * <h1>LocationNameValidator</h1>
@@ -46,6 +47,7 @@ import org.woym.messages.GenericErrorMessage;
 public class NameValidator implements Validator {
 
 	public static final String BEAN_NAME = "validateBean";
+	public static final String PARENT_BEAN = "parentBean";
 
 	private static Logger LOGGER = LogManager.getLogger(NameValidator.class);
 
@@ -83,7 +85,7 @@ public class NameValidator implements Validator {
 			} else if (bean instanceof Room) {
 				// Rooms can not be checked directly in database
 				ValueExpression locationExpression = uiComponent
-						.getValueExpression("locationBean");
+						.getValueExpression(PARENT_BEAN);
 				Object locationBean = locationExpression.getValue(elContext);
 
 				for (Room room : ((Location) locationBean).getRooms()) {
@@ -119,19 +121,16 @@ public class NameValidator implements Validator {
 	}
 
 	private FacesMessage getNameIsEmptyMessage() {
-		FacesMessage msg = new FacesMessage(
-				GenericErrorMessage.NAME_IS_EMPTY.getSummary(),
-				GenericErrorMessage.NAME_IS_EMPTY.getStatusMessage());
-		msg.setSeverity(FacesMessage.SEVERITY_ERROR);
+		FacesMessage msg = MessageHelper.generateMessage(
+				GenericErrorMessage.NAME_IS_EMPTY, FacesMessage.SEVERITY_ERROR);
 
 		return msg;
 	}
 
 	private FacesMessage getNameAlreadyExistsMessage() {
-		FacesMessage msg = new FacesMessage(
-				GenericErrorMessage.NAME_ALREADY_EXISTS.getSummary(),
-				GenericErrorMessage.NAME_ALREADY_EXISTS.getStatusMessage());
-		msg.setSeverity(FacesMessage.SEVERITY_ERROR);
+		FacesMessage msg = MessageHelper.generateMessage(
+				GenericErrorMessage.NAME_ALREADY_EXISTS,
+				FacesMessage.SEVERITY_ERROR);
 
 		return msg;
 	}

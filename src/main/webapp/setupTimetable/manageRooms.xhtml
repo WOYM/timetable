@@ -60,6 +60,9 @@
 					<p:column headerText="Verwendung">
 						<h:outputText value="#{room.purpose}" />
 					</p:column>
+					<p:column headerText="Zusätzliche Information">
+						<h:outputText value="#{room.additionalInformation}" />
+					</p:column>
 				</p:dataTable>
 			</p:outputPanel>
 
@@ -77,11 +80,14 @@
 							requiredMessage="Ein leerer Name ist nicht gültig.">
 							<f:validator validatorId="org.woym.NameValidator" />
 							<f:attribute name="validateBean" value="#{roomController.room}" />
-							<f:attribute name="locationBean" value="#{roomController.location}" />
+							<f:attribute name="parentBean" value="#{roomController.location}" />
 						</p:inputText>
 						<p:outputLabel for="addPurpose" value="Verwendung:" />
 						<p:inputText id="addPurpose"
 							value="#{roomController.room.purpose}" />
+						<p:outputLabel for="addAdditional" value="Zusätz. Information:" />
+						<p:inputTextarea id="addAdditional"
+							value="#{roomController.room.additionalInformation}" />
 					</h:panelGrid>
 					<p:outputPanel id="addRoomButton"
 						style="float:right; margin-top:10px;">
@@ -113,11 +119,14 @@
 							requiredMessage="Ein leerer Name ist nicht gültig.">
 							<f:validator validatorId="org.woym.NameValidator" />
 							<f:attribute name="validateBean" value="#{roomController.room}" />
-							<f:attribute name="locationBean" value="#{roomController.location}" />
+							<f:attribute name="parentBean" value="#{roomController.location}" />
 						</p:inputText>
 						<p:outputLabel for="editPurpose" value="Verwendung:" />
 						<p:inputText id="editPurpose"
 							value="#{roomController.room.purpose}" />
+						<p:outputLabel for="editAdditional" value="Zusätz. Information:" />
+						<p:inputTextarea id="editAdditional"
+							value="#{roomController.room.additionalInformation}" />
 					</h:panelGrid>
 					<p:outputPanel id="editRoomButton"
 						style="float:right; margin-top:10px;">
