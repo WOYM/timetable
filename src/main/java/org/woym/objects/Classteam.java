@@ -57,6 +57,9 @@ public class Classteam extends org.woym.objects.Entity implements Serializable,
 	@OneToMany
 	private List<Schoolclass> schoolclasses = new ArrayList<Schoolclass>();
 
+	public Classteam() {
+	}
+
 	public Long getId() {
 		return id;
 	}
