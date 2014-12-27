@@ -14,10 +14,10 @@ import org.woym.exceptions.DatasetException;
 import org.woym.logic.CommandHandler;
 import org.woym.logic.SuccessStatus;
 import org.woym.logic.command.AddCommand;
+import org.woym.logic.command.DeleteCommand;
 import org.woym.logic.command.UpdateCommand;
 import org.woym.messages.GenericErrorMessage;
 import org.woym.messages.MessageHelper;
-import org.woym.messages.SuccessMessage;
 import org.woym.objects.Location;
 import org.woym.persistence.DataAccess;
 import org.woym.spec.logic.IStatus;
@@ -47,7 +47,7 @@ public class LocationController implements Serializable {
 	private IMemento locationMemento;
 
 	private Location location;
-	
+
 	/**
 	 * Liefert eine Liste mit allen Standorten zurück.
 	 * 
@@ -86,22 +86,11 @@ public class LocationController implements Serializable {
 	 * Löscht einen Standort aus der Datenbank.
 	 */
 	public void deleteLocation() {
-		FacesMessage msg;
-		// For safety
-		if (location != null) {
-			try {
-				dataAccess.delete(location);
-				msg = MessageHelper.generateMessage(
-						SuccessMessage.ADD_OBJECT_SUCCESS, location,
-						FacesMessage.SEVERITY_INFO);
-			} catch (DatasetException e) {
-				msg = MessageHelper.generateMessage(
-						GenericErrorMessage.DATABASE_COMMUNICATION_ERROR,
-						FacesMessage.SEVERITY_ERROR);
-			}
-			
-			FacesContext.getCurrentInstance().addMessage(null, msg);
-		}
+		DeleteCommand<Location> command = new DeleteCommand<Location>(location);
+		IStatus status = commandHandler.execute(command);
+		FacesMessage msg = status.report();
+
+		FacesContext.getCurrentInstance().addMessage(null, msg);
 	}
 
 	/**
@@ -127,7 +116,7 @@ public class LocationController implements Serializable {
 		RequestContext context = RequestContext.getCurrentInstance();
 		context.execute("PF('wAddLocationDialog').show();");
 	}
-	
+
 	public Location getLocation() {
 		return location;
 	}
