@@ -13,18 +13,27 @@
 
 <h:body>
 	<h:form>
+	    <p:growl id="commandGrowl" sticky="true" showDetail="true" />
+		<p:toolbar id="setupToolbar">
+			<f:facet name="left">
+				<p:commandButton ajax="false" title="Zurück" value="Zurück"
+					icon="ui-icon-arrowreturnthick-1-w" action="/index" />
+			</f:facet>
+			<f:facet name="right">
+				<p:commandButton title="Rückgängig"
+					icon="ui-icon-arrowreturnthick-1-w" actionListener="#{GUIController.undo}" update="@form" />
+				<p:commandButton title="Wiederholen"
+					icon="ui-icon-arrowreturnthick-1-e" actionListener="#{GUIController.redo}" update="@form" />
+			</f:facet>
+		</p:toolbar>
+		<p:sticky target="setupToolbar" />
 		<h:panelGrid columns="3" styleClass="topAlignedPanelGrid">
 			<p:outputPanel>
-				<p:menubar>
-					<p:menuitem value="Zurück" icon="ui-icon-arrowreturnthick-1-w"
-						action="/index" />
-				</p:menubar>
 				<p:spacer style="height:20px" />
 				<p:menu style="width:300px; top:0px; position:relative">
 					<p:submenu label="Räumlichkeiten">
 						<p:menuitem value="Standorte" icon="ui-icon-person"
-							action="manageLocations"
-							update="@all" process="@this"/>
+							action="manageLocations" update="@all" process="@this" />
 						<p:menuitem value="Räume" icon="ui-icon-person"
 							action="manageRooms" update="@all" process="@this" />
 					</p:submenu>
@@ -32,8 +41,8 @@
 						<p:menuitem value="Lehrkräfte" icon="ui-icon-person"
 							action="manageTeachers" update="@all" process="@this" />
 						<p:menuitem value="Pädagogische Mitarbeiter"
-							action="managePedagogicAssistants"
-							update="@all" icon="ui-icon-person" process="@this" />
+							action="managePedagogicAssistants" update="@all"
+							icon="ui-icon-person" process="@this" />
 					</p:submenu>
 					<p:submenu label="Schüler/innen">
 						<p:menuitem value="Jahrgänge" ajax="false"
@@ -41,16 +50,15 @@
 						<p:menuitem value="Klassen" ajax="false" icon="ui-icon-calculator" />
 					</p:submenu>
 					<p:submenu label="Unterricht">
-						<p:menuitem value="Inhalte"
-							action="manageLessonTypes"
+						<p:menuitem value="Inhalte" action="manageLessonTypes"
 							update="@all" icon="ui-icon-tag" process="@this" />
 					</p:submenu>
 				</p:menu>
 			</p:outputPanel>
 			<p:spacer style="width:30px" />
-			
+
 			<ui:insert name="setupContent">
-			
+
 			</ui:insert>
 		</h:panelGrid>
 	</h:form>

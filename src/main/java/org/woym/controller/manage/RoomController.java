@@ -13,10 +13,10 @@ import org.primefaces.context.RequestContext;
 import org.woym.exceptions.DatasetException;
 import org.woym.logic.CommandHandler;
 import org.woym.logic.SuccessStatus;
+import org.woym.logic.command.DeleteCommand;
 import org.woym.logic.command.UpdateCommand;
 import org.woym.messages.GenericErrorMessage;
 import org.woym.messages.MessageHelper;
-import org.woym.messages.SuccessMessage;
 import org.woym.objects.Location;
 import org.woym.objects.Room;
 import org.woym.persistence.DataAccess;
@@ -68,12 +68,14 @@ public class RoomController implements Serializable {
 	}
 
 	/**
-	 * Fügt einen Raum zur Datenbank hinzu
+	 * Fügt einen Raum zur Datenbank hinzu. Hierbei wird der Standort
+	 * aktualisiert und dessen Liste von Räumen ein neuer Raum angehängt.
 	 */
 	public void addRoom() {
 		locationMemento = location.createMemento();
 		location.add(room);
-		UpdateCommand<Location> updateCommand = new UpdateCommand<>(location, locationMemento);		
+		UpdateCommand<Location> updateCommand = new UpdateCommand<>(location,
+				locationMemento);
 		IStatus status = commandHandler.execute(updateCommand);
 		FacesMessage msg = status.report();
 
@@ -83,7 +85,7 @@ public class RoomController implements Serializable {
 
 		FacesContext.getCurrentInstance().addMessage(null, msg);
 	}
-	
+
 	/**
 	 * Speichert einen bearbeiteten Raum in die Datenbank.
 	 */
@@ -99,22 +101,11 @@ public class RoomController implements Serializable {
 	 * Löscht einen Raum aus der Datenbank.
 	 */
 	public void deleteRoom() {
-		FacesMessage msg;
-		// For safety
-		if (room != null) {
-			try {
-				dataAccess.delete(room);
-				msg = MessageHelper.generateMessage(
-						SuccessMessage.ADD_OBJECT_SUCCESS, room,
-						FacesMessage.SEVERITY_INFO);
-			} catch (DatasetException e) {
-				msg = MessageHelper.generateMessage(
-						GenericErrorMessage.DATABASE_COMMUNICATION_ERROR,
-						FacesMessage.SEVERITY_ERROR);
-			}
+		DeleteCommand<Room> command = new DeleteCommand<>(room);
+		IStatus status = commandHandler.execute(command);
+		FacesMessage msg = status.report();
 
-			FacesContext.getCurrentInstance().addMessage(null, msg);
-		}
+		FacesContext.getCurrentInstance().addMessage(null, msg);
 	}
 
 	/**

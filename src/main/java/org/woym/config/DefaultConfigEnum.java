@@ -92,7 +92,44 @@ public enum DefaultConfigEnum {
 	 * entsprechen.
 	 */
 	PEDAGOGIC_ASSISTANT_HOURLY_SETTLEMENT(
-			"pedagogic_assistant_hourly_settlement", "60");
+			"pedagogic_assistant_hourly_settlement", "60"),
+
+	/**
+	 * True, wenn ein Bestätigungsdialog beim Löschen eines Lehrers angezeigt
+	 * werden soll, der auf die Folgen hinweist.
+	 */
+	SHOW_TEACHER_DELETION_DIALOG("show_teacher_deletion_dialog", "true"),
+
+	/**
+	 * True, wenn ein Bestätigungsdialog beim Löschen eines päd. Mitarbeiters
+	 * angezeigt werden soll, der auf die Folgen hinweist.
+	 */
+	SHOW_PA_DELETION_DIALOG("show_pa_deletion_dialog", "true"),
+
+	/**
+	 * True, wenn ein Bestätigungsdialog beim Löschen einer Schulklasse
+	 * angezeigt werden soll, der auf die Folgen hinweist.
+	 */
+	SHOW_SCHOOLCLASS_DELETION_DIALOG("show_schoolclass_deletion_dialog", "true"),
+
+	/**
+	 * True, wenn ein Bestätigungsdialog beim Löschen eines Standortes angezeigt
+	 * werden soll, der auf die Folgen hinweist.
+	 */
+	SHOW_LOCATION_DELETION_DIALOG("show_location_deletion_dialog", "true"),
+
+	/**
+	 * True, wenn ein Bestätigungsdialog beim Löschen eines Raumes angezeigt
+	 * werden soll, der auf die Folgen hinweist.
+	 */
+	SHOW_ROOM_DELETION_DIALOG("show_room_deletion_dialog", "true"),
+
+	/**
+	 * True, wenn ein Bestätigungsdialog beim Löschen eines Aktivitätstypens
+	 * angezeigt werden soll, der auf die Folgen hinweist.
+	 */
+	SHOW_ACTIVITYTYPE_DELETION_DIALOG("show_activitytype_deletion_dialog",
+			"true");
 
 	/**
 	 * Der Key der Property.
