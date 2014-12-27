@@ -42,9 +42,14 @@ public class LimitedQueueBlackboxTest {
 		queue.add(command1);
 		queue.add(command2);
 		queue.add(command1);
-		assertEquals((Integer) 5, queue.size());
+		queue.add(command2);
 		queue.add(command1);
-		assertEquals((Integer) 5, queue.size());
+		queue.add(command2);
+		queue.add(command1);
+		queue.add(command2);
+		assertEquals((Integer) 10, queue.size());
+		queue.add(command1);
+		assertEquals((Integer) 10, queue.size());
 	}
 
 	@Test
