@@ -3,7 +3,8 @@
  */
 package org.woym.logic.command;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -15,7 +16,6 @@ import org.powermock.modules.junit4.PowerMockRunner;
 import org.woym.logic.CommandHandler;
 import org.woym.logic.FailureStatus;
 import org.woym.logic.SuccessStatus;
-import org.woym.logic.WhateverStatus;
 import org.woym.spec.logic.ICommand;
 
 /**
@@ -51,8 +51,8 @@ public class TestCommandhandler {
 
 	@Test
 	public void testEmptyUndoRedo() {
-		assertTrue(handler.undo() instanceof WhateverStatus);
-		assertTrue(handler.redo() instanceof WhateverStatus);
+		assertTrue(handler.undo() instanceof FailureStatus);
+		assertTrue(handler.redo() instanceof FailureStatus);
 	}
 
 	@Test
