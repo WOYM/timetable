@@ -5,7 +5,10 @@ package org.woym.logic.command;
 
 import java.util.LinkedList;
 
+import javax.faces.application.FacesMessage;
+
 import org.woym.logic.FailureStatus;
+import org.woym.messages.GenericErrorMessage;
 import org.woym.spec.logic.ICommand;
 import org.woym.spec.logic.IStatus;
 
@@ -30,7 +33,9 @@ public class MacroCommand implements ICommand {
 	@Override
 	public IStatus execute() {
 		LinkedList<ICommand> commandsToRevert = new LinkedList<>();
-		IStatus status = null;
+		IStatus status = new FailureStatus(
+				GenericErrorMessage.DATABASE_COMMUNICATION_ERROR,
+				FacesMessage.SEVERITY_INFO);
 		for (ICommand c : commands) {
 			status = c.execute();
 
@@ -48,7 +53,9 @@ public class MacroCommand implements ICommand {
 	@Override
 	public IStatus undo() {
 		LinkedList<ICommand> commandsToRevert = new LinkedList<>();
-		IStatus status = null;
+		IStatus status = new FailureStatus(
+				GenericErrorMessage.DATABASE_COMMUNICATION_ERROR,
+				FacesMessage.SEVERITY_INFO);
 		for (ICommand c : commands) {
 			status = c.undo();
 
@@ -66,7 +73,9 @@ public class MacroCommand implements ICommand {
 	@Override
 	public IStatus redo() {
 		LinkedList<ICommand> commandsToRevert = new LinkedList<>();
-		IStatus status = null;
+		IStatus status = new FailureStatus(
+				GenericErrorMessage.DATABASE_COMMUNICATION_ERROR,
+				FacesMessage.SEVERITY_INFO);
 		for (ICommand c : commands) {
 			status = c.redo();
 
