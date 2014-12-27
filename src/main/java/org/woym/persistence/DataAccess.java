@@ -1,6 +1,7 @@
 package org.woym.persistence;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
@@ -25,6 +26,7 @@ import org.woym.objects.Schoolclass;
 import org.woym.objects.Teacher;
 import org.woym.objects.TravelTimeList;
 import org.woym.objects.Weekday;
+import org.woym.spec.objects.IActivityObject;
 import org.woym.spec.persistence.IDataAccess;
 
 /**
@@ -485,6 +487,19 @@ public class DataAccess implements IDataAccess, Observer {
 			throw new DatasetException(
 					"Error while getting all activities for " + employee + ": "
 							+ e.getMessage());
+		}
+	}
+
+	public List<Activity> getAllActivities(final IActivityObject object)
+			throws DatasetException {
+		if (object instanceof Employee) {
+			return getAllActivities((Employee) object);
+		} else if (object instanceof Schoolclass) {
+			return getAllActivities((Schoolclass) object);
+		} else if (object instanceof Room) {
+			return getAllActivities((Room) object);
+		} else {
+			return new ArrayList<Activity>();
 		}
 	}
 
