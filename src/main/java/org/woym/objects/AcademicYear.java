@@ -110,6 +110,11 @@ public class AcademicYear extends org.woym.objects.Entity implements
 		return academicYear;
 	}
 
+	/**
+	 * Gibt {@code true} zurück, wenn das übergebene Objekt == diesem ist oder
+	 * das übergebene Objekt eine Instanz von {@linkplain AcademicYear} und das
+	 * Attribut {@linkplain AcademicYear#academicYear} den gleichen Wert hat.
+	 */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -203,7 +208,11 @@ public class AcademicYear extends org.woym.objects.Entity implements
 	 * @return
 	 */
 	public boolean replace(final LessonType lessonType, int demand) {
-		return lessonDemands.put(lessonType, demand) != null ? true : false;
+		if (lessonDemands.containsKey(lessonType)) {
+			lessonDemands.put(lessonType, demand);
+			return true;
+		}
+		return false;
 	}
 
 	/**

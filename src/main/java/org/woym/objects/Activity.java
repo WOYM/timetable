@@ -17,7 +17,6 @@ import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
 
-import org.woym.exceptions.DatasetException;
 import org.woym.spec.objects.IActivityObject;
 import org.woym.spec.objects.IMemento;
 import org.woym.spec.objects.IMementoObject;
@@ -59,7 +58,7 @@ public abstract class Activity extends org.woym.objects.Entity implements
 	 */
 	@ManyToMany
 	@OrderBy("name")
-	private List<Room> rooms;
+	private List<Room> rooms = new ArrayList<Room>();
 
 	/**
 	 * Die an der Aktivität teilnehmenden Schulklasse.
@@ -156,30 +155,6 @@ public abstract class Activity extends org.woym.objects.Entity implements
 		}
 		return false;
 	}
-	
-	/**
-	 * Wrapper Zugriffsklasse.
-	 * 
-	 * @param object
-	 * 		Zu löschende {@link IActivityObject}
-	 * 
-	 * @return
-	 * 		Im erfollgt {@code >= 0},
-	 * 		beim misserfolgt {@code -1}
-	 * @throws DatasetException
-	 */
-	public int remove(final IActivityObject object)
-			throws DatasetException {
-		if (object instanceof Employee) {
-			return remove((Employee) object);
-		} else if (object instanceof Schoolclass) {
-			return remove((Schoolclass) object);
-		} else if (object instanceof Room) {
-			return remove((Room) object);
-		} else {
-			return -1;
-		}
-	}
 
 	/**
 	 * Entfernt das übergebene {@linkplain Schoolclass}-Objekt aus der
@@ -263,6 +238,26 @@ public abstract class Activity extends org.woym.objects.Entity implements
 		EmployeeTimePeriods employeeTimePeriods = new EmployeeTimePeriods();
 		employeeTimePeriods.setEmployee(employee);
 		return this.employeeTimePeriods.contains(employeeTimePeriods);
+	}
+
+	/**
+	 * Wrapper Zugriffsklasse.
+	 * 
+	 * @param object
+	 *            Zu löschende {@link IActivityObject}
+	 * 
+	 * @return Im erfollgt {@code >= 0}, beim misserfolgt {@code -1}
+	 */
+	public int remove(final IActivityObject object) {
+		if (object instanceof Employee) {
+			return remove((Employee) object);
+		} else if (object instanceof Schoolclass) {
+			return remove((Schoolclass) object);
+		} else if (object instanceof Room) {
+			return remove((Room) object);
+		} else {
+			return -1;
+		}
 	}
 
 	/**
