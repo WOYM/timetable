@@ -32,7 +32,8 @@ public interface IRoomDAO {
 	 * übergeben, wirde eine {@linkplain IllegalArgumentException} geworfen.
 	 * Existiert der gesuchte Raum wird dieser zurückgegeben, ansonsten
 	 * {@code null}. Tritt bei der Anfrage ein Fehler auf, wird eine
-	 * {@linkplain DatasetException} geworfen.
+	 * {@linkplain DatasetException} geworfen. Groß- und Kleinschreibung wird
+	 * ignoriert.
 	 * 
 	 * @param locationName
 	 *            - Name des Standortes, an welchem nach dem Raum gesucht werden

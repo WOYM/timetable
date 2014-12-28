@@ -60,6 +60,14 @@ public class ChargeableCompensation implements Serializable {
 		return result;
 	}
 
+	/**
+	 * Gibt {@code true} zurück, wenn das übergebene Object == diesem Objekt ist
+	 * oder das übergebene Object eine Instanz von
+	 * {@linkplain ChargeableCompensation} ist und
+	 * {@linkplain ChargeableCompensation#description} und
+	 * {@linkplain ChargeableCompensation#value} die selben Werte haben, wie die
+	 * dieses Objektes. Ansonsten wird {@code false} zurückgegeben.
+	 */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)

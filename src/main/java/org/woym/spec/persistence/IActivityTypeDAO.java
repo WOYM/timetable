@@ -82,7 +82,7 @@ public interface IActivityTypeDAO {
 	/**
 	 * Sucht nach einem {@linkplain ActivityType} mit dem übergebenen Namen,
 	 * wird ein solcher gefunden, wird dieser zurückgegeben, ansonsten
-	 * {@code null}.
+	 * {@code null}. Groß- und Kleinschreibung wird ignoriert.
 	 * 
 	 * @param name
 	 *            - der Name des gesuchten Aktivitätstyps

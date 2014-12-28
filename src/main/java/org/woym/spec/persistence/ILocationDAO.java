@@ -30,7 +30,8 @@ public interface ILocationDAO {
 	/**
 	 * Sucht in der Datenbank nach einem Standort mit dem übergebenen Namen.
 	 * Existiert kein Standort mit dem übergebenen Namen wird {@code null}
-	 * zurückgegeben. Ansonsten der gefundene Standort.
+	 * zurückgegeben. Ansonsten der gefundene Standort. Groß- und
+	 * Kleinschreibung wird ignoriert.
 	 * 
 	 * @param name
 	 *            - Name des gesuchten Standortes

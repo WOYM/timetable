@@ -413,8 +413,8 @@ public class DataAccess implements IDataAccess, Observer {
 		}
 		try {
 			final Query query = em
-					.createQuery("SELECT l FROM Location l WHERE l.name = ?1");
-			query.setParameter(1, name);
+					.createQuery("SELECT l FROM Location l WHERE UPPER(l.name) = ?1");
+			query.setParameter(1, name.toUpperCase());
 			List<Location> result = query.getResultList();
 			if (result.isEmpty()) {
 				return null;
@@ -490,10 +490,10 @@ public class DataAccess implements IDataAccess, Observer {
 		}
 		try {
 			final String select = "SELECT r FROM Room r, Location l WHERE "
-					+ "r.name = ?1 AND l.name = ?2 AND r MEMBER OF l.rooms";
+					+ "UPPER(r.name) = ?1 AND UPPER(l.name) = ?2 AND r MEMBER OF l.rooms";
 			final Query query = em.createQuery(select);
-			query.setParameter(1, roomName);
-			query.setParameter(2, locationName);
+			query.setParameter(1, roomName.toUpperCase());
+			query.setParameter(2, locationName.toUpperCase());
 			List<Room> result = (List<Room>) query.getResultList();
 			if (result.isEmpty()) {
 				return null;
@@ -506,6 +506,24 @@ public class DataAccess implements IDataAccess, Observer {
 					"Error while checking if room with name " + roomName
 							+ " exists in location " + locationName + ": "
 							+ e.getMessage());
+		}
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<String> getRoomPurposes() throws DatasetException {
+		try {
+			final Query query = em
+					.createQuery("SELECT DISTINCT r.purpose FROM Room r");
+			List<String> result = query.getResultList();
+			return result;
+		} catch (Exception e) {
+			LOGGER.error("Exception while getting all room purposes.", e);
+			throw new DatasetException(
+					"Error while getting all room purposes: " + e.getMessage());
 		}
 	}
 
@@ -580,8 +598,8 @@ public class DataAccess implements IDataAccess, Observer {
 		}
 		try {
 			final Query query = em
-					.createQuery("SELECT a from ActivityType a WHERE a.name = ?1");
-			query.setParameter(1, name);
+					.createQuery("SELECT a from ActivityType a WHERE UPPER(a.name) = ?1");
+			query.setParameter(1, name.toUpperCase());
 			List<ActivityType> result = query.getResultList();
 			if (result.isEmpty()) {
 				return null;
@@ -821,24 +839,6 @@ public class DataAccess implements IDataAccess, Observer {
 			LOGGER.error("Exception while getting TravelTimeList.", e);
 			throw new DatasetException("Error while getting TravelTimeList: "
 					+ e.getMessage());
-		}
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@SuppressWarnings("unchecked")
-	@Override
-	public List<String> getRoomPurposes() throws DatasetException {
-		try {
-			final Query query = em
-					.createQuery("SELECT DISTINCT r.purpose FROM Room r");
-			List<String> result = query.getResultList();
-			return result;
-		} catch (Exception e) {
-			LOGGER.error("Exception while getting all room purposes.", e);
-			throw new DatasetException(
-					"Error while getting all room purposes: " + e.getMessage());
 		}
 	}
 
