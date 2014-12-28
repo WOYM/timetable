@@ -9,6 +9,13 @@ import org.woym.objects.MeetingType;
 import org.woym.objects.ProjectType;
 import org.woym.objects.Room;
 
+/**
+ * Dieses Interface beschreibt Methoden, die von einem {@linkplain ActivityType}
+ * Data-Access-Object zu implementieren wären.
+ * 
+ * @author adrian
+ *
+ */
 public interface IActivityTypeDAO {
 
 	/**
@@ -35,7 +42,6 @@ public interface IActivityTypeDAO {
 	 */
 	public List<ActivityType> getAllActivityTypes(Room room)
 			throws DatasetException;
-
 
 	/**
 	 * Gibt eine Liste aller in der Datenbank vorhandenen

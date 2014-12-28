@@ -7,6 +7,13 @@ import org.woym.objects.Room;
 import org.woym.objects.Schoolclass;
 import org.woym.objects.Teacher;
 
+/**
+ * Dieses Interface beschreibt Methoden, die von einem {@linkplain Schoolclass}
+ * Data-Access-Object zu implementieren wären.
+ * 
+ * @author adrian
+ *
+ */
 public interface ISchoolclassDAO {
 
 	/**

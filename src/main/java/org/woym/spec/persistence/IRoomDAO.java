@@ -5,6 +5,13 @@ import java.util.List;
 import org.woym.exceptions.DatasetException;
 import org.woym.objects.Room;
 
+/**
+ * Dieses Interface beschreibt Methoden, die von einem {@linkplain Room}
+ * Data-Access-Object zu implementieren wären.
+ * 
+ * @author adrian
+ *
+ */
 public interface IRoomDAO {
 
 	/**

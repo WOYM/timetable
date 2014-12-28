@@ -7,6 +7,13 @@ import org.woym.objects.Classteam;
 import org.woym.objects.Employee;
 import org.woym.objects.Schoolclass;
 
+/**
+ * Dieses Interface beschreibt Methoden, die von einem {@linkplain Classteam}
+ * Data-Access-Object zu implementieren wären.
+ * 
+ * @author adrian
+ *
+ */
 public interface IClassteamDAO {
 
 	/**

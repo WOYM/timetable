@@ -6,6 +6,13 @@ import org.woym.exceptions.DatasetException;
 import org.woym.objects.AcademicYear;
 import org.woym.objects.Schoolclass;
 
+/**
+ * Dieses Interface beschreibt Methoden, die von einem {@linkplain AcademicYear}
+ * Data-Access-Object zu implementieren wären.
+ * 
+ * @author adrian
+ *
+ */
 public interface IAcademicYearDAO {
 
 	/**

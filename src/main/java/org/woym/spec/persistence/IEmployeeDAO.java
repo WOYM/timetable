@@ -8,6 +8,13 @@ import org.woym.objects.Employee;
 import org.woym.objects.PedagogicAssistant;
 import org.woym.objects.Teacher;
 
+/**
+ * Dieses Interface beschreibt Methoden, die von einem {@linkplain Employee}
+ * Data-Access-Object zu implementieren wären.
+ * 
+ * @author adrian
+ *
+ */
 public interface IEmployeeDAO {
 
 	/**

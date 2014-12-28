@@ -214,6 +214,31 @@ public class DataAccess implements IDataAccess, Observer {
 	/**
 	 * {@inheritDoc}
 	 */
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Schoolclass> getAllSchoolclasses(Teacher teacher)
+			throws DatasetException {
+		if (teacher == null) {
+			throw new IllegalArgumentException();
+		}
+		try {
+			final Query query = em
+					.createQuery("SELECT s FROM Schoolclass s WHERE s.teacher = ?1");
+			query.setParameter(1, teacher);
+			return query.getResultList();
+		} catch (Exception e) {
+			LOGGER.error(
+					"Exception while getting all schoolclasses for teacher "
+							+ teacher, e);
+			throw new DatasetException(
+					"Error while getting all schoolclasses for teacher "
+							+ teacher + ": " + e.getMessage());
+		}
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	@SuppressWarnings("unchecked")
 	public Schoolclass getOneSchoolclass(int academicYear, char identifier)
@@ -236,6 +261,33 @@ public class DataAccess implements IDataAccess, Observer {
 					"Exception while getting schoolclass with identifier %s"
 							+ " from academic year %s: " + e.getMessage(),
 					identifier, academicYear));
+		}
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@SuppressWarnings("unchecked")
+	@Override
+	public Schoolclass getOneSchoolclass(Room room) throws DatasetException {
+		if (room == null) {
+			throw new IllegalArgumentException();
+		}
+		try {
+			final Query query = em
+					.createQuery("SELECT s FROM Schoolclass s WHERE s.room = ?1");
+			query.setParameter(1, room);
+			List<Schoolclass> result = query.getResultList();
+			if (result.isEmpty()) {
+				return null;
+			}
+			return result.get(0);
+		} catch (Exception e) {
+			LOGGER.error(
+					"Exception while getting schoolclass for room " + room, e);
+			throw new DatasetException(
+					"Error while getting schoolclass for room " + room + ": "
+							+ e.getMessage());
 		}
 	}
 
@@ -684,6 +736,55 @@ public class DataAccess implements IDataAccess, Observer {
 	/**
 	 * {@inheritDoc}
 	 */
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Lesson> getAllLessons(LessonType lessonType)
+			throws DatasetException {
+		if (lessonType == null) {
+			throw new IllegalArgumentException();
+		}
+		try {
+			final Query query = em
+					.createQuery("SELECT l FROM Lesson l WHERE l.lessonType = ?1");
+			query.setParameter(1, lessonType);
+			return query.getResultList();
+		} catch (Exception e) {
+			LOGGER.error("Exception while getting all lessons for lesson type "
+					+ lessonType, e);
+			throw new DatasetException(
+					"Error while getting all lessons for lesson type "
+							+ lessonType + ": " + e.getMessage());
+		}
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Meeting> getAllMeetings(MeetingType meetingType)
+			throws DatasetException {
+		if (meetingType == null) {
+			throw new IllegalArgumentException();
+		}
+		try {
+			final Query query = em
+					.createQuery("SELECT m FROM Meeting m WHERE m.meetingType = ?1");
+			query.setParameter(1, meetingType);
+			return query.getResultList();
+		} catch (Exception e) {
+			LOGGER.error(
+					"Exception while getting all meetings for meeting type "
+							+ meetingType, e);
+			throw new DatasetException(
+					"Error while getting all meetings for meeting type "
+							+ meetingType + ": " + e.getMessage());
+		}
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public <E> E getById(Class<E> clazz, Long id) throws DatasetException {
 		if (id == null) {
@@ -861,33 +962,6 @@ public class DataAccess implements IDataAccess, Observer {
 					clazz.getSimpleName() + "s", searchSymbol)
 					+ e.getMessage());
 		}
-	}
-
-	@Override
-	public List<Lesson> getAllLessons(LessonType lessonType)
-			throws DatasetException {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public List<Meeting> getAllMeetings(MeetingType meetingType)
-			throws DatasetException {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public List<Schoolclass> getAllSchoolclasses(Teacher teacher)
-			throws DatasetException {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Schoolclass getOneSchoolclass(Room room) throws DatasetException {
-		// TODO Auto-generated method stub
-		return null;
 	}
 
 }

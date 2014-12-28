@@ -14,6 +14,13 @@ import org.woym.objects.Room;
 import org.woym.objects.Schoolclass;
 import org.woym.objects.Weekday;
 
+/**
+ * Dieses Interface beschreibt Methoden, die von einem {@linkplain Activity}
+ * Data-Access-Object zu implementieren wären.
+ * 
+ * @author adrian
+ *
+ */
 public interface IActivityDAO {
 
 	/**
