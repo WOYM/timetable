@@ -48,7 +48,8 @@
 						actionListener="#{roomController.generateRoomMemento}"
 						oncomplete="PF('wEditRoomDialog').show();" icon="ui-icon-pencil" />
 					<p:menuitem value="Löschen" update="@form" icon="ui-icon-close"
-						actionListener="#{roomController.deleteRoom}" />
+						oncomplete="PF('wConfirmRoomDelete').show();">
+					</p:menuitem>
 				</p:contextMenu>
 				<p:dataTable emptyMessage="Keine Räume vorhanden" id="roomTable"
 					var="room" selection="#{roomController.room}"
@@ -66,10 +67,35 @@
 				</p:dataTable>
 			</p:outputPanel>
 
+			<!-- Confirm-Dialog -->
+			<p:dialog header="Bestätigen" modal="true" draggable="true"
+				resizable="false" appendToBody="true" dynamic="true"
+				id="confirmRoomDelete" widgetVar="wConfirmRoomDelete"
+				showEffect="fade" hideEffect="fade">
+				<p:ajax event="close" update="@form" />
+				<h:panelGrid columns="1">
+					<h:outputText
+						value="Sind Sie sicher, dass der Raum gelöscht werden soll?" />
+					<p:separator />
+					<p:outputPanel>
+						<p:commandButton value="Bestätigen"
+							actionListener="#{roomController.deleteRoom}"
+							oncomplete="PF('wConfirmRoomDelete').hide();"
+							styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+						<p:commandButton value="Abbrechen"
+							oncomplete="PF('wConfirmRoomDelete').hide();"
+							styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+					</p:outputPanel>
+					<h:outputText
+						value="Sie können die Aktion nachträglich rückgängig machen." />
+				</h:panelGrid>
+			</p:dialog>
+
 			<!-- Add-Dialog -->
 			<p:dialog header="Hinzufügen von Räumen" id="addRoomDialog"
 				widgetVar="wAddRoomDialog" width="550" modal="true" draggable="true"
-				resizable="false" appendToBody="true" dynamic="true">
+				resizable="false" appendToBody="true" dynamic="true"
+				showEffect="fade" hideEffect="fade">
 				<p:ajax event="close" update="@form" />
 				<p:outputPanel id="addRoomPanel">
 					<b><h:outputText value="Neuer Raum" /></b>
@@ -107,7 +133,7 @@
 			<p:dialog header="Bearbeiten von Raum" id="editRoomDialog"
 				widgetVar="wEditRoomDialog" width="550" modal="true"
 				draggable="true" resizable="false" appendToBody="true"
-				dynamic="true">
+				dynamic="true" showEffect="fade" hideEffect="fade">
 				<p:ajax event="close" update="@form" />
 				<p:outputPanel id="editRoomPanel">
 					<b><h:outputText

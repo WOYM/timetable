@@ -30,66 +30,71 @@
 		</p:toolbar>
 		<p:sticky target="setupToolbar" />
 		<h:panelGrid columns="3" styleClass="topAlignedPanelGrid">
-			<p:outputPanel>
-				<p:spacer style="height:20px" />
-				<p:menu style="width:300px; top:0px; position:relative">
-					<p:submenu label="Räumlichkeiten">
-						<p:menuitem value="Standorte" icon="ui-icon-person"
-							action="manageLocations" update="@all" process="@this" />
-						<p:menuitem value="Räume" icon="ui-icon-person"
-							action="manageRooms" update="@all" process="@this" />
-					</p:submenu>
-					<p:submenu label="Personal">
-						<p:menuitem value="Lehrkräfte" icon="ui-icon-person"
-							action="manageTeachers" update="@all" process="@this" />
-						<p:menuitem value="Pädagogische Mitarbeiter"
-							action="managePedagogicAssistants" update="@all"
-							icon="ui-icon-person" process="@this" />
-					</p:submenu>
-					<p:submenu label="Schüler/innen">
-						<p:menuitem value="Jahrgänge" ajax="false"
-							icon="ui-icon-calculator" />
-						<p:menuitem value="Klassen" ajax="false" icon="ui-icon-calculator" />
-					</p:submenu>
-					<p:submenu label="Unterricht">
-						<p:menuitem value="Inhalte" action="manageLessonTypes"
-							update="@all" icon="ui-icon-tag" process="@this" />
-					</p:submenu>
-				</p:menu>
-			</p:outputPanel>
-			<p:spacer style="width:30px" />
-
-			<ui:insert name="setupContent">
+			<p:column>
 				<p:outputPanel>
-					<h1>
-						<h:outputText value="Systemübersicht" />
-					</h1>
-					<p:panel id="teacherStats" header="Statistik"
-						style="margin-bottom:20px; width:600px;">
-						<h:panelGrid columns="2" cellpadding="10">
-							<h:outputText value="Anzahl der Lehrkräfte: " />
-							<h:outputText value="#{GUIController.amountOfTeachers}" />
-							<h:outputText value="Anzahl der pädagogischen Mitarbeiter: " />
-							<h:outputText
-								value="#{GUIController.amountOfPedagogicAssistants}" />
-							<p:spacer />
-							<p:spacer />
-							<p:outputPanel>
-								<b><h:outputText value="Gesamtanzahl: " /></b>
-							</p:outputPanel>
-							<p:outputPanel>
-								<b><h:outputText value="#{GUIController.amountOfEmployees}" /></b>
-							</p:outputPanel>
-							<p:separator />
-							<p:spacer />
-							<h:outputText value="Anzahl der Standorte: " />
-							<h:outputText value="#{GUIController.amountOfLocations}" />
-							<h:outputText value="Anzahl der aller Räume: " />
-							<h:outputText value="#{GUIController.amountOfRooms}" />
-						</h:panelGrid>
-					</p:panel>
+					<p:spacer style="height:20px" />
+					<p:menu style="width:300px; top:0px; position:relative">
+						<p:submenu label="Räumlichkeiten">
+							<p:menuitem value="Standorte" icon="ui-icon-person"
+								action="manageLocations" update="@all" process="@this" />
+							<p:menuitem value="Räume" icon="ui-icon-person"
+								action="manageRooms" update="@all" process="@this" />
+						</p:submenu>
+						<p:submenu label="Personal">
+							<p:menuitem value="Lehrkräfte" icon="ui-icon-person"
+								action="manageTeachers" update="@all" process="@this" />
+							<p:menuitem value="Pädagogische Mitarbeiter"
+								action="managePedagogicAssistants" update="@all"
+								icon="ui-icon-person" process="@this" />
+						</p:submenu>
+						<p:submenu label="Schüler/innen">
+							<p:menuitem value="Jahrgänge und Klassen"
+								action="manageAcademicYearsAndClasses" update="@all"
+								icon="ui-icon-calculator" process="@this" />
+						</p:submenu>
+						<p:submenu label="Unterricht">
+							<p:menuitem value="Inhalte" action="manageLessonTypes"
+								update="@all" icon="ui-icon-tag" process="@this" />
+						</p:submenu>
+					</p:menu>
 				</p:outputPanel>
-			</ui:insert>
+			</p:column>
+			<p:column>
+				<p:spacer style="width:30px" />
+			</p:column>
+			<p:column>
+				<ui:insert name="setupContent">
+					<p:outputPanel>
+						<h1>
+							<h:outputText value="Systemübersicht" />
+						</h1>
+						<p:panel id="teacherStats" header="Statistik"
+							style="margin-bottom:20px; width:600px;">
+							<h:panelGrid columns="2" cellpadding="10">
+								<h:outputText value="Anzahl der Lehrkräfte: " />
+								<h:outputText value="#{GUIController.amountOfTeachers}" />
+								<h:outputText value="Anzahl der pädagogischen Mitarbeiter: " />
+								<h:outputText
+									value="#{GUIController.amountOfPedagogicAssistants}" />
+								<p:spacer />
+								<p:spacer />
+								<p:outputPanel>
+									<b><h:outputText value="Gesamtanzahl: " /></b>
+								</p:outputPanel>
+								<p:outputPanel>
+									<b><h:outputText value="#{GUIController.amountOfEmployees}" /></b>
+								</p:outputPanel>
+								<p:separator />
+								<p:spacer />
+								<h:outputText value="Anzahl der Standorte: " />
+								<h:outputText value="#{GUIController.amountOfLocations}" />
+								<h:outputText value="Anzahl der aller Räume: " />
+								<h:outputText value="#{GUIController.amountOfRooms}" />
+							</h:panelGrid>
+						</p:panel>
+					</p:outputPanel>
+				</ui:insert>
+			</p:column>
 		</h:panelGrid>
 	</h:form>
 </h:body>
