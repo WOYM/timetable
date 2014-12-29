@@ -27,7 +27,7 @@
 					<p:selectOneMenu id="selectLocation"
 						value="#{roomController.location}"
 						converter="LocationNameConverter">
-						<p:ajax update="roomTable,addNewRoomButton" />
+						<p:ajax event="change" update="addNewRoomButton,roomTablePanel,roomTable" />
 						<f:selectItem value="#{null}" itemLabel="Bitte auswählen" />
 						<f:selectItems value="#{locationController.locations}"
 							var="location" itemLabel="#{location.name}" />
@@ -51,20 +51,22 @@
 						oncomplete="PF('wConfirmRoomDelete').show();">
 					</p:menuitem>
 				</p:contextMenu>
-				<p:dataTable emptyMessage="Keine Räume vorhanden" id="roomTable"
-					var="room" selection="#{roomController.room}"
-					value="#{roomController.rooms}" selectionMode="single"
-					rowKey="#{room.name}" scrollable="true" scrollHeight="500">
-					<p:column headerText="Name">
-						<h:outputText value="#{room.name}" />
-					</p:column>
-					<p:column headerText="Verwendung">
-						<h:outputText value="#{room.purpose}" />
-					</p:column>
-					<p:column headerText="Zusätzliche Information">
-						<h:outputText value="#{room.additionalInformation}" />
-					</p:column>
-				</p:dataTable>
+				<p:outputPanel id="roomTablePanel">
+					<p:dataTable emptyMessage="Keine Räume vorhanden" id="roomTable"
+						var="room" selection="#{roomController.room}"
+						value="#{roomController.rooms}" selectionMode="single"
+						rowKey="#{room.name}" scrollable="true" scrollHeight="500" rendered="#{roomController.location != null}">
+						<p:column headerText="Name">
+							<h:outputText value="#{room.name}" />
+						</p:column>
+						<p:column headerText="Verwendung">
+							<h:outputText value="#{room.purpose}" />
+						</p:column>
+						<p:column headerText="Zusätzliche Information">
+							<h:outputText value="#{room.additionalInformation}" />
+						</p:column>
+					</p:dataTable>
+				</p:outputPanel>
 			</p:outputPanel>
 
 			<!-- Confirm-Dialog -->
@@ -119,7 +121,7 @@
 						style="float:right; margin-top:10px;">
 						<p:commandButton value="Hinzufügen"
 							actionListener="#{roomController.addRoom}"
-							process="addName,addPurpose,@this"
+							process="addName,addPurpose,addAdditional,@this"
 							update="addRoomPanel,roomTable" />
 					</p:outputPanel>
 					<p:defaultCommand target="addRoomButton" />
@@ -158,7 +160,7 @@
 						style="float:right; margin-top:10px;">
 						<p:commandButton value="Aktualisieren"
 							actionListener="#{roomController.editRoom}"
-							process="editName,editPurpose,@this"
+							process="editName,editPurpose,editAdditional,@this"
 							update="editRoomPanel,roomTable" />
 					</p:outputPanel>
 					<p:defaultCommand target="editRoomButton" />
