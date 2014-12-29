@@ -94,6 +94,11 @@ public class RoomController implements Serializable {
 		IStatus status = commandHandler.execute(command);
 		FacesMessage msg = status.report();
 
+		if(status instanceof SuccessStatus) {			
+			RequestContext context = RequestContext.getCurrentInstance();
+			context.execute("PF('wEditRoomDialog').hide();");
+		}
+		
 		FacesContext.getCurrentInstance().addMessage(null, msg);
 	}
 
