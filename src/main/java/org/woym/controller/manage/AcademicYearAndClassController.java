@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
@@ -18,6 +19,8 @@ import org.woym.logic.command.DeleteCommand;
 import org.woym.messages.GenericErrorMessage;
 import org.woym.messages.MessageHelper;
 import org.woym.objects.AcademicYear;
+import org.woym.objects.Location;
+import org.woym.objects.Schoolclass;
 import org.woym.persistence.DataAccess;
 import org.woym.spec.logic.IStatus;
 
@@ -44,7 +47,14 @@ public class AcademicYearAndClassController implements Serializable {
 	private CommandHandler commandHandler = CommandHandler.getInstance();
 
 	private AcademicYear academicYear;
+	private Schoolclass schoolclass;
+	private Location location;
 
+	@PostConstruct
+	public void init() {
+		schoolclass = new Schoolclass();
+	}
+	
 	/**
 	 * Liefert eine Liste mit allen bekannten Jahrgängen zurück.
 	 * 
@@ -62,6 +72,10 @@ public class AcademicYearAndClassController implements Serializable {
 
 			return new ArrayList<AcademicYear>();
 		}
+	}
+	
+	public List<Schoolclass> getSchoolclasses(AcademicYear academicYear) {
+		return academicYear.getSchoolclasses();
 	}
 
 	/**
@@ -97,6 +111,19 @@ public class AcademicYearAndClassController implements Serializable {
 		FacesContext.getCurrentInstance().addMessage(null, msg);
 	}
 	
+	/**
+	 * Fügt eine neue Klasse dem Jahrgang hinzu.
+	 */
+	public void addSchoolclass() {
+		// Check for correct data
+		if(location != null && schoolclass.getRoom() != null && schoolclass.getTeacher() != null) {
+			
+		}
+	}
+	
+	/**
+	 * Löscht einen Jahrgang aus der Datennbank.
+	 */
 	public void deleteAcademicYear() {
 		DeleteCommand<AcademicYear> command = new DeleteCommand<>(academicYear);
 		IStatus status = commandHandler.execute(command);
@@ -111,5 +138,21 @@ public class AcademicYearAndClassController implements Serializable {
 
 	public void setAcademicYear(AcademicYear academicYear) {
 		this.academicYear = academicYear;
+	}
+
+	public Schoolclass getSchoolclass() {
+		return schoolclass;
+	}
+
+	public void setSchoolclass(Schoolclass schoolclass) {
+		this.schoolclass = schoolclass;
+	}
+
+	public Location getLocation() {
+		return location;
+	}
+
+	public void setLocation(Location location) {
+		this.location = location;
 	}
 }

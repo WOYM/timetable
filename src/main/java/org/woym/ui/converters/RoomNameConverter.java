@@ -12,13 +12,13 @@ import org.woym.objects.Location;
 import org.woym.objects.Room;
 import org.woym.persistence.DataAccess;
 
-@FacesConverter("org.woym.LessonTypeRoomConverter")
-public class LessonTypeRoomConverter implements Converter  {
+@FacesConverter("org.woym.RoomNameConverter")
+public class RoomNameConverter implements Converter  {
 
 	DataAccess dataAccess = DataAccess.getInstance();
 	
 	private static Logger LOGGER = LogManager
-			.getLogger(LessonTypeRoomConverter.class);
+			.getLogger(RoomNameConverter.class);
 
 	
 	@Override

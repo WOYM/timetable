@@ -123,7 +123,7 @@
 							<p:selectCheckboxMenu id="addRooms"
 								value="#{lessonTypeController.rooms}" label="Bitte auswählen"
 								filter="true" filterMatchMode="contains"
-								converter="LessonTypeRoomConverter" panelStyle="width:500px;">
+								converter="RoomNameConverter" panelStyle="width:500px;">
 								<f:selectItems value="#{lessonTypeController.allRooms}"
 									var="room"
 									itemLabel="#{room.locationName} - #{room.name} (#{room.purpose})" />
@@ -172,7 +172,7 @@
 							<p:selectCheckboxMenu id="editRooms"
 								value="#{lessonTypeController.rooms}" label="Bitte auswählen"
 								filter="true" filterMatchMode="contains"
-								converter="LessonTypeRoomConverter" panelStyle="width:500px;">
+								converter="RoomNameConverter" panelStyle="width:500px;">
 								<f:selectItems value="#{lessonTypeController.allRooms}"
 									var="room"
 									itemLabel="#{room.locationName} - #{room.name} (#{room.purpose})" />

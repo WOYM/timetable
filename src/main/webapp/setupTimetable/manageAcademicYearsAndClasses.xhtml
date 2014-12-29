@@ -28,25 +28,59 @@
 				<p:outputPanel style="float:right">
 					<p:commandButton value="Hinzufügen" icon="ui-icon-plusthick"
 						actionListener="#{academicYearAndClassController.addAcademicYear}"
-						process="@this" update="academicYearAccordionPanel">
-					</p:commandButton>
+						process="@this" update="academicYearAccordionPanel,commandGrowl" />
+					<p:spacer style="height:10px;width:10px;" />
+					<p:commandButton value="Generieren" icon="ui-icon-gear" />
 				</p:outputPanel>
 
 				<p:accordionPanel id="academicYearAccordionPanel"
 					value="#{academicYearAndClassController.academicYears}"
-					var="academicYear" style="width:100%;">
-					<p:tab id="academicYear#{academicYear.academicYear}"
+					var="academicYear" multiple="true" dynamic="true" activeIndex="-1"
+					style="width:100%;">
+					<p:tab id="academicYear-#{academicYear.academicYear}"
 						title="Jahrgang - #{academicYear.academicYear}">
 						<p:outputPanel style="float:right">
-							<p:commandButton value="Löschen" icon="ui-icon-plusthick"
+							<p:commandButton value="Löschen" icon="ui-icon-close"
 								actionListener="#{academicYearAndClassController.setAcademicYear(academicYear)}"
-								process="@this" oncomplete="PF('wConfirmAcademicYearDelete').show();">
+								process="@this"
+								oncomplete="PF('wConfirmAcademicYearDelete').show();">
 							</p:commandButton>
 						</p:outputPanel>
+						<p:spacer style="height:50px;" />
+						<p:separator />
 
-						<h:panelGrid columns="3">
-							<h:outputText value="Test" />
-						</h:panelGrid>
+						<!-- Tabcontent -->
+						<p:outputPanel>
+							<p:outputPanel style="float:right">
+								<p:commandButton value="Hinzufügen" icon="ui-icon-plusthick"
+									actionListener="#{academicYearAndClassController.setAcademicYear(academicYear)}"
+									process="@this">
+								</p:commandButton>
+							</p:outputPanel>
+							<h:panelGrid columns="2">
+								<h:outputText
+									value="Klassen des #{academicYear.academicYear}. Jahrgangs" />
+								<p:spacer style="height:50px;" />
+							</h:panelGrid>
+							<p:dataTable emptyMessage="Keine Klassen vorhanden"
+								id="schoolclassTable" var="schoolclass"
+								selection="#{academicYearAndClassController.schoolclass}"
+								value="#{academicYearAndClassController.getSchoolclasses(academicYear)}"
+								selectionMode="single" rowKey="#{schoolclass.identifier}"
+								scrollable="true" scrollHeight="500">
+								<p:column headerText="Name">
+									<h:outputText value="#{schoolclass.identifier}" />
+								</p:column>
+								<p:column headerText="Klassenlehrkraft">
+									<h:outputText
+										value="#{schoolclass.teacher.name} (#{schoolclass.teacher.symbol})" />
+								</p:column>
+								<p:column headerText="Klassenraum">
+									<h:outputText
+										value="#{schoolclass.room.name} (#{schoolclass.room.locationName})" />
+								</p:column>
+							</p:dataTable>
+						</p:outputPanel>
 					</p:tab>
 				</p:accordionPanel>
 
@@ -60,72 +94,95 @@
 				</p:fieldset>
 			</p:outputPanel>
 
-            <!-- Confirm-Dialog -->
-            <p:dialog header="Bestätigen" modal="true" draggable="true"
-                resizable="false" appendToBody="true" dynamic="true"
-                id="confirmAcademicYearDelete" widgetVar="wConfirmAcademicYearDelete"
-                showEffect="fade" hideEffect="fade">
-                <p:ajax event="close" update="@form" />
-                <h:panelGrid columns="1">
-                    <h:outputText
-                        value="Sind Sie sicher, dass der Jahrgang gelöscht werden soll?" />
-                    <h:outputText value="Es entsteht dadurch eine Lücke in der Aufzählung." />
-                    <h:outputText value="Alle Klassen des Jahrgangs werden gelöscht." />
-                    <p:separator />
-                    <p:outputPanel>
-                        <p:commandButton value="Bestätigen"
-                            actionListener="#{academicYearAndClassController.deleteAcademicYear}"
-                            oncomplete="PF('wConfirmAcademicYearDelete').hide();"
-                            styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
-                        <p:commandButton value="Abbrechen"
-                            oncomplete="PF('wConfirmAcademicYearDelete').hide();"
-                            styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
-                    </p:outputPanel>
-                    <h:outputText
-                        value="Sie können die Aktion nachträglich rückgängig machen." />
-                </h:panelGrid>
-            </p:dialog>
+			<!-- Confirm-Dialog -->
+			<p:dialog header="Bestätigen" modal="true" draggable="true"
+				resizable="false" appendToBody="true" dynamic="true"
+				id="confirmAcademicYearDelete"
+				widgetVar="wConfirmAcademicYearDelete" showEffect="fade"
+				hideEffect="fade">
+				<p:ajax event="close" update="@form" />
+				<h:panelGrid columns="1">
+					<h:outputText
+						value="Sind Sie sicher, dass der Jahrgang gelöscht werden soll?" />
+					<h:outputText
+						value="Es entsteht dadurch eine Lücke in der Aufzählung." />
+					<h:outputText value="Alle Klassen des Jahrgangs werden gelöscht." />
+					<p:separator />
+					<p:outputPanel>
+						<p:commandButton value="Bestätigen"
+							actionListener="#{academicYearAndClassController.deleteAcademicYear}"
+							process="@this"
+							oncomplete="PF('wConfirmAcademicYearDelete').hide();"
+							styleClass="ui-confirmdialog-yes" icon="ui-icon-check" update="commandGrowl" />
+						<p:commandButton value="Abbrechen"
+							oncomplete="PF('wConfirmAcademicYearDelete').hide();"
+							styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+					</p:outputPanel>
+					<h:outputText
+						value="Sie können die Aktion nachträglich rückgängig machen." />
+				</h:panelGrid>
+			</p:dialog>
 
 			<!-- Add-Dialog -->
-			<p:dialog header="Hinzufügen von Unterrichtsinhalten"
-				id="addLessonTypeDialog" widgetVar="wAddLessonTypeDialog"
-				width="500" modal="true" draggable="true" resizable="false"
-				appendToBody="true" dynamic="true">
+			<p:dialog header="Hinzufügen von Klassen" id="addSchoolclassDialog"
+				widgetVar="wAddSchoolclassDialog" width="600" modal="true"
+				draggable="true" resizable="false" appendToBody="true"
+				dynamic="true">
 				<p:ajax event="close" update="@form" />
-				<p:outputPanel id="addLessonTypePanel">
-					<b><h:outputText value="Neuer Unterrichtsinhalt" /></b>
+				<p:outputPanel id="addSchoolclassPanel">
+					<b><h:outputText value="Neue Klasse" /></b>
 					<h:panelGrid columns="2">
 						<p:outputLabel for="addName" value="Name:" />
 						<p:inputText id="addName"
-							value="#{lessonTypeController.lessonType.name}" required="true"
+							value="#{academicYearAndClassController.schoolclass.identifier}"
+							required="true"
 							requiredMessage="Ein leerer Name ist nicht gültig.">
 							<f:validator validatorId="org.woym.NameValidator" />
 							<f:attribute name="validateBean"
-								value="#{lessonTypeController.lessonType}" />
+								value="#{academicYearAndClassController.schoolclass}" />
+							<f:attribute name="parentBean"
+								value="#{academicYearAndClassController.academicYear}" />
 						</p:inputText>
-						<p:outputLabel for="addDuration" value="Typische Dauer (Minuten):" />
-						<p:spinner id="addDuration" min="0" max="1000"
-							value="#{lessonTypeController.lessonType.typicalDuration}" />
-						<p:outputLabel value="Räume:" />
-						<p:outputPanel>
-							<p:selectCheckboxMenu id="addRooms"
-								value="#{lessonTypeController.rooms}" label="Bitte auswählen"
-								filter="true" filterMatchMode="contains"
-								converter="LessonTypeRoomConverter" panelStyle="width:500px;">
-								<f:selectItems value="#{lessonTypeController.allRooms}"
-									var="room"
-									itemLabel="#{room.locationName} - #{room.name} (#{room.purpose})" />
-							</p:selectCheckboxMenu>
+						<p:outputLabel for="addRoomPanel" value="Klassenraum:" />
+						<p:outputPanel id="addRoomPanel">
+							<p:selectOneMenu id="addLocation"
+								value="#{academicYearAndClassController.location}"
+								converter="LocationNameConverter">
+								<p:ajax event="change" update="addRoomPanel" />
+								<f:selectItem value="#{null}" itemLabel="Standort" />
+								<f:selectItems value="#{locationController.locations}"
+									var="location" itemLabel="#{location.name}" />
+							</p:selectOneMenu>
+							<p:outputPanel style="margin-top:5px;"
+								rendered="#{academicYearAndClassController.location != null}">
+								<p:selectOneMenu id="addRoom"
+									value="#{academicYearAndClassController.schoolclass.room}"
+									converter="RoomNameConverter">
+									<p:ajax event="change" update="addRoomPanel" />
+									<f:selectItem value="#{null}" itemLabel="Raum" />
+									<f:selectItems
+										value="#{academicYearAndClassController.location.rooms}"
+										var="room" itemLabel="#{room.name} (#{room.purpose})" />
+								</p:selectOneMenu>
+							</p:outputPanel>
 						</p:outputPanel>
+						<p:outputLabel for="addTeacher" value="Klassenlehrkraft:" />
+						<p:selectOneMenu id="addTeacher"
+							value="#{academicYearAndClassController.schoolclass.teacher}"
+							converter="TeacherNameConverter">
+							<f:selectItem value="#{null}" itemLabel="Lehrkraft" />
+							<f:selectItems value="#{teacherController.teachers}"
+								var="teacher" itemLabel="#{teacher.name} (#{teacher.symbol})" />
+						</p:selectOneMenu>
 					</h:panelGrid>
-					<p:outputPanel id="addLessonTypeButton"
+					<p:outputPanel id="addClassButton"
 						style="float:right;margin-top:10px;">
 						<p:commandButton value="Hinzufügen"
-							actionListener="#{lessonTypeController.addLessonType}"
-							process="addName,addDuration,addRooms,@this"
-							update="addLessonTypePanel,lessonTypeTable" />
+							actionListener="#{academicYearAndClassController.addSchoolclass}"
+							process="addName,addLocation,addRoom,addTeacher,@this"
+							update="addSchoolclassPanel,schoolclassTable" />
 					</p:outputPanel>
-					<p:defaultCommand target="addLessonTypeButton" />
+					<p:defaultCommand target="addClassButton" />
 					<p:outputPanel style="clear:right; margin-top:60px;">
 						<p:messages showDetail="true" autoUpdate="true" closable="false" />
 					</p:outputPanel>
@@ -159,7 +216,7 @@
 							<p:selectCheckboxMenu id="editRooms"
 								value="#{lessonTypeController.rooms}" label="Bitte auswählen"
 								filter="true" filterMatchMode="contains"
-								converter="LessonTypeRoomConverter" panelStyle="width:500px;">
+								converter="RoomNameConverter" panelStyle="width:500px;">
 								<f:selectItems value="#{lessonTypeController.allRooms}"
 									var="room"
 									itemLabel="#{room.locationName} - #{room.name} (#{room.purpose})" />

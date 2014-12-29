@@ -52,6 +52,10 @@
 					</p:menuitem>
 				</p:contextMenu>
 				<p:outputPanel id="roomTablePanel">
+				    <p:outputPanel rendered="#{roomController.location == null}">
+				        <p:separator />
+				        <h:outputText value="Bitte zunächst einen Standort wählen." />
+				    </p:outputPanel>
 					<p:dataTable emptyMessage="Keine Räume vorhanden" id="roomTable"
 						var="room" selection="#{roomController.room}"
 						value="#{roomController.rooms}" selectionMode="single"
