@@ -39,7 +39,8 @@
 						oncomplete="PF('wEditTeacherDialog').show();"
 						icon="ui-icon-pencil" />
 					<p:menuitem value="Löschen" update="@form" icon="ui-icon-close"
-						actionListener="#{teacherController.deleteTeacher}" />
+						oncomplete="PF('wConfirmTeacherDelete').show();">
+					</p:menuitem>
 				</p:contextMenu>
 				<p:dataTable emptyMessage="Keine Lehrer vorhanden" id="teacherTable"
 					var="teacher" selection="#{teacherController.teacher}"
@@ -68,11 +69,36 @@
 					</h:panelGrid>
 				</p:fieldset>
 			</p:outputPanel>
+
+			<!-- Confirm-Dialog -->
+			<p:dialog header="Bestätigen" modal="true" draggable="true"
+				resizable="false" appendToBody="true" dynamic="true"
+				id="confirmTeacherDelete" widgetVar="wConfirmTeacherDelete"
+				showEffect="fade" hideEffect="fade">
+				<p:ajax event="close" update="@form" />
+				<h:panelGrid columns="1">
+					<h:outputText
+						value="Sind Sie sicher, dass die Lehrkraft gelöscht werden soll?" />
+					<p:separator />
+					<p:outputPanel>
+						<p:commandButton value="Bestätigen"
+							actionListener="#{teacherController.deleteTeacher}"
+							oncomplete="PF('wConfirmTeacherDelete').hide();"
+							styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+						<p:commandButton value="Abbrechen"
+							oncomplete="PF('wConfirmTeacherDelete').hide();"
+							styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+					</p:outputPanel>
+					<h:outputText
+						value="Sie können die Aktion nachträglich rückgängig machen." />
+				</h:panelGrid>
+			</p:dialog>
+
 			<!-- Add-Dialog -->
 			<p:dialog header="Hinzufügen von Lehrkräften" id="addTeacherDialog"
 				widgetVar="wAddTeacherDialog" width="550" modal="true"
 				draggable="true" resizable="false" appendToBody="true"
-				dynamic="true">
+				dynamic="true" showEffect="fade" hideEffect="fade">
 				<p:ajax event="close" update="@form" />
 				<p:outputPanel id="addTeacherPanel">
 					<b><h:outputText value="Neue Lehrkraft" /></b>
@@ -132,7 +158,7 @@
 			<p:dialog header="Bearbeiten von Lehrkraft" id="editTeacherDialog"
 				widgetVar="wEditTeacherDialog" width="550" modal="true"
 				draggable="true" resizable="false" appendToBody="true"
-				dynamic="true">
+				dynamic="true" showEffect="fade" hideEffect="fade">
 				<p:ajax event="close" update="@form" />
 				<p:outputPanel id="editTeacherPanel">
 					<b><h:outputText

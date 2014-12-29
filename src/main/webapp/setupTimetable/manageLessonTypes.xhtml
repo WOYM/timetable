@@ -35,26 +35,29 @@
 				<!-- Existierende Unterrichtsinhalte -->
 				<p:contextMenu for="lessonTypeTable">
 					<p:menuitem value="Bearbeiten"
-						actionListener="#{lessonTypeController.generateLessonTypeMemento}"
+						actionListener="#{lessonTypeController.doBeforeEdit}"
 						oncomplete="PF('wEditLessonTypeDialog').show();"
 						icon="ui-icon-pencil" />
-					<p:menuitem value="Löschen" update="@form" icon="ui-icon-close"
-						actionListener="#{lessonTypeController.deleteLessonType}" />
+					<p:menuitem value="Löschen" icon="ui-icon-close"
+						oncomplete="PF('wConfirmLessonTypeDelete').show();">
+					</p:menuitem>
 				</p:contextMenu>
 				<p:dataTable emptyMessage="Keine Unterrichtsinhalte vorhanden"
 					id="lessonTypeTable" var="lessonType"
 					selection="#{lessonTypeController.lessonType}"
 					value="#{lessonTypeController.lessonTypes}" selectionMode="single"
 					rowKey="#{lessonType.name}" scrollable="true" scrollHeight="500">
-					<p:column headerText="Name">
+					<p:column width="300" headerText="Name">
 						<h:outputText value="#{lessonType.name}" />
 					</p:column>
-					<p:column headerText="Standarddauer">
+					<p:column width="200" headerText="Standarddauer">
 						<h:outputText value="#{lessonType.readableDuration}" />
 					</p:column>
 					<p:column headerText="Standardräume">
 						<ui:repeat var="room" value="#{lessonType.rooms}">
-							<h:outputText value="#{room.name}, " />
+							<h:outputText
+								value="#{room.locationName} - #{room.name} (#{room.purpose})" />
+							<br />
 						</ui:repeat>
 					</p:column>
 				</p:dataTable>
@@ -70,11 +73,36 @@
 
 			</p:outputPanel>
 
+			<!-- Confirm-Dialog -->
+			<p:dialog header="Bestätigen" modal="true" draggable="true"
+				resizable="false" appendToBody="true" dynamic="true"
+				id="confirmLessonTypeDelete" widgetVar="wConfirmLessonTypeDelete"
+				showEffect="fade" hideEffect="fade">
+				<p:ajax event="close" update="@form" />
+				<h:panelGrid columns="1">
+					<h:outputText
+						value="Sind Sie sicher, dass der Stundeninhalt gelöscht werden soll?" />
+					<p:separator />
+					<p:outputPanel>
+						<p:commandButton value="Bestätigen"
+							actionListener="#{lessonTypeController.deleteLessonType}"
+							oncomplete="PF('wConfirmLessonTypeDelete').hide();"
+							styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+						<p:commandButton value="Abbrechen"
+							oncomplete="PF('wConfirmLessonTypeDelete').hide();"
+							styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+					</p:outputPanel>
+					<h:outputText
+						value="Sie können die Aktion nachträglich rückgängig machen." />
+				</h:panelGrid>
+			</p:dialog>
+
 			<!-- Add-Dialog -->
 			<p:dialog header="Hinzufügen von Unterrichtsinhalten"
 				id="addLessonTypeDialog" widgetVar="wAddLessonTypeDialog"
 				width="500" modal="true" draggable="true" resizable="false"
-				appendToBody="true" dynamic="true">
+				appendToBody="true" dynamic="true" showEffect="fade"
+				hideEffect="fade">
 				<p:ajax event="close" update="@form" />
 				<p:outputPanel id="addLessonTypePanel">
 					<b><h:outputText value="Neuer Unterrichtsinhalt" /></b>
@@ -90,16 +118,29 @@
 						<p:outputLabel for="addDuration" value="Typische Dauer (Minuten):" />
 						<p:spinner id="addDuration" min="0" max="1000"
 							value="#{lessonTypeController.lessonType.typicalDuration}" />
-						<p:spacer />
-						<p:outputPanel id="addLessonTypeButton" style="float:right">
-							<p:commandButton value="Hinzufügen"
-								actionListener="#{lessonTypeController.addLessonType}"
-								process="addName,addDuration,@this"
-								update="addLessonTypePanel,lessonTypeTable" />
+						<p:outputLabel value="Räume:" />
+						<p:outputPanel>
+							<p:selectCheckboxMenu id="addRooms"
+								value="#{lessonTypeController.rooms}" label="Bitte auswählen"
+								filter="true" filterMatchMode="contains"
+								converter="RoomNameConverter" panelStyle="width:500px;">
+								<f:selectItems value="#{lessonTypeController.allRooms}"
+									var="room"
+									itemLabel="#{room.locationName} - #{room.name} (#{room.purpose})" />
+							</p:selectCheckboxMenu>
 						</p:outputPanel>
-						<p:defaultCommand target="addLessonTypeButton" />
 					</h:panelGrid>
-					<p:messages showDetail="true" autoUpdate="true" closable="false" />
+					<p:outputPanel id="addLessonTypeButton"
+						style="float:right;margin-top:10px;">
+						<p:commandButton value="Hinzufügen"
+							actionListener="#{lessonTypeController.addLessonType}"
+							process="addName,addDuration,addRooms,@this"
+							update="addLessonTypePanel,lessonTypeTable" />
+					</p:outputPanel>
+					<p:defaultCommand target="addLessonTypeButton" />
+					<p:outputPanel style="clear:right; margin-top:60px;">
+						<p:messages showDetail="true" autoUpdate="true" closable="false" />
+					</p:outputPanel>
 				</p:outputPanel>
 			</p:dialog>
 
@@ -107,7 +148,8 @@
 			<p:dialog header="Bearbeiten von Unterrichtsinhalt"
 				id="editLessonTypeDialog" widgetVar="wEditLessonTypeDialog"
 				width="500" modal="true" draggable="true" resizable="false"
-				appendToBody="true" dynamic="true">
+				appendToBody="true" dynamic="true" showEffect="fade"
+				hideEffect="fade">
 				<p:ajax event="close" update="@form" />
 				<p:outputPanel id="editLessonTypePanel">
 					<b><h:outputText
@@ -125,16 +167,28 @@
 							value="Typische Dauer (Minuten):" />
 						<p:spinner id="editDuration" min="0" max="1000"
 							value="#{lessonTypeController.lessonType.typicalDuration}" />
-						<p:spacer />
-						<p:outputPanel style="margin-top:10px; float:right">
-							<p:commandButton id="editLessonTypeButton" value="Aktualisieren"
-								actionListener="#{lessonTypeController.editLessonType}"
-								process="editName,editDuration,@this"
-								update="editLessonTypePanel, lessonTypeTable" />
+						<p:outputLabel value="Räume:" />
+						<p:outputPanel>
+							<p:selectCheckboxMenu id="editRooms"
+								value="#{lessonTypeController.rooms}" label="Bitte auswählen"
+								filter="true" filterMatchMode="contains"
+								converter="RoomNameConverter" panelStyle="width:500px;">
+								<f:selectItems value="#{lessonTypeController.allRooms}"
+									var="room"
+									itemLabel="#{room.locationName} - #{room.name} (#{room.purpose})" />
+							</p:selectCheckboxMenu>
 						</p:outputPanel>
-						<p:defaultCommand target="editLessonTypeButton" />
 					</h:panelGrid>
-					<p:messages showDetail="true" />
+					<p:outputPanel style="margin-top:10px; float:right">
+						<p:commandButton id="editLessonTypeButton" value="Aktualisieren"
+							actionListener="#{lessonTypeController.editLessonType}"
+							process="editName,editDuration,editRooms,@this"
+							update="editLessonTypePanel,lessonTypeTable" />
+					</p:outputPanel>
+					<p:defaultCommand target="editLessonTypeButton" />
+					<p:outputPanel style="clear:right; margin-top:60px;">
+						<p:messages showDetail="true" />
+					</p:outputPanel>
 				</p:outputPanel>
 			</p:dialog>
 		</ui:define>

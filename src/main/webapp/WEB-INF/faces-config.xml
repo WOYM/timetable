@@ -26,4 +26,12 @@
         <converter-id>LocationNameConverter</converter-id>
         <converter-class>org.woym.ui.converters.LocationNameConverter</converter-class>
     </converter>
+    <converter>
+        <converter-id>RoomNameConverter</converter-id>
+        <converter-class>org.woym.ui.converters.RoomNameConverter</converter-class>
+    </converter>
+        <converter>
+        <converter-id>TeacherNameConverter</converter-id>
+        <converter-class>org.woym.ui.converters.TeacherNameConverter</converter-class>
+    </converter>
 </faces-config>
