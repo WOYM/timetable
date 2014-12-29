@@ -9,6 +9,8 @@ import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.primefaces.context.RequestContext;
 import org.woym.exceptions.DatasetException;
 import org.woym.logic.CommandHandler;
@@ -37,10 +39,10 @@ public class LocationController implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
-	/**
-	 * Datenbankinstanz
-	 */
 	private DataAccess dataAccess = DataAccess.getInstance();
+
+	private static Logger LOGGER = LogManager
+			.getLogger(LocationController.class);
 
 	private CommandHandler commandHandler = CommandHandler.getInstance();
 
@@ -58,6 +60,7 @@ public class LocationController implements Serializable {
 		try {
 			return dataAccess.getAllLocations();
 		} catch (DatasetException e) {
+			LOGGER.error(e);
 			msg = MessageHelper.generateMessage(
 					GenericErrorMessage.DATABASE_COMMUNICATION_ERROR,
 					FacesMessage.SEVERITY_ERROR);
@@ -79,11 +82,11 @@ public class LocationController implements Serializable {
 		IStatus status = commandHandler.execute(command);
 		FacesMessage msg = status.report();
 
-		if(status instanceof SuccessStatus) {			
+		if (status instanceof SuccessStatus) {
 			RequestContext context = RequestContext.getCurrentInstance();
 			context.execute("PF('wEditLocationDialog').hide();");
 		}
-		
+
 		FacesContext.getCurrentInstance().addMessage(null, msg);
 	}
 
