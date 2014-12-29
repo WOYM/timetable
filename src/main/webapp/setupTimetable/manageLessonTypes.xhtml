@@ -46,15 +46,15 @@
 					selection="#{lessonTypeController.lessonType}"
 					value="#{lessonTypeController.lessonTypes}" selectionMode="single"
 					rowKey="#{lessonType.name}" scrollable="true" scrollHeight="500">
-					<p:column headerText="Name">
+					<p:column width="300" headerText="Name">
 						<h:outputText value="#{lessonType.name}" />
 					</p:column>
-					<p:column headerText="Standarddauer">
+					<p:column width="200" headerText="Standarddauer">
 						<h:outputText value="#{lessonType.readableDuration}" />
 					</p:column>
 					<p:column headerText="Standardräume">
 						<ui:repeat var="room" value="#{lessonType.rooms}">
-							<h:outputText value="#{room.name} (#{room.purpose})" />
+							<h:outputText value="#{room.locationName} - #{room.name} (#{room.purpose})" />
 							<br />
 						</ui:repeat>
 					</p:column>
@@ -91,13 +91,13 @@
 						<p:outputLabel for="addDuration" value="Typische Dauer (Minuten):" />
 						<p:spinner id="addDuration" min="0" max="1000"
 							value="#{lessonTypeController.lessonType.typicalDuration}" />
-						<p:outputLabel for="addRooms" value="Räume:" />
+						<p:outputLabel value="Räume:" />
 						<p:outputPanel>
 							<p:selectCheckboxMenu id="addRooms"
 								value="#{lessonTypeController.rooms}" label="Bitte auswählen"
 								filter="true" filterMatchMode="contains"
-								converter="LessonTypeRoomConverter" panelStyle="width:300px">
-								<f:selectItems value="#{lessonTypeController.allRooms}" />
+								converter="LessonTypeRoomConverter" panelStyle="width:500px;">
+								<f:selectItems value="#{lessonTypeController.allRooms}" var="room" itemLabel="#{room.locationName} - #{room.name} (#{room.purpose})" />
 							</p:selectCheckboxMenu>
 						</p:outputPanel>
 					</h:panelGrid>
@@ -137,13 +137,13 @@
 							value="Typische Dauer (Minuten):" />
 						<p:spinner id="editDuration" min="0" max="1000"
 							value="#{lessonTypeController.lessonType.typicalDuration}" />
-						<p:outputLabel for="addRooms" value="Räume:" />
+						<p:outputLabel value="Räume:" />
 						<p:outputPanel>
 							<p:selectCheckboxMenu id="editRooms"
 								value="#{lessonTypeController.rooms}" label="Bitte auswählen"
 								filter="true" filterMatchMode="contains"
-								converter="LessonTypeRoomConverter" panelStyle="width:300px">
-								<f:selectItems value="#{lessonTypeController.allRooms}" />
+								converter="LessonTypeRoomConverter" panelStyle="width:500px;">
+								<f:selectItems value="#{lessonTypeController.allRooms}" var="room" itemLabel="#{room.locationName} - #{room.name} (#{room.purpose})" />
 							</p:selectCheckboxMenu>
 						</p:outputPanel>
 					</h:panelGrid>
