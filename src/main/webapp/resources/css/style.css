@@ -6,6 +6,14 @@ div[id$="searchTeacherTable"]>div>table>thead {
 	display: none;
 }
 
+.menuColumn {
+	width:315px !important;
+}
+
+.spacerColumn {
+	width:20px;
+}
+
 .ui-growl {
     top:60px !important;
     right:10px !important;

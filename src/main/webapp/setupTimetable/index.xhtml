@@ -29,9 +29,10 @@
 			</f:facet>
 		</p:toolbar>
 		<p:sticky target="setupToolbar" />
-		<h:panelGrid columns="3" styleClass="topAlignedPanelGrid">
-			<p:column>
-				<p:outputPanel>
+		<h:panelGrid columns="3" styleClass="topAlignedPanelGrid"
+			style="width:100%;" columnClasses="menuColumn,spacerColumn">
+			<h:column>
+				<p:outputPanel style="width:300px;">
 					<p:spacer style="height:20px" />
 					<p:menu style="width:300px; top:0px; position:relative">
 						<p:submenu label="Räumlichkeiten">
@@ -58,18 +59,18 @@
 						</p:submenu>
 					</p:menu>
 				</p:outputPanel>
-			</p:column>
-			<p:column>
+			</h:column>
+			<h:column>
 				<p:spacer style="width:30px" />
-			</p:column>
-			<p:column>
+			</h:column>
+			<h:column style="width:100%;">
 				<ui:insert name="setupContent">
 					<p:outputPanel>
 						<h1>
 							<h:outputText value="Systemübersicht" />
 						</h1>
-						<p:panel id="teacherStats" header="Statistik"
-							style="margin-bottom:20px; width:600px;">
+						<p:panel id="stats" header="Statistik"
+							style="margin-bottom:20px;">
 							<h:panelGrid columns="2" cellpadding="10">
 								<h:outputText value="Anzahl der Lehrkräfte: " />
 								<h:outputText value="#{GUIController.amountOfTeachers}" />
@@ -94,7 +95,7 @@
 						</p:panel>
 					</p:outputPanel>
 				</ui:insert>
-			</p:column>
+			</h:column>
 		</h:panelGrid>
 	</h:form>
 </h:body>
