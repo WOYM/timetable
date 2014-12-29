@@ -181,6 +181,12 @@ public abstract class Employee extends org.woym.objects.Entity implements
 		return result;
 	}
 
+	/**
+	 * Gibt {@code true} zurück, wenn das übergebene Object == diesem Objekt
+	 * oder das übergebene Object eine Instanz von {@linkplain Employee} ist und
+	 * {@linkplain Employee#symbol} bei ignorierter Groß- und Kleinschreibung
+	 * denselben Wert besitzt. Ansonsten wird {@code false} zurückgegeben.
+	 */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -193,7 +199,7 @@ public abstract class Employee extends org.woym.objects.Entity implements
 		if (symbol == null) {
 			if (other.symbol != null)
 				return false;
-		} else if (!symbol.equals(other.symbol))
+		} else if (!symbol.toUpperCase().equals(other.symbol.toUpperCase()))
 			return false;
 		return true;
 	}

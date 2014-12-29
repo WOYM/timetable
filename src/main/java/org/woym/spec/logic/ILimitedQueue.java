@@ -3,7 +3,7 @@ package org.woym.spec.logic;
 public interface ILimitedQueue<E> {
 
 	// Static final Size for all Queues
-	public static final Integer LIST_SIZE = 5;
+	public static final Integer LIST_SIZE = 10;
 
 	/**
 	 * Platziert das Element ans ende der schlange. Sollte dadurch die größe

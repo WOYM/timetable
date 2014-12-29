@@ -13,8 +13,8 @@ import javax.persistence.OneToMany;
 import org.woym.spec.objects.IMemento;
 
 /**
- * Eine Klasse die eine Liste die einen Mitarbeiter und eine Liste von Zeiträumen
- * enhält.
+ * Eine Klasse die eine Liste die einen Mitarbeiter und eine Liste von
+ * Zeiträumen enhält.
  * 
  * @author Adrian
  *
@@ -72,7 +72,7 @@ public class EmployeeTimePeriods extends org.woym.objects.Entity {
 	public void setTimePeriods(List<TimePeriod> timePeriods) {
 		this.timePeriods = timePeriods;
 	}
-	
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -82,6 +82,13 @@ public class EmployeeTimePeriods extends org.woym.objects.Entity {
 		return result;
 	}
 
+	/**
+	 * Gibt {@code true} zurück, wenn das übergebene Object == diesem Objekt
+	 * oder eine Instanz von {@linkplain EmployeeTimePeriods} ist und
+	 * {@linkplain EmployeeTimePeriods#employee} nach
+	 * {@linkplain Employee#equals(Object)} gleich ist. Ansonsten wird
+	 * {@code false} zurückgegeben.
+	 */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -98,7 +105,7 @@ public class EmployeeTimePeriods extends org.woym.objects.Entity {
 			return false;
 		return true;
 	}
-	
+
 	public boolean add(final TimePeriod timePeriod) {
 		if (!timePeriods.contains(timePeriod)) {
 			timePeriods.add(timePeriod);

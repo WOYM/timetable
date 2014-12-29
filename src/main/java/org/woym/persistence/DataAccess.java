@@ -15,9 +15,13 @@ import org.woym.exceptions.DatasetException;
 import org.woym.objects.AcademicYear;
 import org.woym.objects.Activity;
 import org.woym.objects.ActivityType;
+import org.woym.objects.Classteam;
+import org.woym.objects.CompoundLesson;
 import org.woym.objects.Employee;
+import org.woym.objects.Lesson;
 import org.woym.objects.LessonType;
 import org.woym.objects.Location;
+import org.woym.objects.Meeting;
 import org.woym.objects.MeetingType;
 import org.woym.objects.PedagogicAssistant;
 import org.woym.objects.ProjectType;
@@ -210,6 +214,31 @@ public class DataAccess implements IDataAccess, Observer {
 	/**
 	 * {@inheritDoc}
 	 */
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Schoolclass> getAllSchoolclasses(Teacher teacher)
+			throws DatasetException {
+		if (teacher == null) {
+			throw new IllegalArgumentException();
+		}
+		try {
+			final Query query = em
+					.createQuery("SELECT s FROM Schoolclass s WHERE s.teacher = ?1");
+			query.setParameter(1, teacher);
+			return query.getResultList();
+		} catch (Exception e) {
+			LOGGER.error(
+					"Exception while getting all schoolclasses for teacher "
+							+ teacher, e);
+			throw new DatasetException(
+					"Error while getting all schoolclasses for teacher "
+							+ teacher + ": " + e.getMessage());
+		}
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	@SuppressWarnings("unchecked")
 	public Schoolclass getOneSchoolclass(int academicYear, char identifier)
@@ -232,6 +261,58 @@ public class DataAccess implements IDataAccess, Observer {
 					"Exception while getting schoolclass with identifier %s"
 							+ " from academic year %s: " + e.getMessage(),
 					identifier, academicYear));
+		}
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@SuppressWarnings("unchecked")
+	@Override
+	public Schoolclass getOneSchoolclass(Room room) throws DatasetException {
+		if (room == null) {
+			throw new IllegalArgumentException();
+		}
+		try {
+			final Query query = em
+					.createQuery("SELECT s FROM Schoolclass s WHERE s.room = ?1");
+			query.setParameter(1, room);
+			List<Schoolclass> result = query.getResultList();
+			if (result.isEmpty()) {
+				return null;
+			}
+			return result.get(0);
+		} catch (Exception e) {
+			LOGGER.error(
+					"Exception while getting schoolclass for room " + room, e);
+			throw new DatasetException(
+					"Error while getting schoolclass for room " + room + ": "
+							+ e.getMessage());
+		}
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Employee> getAllEmployees(ActivityType activityType)
+			throws DatasetException {
+		if (activityType == null) {
+			throw new IllegalArgumentException();
+		}
+		try {
+			final Query query = em
+					.createQuery("SELECT e FROM Employee e WHERE ?1 MEMBER OF e.possibleActivityTypes");
+			query.setParameter(1, activityType);
+			return query.getResultList();
+		} catch (Exception e) {
+			LOGGER.error(
+					"Exception while getting all employees for activity type "
+							+ activityType, e);
+			throw new DatasetException(
+					"Exception while getting all employees for activity type "
+							+ activityType + ": " + e.getMessage());
 		}
 	}
 
@@ -332,8 +413,8 @@ public class DataAccess implements IDataAccess, Observer {
 		}
 		try {
 			final Query query = em
-					.createQuery("SELECT l FROM Location l WHERE l.name = ?1");
-			query.setParameter(1, name);
+					.createQuery("SELECT l FROM Location l WHERE UPPER(l.name) = ?1");
+			query.setParameter(1, name.toUpperCase());
 			List<Location> result = query.getResultList();
 			if (result.isEmpty()) {
 				return null;
@@ -345,6 +426,31 @@ public class DataAccess implements IDataAccess, Observer {
 			throw new DatasetException(
 					"Error while getting location with name " + name + ": "
 							+ e.getMessage());
+		}
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@SuppressWarnings("unchecked")
+	@Override
+	public Location getOneLocation(Room room) throws DatasetException {
+		if (room == null) {
+			throw new IllegalArgumentException();
+		}
+		try {
+			final Query query = em
+					.createQuery("SELECT l FROM Location l WHERE ?1 MEMBER OF l.rooms");
+			query.setParameter(1, room);
+			List<Location> result = query.getResultList();
+			if (result.isEmpty()) {
+				return null;
+			}
+			return result.get(0);
+		} catch (Exception e) {
+			LOGGER.error("Exception while getting location for room " + room, e);
+			throw new DatasetException("Error while getting location for room "
+					+ room + ": " + e.getMessage());
 		}
 	}
 
@@ -384,10 +490,10 @@ public class DataAccess implements IDataAccess, Observer {
 		}
 		try {
 			final String select = "SELECT r FROM Room r, Location l WHERE "
-					+ "r.name = ?1 AND l.name = ?2 AND r MEMBER OF l.rooms";
+					+ "UPPER(r.name) = ?1 AND UPPER(l.name) = ?2 AND r MEMBER OF l.rooms";
 			final Query query = em.createQuery(select);
-			query.setParameter(1, roomName);
-			query.setParameter(2, locationName);
+			query.setParameter(1, roomName.toUpperCase());
+			query.setParameter(2, locationName.toUpperCase());
 			List<Room> result = (List<Room>) query.getResultList();
 			if (result.isEmpty()) {
 				return null;
@@ -406,10 +512,52 @@ public class DataAccess implements IDataAccess, Observer {
 	/**
 	 * {@inheritDoc}
 	 */
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<String> getRoomPurposes() throws DatasetException {
+		try {
+			final Query query = em
+					.createQuery("SELECT DISTINCT r.purpose FROM Room r");
+			List<String> result = query.getResultList();
+			return result;
+		} catch (Exception e) {
+			LOGGER.error("Exception while getting all room purposes.", e);
+			throw new DatasetException(
+					"Error while getting all room purposes: " + e.getMessage());
+		}
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	@SuppressWarnings("unchecked")
 	public List<ActivityType> getAllActivityTypes() throws DatasetException {
 		return (List<ActivityType>) getAll(ActivityType.class, "name");
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<ActivityType> getAllActivityTypes(Room room)
+			throws DatasetException {
+		if (room == null) {
+			throw new IllegalArgumentException();
+		}
+		try {
+			final Query query = em
+					.createQuery("SELECT a FROM ActivityType a WHERE ?1 MEMBER OF a.rooms");
+			query.setParameter(1, room);
+			return query.getResultList();
+		} catch (Exception e) {
+			LOGGER.error("Exception while getting all activtiy types for room "
+					+ room, e);
+			throw new DatasetException(
+					"Error while getting all activity types for room " + room
+							+ ": " + e.getMessage());
+		}
 	}
 
 	/**
@@ -450,8 +598,8 @@ public class DataAccess implements IDataAccess, Observer {
 		}
 		try {
 			final Query query = em
-					.createQuery("SELECT a from ActivityType a WHERE a.name = ?1");
-			query.setParameter(1, name);
+					.createQuery("SELECT a from ActivityType a WHERE UPPER(a.name) = ?1");
+			query.setParameter(1, name.toUpperCase());
 			List<ActivityType> result = query.getResultList();
 			if (result.isEmpty()) {
 				return null;
@@ -581,6 +729,80 @@ public class DataAccess implements IDataAccess, Observer {
 	/**
 	 * {@inheritDoc}
 	 */
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<CompoundLesson> getAllCompoundLessons(LessonType lessonType)
+			throws DatasetException {
+		if (lessonType == null) {
+			throw new IllegalArgumentException();
+		}
+		try {
+			final Query query = em
+					.createQuery("SELECT c FROM CompoundLesson c WHERE ?1 MEMBER OF c.lessonTypes");
+			query.setParameter(1, lessonType);
+			return query.getResultList();
+		} catch (Exception e) {
+			LOGGER.error(
+					"Exception while getting all compound lessons for lesson type "
+							+ lessonType, e);
+			throw new DatasetException(
+					"Error while getting all compound lessons for lesson type "
+							+ lessonType + ": " + e.getMessage());
+		}
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Lesson> getAllLessons(LessonType lessonType)
+			throws DatasetException {
+		if (lessonType == null) {
+			throw new IllegalArgumentException();
+		}
+		try {
+			final Query query = em
+					.createQuery("SELECT l FROM Lesson l WHERE l.lessonType = ?1");
+			query.setParameter(1, lessonType);
+			return query.getResultList();
+		} catch (Exception e) {
+			LOGGER.error("Exception while getting all lessons for lesson type "
+					+ lessonType, e);
+			throw new DatasetException(
+					"Error while getting all lessons for lesson type "
+							+ lessonType + ": " + e.getMessage());
+		}
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Meeting> getAllMeetings(MeetingType meetingType)
+			throws DatasetException {
+		if (meetingType == null) {
+			throw new IllegalArgumentException();
+		}
+		try {
+			final Query query = em
+					.createQuery("SELECT m FROM Meeting m WHERE m.meetingType = ?1");
+			query.setParameter(1, meetingType);
+			return query.getResultList();
+		} catch (Exception e) {
+			LOGGER.error(
+					"Exception while getting all meetings for meeting type "
+							+ meetingType, e);
+			throw new DatasetException(
+					"Error while getting all meetings for meeting type "
+							+ meetingType + ": " + e.getMessage());
+		}
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public <E> E getById(Class<E> clazz, Long id) throws DatasetException {
 		if (id == null) {
@@ -625,16 +847,59 @@ public class DataAccess implements IDataAccess, Observer {
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<String> getRoomPurposes() throws DatasetException {
+	public List<Classteam> getAllClassteams() throws DatasetException {
+		return (List<Classteam>) getAll(Classteam.class, null);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Classteam> getAllClassteams(Employee employee)
+			throws DatasetException {
+		if (employee == null) {
+			throw new IllegalArgumentException();
+		}
 		try {
 			final Query query = em
-					.createQuery("SELECT DISTINCT r.purpose FROM Room r");
-			List<String> result = query.getResultList();
-			return result;
+					.createQuery("SELECT c FROM Classteam c WHERE ?1 = c.teacher OR ?1 MEMBER OF c.employees");
+			query.setParameter(1, employee);
+			return query.getResultList();
 		} catch (Exception e) {
-			LOGGER.error("Exception while getting all room purposes.", e);
+			LOGGER.error("Exception while getting all classteams for employee "
+					+ employee, e);
 			throw new DatasetException(
-					"Error while getting all room purposes: " + e.getMessage());
+					"Error while getting all classteams for employee "
+							+ employee + ": " + e.getMessage());
+		}
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@SuppressWarnings("unchecked")
+	@Override
+	public Classteam getOneClassteam(Schoolclass schoolclass)
+			throws DatasetException {
+		if (schoolclass == null) {
+			throw new IllegalArgumentException();
+		}
+		try {
+			final Query query = em
+					.createQuery("SELECT c FROM Classteam c WHERE ?1 MEMBER OF c.schoolclasses");
+			query.setParameter(1, schoolclass);
+			List<Classteam> result = query.getResultList();
+			if (result.isEmpty()) {
+				return null;
+			}
+			return result.get(0);
+		} catch (Exception e) {
+			LOGGER.error("Exception while getting classteam for schoolclass "
+					+ schoolclass, e);
+			throw new DatasetException(
+					"Exception while getting classteam for schoolclass "
+							+ schoolclass + ": " + e.getMessage());
 		}
 	}
 
