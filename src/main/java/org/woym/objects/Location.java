@@ -87,6 +87,12 @@ public class Location extends org.woym.objects.Entity implements IMementoObject 
 		return result;
 	}
 
+	/**
+	 * Gibt {@code true} zurück, wenn das übergebene Object == diesem Objekt
+	 * oder eine Instanz von {@linkplain Location} ist und
+	 * {@linkplain Location#name} bei ignorierter Groß- und Kleinschreibung
+	 * denselben Wert besitzt. Ansonsten wird {@code false} zurückgegeben.
+	 */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -99,7 +105,7 @@ public class Location extends org.woym.objects.Entity implements IMementoObject 
 		if (name == null) {
 			if (other.name != null)
 				return false;
-		} else if (!name.equals(other.name))
+		} else if (!name.toUpperCase().equals(other.name.toUpperCase()))
 			return false;
 		return true;
 	}

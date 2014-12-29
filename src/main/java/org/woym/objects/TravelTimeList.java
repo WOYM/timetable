@@ -367,7 +367,7 @@ public final class TravelTimeList extends org.woym.objects.Entity implements
 		}
 
 		/**
-		 * Gibt {@code true} zurück, wenn das übergebene Objekt == diese ist
+		 * Gibt {@code true} zurück, wenn das übergebene Objekt == diesem ist
 		 * oder wenn das übergebene Objekt eine Kante ist und die selben
 		 * Standorte besitzt wie das Objekt, auf welchem die Methode aufgerufen
 		 * wird.

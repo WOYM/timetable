@@ -122,6 +122,13 @@ public abstract class ActivityType extends org.woym.objects.Entity implements
 		return result;
 	}
 
+	/**
+	 * Gibt {@code true} zurück, wenn das übergebene Object == diesem Objekt ist
+	 * oder das übergebene Object eine Instanz von {@linkplain ActivityType} ist
+	 * und das Attribut {@linkplain ActivityType#name} bei ignorierter Groß- und
+	 * Kleinschreibung denselben Wert hat. Ansonsten wird {@code false}
+	 * zurückgegeben.
+	 */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -134,7 +141,7 @@ public abstract class ActivityType extends org.woym.objects.Entity implements
 		if (name == null) {
 			if (other.name != null)
 				return false;
-		} else if (!name.equals(other.name))
+		} else if (!name.toUpperCase().equals(other.name.toUpperCase()))
 			return false;
 		return true;
 	}
@@ -148,7 +155,7 @@ public abstract class ActivityType extends org.woym.objects.Entity implements
 	 * @return {@code true}, wenn das Objekt sich noch nicht in der Liste
 	 *         befindet und hinzugefügt wurde, ansonsten {@code false}
 	 */
-	public boolean addRoom(final Room room) {
+	public boolean add(final Room room) {
 		if (!rooms.contains(room)) {
 			rooms.add(room);
 			return true;
@@ -165,7 +172,7 @@ public abstract class ActivityType extends org.woym.objects.Entity implements
 	 * @return {@code true}, wenn das Objekt entfernt wurde, ansonsten
 	 *         {@code false}
 	 */
-	public boolean removeRoom(final Room room) {
+	public boolean remove(final Room room) {
 		return rooms.remove(room);
 	}
 
@@ -179,7 +186,7 @@ public abstract class ActivityType extends org.woym.objects.Entity implements
 	 * @return {@code true}, wenn das Objekt sich in der Liste befindet,
 	 *         ansonsten {@code false}
 	 */
-	public boolean containsRoom(final Room room) {
+	public boolean contains(final Room room) {
 		return rooms.contains(room);
 	}
 
@@ -200,10 +207,10 @@ public abstract class ActivityType extends org.woym.objects.Entity implements
 			hours = ((int) (typicalDuration - minutes) / 60);
 
 			if (hours == 1) {
-
+				readableString += hours + " Stunde";
+			} else {
+				readableString += hours + " Stunden";
 			}
-
-			readableString += hours + " Stunden";
 
 		} else {
 			minutes = typicalDuration;

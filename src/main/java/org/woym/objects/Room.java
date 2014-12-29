@@ -6,6 +6,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
+import org.woym.exceptions.DatasetException;
+import org.woym.persistence.DataAccess;
 import org.woym.spec.objects.IActivityObject;
 import org.woym.spec.objects.IMemento;
 import org.woym.spec.objects.IMementoObject;
@@ -85,6 +87,23 @@ public class Room extends org.woym.objects.Entity implements IActivityObject,
 	@Override
 	public String toString() {
 		return purpose == null ? name : name + " (" + purpose + ")";
+	}
+
+	/**
+	 * Gibt den Namen des Standortes, zu dem dieser Raum gehört, zurück. Gehört
+	 * der Raum zu keinem Standort oder tritt bei der Suche nach dem Standort
+	 * ein Fehler auf, wird ein leerer String zurückgegeben.
+	 * 
+	 * @return Name des Standortes oder ein leerer String, wenn der Raum zu
+	 *         keinem Standort gehört oder ein Fehler auftritt
+	 */
+	public String getLocationName() {
+		try {
+			Location location = DataAccess.getInstance().getOneLocation(this);
+			return location != null ? location.getName() : "";
+		} catch (DatasetException e) {
+			return "";
+		}
 	}
 
 	/**
