@@ -11,6 +11,8 @@ import org.woym.logic.command.UpdateCommand;
 import org.woym.messages.GenericErrorMessage;
 import org.woym.messages.MessageHelper;
 import org.woym.objects.LessonType;
+import org.woym.objects.Location;
+import org.woym.objects.Room;
 import org.woym.persistence.DataAccess;
 import org.woym.spec.logic.IStatus;
 import org.woym.spec.objects.IMemento;
@@ -18,11 +20,13 @@ import org.woym.spec.objects.IMemento;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+
 import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.primefaces.context.RequestContext;
@@ -49,6 +53,8 @@ public class LessonTypeController implements Serializable {
 	private DataAccess dataAccess = DataAccess.getInstance();
 
 	private CommandHandler commandHandler = CommandHandler.getInstance();
+
+	private List<Room> rooms;
 
 	private IMemento lessonTypeMemento;
 
@@ -77,6 +83,28 @@ public class LessonTypeController implements Serializable {
 		}
 	}
 
+	public List<Room> getAllRooms() {
+
+		try {
+			ArrayList<Room> tempRooms = new ArrayList<>();
+
+			for (Location location : dataAccess.getAllLocations()) {
+				tempRooms.addAll(location.getRooms());
+			}
+
+			return tempRooms;
+
+		} catch (Exception e) {
+			LOGGER.error(e);
+			FacesMessage msg = MessageHelper.generateMessage(
+					GenericErrorMessage.DATABASE_COMMUNICATION_ERROR,
+					FacesMessage.SEVERITY_ERROR);
+			FacesContext.getCurrentInstance().addMessage(null, msg);
+
+			return new ArrayList<Room>();
+		}
+	}
+
 	/**
 	 * Setzt die Werte zum Bearbeiten eines neuen Unterrichtstypen.
 	 */
@@ -101,20 +129,33 @@ public class LessonTypeController implements Serializable {
 	}
 
 	/**
-	 * Erzeugt ein neues Memento des momentan selektierten Objektes.
+	 * Diese Methode tut alles, was an Modifikationen vor dem Bearbeiten eines
+	 * Objektes notwendig ist.
+	 * 
+	 * Dazu gehören das Erzeugen eines Mementos und das Setzen der Räume.
 	 */
-	public void generateLessonTypeMemento() {
+	public void doBeforeEdit() {
 		lessonTypeMemento = lessonType.createMemento();
+		rooms = lessonType.getRooms();
 	}
 
 	/**
 	 * Bearbeitet einen Unterrichtsinhalt.
 	 */
 	public void editLessonType() {
+		lessonType.setRooms(rooms);
 		UpdateCommand<LessonType> command = new UpdateCommand<>(lessonType,
 				lessonTypeMemento);
 		IStatus status = commandHandler.execute(command);
 		FacesMessage msg = status.report();
+		
+		if(status instanceof SuccessStatus) {
+			// Reset stuff
+			rooms = new ArrayList<Room>();
+			
+			RequestContext context = RequestContext.getCurrentInstance();
+			context.execute("PF('wEditLessonTypeDialog').hide();");
+		}
 
 		FacesContext.getCurrentInstance().addMessage(null, msg);
 	}
@@ -123,6 +164,8 @@ public class LessonTypeController implements Serializable {
 	 * Fügt einen neuen Unterrichtsinhalt hinzu.
 	 */
 	public void addLessonType() {
+		lessonType.setRooms(rooms);
+
 		AddCommand<LessonType> command = new AddCommand<>(lessonType);
 		IStatus status = commandHandler.execute(command);
 		FacesMessage msg = status.report();
@@ -130,6 +173,7 @@ public class LessonTypeController implements Serializable {
 		if (status instanceof SuccessStatus) {
 			lessonType = new LessonType();
 			lessonType.setTypicalDuration(getTypicalDuration());
+			rooms = new ArrayList<Room>();
 		}
 
 		FacesContext.getCurrentInstance().addMessage(null, msg);
@@ -141,6 +185,14 @@ public class LessonTypeController implements Serializable {
 
 	public void setLessonType(LessonType lessonType) {
 		this.lessonType = lessonType;
+	}
+
+	public void setRooms(List<Room> rooms) {
+		this.rooms = rooms;
+	}
+
+	public List<Room> getRooms() {
+		return rooms;
 	}
 
 	private int getTypicalDuration() {

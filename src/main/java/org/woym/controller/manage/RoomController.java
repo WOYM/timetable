@@ -23,6 +23,15 @@ import org.woym.persistence.DataAccess;
 import org.woym.spec.logic.IStatus;
 import org.woym.spec.objects.IMemento;
 
+/**
+ * <h1>TeacherController</h1>
+ * <p>
+ * Dieser Controller ist für die allgemeine Raumverwaltung in Standorten
+ * zuständig.
+ * 
+ * @author Tim Hansen (tihansen)
+ *
+ */
 @ViewScoped
 @ManagedBean(name = "roomController")
 public class RoomController implements Serializable {
@@ -93,6 +102,11 @@ public class RoomController implements Serializable {
 		UpdateCommand<Room> command = new UpdateCommand<>(room, roomMemento);
 		IStatus status = commandHandler.execute(command);
 		FacesMessage msg = status.report();
+
+		if (status instanceof SuccessStatus) {
+			RequestContext context = RequestContext.getCurrentInstance();
+			context.execute("PF('wEditRoomDialog').hide();");
+		}
 
 		FacesContext.getCurrentInstance().addMessage(null, msg);
 	}

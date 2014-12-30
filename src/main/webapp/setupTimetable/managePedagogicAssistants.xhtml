@@ -39,7 +39,8 @@
 						oncomplete="PF('wEditPedagogicAssistantDialog').show();"
 						icon="ui-icon-pencil" />
 					<p:menuitem value="Löschen" update="@form" icon="ui-icon-close"
-						actionListener="#{pedagogicAssistantController.deletePedagogicAssistant}" />
+						oncomplete="PF('wConfirmPedagogicAssistantDelete').show();">
+					</p:menuitem>
 				</p:contextMenu>
 				<p:dataTable emptyMessage="Keine Mitarbeiter vorhanden"
 					id="pedagogicAssistantsTable" var="pedagogicAssistant"
@@ -70,12 +71,38 @@
 					</h:panelGrid>
 				</p:fieldset>
 			</p:outputPanel>
+
+			<!-- Confirm-Dialog -->
+			<p:dialog header="Bestätigen" modal="true" draggable="true"
+				resizable="false" appendToBody="true" dynamic="true"
+				id="confirmPedagogicAssistantDelete"
+				widgetVar="wConfirmPedagogicAssistantDelete" showEffect="fade"
+				hideEffect="fade">
+				<p:ajax event="close" update="@form" />
+				<h:panelGrid columns="1">
+					<h:outputText
+						value="Sind Sie sicher, dass der Mitarbeiter gelöscht werden soll?" />
+					<p:separator />
+					<p:outputPanel>
+						<p:commandButton value="Bestätigen"
+							actionListener="#{pedagogicAssistantController.deletePedagogicAssistant}"
+							oncomplete="PF('wConfirmPedagogicAssistantDelete').hide();"
+							styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+						<p:commandButton value="Abbrechen"
+							oncomplete="PF('wConfirmPedagogicAssistantDelete').hide();"
+							styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+					</p:outputPanel>
+					<h:outputText
+						value="Sie können die Aktion nachträglich rückgängig machen." />
+				</h:panelGrid>
+			</p:dialog>
+
 			<!-- Add-Dialog -->
 			<p:dialog header="Hinzufügen von Mitarbeiterm"
 				id="addPedagogicAssistantDialog"
 				widgetVar="wAddPedagogicAssistantDialog" width="600" modal="true"
 				draggable="true" resizable="false" appendToBody="true"
-				dynamic="true">
+				dynamic="true" showEffect="fade" hideEffect="fade">
 				<p:ajax event="close" update="@form" />
 				<p:outputPanel id="addPedagogicAssistantPanel">
 					<b><h:outputText value="Neuer Mitarbeiter" /></b>
@@ -139,7 +166,7 @@
 				id="editPedagogicAssistantDialog"
 				widgetVar="wEditPedagogicAssistantDialog" width="600" modal="true"
 				draggable="true" resizable="false" appendToBody="true"
-				dynamic="true">
+				dynamic="true" showEffect="fade" hideEffect="fade">
 				<p:ajax event="close" update="@form" />
 				<p:outputPanel id="editPedagogicAssistantPanel">
 					<b><h:outputText
