@@ -9,8 +9,8 @@ import org.woym.exceptions.DatasetException;
  * @author Adrian
  *
  */
-public enum GenericErrorMessage {
 
+public enum GenericErrorMessage {
 	/**
 	 * Diese Statusnachricht wird gewählt, wenn ein Fehler bei der Kommunikation
 	 * mit der Datenbank aufgetreten ist, z.B. wenn eine Liste aller Objekte
@@ -19,6 +19,13 @@ public enum GenericErrorMessage {
 	 */
 	DATABASE_COMMUNICATION_ERROR("Datenbankfehler",
 			"Bei der Kommunikation mit der Datenbank ist ein Fehler aufgetreten."),
+
+	/**
+	 * Diese Statusnachricht wird gewählt, wenn beim Aktualisieren der
+	 * Konfiguration ein Fehler aufgetreten ist.
+	 */
+	CONFIG_UPDATE_ERROR("Konfigurationsfehler",
+			"Beim Aktualisieren der Konfiguration ist ein Fehler aufgetreten."),
 
 	/**
 	 * Diese Statusnachricht wird gewählt, wenn ein Textfeld mit der Bezeichnung

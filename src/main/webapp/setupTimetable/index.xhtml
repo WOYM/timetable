@@ -13,7 +13,7 @@
 
 <h:body>
 	<h:form>
-	    <p:growl id="commandGrowl" sticky="true" showDetail="true" />
+		<p:growl id="commandGrowl" showDetail="true" />
 		<p:toolbar id="setupToolbar">
 			<f:facet name="left">
 				<p:commandButton ajax="false" title="Zurück" value="Zurück"
@@ -21,45 +21,86 @@
 			</f:facet>
 			<f:facet name="right">
 				<p:commandButton title="Rückgängig"
-					icon="ui-icon-arrowreturnthick-1-w" actionListener="#{GUIController.undo}" update="@form" />
+					icon="ui-icon-arrowreturnthick-1-w"
+					actionListener="#{GUIController.undo}" update="@form" />
 				<p:commandButton title="Wiederholen"
-					icon="ui-icon-arrowreturnthick-1-e" actionListener="#{GUIController.redo}" update="@form" />
+					icon="ui-icon-arrowreturnthick-1-e"
+					actionListener="#{GUIController.redo}" update="@form" />
 			</f:facet>
 		</p:toolbar>
 		<p:sticky target="setupToolbar" />
-		<h:panelGrid columns="3" styleClass="topAlignedPanelGrid">
-			<p:outputPanel>
-				<p:spacer style="height:20px" />
-				<p:menu style="width:300px; top:0px; position:relative">
-					<p:submenu label="Räumlichkeiten">
-						<p:menuitem value="Standorte" icon="ui-icon-person"
-							action="manageLocations" update="@all" process="@this" />
-						<p:menuitem value="Räume" icon="ui-icon-person"
-							action="manageRooms" update="@all" process="@this" />
-					</p:submenu>
-					<p:submenu label="Personal">
-						<p:menuitem value="Lehrkräfte" icon="ui-icon-person"
-							action="manageTeachers" update="@all" process="@this" />
-						<p:menuitem value="Pädagogische Mitarbeiter"
-							action="managePedagogicAssistants" update="@all"
-							icon="ui-icon-person" process="@this" />
-					</p:submenu>
-					<p:submenu label="Schüler/innen">
-						<p:menuitem value="Jahrgänge" ajax="false"
-							icon="ui-icon-calculator" />
-						<p:menuitem value="Klassen" ajax="false" icon="ui-icon-calculator" />
-					</p:submenu>
-					<p:submenu label="Unterricht">
-						<p:menuitem value="Inhalte" action="manageLessonTypes"
-							update="@all" icon="ui-icon-tag" process="@this" />
-					</p:submenu>
-				</p:menu>
-			</p:outputPanel>
-			<p:spacer style="width:30px" />
-
-			<ui:insert name="setupContent">
-
-			</ui:insert>
+		<h:panelGrid columns="3" styleClass="topAlignedPanelGrid"
+			style="width:100%;" columnClasses="menuColumn,spacerColumn">
+			<h:column>
+				<p:outputPanel style="width:300px;">
+					<p:spacer style="height:20px" />
+					<p:menu style="width:300px; top:0px; position:relative">
+						<p:submenu label="Räumlichkeiten">
+							<p:menuitem value="Standorte" icon="ui-icon-person"
+								action="manageLocations" update="@all" process="@this" />
+							<p:menuitem value="Räume" icon="ui-icon-person"
+								action="manageRooms" update="@all" process="@this" />
+						</p:submenu>
+						<p:submenu label="Personal">
+							<p:menuitem value="Lehrkräfte" icon="ui-icon-person"
+								action="manageTeachers" update="@all" process="@this" />
+							<p:menuitem value="Pädagogische Mitarbeiter"
+								action="managePedagogicAssistants" update="@all"
+								icon="ui-icon-person" process="@this" />
+						</p:submenu>
+						<p:submenu label="Schüler und Schülerinnen">
+							<p:menuitem value="Jahrgänge und Klassen"
+								action="manageAcademicYearsAndClasses" update="@all"
+								icon="ui-icon-calculator" process="@this" />
+						</p:submenu>
+						<p:submenu label="Unterricht">
+							<p:menuitem value="Inhalte" action="manageLessonTypes"
+								update="@all" icon="ui-icon-tag" process="@this" />
+						</p:submenu>
+					</p:menu>
+					<p:menu style="width:300px; top:10px; position:relative">
+						<p:submenu label="Einstellungen">
+							<p:menuitem value="Systemeinstellungen" icon="ui-icon-gear"
+								action="manageSystemSettings" update="@all" process="@this" />
+						</p:submenu>
+					</p:menu>
+				</p:outputPanel>
+			</h:column>
+			<h:column>
+				<p:spacer style="width:30px" />
+			</h:column>
+			<h:column style="width:100%;">
+				<ui:insert name="setupContent">
+					<p:outputPanel>
+						<h1>
+							<h:outputText value="Systemübersicht" />
+						</h1>
+						<p:panel id="stats" header="Statistik" style="margin-bottom:20px;">
+							<h:panelGrid columns="2" cellpadding="10">
+								<h:outputText value="Anzahl der Lehrkräfte: " />
+								<h:outputText value="#{GUIController.amountOfTeachers}" />
+								<h:outputText value="Anzahl der pädagogischen Mitarbeiter: " />
+								<h:outputText
+									value="#{GUIController.amountOfPedagogicAssistants}" />
+								<p:spacer />
+								<p:spacer />
+								<p:outputPanel>
+									<b><h:outputText value="Gesamtanzahl: " /></b>
+								</p:outputPanel>
+								<p:outputPanel>
+									<b><h:outputText value="#{GUIController.amountOfEmployees}" /></b>
+								</p:outputPanel>
+								<p:separator />
+								<p:spacer />
+								<h:outputText value="Anzahl der Standorte: " />
+								<h:outputText value="#{GUIController.amountOfLocations}" />
+								<h:outputText value="Anzahl der aller Räume: " />
+								<h:outputText value="#{GUIController.amountOfRooms}" />
+							</h:panelGrid>
+						</p:panel>
+					</p:outputPanel>
+				</ui:insert>
+			</h:column>
 		</h:panelGrid>
 	</h:form>
 </h:body>

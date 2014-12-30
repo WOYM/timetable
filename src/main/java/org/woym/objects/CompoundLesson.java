@@ -42,6 +42,17 @@ public class CompoundLesson extends Activity {
 		this.lessonTypes = lessonTypes;
 	}
 
+	/**
+	 * Fügt das übergebene {@linkplain LessonType}-Objekt der Liste hinzu,
+	 * sofern es noch nicht vorhanden ist und gibt {@code true} zurück. Ist es
+	 * bereits vorhanden, wird {@code false} zurückgegeben.
+	 * 
+	 * @param lessonType
+	 *            - das hinzuzufügende {@linkplain LessonType}-Objekt
+	 * @return {@code true}, wenn das übergebene {@linkplain LessonType}-Objekt
+	 *         noch nicht vorhanden war und daher hinzugefügt wurde,
+	 *         {@code false} ansonsten
+	 */
 	public boolean add(LessonType lessonType) {
 		if (!lessonTypes.contains(lessonType)) {
 			return lessonTypes.add(lessonType);
@@ -49,12 +60,32 @@ public class CompoundLesson extends Activity {
 		return false;
 	}
 
+	/**
+	 * Gibt {@code true} zurück, wenn das übergebene {@linkplain LessonType}
+	 * -Objekt in der entsprechenden Liste vorhanden ist, ansonsten
+	 * {@code false}.
+	 * 
+	 * @param lessonType
+	 *            - das zu prüfende {@linkplain LessonType}-Objekt
+	 * @return {@code true}, wenn es vorhanden ist, ansonsten {@code false}
+	 */
 	public boolean contains(LessonType lessonType) {
 		return lessonTypes.contains(lessonType);
 	}
 
-	public boolean remove(LessonType lessonType) {
-		return lessonTypes.remove(lessonType);
+	/**
+	 * Entfernt das übergebene {@linkplain LessonType}-Objekt aus der
+	 * entsprechenden Liste, sofern es darin vorhanden ist und gibt die Größe
+	 * der Liste nach dem Entfernen zurück. Ist es nicht vorhanden wird
+	 * lediglich die Größe der Liste zurückgegeben.
+	 * 
+	 * @param lessonType
+	 *            - das zu entferndene {@linkplain LessonType}-Objekt
+	 * @return die Größe der entsprechenden Liste nach dem Entfernen
+	 */
+	public int remove(LessonType lessonType) {
+		lessonTypes.remove(lessonType);
+		return lessonTypes.size();
 	}
 
 	/**

@@ -6,9 +6,29 @@ div[id$="searchTeacherTable"]>div>table>thead {
 	display: none;
 }
 
+.menuColumn {
+	width:315px !important;
+}
+
+.spacerColumn {
+	width:20px;
+}
+
+.ui-toolbar-group-right {
+	margin-right:10px;
+}
+
+.ui-toolbar-group-left {
+	margin-left: 10px;
+}
+
 .ui-growl {
     top:60px !important;
     right:10px !important;
+}
+
+.half-column {
+	width:50% !important;
 }
 
 .blueActivity {
