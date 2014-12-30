@@ -110,6 +110,17 @@ public class Location extends org.woym.objects.Entity implements IMementoObject 
 		return true;
 	}
 
+	/**
+	 * Fügt das übergebene {@linkplain Room}-Objekt diesem Standort hinzu, wenn
+	 * es gemäß {@linkplain Room#equals(Object)} noch nicht vorhanden ist und
+	 * gibt {@code true} zurück. Ist es bereits vorhanden, wird lediglich
+	 * {@code false} zurückgegeben.
+	 * 
+	 * @param room
+	 *            - der hinzuzufügende Raum
+	 * @return {@code true}, wenn der Raum nicht vorhanden war und hinzugefügt
+	 *         wurde, ansonsten {@code false}
+	 */
 	public boolean add(final Room room) {
 		if (!rooms.contains(room)) {
 			rooms.add(room);
@@ -118,10 +129,29 @@ public class Location extends org.woym.objects.Entity implements IMementoObject 
 		return false;
 	}
 
+	/**
+	 * Entfernt das übergebene {@linkplain Room}-Objekt, von diesem Standort,
+	 * sofern es vorhanden war und gibt {@code true} zurück. War es nicht
+	 * vorhanden, ist es nicht vorhanden, wird {@code false} zurückgegeben.
+	 * 
+	 * @param room
+	 *            - der zu entfernende Raum
+	 * @return {@code true}, wenn der zu entfernden Raum vorhanden war und
+	 *         entfernt wurde, ansonsten {@code false}
+	 */
 	public boolean remove(final Room room) {
 		return rooms.remove(room);
 	}
 
+	/**
+	 * Gibt {@code true} zurück, wenn das übergebene {@linkplain Room}-Objekt
+	 * Teil des Standortes ist, ansonsten {@code false}.
+	 * 
+	 * @param room
+	 *            - der zur prüfende Raum
+	 * @return {@code true}, wenn der Raum Teil des Standortes ist, ansonsten
+	 *         {@code false}
+	 */
 	public boolean contains(final Room room) {
 		return rooms.contains(room);
 	}

@@ -106,6 +106,17 @@ public class EmployeeTimePeriods extends org.woym.objects.Entity {
 		return true;
 	}
 
+	/**
+	 * Fügt das übergebene {@linkplain TimePeriod}-Objekt der entsprechenden
+	 * Liste hinzu, sofern es gemäß {@linkplain TimePeriod#equals(Object)} noch
+	 * nicht vorhanden ist und gibt {@code true} zurück. Ist es bereits
+	 * vorhanden, wird {@code false} zurückgegeben.
+	 * 
+	 * @param timePeriod
+	 *            - das hinzuzufügende {@linkplain TimePeriod}-Objekt
+	 * @return {@code true}, wenn nicht vorhanden und hinzugefügt, ansonsten
+	 *         {@code false}
+	 */
 	public boolean add(final TimePeriod timePeriod) {
 		if (!timePeriods.contains(timePeriod)) {
 			timePeriods.add(timePeriod);
@@ -114,10 +125,29 @@ public class EmployeeTimePeriods extends org.woym.objects.Entity {
 		return false;
 	}
 
+	/**
+	 * Entfernt das übergebene {@linkplain TimePeriod}-Objekt aus der
+	 * entsprechenden Liste, sofern es vorhanden ist. Gibt {@code true} zurück,
+	 * wenn es vorhanden war, ansonsten {@code false}.
+	 * 
+	 * @param timePeriod
+	 *            - das zu entfernende {@linkplain TimePeriod}-Objekt
+	 * @return {@code true}, wenn es vorhanden war, ansonsten {@code false}
+	 */
 	public boolean remove(final TimePeriod timePeriod) {
 		return timePeriods.remove(timePeriod);
 	}
 
+	/**
+	 * Prüft, ob sich das übergebene {@linkplain TimePeriod}-Objekt in der
+	 * entsprechenden Liste befindet. Ist dies der Fall, wird {@code true}
+	 * zurückgegeben, ansonsten {@code false}.
+	 * 
+	 * @param timePeriod
+	 *            - das zu prüfende {@linkplain TimePeriod}-Objekt
+	 * @return {@code true}, wenn es in der entsprechenden Liste vorhanden ist,
+	 *         ansonsten {@code false}
+	 */
 	public boolean contains(final TimePeriod timePeriod) {
 		return timePeriods.contains(timePeriod);
 	}

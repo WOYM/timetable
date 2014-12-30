@@ -138,8 +138,27 @@ public class Schoolclass extends org.woym.objects.Entity implements
 	 * @return {@code true}, wenn noch kein Mapping vorhanden war und eins
 	 *         hinzugefügt wurde, ansonsten {@code false}
 	 */
-	public boolean addLessonDemand(final LessonType lessonType, int demand) {
+	public boolean add(final LessonType lessonType, int demand) {
 		if (!lessonDemands.containsKey(lessonType)) {
+			lessonDemands.put(lessonType, demand);
+			return true;
+		}
+		return false;
+	}
+
+	/**
+	 * Ersetzt den Wert zu dem übergebenen Key durch den übergebenen Wert. Ist
+	 * kein Mapping vorhanden, wird {@code false}, ansonsten {@code true}
+	 * zurückgegeben.
+	 * 
+	 * @param lessonType
+	 *            - der Unterrichtstyp, für den der Wert ersetzt werden soll
+	 * @param demand
+	 *            - der neue Bedarf (in Unterrichtsstunden)
+	 * @return
+	 */
+	public boolean replace(final LessonType lessonType, int demand) {
+		if (lessonDemands.containsKey(lessonType)) {
 			lessonDemands.put(lessonType, demand);
 			return true;
 		}
@@ -154,8 +173,8 @@ public class Schoolclass extends org.woym.objects.Entity implements
 	 *            soll werden soll
 	 * @return Integer (Value), wenn ein Mapping bestand, ansonsten {@code null}
 	 */
-	public Integer removeSubjectDemand(final LessonType lessonType) {
-		return lessonDemands.remove(lessonType);
+	public boolean remove(final LessonType lessonType) {
+		return lessonDemands.remove(lessonType) != null ? true : false;
 	}
 
 	/**
@@ -168,7 +187,7 @@ public class Schoolclass extends org.woym.objects.Entity implements
 	 * @return {@code true}, wenn ein Mapping vorhanden ist, ansonsten
 	 *         {@code false}
 	 */
-	public boolean containsSubjectDemand(final LessonType lessonType) {
+	public boolean contains(final LessonType lessonType) {
 		return lessonDemands.containsKey(lessonType);
 	}
 
