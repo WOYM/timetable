@@ -108,7 +108,7 @@ public class TestCommandCreator {
 	}
 
 	@Test
-	public void testAcademicYear() {
+	public void testAcademicYearWhithoutClasses() {
 		MacroCommand macro = CommandCreator.getInstance().createDeleteCommand(
 				year);
 

@@ -71,6 +71,7 @@ public class CommandCreator {
 				for (Schoolclass s : list) {
 					commands.addAll(createDeleteCommand(s).getCommands());
 				}
+				commands.addLast(new DeleteCommand<Entity>(entity));
 				macro = listToMacro(commands);
 			} else {
 				throw new UnsupportedOperationException("Not supportet Entity");
