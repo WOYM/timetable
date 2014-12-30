@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+<h:head>
+
+</h:head>
+
+<h:body>
+	<ui:composition template="index.xhtml">
+
+		<ui:define name="setupContent">
+			<p:outputPanel>
+				<p:outputPanel>
+					<h1>
+						<h:outputText value="Systemeinstellungen" />
+					</h1>
+					<h:outputText
+						value="In dieser Ansicht können die globalen Systemeinstellungen geändert werden." />
+				</p:outputPanel>
+
+				<p:separator style="margin-top:10px;" />
+
+				<p:panel header="Datensicherung">
+					<h:outputText
+						value="Intervall in Minuten in dem die Datensicherung erfolgen soll." />
+					<h:panelGrid columns="2" style="width:100%;"
+						columnClasses="half-column">
+						<p:outputLabel for="backupInterval" value="Intervall" />
+						<p:spinner id="backupInterval"
+							value="#{configController.backupInterval}"
+							max="#{configController.maxBackupInterval}" min="1" />
+					</h:panelGrid>
+				</p:panel>
+
+				<p:outputPanel style="float:right; margin-top:10px;">
+					<p:commandButton value="Aktualisieren" icon="ui-icon-plusthick"
+						onclick="PF('wConfimSettings').show();"
+						process="@form">
+					</p:commandButton>
+				</p:outputPanel>
+
+
+			</p:outputPanel>
+
+			<!-- Confirm-Dialog -->
+			<p:dialog header="Bestätigen" modal="true" draggable="true"
+				resizable="false" appendToBody="true" dynamic="true"
+				id="confimSettings" widgetVar="wConfimSettings"
+				showEffect="fade" hideEffect="fade">
+				<h:panelGrid columns="1">
+					<h:outputText
+						value="Sind Sie sicher, dass die Einstellungen übernommen werden soll?" />
+					<p:separator />
+					<p:outputPanel>
+						<p:commandButton value="Bestätigen"
+							actionListener="#{configController.updateProperties}"
+							oncomplete="PF('wConfimSettings').hide();"
+							update="commandGrowl"
+							styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+						<p:commandButton value="Abbrechen"
+							oncomplete="PF('wConfimSettings').hide();"
+							styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+					</p:outputPanel>
+					<p:outputPanel>
+						<h:outputText value="Sie können die Aktion " />
+						<b><h:outputText value="nicht " /></b>
+						<h:outputText value="nachträglich rückgängig machen." />
+					</p:outputPanel>
+				</h:panelGrid>
+			</p:dialog>
+
+		</ui:define>
+	</ui:composition>
+</h:body>
+</html>

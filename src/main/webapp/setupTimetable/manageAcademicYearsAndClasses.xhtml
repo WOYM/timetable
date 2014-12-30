@@ -104,7 +104,9 @@
 				<h:outputText value="Automatisches Generieren von Jahrgängen." />
 				<h:panelGrid columns="2">
 					<p:outputLabel for="generateAmount" value="Anzahl" />
-					<p:spinner id="generateAmount" max="#{academicYearAndClassController.maxGeneratorSize}" min="1" value="#{academicYearAndClassController.generatorSize}"/>
+					<p:spinner id="generateAmount"
+						max="#{academicYearAndClassController.maxGeneratorSize}" min="1"
+						value="#{academicYearAndClassController.generatorSize}" />
 				</h:panelGrid>
 				<p:outputPanel id="generateAcademicYearsButton"
 					style="float:right;margin-top:10px;">
