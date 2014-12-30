@@ -259,10 +259,6 @@ public abstract class Employee extends org.woym.objects.Entity implements
 	 *         befindet und hinzugefügt wurde, ansonsten {@code false}
 	 */
 	public boolean add(ActivityType activityType) {
-		if (activityType == null) {
-			return false;
-		}
-
 		if (!this.possibleActivityTypes.contains(activityType)) {
 			this.possibleActivityTypes.add(activityType);
 			return true;
