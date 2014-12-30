@@ -181,7 +181,8 @@ public class CommandCreator {
 			AcademicYear year = DataAccess.getInstance().getOneAcademicYear(
 					schoolclass);
 			IMemento yearMemento = year.createMemento();
-
+			year.remove(schoolclass);
+			
 			macro.addLast(new UpdateCommand<Entity>(year, yearMemento));
 
 			macro.addLast(new DeleteCommand<Entity>(schoolclass));
