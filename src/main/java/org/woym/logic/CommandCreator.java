@@ -46,7 +46,7 @@ public class CommandCreator {
 
 		MacroCommand macro = new MacroCommand();
 
-		if (entity instanceof Activity || entity instanceof AcademicYear) {
+		if (entity instanceof Activity) {
 			macro.add(new DeleteCommand<Entity>(entity));
 		} else {
 			if (entity instanceof IActivityObject) {
@@ -63,6 +63,15 @@ public class CommandCreator {
 					macro = listToMacro(commands);
 				}
 
+			} else if (entity instanceof AcademicYear) {
+				List<Schoolclass> list = ((AcademicYear) entity)
+						.getSchoolclasses();
+				LinkedList<ICommand> commands = new LinkedList<ICommand>();
+
+				for (Schoolclass s : list) {
+					commands.addAll(createDeleteCommand(s).getCommands());
+				}
+				macro = listToMacro(commands);
 			} else {
 				throw new UnsupportedOperationException("Not supportet Entity");
 			}
@@ -167,6 +176,13 @@ public class CommandCreator {
 			team.remove(schoolclass);
 
 			macro.addLast(new UpdateCommand<Entity>(team, memento));
+
+			AcademicYear year = DataAccess.getInstance().getOneAcademicYear(
+					schoolclass);
+			IMemento yearMemento = year.createMemento();
+
+			macro.addLast(new UpdateCommand<Entity>(year, yearMemento));
+
 			macro.addLast(new DeleteCommand<Entity>(schoolclass));
 		} catch (DatasetException e) {
 			macro = new LinkedList<ICommand>();

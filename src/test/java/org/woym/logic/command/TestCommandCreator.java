@@ -126,17 +126,23 @@ public class TestCommandCreator {
 				.thenReturn(team);
 		Mockito.when(team.remove(schoolclass)).thenReturn(true);
 		Mockito.when(team.createMemento()).thenReturn(memento);
+		
+		Mockito.when(DataAccess.getInstance().getOneAcademicYear(schoolclass)).thenReturn(year);
+		IMemento yearMemento = Mockito
+				.mock(org.woym.objects.AcademicYear.Memento.class);
+		Mockito.when(year.createMemento()).thenReturn((org.woym.objects.AcademicYear.Memento) yearMemento);
 
 		MacroCommand macro = CommandCreator.getInstance().createDeleteCommand(
 				schoolclass);
 
-		assertEquals(4, macro.getCommands().size());
+		assertEquals(5, macro.getCommands().size());
 
 		assertTrue(macro.getCommands().get(0) instanceof UpdateCommand);
 		assertTrue(macro.getCommands().get(1) instanceof DeleteCommand);
 
 		assertTrue(macro.getCommands().get(2) instanceof UpdateCommand);
-		assertTrue(macro.getCommands().get(3) instanceof DeleteCommand);
+		assertTrue(macro.getCommands().get(3) instanceof UpdateCommand);
+		assertTrue(macro.getCommands().get(4) instanceof DeleteCommand);
 
 	}
 	
