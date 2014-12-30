@@ -40,7 +40,7 @@ public class TravelTimeListTest {
 	}
 
 	@Test
-	public void getInstanceInstancceNullDataAccessReturnNotNull()
+	public void getInstanceInstanceNullDataAccessReturnNotNull()
 			throws Exception {
 		PowerMockito.when(dataAccess.getTravelTimeList()).thenReturn(list);
 		assertNotNull(TravelTimeList.getInstance());

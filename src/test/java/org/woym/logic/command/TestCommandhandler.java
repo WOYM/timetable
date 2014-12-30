@@ -50,12 +50,20 @@ public class TestCommandhandler {
 	}
 
 	@Test
+	public void testAll(){
+		testEmptyUndoRedo();
+		testExecuteNull();
+		testExecuteValidCommand();
+		testExecuteNonValidCommand();
+		testValidUndoRedo();
+		testNonValidUndoRedo();
+	}
+	
 	public void testEmptyUndoRedo() {
 		assertTrue(handler.undo() instanceof FailureStatus);
 		assertTrue(handler.redo() instanceof FailureStatus);
 	}
 
-	@Test
 	public void testExecuteNull() {
 		try {
 			handler.execute(null);
@@ -64,7 +72,6 @@ public class TestCommandhandler {
 		}
 	}
 
-	@Test
 	public void testExecuteValidCommand() {
 		assertTrue(handler.execute(command1) instanceof SuccessStatus);
 		assertEquals((Integer)1, handler.getUndoSize());
@@ -73,7 +80,6 @@ public class TestCommandhandler {
 		Mockito.verify(command1).execute();
 	}
 	
-	@Test
 	public void testExecuteNonValidCommand() {
 		assertTrue(handler.execute(command2) instanceof FailureStatus);
 		//Vom vorhergehenden Test enthalten wegen Singleton 
@@ -83,7 +89,6 @@ public class TestCommandhandler {
 		Mockito.verify(command2).execute();
 	}
 	
-	@Test
 	public void testValidUndoRedo() {
 		Mockito.when(command1.undo()).thenReturn(successStatus);
 		Mockito.when(command1.redo()).thenReturn(successStatus);
@@ -100,7 +105,6 @@ public class TestCommandhandler {
 		assertEquals((Integer)0, handler.getRedoSize());
 	}
 	
-	@Test
 	public void testNonValidUndoRedo() {
 		Mockito.when(command2.execute()).thenReturn(successStatus);
 		Mockito.when(command2.undo()).thenReturn(failureStatus);
