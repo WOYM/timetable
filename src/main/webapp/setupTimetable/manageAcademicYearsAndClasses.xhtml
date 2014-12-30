@@ -30,7 +30,8 @@
 						actionListener="#{academicYearAndClassController.addAcademicYear}"
 						process="@this" update="academicYearAccordionPanel,commandGrowl" />
 					<p:spacer style="height:10px;width:10px;" />
-					<p:commandButton value="Generieren" icon="ui-icon-gear" />
+					<p:commandButton value="Generieren" icon="ui-icon-gear"
+						process="@this" onclick="PF('wGenerateAcademicYears').show();" />
 				</p:outputPanel>
 
 				<p:accordionPanel id="academicYearAccordionPanel"
@@ -94,6 +95,31 @@
 				</p:fieldset>
 			</p:outputPanel>
 
+			<!-- Generate-Dialog -->
+			<p:dialog header="Generieren" modal="true" draggable="true"
+				resizable="false" appendToBody="true" dynamic="true"
+				id="generateAcademicYears" widgetVar="wGenerateAcademicYears"
+				showEffect="fade" hideEffect="fade">
+				<p:ajax event="close" update="@form" />
+				<h:outputText value="Automatisches Generieren von Jahrgängen." />
+				<h:panelGrid columns="2">
+					<p:outputLabel for="generateAmount" value="Anzahl" />
+					<p:spinner id="generateAmount"
+						max="#{academicYearAndClassController.maxGeneratorSize}" min="1"
+						value="#{academicYearAndClassController.generatorSize}" />
+				</h:panelGrid>
+				<p:outputPanel id="generateAcademicYearsButton"
+					style="float:right;margin-top:10px;">
+					<p:commandButton value="Generieren"
+						actionListener="#{academicYearAndClassController.generateAcademicYears}"
+						oncomplete="PF('wGenerateAcademicYears').hide();"
+						process="generateAmount,@this" />
+				</p:outputPanel>
+				<p:separator style="margin-top:50px;" />
+				<h:outputText
+					value="Die generierten Jahrgänge werden an den höchsten bekannten Jahrgang angehängt." />
+			</p:dialog>
+
 			<!-- Confirm-Dialog -->
 			<p:dialog header="Bestätigen" modal="true" draggable="true"
 				resizable="false" appendToBody="true" dynamic="true"
@@ -113,7 +139,8 @@
 							actionListener="#{academicYearAndClassController.deleteAcademicYear}"
 							process="@this"
 							oncomplete="PF('wConfirmAcademicYearDelete').hide();"
-							styleClass="ui-confirmdialog-yes" icon="ui-icon-check" update="commandGrowl" />
+							styleClass="ui-confirmdialog-yes" icon="ui-icon-check"
+							update="commandGrowl" />
 						<p:commandButton value="Abbrechen"
 							oncomplete="PF('wConfirmAcademicYearDelete').hide();"
 							styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
