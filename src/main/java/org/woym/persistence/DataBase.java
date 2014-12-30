@@ -118,7 +118,9 @@ public class DataBase extends Observable implements Serializable {
 	/**
 	 * Erzeugt ein Backup der Datenbank. Im Verzeichnis
 	 * {@linkplain DataBase#DB_BACKUP_LOCATION}. Das Backup trägt den
-	 * übergebenen Namen. Tritt beim Backup ein Fehler auf, wird eine
+	 * übergebenen Namen. Wird {@code null} für den Namen übergeben, wird
+	 * {@linkplain DataBase#backup()} ausgeführt. Es wird der Pfad zum erzeugten
+	 * Backup zurückgegeben.Tritt beim Backup ein Fehler auf, wird eine
 	 * {@linkplain DatasetException} geworfen. Schlägt das Schließen des
 	 * {@linkplain Statement} oder der {@linkplain Connection} fehl, wird eine
 	 * {@linkplain SQLException} geworfen.
@@ -129,8 +131,13 @@ public class DataBase extends Observable implements Serializable {
 	 * @throws SQLException
 	 *             wenn das Schließen des {@linkplain Statement} oder der
 	 *             {@linkplain Connection} fehlschlägt
+	 * @return den Pfad zum erzeugten Backup
 	 */
-	public void backup(String backupName) throws DatasetException, SQLException {
+	public String backup(String backupName) throws DatasetException,
+			SQLException {
+		if (backupName == null) {
+			return backup();
+		}
 		Statement stm = null;
 		Connection conn = null;
 		try {
@@ -139,6 +146,7 @@ public class DataBase extends Observable implements Serializable {
 			stm.execute("SCRIPT TO '" + DB_BACKUP_LOCATION + backupName
 					+ ".zip' COMPRESSION ZIP");
 			LOGGER.info("Database backup created: " + backupName + ".zip");
+			return DB_BACKUP_LOCATION + backupName + ".zip";
 		} catch (Exception e) {
 			LOGGER.error("Exception while backing up database", e);
 			throw new DatasetException("Error while backing up database: "
@@ -151,20 +159,6 @@ public class DataBase extends Observable implements Serializable {
 				conn.close();
 			}
 		}
-	}
-
-	/**
-	 * Erzeugt ein Backup, das das aktuelle Datum plus Uhrzeit im Format
-	 * "yyyy-mm-dd_HH.mm.ss" als Namen trägt.
-	 * 
-	 * @throws DatasetException
-	 * @throws SQLException
-	 */
-	public void backup() throws DatasetException, SQLException {
-		DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd_HH.mm.ss");
-		Calendar cal = Calendar.getInstance();
-		String time = dateFormat.format(cal.getTime());
-		backup(time);
 	}
 
 	/**
@@ -263,6 +257,20 @@ public class DataBase extends Observable implements Serializable {
 								+ e.getMessage());
 			}
 		}
+	}
+
+	/**
+	 * Erzeugt ein Backup, das das aktuelle Datum plus Uhrzeit im Format
+	 * "yyyy-mm-dd_HH.mm.ss" als Namen trägt.
+	 * 
+	 * @throws DatasetException
+	 * @throws SQLException
+	 */
+	private String backup() throws DatasetException, SQLException {
+		DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd_HH.mm.ss");
+		Calendar cal = Calendar.getInstance();
+		String time = dateFormat.format(cal.getTime());
+		return backup(time);
 	}
 
 	/**

@@ -65,7 +65,27 @@ public enum GenericErrorMessage {
 	 * Diese Statusnachricht wird gewählt, wenn die Redo-Liste leer ist.
 	 */
 	REDO_EMPTY("Wiederholung nicht möglich.",
-			"Es ist keine zu wiederholende Aktion vorhanden.");
+			"Es ist keine zu wiederholende Aktion vorhanden."),
+
+	/**
+	 * Diese Statusnachricht wird gewählt, wenn beim Erzeugen eines
+	 * Datenbank-Backups ein Fehler aufgetreten ist.
+	 */
+	DATABASE_BACKUP_FAILURE("Backup fehlgeschlagen.",
+			"Das Datenbank-Backup ist fehlgeschlagen."),
+
+	/**
+	 * Diese Statusnachricht wird gewählt, wenn ein Datenbank-Backup
+	 * fehlgeschlagen ist.
+	 */
+	DATABASE_RESTORE_FAILURE("Backup-Wiederherstellung fehlgeschlagen.",
+			"Die Wiederherstellung des Backups ist fehlgeschlagen."),
+
+	/**
+	 * Diese Statusnachricht wird gewählt, wenn an einer Stelle eine ungültige
+	 * Datei gewählt wurde.
+	 */
+	INVALID_FILE("Ungültige Datei", "Die ausgewählte Datei ist ungültig.");
 
 	/**
 	 * Zusammenfassung der Nachricht.
