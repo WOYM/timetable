@@ -44,6 +44,7 @@ public class AcademicYearAndClassController implements Serializable {
 			.getLogger(AcademicYearAndClassController.class);
 
 	private static int INITIAL_GENERATOR_SIZE = 1;
+	private static int MAX_GENERATOR_SIZE = 20;
 
 	private DataAccess dataAccess = DataAccess.getInstance();
 
@@ -98,6 +99,10 @@ public class AcademicYearAndClassController implements Serializable {
 		// For safety, should never happen
 		if (generatorSize < 1) {
 			generatorSize = 1;
+		}
+		
+		if (generatorSize > MAX_GENERATOR_SIZE) {
+			generatorSize = MAX_GENERATOR_SIZE;
 		}
 
 		try {
@@ -188,6 +193,10 @@ public class AcademicYearAndClassController implements Serializable {
 		FacesMessage msg = status.report();
 
 		FacesContext.getCurrentInstance().addMessage(null, msg);
+	}
+	
+	public int getMaxGeneratorSize() {
+		return MAX_GENERATOR_SIZE;
 	}
 
 	public AcademicYear getAcademicYear() {
