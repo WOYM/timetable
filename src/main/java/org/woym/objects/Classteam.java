@@ -91,6 +91,14 @@ public class Classteam extends org.woym.objects.Entity implements Serializable,
 	public void setSchoolclasses(List<Schoolclass> schoolclasses) {
 		this.schoolclasses = schoolclasses;
 	}
+	
+	public boolean remove (Employee employee) {
+		return employees.remove(employee);
+	}
+	
+	public boolean remove (Schoolclass schoolclass) {
+		return schoolclasses.remove(schoolclass);
+	}
 
 	/**
 	 * {@inheritDoc}

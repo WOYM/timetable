@@ -4,6 +4,7 @@
 package org.woym.logic.command;
 
 import java.util.LinkedList;
+import java.util.List;
 
 import javax.faces.application.FacesMessage;
 
@@ -28,6 +29,10 @@ public class MacroCommand implements ICommand {
 	 */
 	public void add(ICommand command) {
 		commands.addLast(command);
+	}
+	
+	public List<ICommand> getCommands() {
+		return new LinkedList<ICommand>(commands);
 	}
 
 	@Override
