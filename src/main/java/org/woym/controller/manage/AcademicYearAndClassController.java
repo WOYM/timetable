@@ -16,6 +16,7 @@ import org.woym.exceptions.DatasetException;
 import org.woym.logic.CommandHandler;
 import org.woym.logic.command.AddCommand;
 import org.woym.logic.command.DeleteCommand;
+import org.woym.logic.command.MacroCommand;
 import org.woym.messages.GenericErrorMessage;
 import org.woym.messages.MessageHelper;
 import org.woym.objects.AcademicYear;
@@ -42,6 +43,8 @@ public class AcademicYearAndClassController implements Serializable {
 	private static Logger LOGGER = LogManager
 			.getLogger(AcademicYearAndClassController.class);
 
+	private static int INITIAL_GENERATOR_SIZE = 1;
+
 	private DataAccess dataAccess = DataAccess.getInstance();
 
 	private CommandHandler commandHandler = CommandHandler.getInstance();
@@ -50,11 +53,14 @@ public class AcademicYearAndClassController implements Serializable {
 	private Schoolclass schoolclass;
 	private Location location;
 
+	private int generatorSize;
+
 	@PostConstruct
 	public void init() {
 		schoolclass = new Schoolclass();
+		generatorSize = INITIAL_GENERATOR_SIZE;
 	}
-	
+
 	/**
 	 * Liefert eine Liste mit allen bekannten Jahrgängen zurück.
 	 * 
@@ -73,9 +79,55 @@ public class AcademicYearAndClassController implements Serializable {
 			return new ArrayList<AcademicYear>();
 		}
 	}
-	
+
 	public List<Schoolclass> getSchoolclasses(AcademicYear academicYear) {
 		return academicYear.getSchoolclasses();
+	}
+
+	/**
+	 * Diese Methode generiert automatisch Jahrgänge.
+	 * 
+	 * Es wird eine FacesMessage zurückgeliefert, die dem Nutzer Auskunft über
+	 * Erfolg und Misserfolg gibt.
+	 */
+	public void generateAcademicYears() {
+		FacesMessage msg;
+
+		MacroCommand macroCommand = new MacroCommand();
+
+		// For safety, should never happen
+		if (generatorSize < 1) {
+			generatorSize = 1;
+		}
+
+		try {
+			int maxYear = getMaxYear();
+
+			for (int i = 0; i < generatorSize; i++) {
+				AcademicYear academicYear = new AcademicYear();
+				academicYear.setAcademicYear(maxYear);
+
+				AddCommand<AcademicYear> addCommand = new AddCommand<>(
+						academicYear);
+				macroCommand.add(addCommand);
+
+				maxYear++;
+			}
+
+			IStatus status = commandHandler.execute(macroCommand);
+			msg = status.report();
+
+			generatorSize = INITIAL_GENERATOR_SIZE;
+
+		} catch (DatasetException e) {
+			LOGGER.error(e);
+			msg = MessageHelper.generateMessage(
+					GenericErrorMessage.DATABASE_COMMUNICATION_ERROR,
+					FacesMessage.SEVERITY_ERROR);
+		}
+
+		FacesContext.getCurrentInstance().addMessage(null, msg);
+
 	}
 
 	/**
@@ -87,15 +139,7 @@ public class AcademicYearAndClassController implements Serializable {
 		try {
 			// Produce new valid AcademicYear
 			academicYear = new AcademicYear();
-			int maxYear = 0;
-
-			for (AcademicYear academicYear : dataAccess.getAllAcademicYears()) {
-				if (maxYear < academicYear.getAcademicYear()) {
-					maxYear = academicYear.getAcademicYear();
-				}
-			}
-			maxYear += 1;
-			academicYear.setAcademicYear(maxYear);
+			academicYear.setAcademicYear(getMaxYear());
 
 			AddCommand<AcademicYear> command = new AddCommand<>(academicYear);
 			IStatus status = commandHandler.execute(command);
@@ -110,17 +154,31 @@ public class AcademicYearAndClassController implements Serializable {
 
 		FacesContext.getCurrentInstance().addMessage(null, msg);
 	}
-	
+
+	private int getMaxYear() throws DatasetException {
+		int maxYear = 0;
+
+		for (AcademicYear academicYear : dataAccess.getAllAcademicYears()) {
+			if (maxYear < academicYear.getAcademicYear()) {
+				maxYear = academicYear.getAcademicYear();
+			}
+		}
+		maxYear += 1;
+
+		return maxYear;
+	}
+
 	/**
 	 * Fügt eine neue Klasse dem Jahrgang hinzu.
 	 */
 	public void addSchoolclass() {
 		// Check for correct data
-		if(location != null && schoolclass.getRoom() != null && schoolclass.getTeacher() != null) {
-			
+		if (location != null && schoolclass.getRoom() != null
+				&& schoolclass.getTeacher() != null) {
+
 		}
 	}
-	
+
 	/**
 	 * Löscht einen Jahrgang aus der Datennbank.
 	 */
@@ -154,5 +212,13 @@ public class AcademicYearAndClassController implements Serializable {
 
 	public void setLocation(Location location) {
 		this.location = location;
+	}
+
+	public int getGeneratorSize() {
+		return generatorSize;
+	}
+
+	public void setGeneratorSize(int generatorSize) {
+		this.generatorSize = generatorSize;
 	}
 }
