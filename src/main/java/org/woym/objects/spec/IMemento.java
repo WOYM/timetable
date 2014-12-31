@@ -1,4 +1,4 @@
-package org.woym.spec.objects;
+package org.woym.objects.spec;
 
 /**
  * Dieses Interface dient der Vereinheitlichung aller Memento-Klassen. Es stellt

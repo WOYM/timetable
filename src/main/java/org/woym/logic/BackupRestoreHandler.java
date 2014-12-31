@@ -24,10 +24,10 @@ import org.apache.logging.log4j.Logger;
 import org.woym.config.Config;
 import org.woym.exceptions.DatasetException;
 import org.woym.exceptions.InvalidFileException;
+import org.woym.logic.spec.IStatus;
 import org.woym.messages.GenericErrorMessage;
 import org.woym.messages.GenericSuccessMessage;
 import org.woym.persistence.DataBase;
-import org.woym.spec.logic.IStatus;
 
 /**
  * Diese abstrakte Klasse stellt Methoden bereit, die ein Backup des Systems

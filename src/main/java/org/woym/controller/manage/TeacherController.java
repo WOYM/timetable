@@ -22,13 +22,13 @@ import org.woym.logic.SuccessStatus;
 import org.woym.logic.command.AddCommand;
 import org.woym.logic.command.DeleteCommand;
 import org.woym.logic.command.UpdateCommand;
+import org.woym.logic.spec.IStatus;
 import org.woym.messages.GenericErrorMessage;
 import org.woym.messages.MessageHelper;
 import org.woym.objects.ActivityType;
 import org.woym.objects.Teacher;
+import org.woym.objects.spec.IMemento;
 import org.woym.persistence.DataAccess;
-import org.woym.spec.logic.IStatus;
-import org.woym.spec.objects.IMemento;
 
 /**
  * <h1>TeacherController</h1>

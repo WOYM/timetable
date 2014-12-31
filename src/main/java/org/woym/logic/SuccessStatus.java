@@ -5,11 +5,11 @@ package org.woym.logic;
 
 import javax.faces.application.FacesMessage;
 
+import org.woym.logic.spec.IStatus;
 import org.woym.messages.GenericSuccessMessage;
 import org.woym.messages.MessageHelper;
 import org.woym.messages.SpecificSuccessMessage;
 import org.woym.objects.Entity;
-import org.woym.spec.logic.IStatus;
 
 /**
  * Representation eines erfolgreichen {@link IStatus}

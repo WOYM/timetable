@@ -3,7 +3,7 @@ package org.woym.objects;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 
-import org.woym.spec.objects.IMemento;
+import org.woym.objects.spec.IMemento;
 
 /**
  * Diese Klasse repräsentiert eine reguläre Unterrichtsstunde.

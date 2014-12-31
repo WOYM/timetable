@@ -7,10 +7,10 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
 import org.woym.exceptions.DatasetException;
+import org.woym.objects.spec.IActivityObject;
+import org.woym.objects.spec.IMemento;
+import org.woym.objects.spec.IMementoObject;
 import org.woym.persistence.DataAccess;
-import org.woym.spec.objects.IActivityObject;
-import org.woym.spec.objects.IMemento;
-import org.woym.spec.objects.IMementoObject;
 
 /**
  * Diese Klasse repräsentiert einen Raum.

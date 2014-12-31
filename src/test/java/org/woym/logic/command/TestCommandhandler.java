@@ -16,7 +16,7 @@ import org.powermock.modules.junit4.PowerMockRunner;
 import org.woym.logic.CommandHandler;
 import org.woym.logic.FailureStatus;
 import org.woym.logic.SuccessStatus;
-import org.woym.spec.logic.ICommand;
+import org.woym.logic.spec.ICommand;
 
 /**
  * @author JurSch

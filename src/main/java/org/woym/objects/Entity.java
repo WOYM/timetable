@@ -3,8 +3,8 @@ package org.woym.objects;
 import java.io.Serializable;
 
 import org.woym.exceptions.DatasetException;
+import org.woym.objects.spec.IMementoObject;
 import org.woym.persistence.DataAccess;
-import org.woym.spec.objects.IMementoObject;
 
 /**
  * Diese abstrakte Klasse implementiert Methoden, welche auf Objekten einer

@@ -23,12 +23,12 @@ import org.woym.objects.Activity;
 import org.woym.objects.Classteam;
 import org.woym.objects.Location;
 import org.woym.objects.Location.Memento;
+import org.woym.objects.spec.IActivityObject;
+import org.woym.objects.spec.IMemento;
 import org.woym.objects.Room;
 import org.woym.objects.Schoolclass;
 import org.woym.objects.TravelTimeList;
 import org.woym.persistence.DataAccess;
-import org.woym.spec.objects.IActivityObject;
-import org.woym.spec.objects.IMemento;
 
 /**
  * @author JurSch

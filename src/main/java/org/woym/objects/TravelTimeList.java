@@ -11,9 +11,9 @@ import javax.persistence.Id;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.woym.exceptions.DatasetException;
+import org.woym.objects.spec.IMemento;
+import org.woym.objects.spec.IMementoObject;
 import org.woym.persistence.DataAccess;
-import org.woym.spec.objects.IMemento;
-import org.woym.spec.objects.IMementoObject;
 
 /**
  * Diese Singleton-Klasse speichert eine Liste von Kanten, welche die Wegzeiten

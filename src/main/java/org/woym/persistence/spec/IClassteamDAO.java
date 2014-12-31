@@ -1,4 +1,4 @@
-package org.woym.spec.persistence;
+package org.woym.persistence.spec;
 
 import java.util.List;
 

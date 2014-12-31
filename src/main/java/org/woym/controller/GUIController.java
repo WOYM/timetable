@@ -10,9 +10,9 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.woym.exceptions.DatasetException;
 import org.woym.logic.CommandHandler;
+import org.woym.logic.spec.IStatus;
 import org.woym.objects.Location;
 import org.woym.persistence.DataAccess;
-import org.woym.spec.logic.IStatus;
 
 /**
  * <h1>GUIController</h1>
