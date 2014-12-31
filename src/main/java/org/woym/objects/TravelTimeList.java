@@ -48,8 +48,7 @@ public final class TravelTimeList extends org.woym.objects.Entity implements
 	private List<Edge> edges = new ArrayList<Edge>();
 
 	/**
-	 * Die Singleton-Instanz. Sie wird nicht direkt erzeugt, sondern muss über
-	 * einen Aufruf von {@linkplain TravelTimeList#load()} erzeugt werden.
+	 * Die Singleton-Instanz. Sie wird per LazyLoading erzeugt.
 	 */
 	private static TravelTimeList INSTANCE;
 

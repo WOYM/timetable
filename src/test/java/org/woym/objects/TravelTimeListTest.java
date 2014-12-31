@@ -2,6 +2,8 @@ package org.woym.objects;
 
 import static org.junit.Assert.assertNotNull;
 
+import java.lang.reflect.Field;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -34,6 +36,8 @@ public class TravelTimeListTest {
 	// keine TravelTimeList zurückgibt
 	@Test
 	public void getInstanceInstanceNullDataAccessReturnNull() throws Exception {
+		Field field = PowerMockito.field(TravelTimeList.class, "INSTANCE");
+		field.set(TravelTimeList.class, null);
 		PowerMockito.when(dataAccess.getTravelTimeList()).thenReturn(null);
 		assertNotNull(TravelTimeList.getInstance());
 	}
@@ -41,6 +45,8 @@ public class TravelTimeListTest {
 	@Test
 	public void getInstanceInstanceNullDataAccessReturnNotNull()
 			throws Exception {
+		Field field = PowerMockito.field(TravelTimeList.class, "INSTANCE");
+		field.set(TravelTimeList.class, null);
 		PowerMockito.when(dataAccess.getTravelTimeList()).thenReturn(list);
 		assertNotNull(TravelTimeList.getInstance());
 	}

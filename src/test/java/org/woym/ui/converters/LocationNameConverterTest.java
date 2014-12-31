@@ -47,11 +47,12 @@ public class LocationNameConverterTest {
 		Location l = PowerMockito.mock(Location.class);
 		PowerMockito.when(dataAccess.getOneLocation(Mockito.anyString()))
 				.thenReturn(l);
-		assertEquals(l, locationNameConverter.getAsObject(facesContext, uiComponent, "test"));
+		assertEquals(l, locationNameConverter.getAsObject(facesContext,
+				uiComponent, "test"));
 	}
-	
+
 	@Test(expected = ConverterException.class)
-	public void getAsObjectException() throws DatasetException{
+	public void getAsObjectException() throws DatasetException {
 		PowerMockito.mockStatic(MessageHelper.class);
 		Mockito.doThrow(DatasetException.class).when(dataAccess)
 				.getOneLocation(Mockito.anyString());
@@ -62,11 +63,18 @@ public class LocationNameConverterTest {
 				PowerMockito.mock(FacesMessage.class));
 		locationNameConverter.getAsObject(facesContext, uiComponent, "test");
 	}
-	
+
 	@Test
-	public void getAsString(){
+	public void getAsString() {
 		Location l = PowerMockito.mock(Location.class);
-		assertEquals(l.getName(), locationNameConverter.getAsString(facesContext, uiComponent, l));
+		assertEquals(l.getName(),
+				locationNameConverter.getAsString(facesContext, uiComponent, l));
+	}
+
+	@Test
+	public void getAsStringNullValue() {
+		assertNull(locationNameConverter.getAsString(facesContext, uiComponent,
+				null));
 	}
 
 }

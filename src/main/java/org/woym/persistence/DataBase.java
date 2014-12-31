@@ -218,6 +218,8 @@ public class DataBase extends Observable implements Serializable {
 		} catch (IOException e) {
 			LOGGER.error("Error while checking backup file: ", e);
 			throw new IOException();
+		} catch (InvalidFileException e) {
+			throw new InvalidFileException();
 		} catch (Exception e) {
 			LOGGER.error("Exception while restoring database from backup: ", e);
 			throw new DatasetException(
@@ -255,6 +257,24 @@ public class DataBase extends Observable implements Serializable {
 				throw new PersistenceException(
 						"Could not initialize persistence component: "
 								+ e.getMessage());
+			}
+		}
+	}
+
+	void shutDown() throws SQLException {
+		Connection conn = null;
+		Statement stm = null;
+		try {
+			entityManager.close();
+			conn = DriverManager.getConnection(DB_URL, USER, PASSWORD);
+			stm = conn.createStatement();
+			stm.execute("SHUTDOWN");
+		} finally {
+			if (stm != null) {
+				stm.close();
+			}
+			if (conn != null) {
+				conn.close();
 			}
 		}
 	}
