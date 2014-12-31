@@ -10,7 +10,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 
-import org.woym.spec.objects.IMemento;
+import org.woym.objects.spec.IMemento;
 
 /**
  * Eine Klasse die eine Liste die einen Mitarbeiter und eine Liste von

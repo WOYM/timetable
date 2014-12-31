@@ -8,11 +8,11 @@ import java.util.List;
 
 import javax.faces.application.FacesMessage;
 
+import org.woym.logic.spec.IStatus;
 import org.woym.messages.GenericErrorMessage;
 import org.woym.messages.MessageHelper;
 import org.woym.messages.SpecificErrorMessage;
 import org.woym.objects.Entity;
-import org.woym.spec.logic.IStatus;
 
 /**
  * @author JurSch, adrian

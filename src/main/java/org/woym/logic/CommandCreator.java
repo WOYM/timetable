@@ -10,6 +10,7 @@ import org.woym.exceptions.DatasetException;
 import org.woym.logic.command.DeleteCommand;
 import org.woym.logic.command.MacroCommand;
 import org.woym.logic.command.UpdateCommand;
+import org.woym.logic.spec.ICommand;
 import org.woym.objects.AcademicYear;
 import org.woym.objects.Activity;
 import org.woym.objects.Classteam;
@@ -18,10 +19,9 @@ import org.woym.objects.Entity;
 import org.woym.objects.Room;
 import org.woym.objects.Schoolclass;
 import org.woym.objects.Teacher;
+import org.woym.objects.spec.IActivityObject;
+import org.woym.objects.spec.IMemento;
 import org.woym.persistence.DataAccess;
-import org.woym.spec.logic.ICommand;
-import org.woym.spec.objects.IActivityObject;
-import org.woym.spec.objects.IMemento;
 
 /**
  * @author JurSch

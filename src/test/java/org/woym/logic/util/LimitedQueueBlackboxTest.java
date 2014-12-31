@@ -8,8 +8,8 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.powermock.modules.junit4.PowerMockRunner;
+import org.woym.logic.spec.ICommand;
 import org.woym.logic.util.LimitedQueue;
-import org.woym.spec.logic.ICommand;
 
 @RunWith(PowerMockRunner.class)
 public class LimitedQueueBlackboxTest {

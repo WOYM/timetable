@@ -14,8 +14,8 @@ import javax.persistence.Inheritance;
 import javax.persistence.ManyToMany;
 import javax.persistence.OrderBy;
 
-import org.woym.spec.objects.IMemento;
-import org.woym.spec.objects.IMementoObject;
+import org.woym.objects.spec.IMemento;
+import org.woym.objects.spec.IMementoObject;
 
 /**
  * Diese abstrakte Klasse dient als Superklasse für konkrete Aktivitätstypen.

@@ -18,8 +18,8 @@ import javax.persistence.MapKeyJoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
 
-import org.woym.spec.objects.IMemento;
-import org.woym.spec.objects.IMementoObject;
+import org.woym.objects.spec.IMemento;
+import org.woym.objects.spec.IMementoObject;
 
 /**
  * Diese Klasse repräsentiert einen Jahrgang.

@@ -9,9 +9,9 @@ import java.util.List;
 import javax.faces.application.FacesMessage;
 
 import org.woym.logic.FailureStatus;
+import org.woym.logic.spec.ICommand;
+import org.woym.logic.spec.IStatus;
 import org.woym.messages.GenericErrorMessage;
-import org.woym.spec.logic.ICommand;
-import org.woym.spec.logic.IStatus;
 
 /**
  * @author JurSch

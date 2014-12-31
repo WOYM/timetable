@@ -75,9 +75,8 @@ public abstract class MessageHelper {
 	}
 
 	/**
-	 * Generiert aus der übergebenen {@linkplain SuccessMessage}, dem
-	 * übergebenen Objekt einer {@linkplain Entity} erweiternden Klasse und der
-	 * übergebenen {@linkplain FacesMessage.Severity} eine
+	 * Generiert aus der übergebenen {@linkplain SpecificSuccessMessage} und dem
+	 * übergebenen Objekt einer {@linkplain Entity} erweiternden Klasse eine
 	 * {@linkplain FacesMessage} für einen Erfolgsfall. Wird für einen der
 	 * Parameter {@code null} übergeben, wird eine
 	 * {@linkplain IllegalArgumentException} geworfen.
@@ -87,21 +86,39 @@ public abstract class MessageHelper {
 	 * @param entity
 	 *            - das Objekt einer {@linkplain Entity} erweiternden Klasse,
 	 *            welches die Meldung betrifft
-	 * @param severity
-	 *            - die Art der Meldung (Info, Warnung, Fehler)
 	 * @return die generierte {@linkplain FacesMessage}
 	 */
-	public static FacesMessage generateMessage(SuccessMessage message,
-			Entity entity, FacesMessage.Severity severity) {
-		if (message == null || entity == null || severity == null) {
+	public static FacesMessage generateMessage(SpecificSuccessMessage message,
+			Entity entity) {
+		if (message == null || entity == null) {
 			throw new IllegalArgumentException();
 		}
 		String toInsert = getInsertString(entity.getClass(), true);
 		String summary = String.format(message.getSummary(), toInsert);
 		String msg = String.format(message.getMessage(), toInsert,
 				entity.toString());
-		FacesMessage facesMessage = new FacesMessage(severity, summary, msg);
+		FacesMessage facesMessage = new FacesMessage(
+				FacesMessage.SEVERITY_INFO, summary, msg);
 		return facesMessage;
+	}
+
+	/**
+	 * Erzeugt aus der übergebenen {@linkplain GenericSuccessMessage} und der
+	 * übergebenen {@linkplain FacesMessage.Severity} eine neue
+	 * {@linkplain FacesMessage} und gibt diese zurück.
+	 * 
+	 * @param message
+	 *            - die Erfolgsmeldung
+	 * @param severity
+	 *            - die Art der Meldung (Info, Warnung, Fehler)
+	 * @return
+	 */
+	public static FacesMessage generateMessage(GenericSuccessMessage message) {
+		if (message == null) {
+			throw new IllegalArgumentException();
+		}
+		return new FacesMessage(FacesMessage.SEVERITY_INFO,
+				message.getSummary(), message.getMessage());
 	}
 
 	/**
