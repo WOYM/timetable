@@ -19,12 +19,12 @@ public final class Config {
 	/**
 	 * Der Name der Konfigurations-Datei.
 	 */
-	private static final String PROPERTIES_FILE_NAME = "timetable.properties";
+	public static final String PROPERTIES_FILE_NAME = "timetable.properties";
 
 	/**
 	 * Der Pfad zur Konfigurationsdatei.
 	 */
-	private static final String PROPERTIES_FILE_PATH = System
+	public static final String PROPERTIES_FILE_PATH = System
 			.getProperty("user.dir")
 			+ System.getProperty("file.separator")
 			+ PROPERTIES_FILE_NAME;

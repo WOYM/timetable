@@ -118,7 +118,7 @@ public class Schoolclass extends org.woym.objects.Entity implements
 		try {
 			AcademicYear year = DataAccess.getInstance().getOneAcademicYear(
 					this);
-			return year.toString() + identifier;
+			return year == null? String.valueOf(identifier) : year.toString() + identifier;
 		} catch (DatasetException e) {
 			return String.valueOf(identifier);
 		}

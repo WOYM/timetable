@@ -1,4 +1,5 @@
 package org.woym.objects;
+
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 

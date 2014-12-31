@@ -19,7 +19,7 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.build.outputEncoding>UTF-8</project.build.outputEncoding>
 	</properties>
-	
+
 	<!-- JARs -->
 	<dependencies>
 		<!-- Log4J -->
@@ -96,7 +96,8 @@
 			<artifactId>powermock-module-junit4</artifactId>
 			<version>1.5.6</version>
 			<scope>test</scope>
-		</dependency>		<dependency>
+		</dependency>
+		<dependency>
 			<groupId>org.powermock</groupId>
 			<artifactId>powermock-api-mockito</artifactId>
 			<version>1.5.6</version>
@@ -119,37 +120,37 @@
 	<!-- Build-Process -->
 	<build>
 		<finalName>timetable-${project.version}</finalName>
-			<plugins>
-				<plugin>
-					<groupId>org.apache.maven.plugins</groupId>
-					<artifactId>maven-compiler-plugin</artifactId>
-					<version>3.1</version>
-					<configuration>
-						<source>1.7</source>
-						<target>1.7</target>
-					</configuration>
-				</plugin>
-				
-				<plugin>
-	            <groupId>org.apache.tomcat.maven</groupId>
-	            <artifactId>tomcat7-maven-plugin</artifactId>
-	            <version>2.0</version>
-		            <executions>
-		                <execution>
-		                    <id>tomcat-run</id>
-		                    <goals>
-		                        <goal>exec-war-only</goal>
-		                    </goals>
-		                    <phase>package</phase>
-		                    <configuration>
-		                        <path>/timetable</path>
-		                        <enableNaming>false</enableNaming>
-		                        <finalName>timetable.jar</finalName>
-		                        <charset>utf-8</charset>
-		                    </configuration>
-		                </execution>
-		            </executions>
-	        	</plugin>
-	        </plugins>			
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.1</version>
+				<configuration>
+					<source>1.7</source>
+					<target>1.7</target>
+				</configuration>
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.tomcat.maven</groupId>
+				<artifactId>tomcat7-maven-plugin</artifactId>
+				<version>2.0</version>
+				<executions>
+					<execution>
+						<id>tomcat-run</id>
+						<goals>
+							<goal>exec-war-only</goal>
+						</goals>
+						<phase>package</phase>
+						<configuration>
+							<path>/timetable</path>
+							<enableNaming>false</enableNaming>
+							<finalName>timetable.jar</finalName>
+							<charset>utf-8</charset>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
 	</build>
 </project>
