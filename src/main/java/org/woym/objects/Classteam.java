@@ -92,7 +92,7 @@ public class Classteam extends org.woym.objects.Entity implements Serializable,
 		this.schoolclasses = schoolclasses;
 	}
 	
-	public boolean remove (Employee employee) {
+	public boolean remove(Employee employee) {
 		return employees.remove(employee);
 	}
 	

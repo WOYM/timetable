@@ -151,7 +151,7 @@ public class PedagogicAssistantController implements Serializable {
 		IStatus status = commandHandler.execute(command);
 		FacesMessage msg = status.report();
 
-		if(status instanceof SuccessStatus) {			
+		if (status instanceof SuccessStatus) {
 			RequestContext context = RequestContext.getCurrentInstance();
 			context.execute("PF('wEditPedagogicAssistantDialog').hide();");
 		}

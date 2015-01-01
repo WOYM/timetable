@@ -106,7 +106,7 @@ public class TravelTimeListTest {
 	}
 	
 	@Test
-	public void removeValidParameters(){
+	public void removeValidParameters() {
 		Location l = PowerMockito.mock(Location.class);
 		Location l1 = PowerMockito.mock(Location.class);
 		TravelTimeList.getInstance().add(l, l1, 1);
@@ -114,12 +114,12 @@ public class TravelTimeListTest {
 	}
 	
 	@Test(expected = IllegalArgumentException.class)
-	public void getTravelTimesLocationNull(){
+	public void getTravelTimesLocationNull() {
 		TravelTimeList.getInstance().getTravelTimes(null);
 	}
 	
 	@Test
-	public void getTravelTimesSuccess(){
+	public void getTravelTimesSuccess() {
 		Location l = PowerMockito.mock(Location.class);
 		Location l1 = PowerMockito.mock(Location.class);
 		Location l2 = PowerMockito.mock(Location.class);

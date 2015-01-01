@@ -1,6 +1,3 @@
-/**
- * 
- */
 package org.woym.logic.command;
 
 import javax.faces.application.FacesMessage;
@@ -35,8 +32,8 @@ public class AddCommand<E extends Entity> implements ICommand {
 
 		try {
 			entity.persist();
-			status = new SuccessStatus(SpecificSuccessMessage.ADD_OBJECT_SUCCESS,
-					entity);
+			status = new SuccessStatus(
+					SpecificSuccessMessage.ADD_OBJECT_SUCCESS, entity);
 		} catch (DatasetException e) {
 			status = new FailureStatus(
 					SpecificErrorMessage.ADD_OBJECT_DATASET_EXCEPTION,
@@ -51,14 +48,14 @@ public class AddCommand<E extends Entity> implements ICommand {
 
 		try {
 			entity.delete();
-			status = new SuccessStatus(SpecificSuccessMessage.DELETE_OBJECT_SUCCESS,
-					entity);
+			status = new SuccessStatus(
+					SpecificSuccessMessage.DELETE_OBJECT_SUCCESS, entity);
 		} catch (DatasetException e) {
 			status = new FailureStatus(
 					SpecificErrorMessage.DELETE_OBJECT_DATASET_EXCEPTION,
 					entity.getClass(), FacesMessage.SEVERITY_ERROR);
 		}
-		
+
 		return status;
 	}
 

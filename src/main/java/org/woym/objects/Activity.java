@@ -208,7 +208,7 @@ public abstract class Activity extends org.woym.objects.Entity implements
 	 * Entfernt das das zum übergebenen {@linkplain Employee}-Objekt gehörende
 	 * {@linkplain EmployeeTimePeriods}-Objekt aus der entsprechenden Liste.
 	 * 
-	 * @param employeeTimePeriods
+	 * @param employee
 	 *            - der Mitarbeiter, für welchen das Mapping entfernt werden
 	 *            soll
 	 * @return die Größe der Liste nach dem Entfernen

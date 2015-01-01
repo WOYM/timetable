@@ -1,6 +1,3 @@
-/**
- * 
- */
 package org.woym.logic;
 
 import javax.faces.application.FacesMessage;

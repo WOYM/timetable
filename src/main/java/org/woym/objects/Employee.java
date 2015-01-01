@@ -189,18 +189,23 @@ public abstract class Employee extends org.woym.objects.Entity implements
 	 */
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj)
+		if (this == obj) {
 			return true;
-		if (obj == null)
+		}
+		if (obj == null) {
 			return false;
-		if (getClass() != obj.getClass())
+		}
+		if (getClass() != obj.getClass()) {
 			return false;
+		}
 		Employee other = (Employee) obj;
 		if (symbol == null) {
-			if (other.symbol != null)
+			if (other.symbol != null) {
 				return false;
-		} else if (!symbol.toUpperCase().equals(other.symbol.toUpperCase()))
+			}
+		} else if (!symbol.toUpperCase().equals(other.symbol.toUpperCase())) {
 			return false;
+		}
 		return true;
 	}
 
