@@ -9,6 +9,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
 
 import org.woym.objects.spec.IMemento;
 
@@ -44,6 +45,7 @@ public class EmployeeTimePeriods extends org.woym.objects.Entity {
 	 */
 	@ElementCollection
 	@OneToMany
+	@OrderBy("day, startTime")
 	private List<TimePeriod> timePeriods = new ArrayList<>();
 
 	public EmployeeTimePeriods() {

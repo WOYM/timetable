@@ -326,7 +326,7 @@ public class DataAccess implements IDataAccess, Observer {
 	@SuppressWarnings("unchecked")
 	public List<PedagogicAssistant> getAllPAs() throws DatasetException {
 		return (List<PedagogicAssistant>) getAll(PedagogicAssistant.class,
-				"name");
+				"symbol");
 	}
 
 	/**
@@ -335,7 +335,7 @@ public class DataAccess implements IDataAccess, Observer {
 	@Override
 	@SuppressWarnings("unchecked")
 	public List<Teacher> getAllTeachers() throws DatasetException {
-		return (List<Teacher>) getAll(Teacher.class, "name");
+		return (List<Teacher>) getAll(Teacher.class, "symbol");
 	}
 
 	/**
@@ -629,7 +629,8 @@ public class DataAccess implements IDataAccess, Observer {
 		}
 		try {
 			final Query query = em
-					.createQuery("SELECT DISTINCT a from Activity a INNER JOIN a.employeeTimePeriods e WHERE e.employee.id = ?1");
+					.createQuery("SELECT DISTINCT a from Activity a INNER JOIN a.employeeTimePeriods e "
+							+ "WHERE e.employee.id = ?1 ORDER BY a.time.day, a.time.startTime");
 			query.setParameter(1, employee.getId());
 			return (List<Activity>) query.getResultList();
 		} catch (Exception e) {
@@ -666,7 +667,8 @@ public class DataAccess implements IDataAccess, Observer {
 		}
 		try {
 			final Query query = em
-					.createQuery("SELECT a FROM Activity a WHERE ?1 MEMBER OF a.schoolclasses");
+					.createQuery("SELECT a FROM Activity a "
+							+ "WHERE ?1 MEMBER OF a.schoolclasses ORDER BY a.time.day, a.time.startTime");
 			query.setParameter(1, schoolclass);
 			return (List<Activity>) query.getResultList();
 		} catch (Exception e) {
@@ -691,7 +693,8 @@ public class DataAccess implements IDataAccess, Observer {
 		}
 		try {
 			final Query query = em
-					.createQuery("SELECT a FROM Activity a WHERE ?1 MEMBER OF a.rooms");
+					.createQuery("SELECT a FROM Activity a "
+							+ "WHERE ?1 MEMBER OF a.rooms ORDER BY a.time.day, a.time.startTime");
 			query.setParameter(1, room);
 			return (List<Activity>) query.getResultList();
 		} catch (Exception e) {
@@ -716,7 +719,7 @@ public class DataAccess implements IDataAccess, Observer {
 		try {
 			final Query query = em
 					.createQuery("SELECT DISTINCT a from Activity a INNER JOIN a.employeeTimePeriods e "
-							+ "WHERE e.employee.id = ?1 AND a.time.day = ?2");
+							+ "WHERE e.employee.id = ?1 AND a.time.day = ?2 ORDER BY a.time.startTime");
 			query.setParameter(1, employee.getId());
 			query.setParameter(2, weekday);
 			return (List<Activity>) query.getResultList();
@@ -746,7 +749,7 @@ public class DataAccess implements IDataAccess, Observer {
 							+ "OR (a.time.endTime BETWEEN ?1 AND ?2 AND a.time.endTime <> ?1) "
 							+ "OR (?1 BETWEEN a.time.startTime AND a.time.endTime AND ?1 <> a.time.endTime)"
 							+ "OR (?2 BETWEEN a.time.startTime AND a.time.endTime AND ?2 <> a.time.startTime)"
-							+ ") AND e.employee.id = ?3");
+							+ ") AND e.employee.id = ?3 ORDER BY a.time.startTime");
 			query.setParameter(1, timePeriod.getStartTime());
 			query.setParameter(2, timePeriod.getEndTime());
 			query.setParameter(3, employee.getId());
@@ -780,7 +783,7 @@ public class DataAccess implements IDataAccess, Observer {
 							+ "OR (a.time.endTime BETWEEN ?1 AND ?2 AND a.time.endTime <> ?1) "
 							+ "OR (?1 BETWEEN a.time.startTime AND a.time.endTime AND ?1 <> a.time.endTime)"
 							+ "OR (?2 BETWEEN a.time.startTime AND a.time.endTime AND ?2 <> a.time.startTime)"
-							+ ") AND ?3 MEMBER OF a.schoolclasses");
+							+ ") AND ?3 MEMBER OF a.schoolclasses ORDER BY a.time.startTime");
 			query.setParameter(1, timePeriod.getStartTime());
 			query.setParameter(2, timePeriod.getEndTime());
 			query.setParameter(3, schoolclass);
@@ -814,7 +817,7 @@ public class DataAccess implements IDataAccess, Observer {
 							+ "OR (a.time.endTime BETWEEN ?1 AND ?2 AND a.time.endTime <> ?1) "
 							+ "OR (?1 BETWEEN a.time.startTime AND a.time.endTime AND ?1 <> a.time.endTime)"
 							+ "OR (?2 BETWEEN a.time.startTime AND a.time.endTime AND ?2 <> a.time.startTime)"
-							+ ") AND ?3 MEMBER OF a.rooms");
+							+ ") AND ?3 MEMBER OF a.rooms ORDER BY a.time.startTime");
 			query.setParameter(1, timePeriod.getStartTime());
 			query.setParameter(2, timePeriod.getEndTime());
 			query.setParameter(3, room);

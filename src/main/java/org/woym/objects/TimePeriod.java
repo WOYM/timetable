@@ -48,12 +48,6 @@ public class TimePeriod implements Serializable {
 	@Column(nullable = false)
 	private Weekday day;
 
-	/**
-	 * Die Woche (s. {@linkplain Week}.
-	 */
-	@Column(nullable = false)
-	private Week week;
-
 	public TimePeriod() {
 	}
 
@@ -89,16 +83,8 @@ public class TimePeriod implements Serializable {
 		this.day = day;
 	}
 
-	public Week getWeek() {
-		return week;
-	}
-
-	public void setWeek(Week week) {
-		this.week = week;
-	}
-
 	@Override
 	public String toString() {
-		return startTime + "-" + endTime + ", " + day + ", " + week;
+		return day + ", " + startTime + "-" + endTime;
 	}
 }

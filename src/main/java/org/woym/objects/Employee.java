@@ -75,6 +75,7 @@ public abstract class Employee extends org.woym.objects.Entity implements
 	 */
 	@ElementCollection
 	@OneToMany
+	@OrderBy("value")
 	private List<ChargeableCompensation> compensations = new ArrayList<ChargeableCompensation>();
 
 	/**
@@ -90,6 +91,7 @@ public abstract class Employee extends org.woym.objects.Entity implements
 	 */
 	@ElementCollection
 	@OneToMany
+	@OrderBy("day, startTime")
 	private List<TimePeriod> timeWishes = new ArrayList<>();
 
 	public Employee() {
