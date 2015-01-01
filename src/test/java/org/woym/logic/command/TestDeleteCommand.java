@@ -1,6 +1,3 @@
-/**
- * 
- */
 package org.woym.logic.command;
 
 import static org.junit.Assert.*;
@@ -22,7 +19,7 @@ import org.woym.objects.Activity;
  */
 @RunWith(PowerMockRunner.class)
 public class TestDeleteCommand {
-	
+
 	@Mock
 	Activity entity;
 
@@ -41,10 +38,10 @@ public class TestDeleteCommand {
 	@Test
 	public void testValidExecute() throws Exception {
 		assertTrue(deleteCommand.execute() instanceof SuccessStatus);
-		
+
 		Mockito.verify(entity).delete();
 	}
-	
+
 	@Test
 	public void testNonValidExecute() throws Exception {
 		Mockito.doThrow(DatasetException.class).when(entity).delete();
@@ -52,14 +49,14 @@ public class TestDeleteCommand {
 		assertTrue(deleteCommand.execute() instanceof FailureStatus);
 		Mockito.verify(entity).delete();
 	}
-	
+
 	@Test
 	public void testValidUndo() throws Exception {
 		assertTrue(deleteCommand.undo() instanceof SuccessStatus);
-		
+
 		Mockito.verify(entity).persist();
 	}
-	
+
 	@Test
 	public void testNonValidUndo() throws Exception {
 		Mockito.doThrow(DatasetException.class).when(entity).persist();
@@ -67,14 +64,14 @@ public class TestDeleteCommand {
 		assertTrue(deleteCommand.undo() instanceof FailureStatus);
 		Mockito.verify(entity).persist();
 	}
-	
+
 	@Test
 	public void testValidRedo() throws Exception {
 		assertTrue(deleteCommand.redo() instanceof SuccessStatus);
-		
+
 		Mockito.verify(entity).delete();
 	}
-	
+
 	@Test
 	public void testNonValidRedo() throws Exception {
 		Mockito.doThrow(DatasetException.class).when(entity).delete();

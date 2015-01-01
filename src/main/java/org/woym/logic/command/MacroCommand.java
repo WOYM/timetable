@@ -1,6 +1,3 @@
-/**
- * 
- */
 package org.woym.logic.command;
 
 import java.util.LinkedList;
@@ -30,7 +27,7 @@ public class MacroCommand implements ICommand {
 	public void add(ICommand command) {
 		commands.addLast(command);
 	}
-	
+
 	public List<ICommand> getCommands() {
 		return new LinkedList<ICommand>(commands);
 	}

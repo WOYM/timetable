@@ -11,6 +11,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
 
 import org.woym.objects.spec.IMemento;
 import org.woym.objects.spec.IMementoObject;
@@ -49,6 +50,7 @@ public class Classteam extends org.woym.objects.Entity implements Serializable,
 	 * Die zusätzlichen zugeordneten Mitarbeiter.
 	 */
 	@ManyToMany
+	@OrderBy("symbol")
 	private List<Employee> employees = new ArrayList<Employee>();
 
 	/**
@@ -92,7 +94,7 @@ public class Classteam extends org.woym.objects.Entity implements Serializable,
 		this.schoolclasses = schoolclasses;
 	}
 	
-	public boolean remove (Employee employee) {
+	public boolean remove(Employee employee) {
 		return employees.remove(employee);
 	}
 	

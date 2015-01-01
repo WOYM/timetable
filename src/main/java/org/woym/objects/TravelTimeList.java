@@ -374,12 +374,15 @@ public final class TravelTimeList extends org.woym.objects.Entity implements
 		 */
 		@Override
 		public boolean equals(Object obj) {
-			if (this == obj)
+			if (this == obj) {
 				return true;
-			if (obj == null)
+			}
+			if (obj == null) {
 				return false;
-			if (getClass() != obj.getClass())
+			}
+			if (getClass() != obj.getClass()) {
 				return false;
+			}
 			Edge other = (Edge) obj;
 			return (location1.equals(other.location1) && location2
 					.equals(other.location2))

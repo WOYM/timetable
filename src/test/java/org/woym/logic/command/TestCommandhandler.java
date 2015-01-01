@@ -1,6 +1,3 @@
-/**
- * 
- */
 package org.woym.logic.command;
 
 import static org.junit.Assert.assertEquals;
@@ -50,7 +47,7 @@ public class TestCommandhandler {
 	}
 
 	@Test
-	public void testAll(){
+	public void testAll() {
 		testEmptyUndoRedo();
 		testExecuteNull();
 		testExecuteValidCommand();
@@ -58,7 +55,7 @@ public class TestCommandhandler {
 		testValidUndoRedo();
 		testNonValidUndoRedo();
 	}
-	
+
 	public void testEmptyUndoRedo() {
 		assertTrue(handler.undo() instanceof FailureStatus);
 		assertTrue(handler.redo() instanceof FailureStatus);
@@ -74,56 +71,56 @@ public class TestCommandhandler {
 
 	public void testExecuteValidCommand() {
 		assertTrue(handler.execute(command1) instanceof SuccessStatus);
-		assertEquals((Integer)1, handler.getUndoSize());
-		assertEquals((Integer)0, handler.getRedoSize());
-		
+		assertEquals((Integer) 1, handler.getUndoSize());
+		assertEquals((Integer) 0, handler.getRedoSize());
+
 		Mockito.verify(command1).execute();
 	}
-	
+
 	public void testExecuteNonValidCommand() {
 		assertTrue(handler.execute(command2) instanceof FailureStatus);
-		//Vom vorhergehenden Test enthalten wegen Singleton 
-		assertEquals((Integer)1, handler.getUndoSize());
-		assertEquals((Integer)0, handler.getRedoSize());
-		
+		// Vom vorhergehenden Test enthalten wegen Singleton
+		assertEquals((Integer) 1, handler.getUndoSize());
+		assertEquals((Integer) 0, handler.getRedoSize());
+
 		Mockito.verify(command2).execute();
 	}
-	
+
 	public void testValidUndoRedo() {
 		Mockito.when(command1.undo()).thenReturn(successStatus);
 		Mockito.when(command1.redo()).thenReturn(successStatus);
-		
-		assertEquals((Integer)1, handler.getUndoSize());
-		assertEquals((Integer)0, handler.getRedoSize());
-		
+
+		assertEquals((Integer) 1, handler.getUndoSize());
+		assertEquals((Integer) 0, handler.getRedoSize());
+
 		assertTrue(handler.undo() instanceof SuccessStatus);
-		assertEquals((Integer)0, handler.getUndoSize());
-		assertEquals((Integer)1, handler.getRedoSize());
-		
+		assertEquals((Integer) 0, handler.getUndoSize());
+		assertEquals((Integer) 1, handler.getRedoSize());
+
 		assertTrue(handler.redo() instanceof SuccessStatus);
-		assertEquals((Integer)1, handler.getUndoSize());
-		assertEquals((Integer)0, handler.getRedoSize());
+		assertEquals((Integer) 1, handler.getUndoSize());
+		assertEquals((Integer) 0, handler.getRedoSize());
 	}
-	
+
 	public void testNonValidUndoRedo() {
 		Mockito.when(command2.execute()).thenReturn(successStatus);
 		Mockito.when(command2.undo()).thenReturn(failureStatus);
 		Mockito.when(command2.redo()).thenReturn(failureStatus);
-		
+
 		handler.execute(command2);
-		
+
 		assertTrue(handler.undo() instanceof FailureStatus);
-		assertEquals((Integer)0, handler.getUndoSize());
-		assertEquals((Integer)0, handler.getRedoSize());
-		
+		assertEquals((Integer) 0, handler.getUndoSize());
+		assertEquals((Integer) 0, handler.getRedoSize());
+
 		Mockito.when(command2.undo()).thenReturn(successStatus);
-		
+
 		handler.execute(command2);
 		handler.undo();
-		
+
 		assertTrue(handler.redo() instanceof FailureStatus);
-		assertEquals((Integer)0, handler.getUndoSize());
-		assertEquals((Integer)0, handler.getRedoSize());
+		assertEquals((Integer) 0, handler.getUndoSize());
+		assertEquals((Integer) 0, handler.getRedoSize());
 	}
 
 }

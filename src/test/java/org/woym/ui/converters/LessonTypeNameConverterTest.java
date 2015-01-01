@@ -66,7 +66,7 @@ public class LessonTypeNameConverterTest {
 	}
 	
 	@Test
-	public void getAsString(){
+	public void getAsString() {
 		ActivityType a = PowerMockito.mock(LessonType.class);
 		assertEquals(a.getName(), lessonTypeNameConverter.getAsString(facesContext, uiComponent, a));
 	}

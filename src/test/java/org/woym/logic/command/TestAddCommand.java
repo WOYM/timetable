@@ -1,6 +1,3 @@
-/**
- * 
- */
 package org.woym.logic.command;
 
 import static org.junit.Assert.*;
@@ -41,10 +38,10 @@ public class TestAddCommand {
 	@Test
 	public void testValidExecute() throws Exception {
 		assertTrue(addCommand.execute() instanceof SuccessStatus);
-		
+
 		Mockito.verify(entity).persist();
 	}
-	
+
 	@Test
 	public void testNonValidExecute() throws Exception {
 		Mockito.doThrow(DatasetException.class).when(entity).persist();
@@ -52,14 +49,14 @@ public class TestAddCommand {
 		assertTrue(addCommand.execute() instanceof FailureStatus);
 		Mockito.verify(entity).persist();
 	}
-	
+
 	@Test
 	public void testValidUndo() throws Exception {
 		assertTrue(addCommand.undo() instanceof SuccessStatus);
-		
+
 		Mockito.verify(entity).delete();
 	}
-	
+
 	@Test
 	public void testNonValidUndo() throws Exception {
 		Mockito.doThrow(DatasetException.class).when(entity).delete();
@@ -67,14 +64,14 @@ public class TestAddCommand {
 		assertTrue(addCommand.undo() instanceof FailureStatus);
 		Mockito.verify(entity).delete();
 	}
-	
+
 	@Test
 	public void testValidRedo() throws Exception {
 		assertTrue(addCommand.redo() instanceof SuccessStatus);
-		
+
 		Mockito.verify(entity).persist();
 	}
-	
+
 	@Test
 	public void testNonValidRedo() throws Exception {
 		Mockito.doThrow(DatasetException.class).when(entity).persist();

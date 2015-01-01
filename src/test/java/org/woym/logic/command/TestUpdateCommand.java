@@ -1,6 +1,3 @@
-/**
- * 
- */
 package org.woym.logic.command;
 
 import static org.junit.Assert.*;
@@ -29,7 +26,7 @@ public class TestUpdateCommand {
 
 	@Mock
 	Memento memento;
-	
+
 	@Mock
 	Memento oldMemento;
 
@@ -50,11 +47,10 @@ public class TestUpdateCommand {
 		}
 	}
 
-
 	@Test
 	public void testValidExecute() throws Exception {
 		assertTrue(update.execute() instanceof SuccessStatus);
-		
+
 		Mockito.verify(entity).update();
 
 	}
@@ -64,19 +60,19 @@ public class TestUpdateCommand {
 		Mockito.doThrow(DatasetException.class).when(entity).update();
 
 		assertTrue(update.execute() instanceof FailureStatus);
-		
+
 		Mockito.verify(entity).update();
 
 	}
-	
+
 	@Test
 	public void testValidUndo() throws Exception {
 		update = new UpdateCommand<Activity>(entity, memento);
-		
+
 		Mockito.when(entity.createMemento()).thenReturn(oldMemento);
-		
+
 		assertTrue(update.undo() instanceof SuccessStatus);
-		
+
 		Mockito.verify(entity).createMemento();
 		Mockito.verify(entity).setMemento(memento);
 		Mockito.verify(entity).update();
@@ -86,27 +82,27 @@ public class TestUpdateCommand {
 	@Test
 	public void testNonValidUndo() throws Exception {
 		update = new UpdateCommand<Activity>(entity, memento);
-		
+
 		Mockito.when(entity.createMemento()).thenReturn(oldMemento);
 		Mockito.doThrow(DatasetException.class).when(entity).update();
-		
+
 		assertTrue(update.undo() instanceof FailureStatus);
-		
+
 		Mockito.verify(entity).createMemento();
 		Mockito.verify(entity).setMemento(memento);
 		Mockito.verify(entity).update();
 		Mockito.verify(entity).setMemento(oldMemento);
 
 	}
-	
+
 	@Test
 	public void testValidRedo() throws Exception {
 		update = new UpdateCommand<Activity>(entity, memento);
-		
+
 		Mockito.when(entity.createMemento()).thenReturn(oldMemento);
-		
+
 		assertTrue(update.redo() instanceof SuccessStatus);
-		
+
 		Mockito.verify(entity).createMemento();
 		Mockito.verify(entity).setMemento(memento);
 		Mockito.verify(entity).update();
@@ -116,12 +112,12 @@ public class TestUpdateCommand {
 	@Test
 	public void testNonValidRedo() throws Exception {
 		update = new UpdateCommand<Activity>(entity, memento);
-		
+
 		Mockito.when(entity.createMemento()).thenReturn(oldMemento);
 		Mockito.doThrow(DatasetException.class).when(entity).update();
-		
+
 		assertTrue(update.redo() instanceof FailureStatus);
-		
+
 		Mockito.verify(entity).createMemento();
 		Mockito.verify(entity).setMemento(memento);
 		Mockito.verify(entity).update();

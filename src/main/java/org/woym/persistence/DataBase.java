@@ -127,11 +127,11 @@ public class DataBase extends Observable implements Serializable {
 	 * 
 	 * @param backupName
 	 *            - Name des Backups
+	 * @return den Pfad zum erzeugten Backup
 	 * @throws DatasetException
 	 * @throws SQLException
 	 *             wenn das Schließen des {@linkplain Statement} oder der
 	 *             {@linkplain Connection} fehlschlägt
-	 * @return den Pfad zum erzeugten Backup
 	 */
 	public String backup(String backupName) throws DatasetException,
 			SQLException {

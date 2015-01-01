@@ -18,6 +18,7 @@ import org.woym.objects.ActivityType;
 import org.woym.objects.Classteam;
 import org.woym.objects.CompoundLesson;
 import org.woym.objects.Employee;
+import org.woym.objects.Entity;
 import org.woym.objects.Lesson;
 import org.woym.objects.LessonType;
 import org.woym.objects.Location;
@@ -28,6 +29,7 @@ import org.woym.objects.ProjectType;
 import org.woym.objects.Room;
 import org.woym.objects.Schoolclass;
 import org.woym.objects.Teacher;
+import org.woym.objects.TimePeriod;
 import org.woym.objects.TravelTimeList;
 import org.woym.objects.Weekday;
 import org.woym.objects.spec.IActivityObject;
@@ -82,7 +84,8 @@ public class DataAccess implements IDataAccess, Observer {
 	/**
 	 * {@inheritDoc}
 	 */
-	public void persist(Serializable object) throws DatasetException {
+	@Override
+	public void persist(Entity object) throws DatasetException {
 		if (object == null) {
 			throw new IllegalArgumentException("Parameter is null.");
 		}
@@ -105,7 +108,7 @@ public class DataAccess implements IDataAccess, Observer {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void update(Serializable object) throws DatasetException {
+	public void update(Entity object) throws DatasetException {
 		if (object == null) {
 			throw new IllegalArgumentException("Parameter is null.");
 		}
@@ -127,7 +130,7 @@ public class DataAccess implements IDataAccess, Observer {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void delete(Serializable object) throws DatasetException {
+	public void delete(Entity object) throws DatasetException {
 		if (object == null) {
 			throw new IllegalArgumentException("Parameter is null.");
 		}
@@ -323,7 +326,7 @@ public class DataAccess implements IDataAccess, Observer {
 	@SuppressWarnings("unchecked")
 	public List<PedagogicAssistant> getAllPAs() throws DatasetException {
 		return (List<PedagogicAssistant>) getAll(PedagogicAssistant.class,
-				"name");
+				"symbol");
 	}
 
 	/**
@@ -332,7 +335,7 @@ public class DataAccess implements IDataAccess, Observer {
 	@Override
 	@SuppressWarnings("unchecked")
 	public List<Teacher> getAllTeachers() throws DatasetException {
-		return (List<Teacher>) getAll(Teacher.class, "name");
+		return (List<Teacher>) getAll(Teacher.class, "symbol");
 	}
 
 	/**
@@ -626,7 +629,8 @@ public class DataAccess implements IDataAccess, Observer {
 		}
 		try {
 			final Query query = em
-					.createQuery("SELECT DISTINCT a from Activity a INNER JOIN a.employeeTimePeriods e WHERE e.employee.id = ?1");
+					.createQuery("SELECT DISTINCT a from Activity a INNER JOIN a.employeeTimePeriods e "
+							+ "WHERE e.employee.id = ?1 ORDER BY a.time.day, a.time.startTime");
 			query.setParameter(1, employee.getId());
 			return (List<Activity>) query.getResultList();
 		} catch (Exception e) {
@@ -663,7 +667,8 @@ public class DataAccess implements IDataAccess, Observer {
 		}
 		try {
 			final Query query = em
-					.createQuery("SELECT a FROM Activity a WHERE ?1 MEMBER OF a.schoolclasses");
+					.createQuery("SELECT a FROM Activity a "
+							+ "WHERE ?1 MEMBER OF a.schoolclasses ORDER BY a.time.day, a.time.startTime");
 			query.setParameter(1, schoolclass);
 			return (List<Activity>) query.getResultList();
 		} catch (Exception e) {
@@ -688,7 +693,8 @@ public class DataAccess implements IDataAccess, Observer {
 		}
 		try {
 			final Query query = em
-					.createQuery("SELECT a FROM Activity a WHERE ?1 MEMBER OF a.rooms");
+					.createQuery("SELECT a FROM Activity a "
+							+ "WHERE ?1 MEMBER OF a.rooms ORDER BY a.time.day, a.time.startTime");
 			query.setParameter(1, room);
 			return (List<Activity>) query.getResultList();
 		} catch (Exception e) {
@@ -713,7 +719,7 @@ public class DataAccess implements IDataAccess, Observer {
 		try {
 			final Query query = em
 					.createQuery("SELECT DISTINCT a from Activity a INNER JOIN a.employeeTimePeriods e "
-							+ "WHERE e.employee.id = ?1 AND a.time.day = ?2");
+							+ "WHERE e.employee.id = ?1 AND a.time.day = ?2 ORDER BY a.time.startTime");
 			query.setParameter(1, employee.getId());
 			query.setParameter(2, weekday);
 			return (List<Activity>) query.getResultList();
@@ -723,6 +729,108 @@ public class DataAccess implements IDataAccess, Observer {
 			throw new DatasetException(
 					"Error while getting all activities for " + employee + ": "
 							+ e.getMessage());
+		}
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Activity> getAllActivities(Employee employee,
+			TimePeriod timePeriod) throws DatasetException {
+		if (employee == null || timePeriod == null) {
+			throw new IllegalArgumentException();
+		}
+		try {
+			final Query query = em
+					.createQuery("SELECT DISTINCT a from Activity a INNER JOIN a.employeeTimePeriods e WHERE ("
+							+ "(a.time.startTime BETWEEN ?1 AND ?2 AND a.time.startTime <> ?2)"
+							+ "OR (a.time.endTime BETWEEN ?1 AND ?2 AND a.time.endTime <> ?1) "
+							+ "OR (?1 BETWEEN a.time.startTime AND a.time.endTime AND ?1 <> a.time.endTime)"
+							+ "OR (?2 BETWEEN a.time.startTime AND a.time.endTime AND ?2 <> a.time.startTime)"
+							+ ") AND e.employee.id = ?3 ORDER BY a.time.startTime");
+			query.setParameter(1, timePeriod.getStartTime());
+			query.setParameter(2, timePeriod.getEndTime());
+			query.setParameter(3, employee.getId());
+			return query.getResultList();
+		} catch (Exception e) {
+			LOGGER.error(String.format(
+					"Exception while getting all activities of employee %s, "
+							+ "which are colliding with time period %s.",
+					employee, timePeriod), e);
+			throw new DatasetException(String.format(
+					"Error while getting all activities of employee %s, "
+							+ "which are colliding with time period %s: "
+							+ e.getMessage(), employee, timePeriod));
+		}
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Activity> getAllActivities(Schoolclass schoolclass,
+			TimePeriod timePeriod) throws DatasetException {
+		if (schoolclass == null || timePeriod == null) {
+			throw new IllegalArgumentException();
+		}
+		try {
+			final Query query = em
+					.createQuery("SELECT a FROM Activity a WHERE ("
+							+ "(a.time.startTime BETWEEN ?1 AND ?2 AND a.time.startTime <> ?2)"
+							+ "OR (a.time.endTime BETWEEN ?1 AND ?2 AND a.time.endTime <> ?1) "
+							+ "OR (?1 BETWEEN a.time.startTime AND a.time.endTime AND ?1 <> a.time.endTime)"
+							+ "OR (?2 BETWEEN a.time.startTime AND a.time.endTime AND ?2 <> a.time.startTime)"
+							+ ") AND ?3 MEMBER OF a.schoolclasses ORDER BY a.time.startTime");
+			query.setParameter(1, timePeriod.getStartTime());
+			query.setParameter(2, timePeriod.getEndTime());
+			query.setParameter(3, schoolclass);
+			return query.getResultList();
+		} catch (Exception e) {
+			LOGGER.error(String.format(
+					"Exception while getting all activities of schoolclass %s, "
+							+ "which are colliding with time period %s.",
+					schoolclass, timePeriod), e);
+			throw new DatasetException(String.format(
+					"Error while getting all activities of schoolclass %s, "
+							+ "which are colliding with time period %s: "
+							+ e.getMessage(), schoolclass, timePeriod));
+		}
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Activity> getAllActivities(Room room, TimePeriod timePeriod)
+			throws DatasetException {
+		if (room == null || timePeriod == null) {
+			throw new IllegalArgumentException();
+		}
+		try {
+			final Query query = em
+					.createQuery("SELECT a FROM Activity a WHERE ("
+							+ "(a.time.startTime BETWEEN ?1 AND ?2 AND a.time.startTime <> ?2)"
+							+ "OR (a.time.endTime BETWEEN ?1 AND ?2 AND a.time.endTime <> ?1) "
+							+ "OR (?1 BETWEEN a.time.startTime AND a.time.endTime AND ?1 <> a.time.endTime)"
+							+ "OR (?2 BETWEEN a.time.startTime AND a.time.endTime AND ?2 <> a.time.startTime)"
+							+ ") AND ?3 MEMBER OF a.rooms ORDER BY a.time.startTime");
+			query.setParameter(1, timePeriod.getStartTime());
+			query.setParameter(2, timePeriod.getEndTime());
+			query.setParameter(3, room);
+			return query.getResultList();
+		} catch (Exception e) {
+			LOGGER.error(String.format(
+					"Exception while getting all activities for room %s, "
+							+ "which are colliding with time period %s.", room,
+					timePeriod), e);
+			throw new DatasetException(String.format(
+					"Error while getting all activities for room %s, "
+							+ "which are colliding with time period %s: "
+							+ e.getMessage(), room, timePeriod));
 		}
 	}
 
