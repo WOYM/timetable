@@ -12,6 +12,7 @@ import org.woym.objects.Meeting;
 import org.woym.objects.MeetingType;
 import org.woym.objects.Room;
 import org.woym.objects.Schoolclass;
+import org.woym.objects.TimePeriod;
 import org.woym.objects.Weekday;
 
 /**
@@ -87,6 +88,80 @@ public interface IActivityDAO {
 	 * @throws DatasetException
 	 */
 	public List<Activity> getAllActivities(Employee employee, Weekday weekday)
+			throws DatasetException;
+
+	/**
+	 * Gibt eine Liste aller Aktivitäten für den übergebenen Mitarbeiter zurück,
+	 * die mit dem übergebenen Zeitraum kollidieren. Wobei es nicht als
+	 * Kollision gewertet wird, wenn der Startzeitpunkt einer Aktivität des
+	 * Mitarbeiters gleich dem Endzeitpunkt der übergebenen Aktivität oder der
+	 * Endzeitpunkt einer Aktivität des Mitarbeiters gleich dem Startzeitpunkt
+	 * der übergebenen Aktivität bzw. der Startzeitpunkt der übergebenen
+	 * Aktivität gleich dem Endzeitpunkt einer Aktivität des Mitarbeiters oder
+	 * der Endzeitpunkt der übergebenen Aktivität gleich dem Startzeitpunkt
+	 * einer Aktivität des Mitarbeiters ist.
+	 * 
+	 * @param employee
+	 *            - Mitarbeiter, für welchen kollidierende Aktivitäten gesucht
+	 *            werden sollen
+	 * @param timePeriod
+	 *            - Zeitraum, für welchen kollidierende Aktivitäten gesucht
+	 *            werden sollen
+	 * @return eine Liste der mit dem übergebenen Zeitraum kollidiernden
+	 *         Aktivitäten des übergebenen Mitarbeiters. Eine leere Liste, wenn
+	 *         keine Kollisionen vorliegen.
+	 * @throws DatasetException
+	 */
+	public List<Activity> getAllActivities(Employee employee,
+			TimePeriod timePeriod) throws DatasetException;
+
+	/**
+	 * Gibt eine Liste aller Aktivitäten für die übergebene Schulklasse zurück,
+	 * die mit dem übergebenen Zeitraum kollidieren. Wobei es nicht als
+	 * Kollision gewertet wird, wenn der Startzeitpunkt einer Aktivität der
+	 * Schulklasse gleich dem Endzeitpunkt der übergebenen Aktivität oder der
+	 * Endzeitpunkt einer Aktivität der Schulklasse gleich dem Startzeitpunkt
+	 * der übergebenen Aktivität bzw. der Startzeitpunkt der übergebenen
+	 * Aktivität gleich dem Endzeitpunkt einer Aktivität der Schulklasse oder
+	 * der Endzeitpunkt der übergebenen Aktivität gleich dem Startzeitpunkt
+	 * einer Aktivität der Schulklasse ist.
+	 * 
+	 * @param schoolclass
+	 *            - Schulklasse, für welchen kollidierende Aktivitäten gesucht
+	 *            werden sollen
+	 * @param timePeriod
+	 *            - Zeitraum, für welchen kollidierende Aktivitäten gesucht
+	 *            werden sollen
+	 * @return eine Liste der mit dem übergebenen Zeitraum kollidiernden
+	 *         Aktivitäten der übergebenen Schulklasse. Eine leere Liste, wenn
+	 *         keine Kollisionen vorliegen.
+	 * @throws DatasetException
+	 */
+	public List<Activity> getAllActivities(Schoolclass schoolclass,
+			TimePeriod timePeriod) throws DatasetException;
+
+	/**
+	 * Gibt eine Liste aller Aktivitäten für den übergebenen Raum zurück, die
+	 * mit dem übergebenen Zeitraum kollidieren. Wobei es nicht als Kollision
+	 * gewertet wird, wenn der Startzeitpunkt einer Aktivität des Raumes gleich
+	 * dem Endzeitpunkt der übergebenen Aktivität oder der Endzeitpunkt einer
+	 * Aktivität des Raumes gleich dem Startzeitpunkt der übergebenen Aktivität
+	 * bzw. der Startzeitpunkt der übergebenen Aktivität gleich dem Endzeitpunkt
+	 * einer Aktivität des Raumes oder der Endzeitpunkt der übergebenen
+	 * Aktivität gleich dem Startzeitpunkt einer Aktivität des Raumes ist.
+	 * 
+	 * @param room
+	 *            - Raum, für welchen kollidierende Aktivitäten gesucht werden
+	 *            sollen
+	 * @param timePeriod
+	 *            - Zeitraum, für welchen kollidierende Aktivitäten gesucht
+	 *            werden sollen
+	 * @return eine Liste der mit dem übergebenen Zeitraum kollidiernden
+	 *         Aktivitäten des übergebenen Raumes. Eine leere Liste, wenn keine
+	 *         Kollisionen vorliegen.
+	 * @throws DatasetException
+	 */
+	public List<Activity> getAllActivities(Room room, TimePeriod timePeriod)
 			throws DatasetException;
 
 	/**

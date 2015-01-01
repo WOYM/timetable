@@ -1,8 +1,7 @@
 package org.woym.persistence.spec;
 
-import java.io.Serializable;
-
 import org.woym.exceptions.DatasetException;
+import org.woym.objects.Entity;
 import org.woym.objects.TravelTimeList;
 
 public interface IDataAccess extends IAcademicYearDAO, IActivityDAO,
@@ -16,7 +15,7 @@ public interface IDataAccess extends IAcademicYearDAO, IActivityDAO,
 	 * @param object
 	 *            - das zu persistierende Objekt
 	 */
-	public void persist(Serializable object) throws DatasetException;
+	public void persist(Entity object) throws DatasetException;
 
 	/**
 	 * Aktualisiert das Objekt in der Datenbank, welches dem dem übergebenen
@@ -28,7 +27,7 @@ public interface IDataAccess extends IAcademicYearDAO, IActivityDAO,
 	 *            persistierende Objekt
 	 * @throws DatasetException
 	 */
-	public void update(Serializable object) throws DatasetException;
+	public void update(Entity object) throws DatasetException;
 
 	/**
 	 * Löscht das Objekt aus der Datenbank, das dem übergebenen entspricht.
@@ -39,7 +38,7 @@ public interface IDataAccess extends IAcademicYearDAO, IActivityDAO,
 	 *            - das zu löschende Objekt
 	 * @throws DatasetException
 	 */
-	public void delete(Serializable object) throws DatasetException;
+	public void delete(Entity object) throws DatasetException;
 
 	/**
 	 * Sucht nach einem Objekt der übergebenen Klasse, welches den übergebenen

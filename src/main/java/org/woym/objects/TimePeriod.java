@@ -10,49 +10,49 @@ import javax.persistence.TemporalType;
 
 /**
  * Diese Klasse repräsentiert einen Zeitraum.
+ * 
  * @author Adrian
  *
  */
 @Embeddable
-public class TimePeriod implements Serializable{
+public class TimePeriod implements Serializable {
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 2207686775603230048L;
-	
+
 	/**
 	 * Der Startzeitpunkt des Zeitraumes.
 	 */
 	@Temporal(TemporalType.TIME)
 	@Column(nullable = false)
 	private Date startTime;
-	
+
 	/**
 	 * Der Endzeitpunkt des Zeitraumes.
 	 */
 	@Temporal(TemporalType.TIME)
 	@Column(nullable = false)
 	private Date endTime;
-	
+
 	/**
 	 * Die Dauer des Zeitraumes in Minuten.
 	 */
 	@Column(nullable = false)
 	private int duration;
-	
+
 	/**
 	 * Der Wochentag (s. {@linkplain Weekday}.
 	 */
 	@Column(nullable = false)
 	private Weekday day;
-	
+
 	/**
 	 * Die Woche (s. {@linkplain Week}.
 	 */
 	@Column(nullable = false)
 	private Week week;
-	
 
 	public TimePeriod() {
 	}
@@ -96,7 +96,7 @@ public class TimePeriod implements Serializable{
 	public void setWeek(Week week) {
 		this.week = week;
 	}
-	
+
 	@Override
 	public String toString() {
 		return startTime + "-" + endTime + ", " + day + ", " + week;
