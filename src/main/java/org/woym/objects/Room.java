@@ -136,8 +136,8 @@ public class Room extends org.woym.objects.Entity implements IActivityObject,
 			purpose = actualMemento.purpose;
 			additionalInformation = actualMemento.additionalInformation;
 		} else {
-			throw new IllegalArgumentException(
-					"Only org.woym.objects.Room.Memento as parameter allowed.");
+			throw new IllegalArgumentException("Only " + Memento.class
+					+ " as parameter allowed.");
 		}
 
 	}

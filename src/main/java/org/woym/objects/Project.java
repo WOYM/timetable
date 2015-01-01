@@ -57,8 +57,8 @@ public class Project extends Activity {
 			Memento actualMemento = (Memento) memento;
 			projectType = actualMemento.projectType;
 		} else {
-			throw new IllegalArgumentException(
-					"Only org.woym.objects.Project.Memento as parameter allowed.");
+			throw new IllegalArgumentException("Only " + Memento.class
+					+ " as parameter allowed.");
 		}
 
 	}

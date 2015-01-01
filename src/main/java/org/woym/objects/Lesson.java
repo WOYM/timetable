@@ -58,8 +58,8 @@ public class Lesson extends Activity {
 			Memento actualMemento = (Memento) memento;
 			lessonType = actualMemento.lessonType;
 		} else {
-			throw new IllegalArgumentException(
-					"Only org.woym.objects.Lesson.Memento as parameter allowed.");
+			throw new IllegalArgumentException("Only " + Memento.class
+					+ " as parameter allowed.");
 		}
 
 	}

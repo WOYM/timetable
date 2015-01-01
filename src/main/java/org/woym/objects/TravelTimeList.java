@@ -127,7 +127,9 @@ public final class TravelTimeList extends org.woym.objects.Entity implements
 	 * Erzeugt aus den übergebenen Parametern eine neue Kante und versucht sie
 	 * hinzuzufügen. Ist sie noch nicht vorhanden, wird sie hinzugefügt und
 	 * {@code true} zurückgegeben, ansonsten wird sie nicht hinzugefügt und
-	 * {@code false} zurückgegeben.
+	 * {@code false} zurückgegeben. Es wird eine
+	 * {@linkplain IllegalArgumentException} gemäß
+	 * {@linkplain Edge#Edge(Location, Location, int)} geworfen.
 	 * 
 	 * @param location1
 	 *            - ein Standort der Kante
@@ -135,21 +137,20 @@ public final class TravelTimeList extends org.woym.objects.Entity implements
 	 *            - der andere Standort der Kante
 	 * @param distance
 	 *            - die Distanz (> 0)
-	 * @return
+	 * @return {@code true}, wenn das Hinzufügen erfolgreich war, ansonsten
+	 *         {@code false}
 	 */
 	public boolean add(Location location1, Location location2, int distance) {
 		Edge edge = new Edge(location1, location2, distance);
-		if (!edges.contains(edge)) {
-			edges.add(edge);
-			return true;
-		}
-		return false;
+		return add(edge);
 	}
 
 	/**
 	 * Erzeugt aus den übergebenen zwei Standorten eine Kante und versucht die
 	 * zu dieser Kante äquivalente zu entfernen. Ist eine äquivalente Kante
-	 * vorhanden, wird {@code true} zurückgegeben, ansonsten {@code false}.
+	 * vorhanden, wird {@code true} zurückgegeben, ansonsten {@code false}. Es
+	 * wird eine {@linkplain IllegalArgumentException} gemäß
+	 * {@linkplain Edge#Edge(Location, Location, int)} geworfen.
 	 * 
 	 * @param location1
 	 *            - erster Standort
@@ -160,7 +161,7 @@ public final class TravelTimeList extends org.woym.objects.Entity implements
 	 */
 	public boolean remove(Location location1, Location location2) {
 		Edge edge = new Edge(location1, location2, 1);
-		return edges.remove(edge);
+		return remove(edge);
 	}
 
 	/**
@@ -223,8 +224,8 @@ public final class TravelTimeList extends org.woym.objects.Entity implements
 			Memento actualMemento = (Memento) memento;
 			edges = new ArrayList<TravelTimeList.Edge>(actualMemento.edges);
 		} else {
-			throw new IllegalArgumentException(
-					"Only org.woym.objects.TravelTimeList.Memento as parameter allowed.");
+			throw new IllegalArgumentException("Only " + Memento.class
+					+ " as parameter allowed.");
 		}
 	}
 
