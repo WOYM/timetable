@@ -17,9 +17,9 @@ import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
 
-import org.woym.spec.objects.IActivityObject;
-import org.woym.spec.objects.IMemento;
-import org.woym.spec.objects.IMementoObject;
+import org.woym.objects.spec.IActivityObject;
+import org.woym.objects.spec.IMemento;
+import org.woym.objects.spec.IMementoObject;
 
 /**
  * Superklasse für alle Personen des Personals.
@@ -375,8 +375,8 @@ public abstract class Employee extends org.woym.objects.Entity implements
 					actualMemento.possibleActivityTypes);
 			timeWishes = new ArrayList<TimePeriod>(actualMemento.timeWishes);
 		} else {
-			throw new IllegalArgumentException(
-					"Only org.woym.objects.Employee.Memento as parameter allowed.");
+			throw new IllegalArgumentException("Only " + Memento.class
+					+ " as parameter allowed.");
 		}
 	}
 

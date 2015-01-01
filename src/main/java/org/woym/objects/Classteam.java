@@ -12,8 +12,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 
-import org.woym.spec.objects.IMemento;
-import org.woym.spec.objects.IMementoObject;
+import org.woym.objects.spec.IMemento;
+import org.woym.objects.spec.IMementoObject;
 
 /**
  * Diese Klasse repräsentiert ein Klassen-Team. Ein Klassen-Team besteht aus
@@ -132,7 +132,7 @@ public class Classteam extends org.woym.objects.Entity implements Serializable,
 					actualMemento.schoolclasses);
 		} else {
 			throw new IllegalArgumentException(
-					"Only org.woym.objects.Classteam.Memento as parameter allowed.");
+					"Only " + Memento.class + " as parameter allowed.");
 		}
 
 	}

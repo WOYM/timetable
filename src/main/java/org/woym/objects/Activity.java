@@ -17,9 +17,9 @@ import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
 
-import org.woym.spec.objects.IActivityObject;
-import org.woym.spec.objects.IMemento;
-import org.woym.spec.objects.IMementoObject;
+import org.woym.objects.spec.IActivityObject;
+import org.woym.objects.spec.IMemento;
+import org.woym.objects.spec.IMementoObject;
 
 /**
  * Diese Klasse repräsentiert eine Aktivität innerhalb eines Stundenplans.
@@ -285,8 +285,8 @@ public abstract class Activity extends org.woym.objects.Entity implements
 			employeeTimePeriods = new ArrayList<EmployeeTimePeriods>(
 					actualMemento.employeeTimePeriods);
 		} else {
-			throw new IllegalArgumentException(
-					"Parameter must from type org.woym.objects.Activity.Memento");
+			throw new IllegalArgumentException("Only " + Memento.class
+					+ " as parameter allowed.");
 
 		}
 

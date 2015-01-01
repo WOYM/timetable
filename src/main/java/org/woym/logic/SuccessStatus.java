@@ -5,10 +5,11 @@ package org.woym.logic;
 
 import javax.faces.application.FacesMessage;
 
+import org.woym.logic.spec.IStatus;
+import org.woym.messages.GenericSuccessMessage;
 import org.woym.messages.MessageHelper;
-import org.woym.messages.SuccessMessage;
+import org.woym.messages.SpecificSuccessMessage;
 import org.woym.objects.Entity;
-import org.woym.spec.logic.IStatus;
 
 /**
  * Representation eines erfolgreichen {@link IStatus}
@@ -29,18 +30,30 @@ public class SuccessStatus implements IStatus {
 	 * {@linkplain IllegalArgumentException} geworfen.
 	 * 
 	 * @param message
-	 *            - eine {@linkplain SuccessMessage}
+	 *            - eine {@linkplain SpecificSuccessMessage}
 	 * @param entity
 	 *            - das betroffene Objekt
-	 * @param severity
-	 *            - die Art der Meldung (Fehler, Info, Warnung)
 	 */
-	public SuccessStatus(SuccessMessage message, Entity entity,
-			FacesMessage.Severity severity) {
-		if (message == null || entity == null || severity == null) {
+	public SuccessStatus(SpecificSuccessMessage message, Entity entity) {
+		if (message == null || entity == null) {
 			throw new IllegalArgumentException();
 		}
-		facesMessage = MessageHelper.generateMessage(message, entity, severity);
+		facesMessage = MessageHelper.generateMessage(message, entity);
+	}
+
+	/**
+	 * Erzeugt ein neues {@linkplain SuccessStatus}-Objekt mit der übergebenen
+	 * Erfolgsmeldung. Wird {@code null} übergeben, wird eine
+	 * {@linkplain IllegalArgumentException} geworfen.
+	 * 
+	 * @param message
+	 *            - eine {@linkplain GenericSuccessMessage}
+	 */
+	public SuccessStatus(GenericSuccessMessage message) {
+		if (message == null) {
+			throw new IllegalArgumentException();
+		}
+		facesMessage = MessageHelper.generateMessage(message);
 	}
 
 	/**

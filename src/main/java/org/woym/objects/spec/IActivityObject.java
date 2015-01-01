@@ -1,4 +1,4 @@
-package org.woym.spec.objects;
+package org.woym.objects.spec;
 
 import org.woym.exceptions.DatasetException;
 

@@ -1,4 +1,4 @@
-package org.woym.spec.objects;
+package org.woym.objects.spec;
 
 /**
  * Dieses Interface beschreibt Methoden, welche von Klassen implementiert werden

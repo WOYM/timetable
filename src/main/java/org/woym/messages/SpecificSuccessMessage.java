@@ -1,6 +1,13 @@
 package org.woym.messages;
 
-public enum SuccessMessage {
+/**
+ * Dieses Enum enthält spezifische Erfolgsmeldungen, die sich auf ein bestimmtes
+ * Objekt beziehen.
+ * 
+ * @author adrian
+ *
+ */
+public enum SpecificSuccessMessage {
 
 	/**
 	 * Diese Nachricht wird gewählt, wenn ein Objekt erfolgreich der Datenbank
@@ -30,7 +37,7 @@ public enum SuccessMessage {
 	 */
 	private final String message;
 
-	private SuccessMessage(String summary, String message) {
+	private SpecificSuccessMessage(String summary, String message) {
 		this.summary = summary;
 		this.message = message;
 	}

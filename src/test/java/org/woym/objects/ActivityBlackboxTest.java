@@ -7,7 +7,7 @@ import java.util.List;
 
 import org.junit.Test;
 import org.powermock.api.mockito.PowerMockito;
-import org.woym.spec.objects.IActivityObject;
+import org.woym.objects.spec.IActivityObject;
 
 public class ActivityBlackboxTest {
 

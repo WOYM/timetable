@@ -8,7 +8,7 @@ import javax.persistence.Entity;
 import javax.persistence.ManyToMany;
 import javax.persistence.OrderBy;
 
-import org.woym.spec.objects.IMemento;
+import org.woym.objects.spec.IMemento;
 
 /**
  * Eine "zusammengesetzte" Unterrichtsstunde. Repräsentiert den Bandunterricht
@@ -114,7 +114,7 @@ public class CompoundLesson extends Activity {
 			lessonTypes = new ArrayList<LessonType>(actualMemento.lessonTypes);
 		} else {
 			throw new IllegalArgumentException(
-					"Only org.woym.objects.CompoundLesson.Memento as parameter allowed.");
+					"Only " + Memento.class + " as parameter allowed.");
 		}
 	}
 

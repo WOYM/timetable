@@ -3,7 +3,7 @@ package org.woym.objects;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 
-import org.woym.spec.objects.IMemento;
+import org.woym.objects.spec.IMemento;
 
 /**
  * Diese Klasse repräsentiert eine reguläre Unterrichtsstunde.
@@ -58,8 +58,8 @@ public class Lesson extends Activity {
 			Memento actualMemento = (Memento) memento;
 			lessonType = actualMemento.lessonType;
 		} else {
-			throw new IllegalArgumentException(
-					"Only org.woym.objects.Lesson.Memento as parameter allowed.");
+			throw new IllegalArgumentException("Only " + Memento.class
+					+ " as parameter allowed.");
 		}
 
 	}

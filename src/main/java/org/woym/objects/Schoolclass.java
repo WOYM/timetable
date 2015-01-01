@@ -14,10 +14,10 @@ import javax.persistence.JoinColumn;
 import javax.persistence.MapKeyJoinColumn;
 
 import org.woym.exceptions.DatasetException;
+import org.woym.objects.spec.IActivityObject;
+import org.woym.objects.spec.IMemento;
+import org.woym.objects.spec.IMementoObject;
 import org.woym.persistence.DataAccess;
-import org.woym.spec.objects.IActivityObject;
-import org.woym.spec.objects.IMemento;
-import org.woym.spec.objects.IMementoObject;
 
 /**
  * Diese Klasse repräsentiert eine Schulklasse.
@@ -118,7 +118,8 @@ public class Schoolclass extends org.woym.objects.Entity implements
 		try {
 			AcademicYear year = DataAccess.getInstance().getOneAcademicYear(
 					this);
-			return year.toString() + identifier;
+			return year == null ? String.valueOf(identifier) : year.toString()
+					+ identifier;
 		} catch (DatasetException e) {
 			return String.valueOf(identifier);
 		}
@@ -223,8 +224,8 @@ public class Schoolclass extends org.woym.objects.Entity implements
 			room = actualMemento.room;
 			teacher = actualMemento.teacher;
 		} else {
-			throw new IllegalArgumentException(
-					"Only org.woym.objects.Schooclass.Memento as parameter allowed.");
+			throw new IllegalArgumentException("Only " + Memento.class
+					+ " as parameter allowed.");
 		}
 
 	}

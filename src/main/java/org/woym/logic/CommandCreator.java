@@ -10,18 +10,23 @@ import org.woym.exceptions.DatasetException;
 import org.woym.logic.command.DeleteCommand;
 import org.woym.logic.command.MacroCommand;
 import org.woym.logic.command.UpdateCommand;
+import org.woym.logic.spec.ICommand;
 import org.woym.objects.AcademicYear;
 import org.woym.objects.Activity;
+import org.woym.objects.ActivityType;
 import org.woym.objects.Classteam;
+import org.woym.objects.CompoundLesson;
 import org.woym.objects.Employee;
 import org.woym.objects.Entity;
+import org.woym.objects.Lesson;
+import org.woym.objects.LessonType;
+import org.woym.objects.Location;
 import org.woym.objects.Room;
 import org.woym.objects.Schoolclass;
 import org.woym.objects.Teacher;
+import org.woym.objects.spec.IActivityObject;
+import org.woym.objects.spec.IMemento;
 import org.woym.persistence.DataAccess;
-import org.woym.spec.logic.ICommand;
-import org.woym.spec.objects.IActivityObject;
-import org.woym.spec.objects.IMemento;
 
 /**
  * @author JurSch
@@ -69,10 +74,21 @@ public class CommandCreator {
 				LinkedList<ICommand> commands = new LinkedList<ICommand>();
 
 				for (Schoolclass s : list) {
-					commands.addAll(createDeleteCommand(s).getCommands());
+					commands.addAll(relationSchoolClass(s));
 				}
 				commands.addLast(new DeleteCommand<Entity>(entity));
 				macro = listToMacro(commands);
+
+			} else if (entity instanceof Location) {
+				List<Room> rooms = ((Location) entity).getRooms();
+				LinkedList<ICommand> commands = new LinkedList<ICommand>();
+
+				for (Room r : rooms) {
+					commands.addAll(relationRoom(r));
+				}
+				commands.addLast(new DeleteCommand<Entity>(entity));
+				macro = listToMacro(commands);
+
 			} else {
 				throw new UnsupportedOperationException("Not supportet Entity");
 			}
@@ -116,12 +132,16 @@ public class CommandCreator {
 		LinkedList<ICommand> macro = new LinkedList<ICommand>();
 
 		if (entity instanceof Room) {
+			macro.addAll(relationRoomLocation((Room) entity));
 			macro.addAll(relationRoom((Room) entity));
 		} else if (entity instanceof Schoolclass) {
+			macro.addAll(relationSchoolClassAcademicYear((Schoolclass) entity));
 			macro.addAll(relationSchoolClass((Schoolclass) entity));
 		} else if (entity instanceof Employee) {
 			macro.addAll(relationEmployee((Employee) entity));
-		} else {
+		} else if (entity instanceof ActivityType){
+			macro.addAll(relationActivityType((ActivityType) entity));
+		}else{
 			return new LinkedList<ICommand>();
 		}
 
@@ -178,14 +198,25 @@ public class CommandCreator {
 
 			macro.addLast(new UpdateCommand<Entity>(team, memento));
 
+			macro.addLast(new DeleteCommand<Entity>(schoolclass));
+		} catch (DatasetException e) {
+			macro = new LinkedList<ICommand>();
+		}
+		return macro;
+	}
+
+	private LinkedList<ICommand> relationSchoolClassAcademicYear(
+			Schoolclass schoolclass) {
+
+		LinkedList<ICommand> macro = new LinkedList<ICommand>();
+
+		try {
 			AcademicYear year = DataAccess.getInstance().getOneAcademicYear(
 					schoolclass);
 			IMemento yearMemento = year.createMemento();
 			year.remove(schoolclass);
-			
-			macro.addLast(new UpdateCommand<Entity>(year, yearMemento));
 
-			macro.addLast(new DeleteCommand<Entity>(schoolclass));
+			macro.addLast(new UpdateCommand<Entity>(year, yearMemento));
 		} catch (DatasetException e) {
 			macro = new LinkedList<ICommand>();
 		}
@@ -195,22 +226,24 @@ public class CommandCreator {
 	private LinkedList<ICommand> relationRoom(Room room) {
 		LinkedList<ICommand> macro = new LinkedList<ICommand>();
 
-		org.woym.objects.Location location;
 		try {
-			location = DataAccess.getInstance().getOneLocation(room);
-			IMemento firstMemento = location.createMemento();
-			location.remove(room);
-
-			macro.addLast(new UpdateCommand<Entity>((Entity) location,
-					firstMemento));
-
 			Schoolclass schoolclass = DataAccess.getInstance()
 					.getOneSchoolclass(room);
-			IMemento secondMemento = schoolclass.createMemento();
-			schoolclass.setRoom(null);
+			if (schoolclass != null) {
+				IMemento secondMemento = schoolclass.createMemento();
+				schoolclass.setRoom(null);
 
-			macro.addLast(new UpdateCommand<Entity>((Entity) schoolclass,
-					secondMemento));
+				macro.addLast(new UpdateCommand<Entity>((Entity) schoolclass,
+						secondMemento));
+			}
+
+			List<ActivityType> activityTypes = DataAccess.getInstance()
+					.getAllActivityTypes(room);
+			for (ActivityType a : activityTypes) {
+				IMemento thirdMemento = a.createMemento();
+				a.remove(room);
+				macro.addLast(new UpdateCommand<Entity>(a, thirdMemento));
+			}
 
 			macro.addLast(new DeleteCommand<Entity>(room));
 
@@ -220,4 +253,86 @@ public class CommandCreator {
 		return macro;
 	}
 
+	private LinkedList<ICommand> relationRoomLocation(Room room) {
+		LinkedList<ICommand> macro = new LinkedList<ICommand>();
+		try {
+			Location location = DataAccess.getInstance().getOneLocation(room);
+			IMemento firstMemento = location.createMemento();
+			location.remove(room);
+			macro.addLast(new UpdateCommand<Entity>((Entity) location,
+					firstMemento));
+		} catch (DatasetException e) {
+			macro = new LinkedList<ICommand>();
+		}
+		return macro;
+	}
+
+	private LinkedList<ICommand> relationActivityType(ActivityType activityType) {
+		LinkedList<ICommand> macro = new LinkedList<ICommand>();
+		if (activityType instanceof LessonType) {
+			try {
+				// Referenzen bei Lesson-Objekten
+				List<Lesson> lessons = DataAccess.getInstance().getAllLessons(
+						(LessonType) activityType);
+				for (Lesson l : lessons) {
+					macro.addLast(new DeleteCommand<Entity>(l));
+				}
+
+				// Referenzen bei CompoundLesson-Objekten
+				List<CompoundLesson> compoundLessons = DataAccess.getInstance()
+						.getAllCompoundLessons((LessonType) activityType);
+				for (CompoundLesson c : compoundLessons) {
+					IMemento memento = c.createMemento();
+					int size = c.remove((LessonType) activityType);
+					if (size == 0) {
+						c.setMemento(memento);
+						macro.addLast(new DeleteCommand<Entity>(c));
+					} else {
+						macro.addLast(new UpdateCommand<Entity>(c, memento));
+					}
+				}
+
+				// Referenzen bei Schulklassen
+				List<Schoolclass> schoolclasses = DataAccess.getInstance()
+						.getAllSchoolclasses();
+				for (Schoolclass s : schoolclasses) {
+					IMemento memento = s.createMemento();
+					s.remove((LessonType) activityType);
+					macro.addLast(new UpdateCommand<Entity>(s, memento));
+				}
+
+				// Referenzen bei Jahrgängen
+				List<AcademicYear> years = DataAccess.getInstance()
+						.getAllAcademicYears();
+				for (AcademicYear a : years) {
+					IMemento memento = a.createMemento();
+					a.remove((LessonType) activityType);
+					macro.addLast(new UpdateCommand<Entity>(a, memento));
+				}
+
+			} catch (DatasetException e) {
+				macro = new LinkedList<ICommand>();
+			}
+		}
+
+		// TODO: später ggf. ProjectType und MeetingType
+
+		// Referenzen bei Mitarbeitern
+		try {
+			List<Employee> employees = DataAccess.getInstance()
+					.getAllEmployees(activityType);
+
+			for (Employee e : employees) {
+				IMemento memento = e.createMemento();
+				e.remove(activityType);
+				macro.addLast(new UpdateCommand<Entity>(e, memento));
+			}
+
+			macro.addLast(new DeleteCommand<Entity>(activityType));
+		} catch (DatasetException e) {
+			macro = new LinkedList<ICommand>();
+		}
+
+		return macro;
+	}
 }

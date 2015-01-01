@@ -14,8 +14,9 @@ import javax.persistence.Inheritance;
 import javax.persistence.ManyToMany;
 import javax.persistence.OrderBy;
 
-import org.woym.spec.objects.IMemento;
-import org.woym.spec.objects.IMementoObject;
+import org.woym.objects.spec.IActivityObject;
+import org.woym.objects.spec.IMemento;
+import org.woym.objects.spec.IMementoObject;
 
 /**
  * Diese abstrakte Klasse dient als Superklasse für konkrete Aktivitätstypen.
@@ -28,7 +29,7 @@ import org.woym.spec.objects.IMementoObject;
 @Entity
 @DiscriminatorColumn(name = "TYPE", discriminatorType = DiscriminatorType.STRING, length = 20)
 public abstract class ActivityType extends org.woym.objects.Entity implements
-		IMementoObject {
+		IActivityObject, IMementoObject {
 
 	/**
 	 * 
@@ -258,8 +259,8 @@ public abstract class ActivityType extends org.woym.objects.Entity implements
 			rooms = new ArrayList<Room>(actualMemento.rooms);
 			hexColor = actualMemento.hexColor;
 		} else {
-			throw new IllegalArgumentException(
-					"Only org.woym.objects.ActivityType.Memento as parameter allowed.");
+			throw new IllegalArgumentException("Only " + Memento.class
+					+ " as parameter allowed.");
 		}
 
 	}

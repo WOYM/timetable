@@ -1,4 +1,4 @@
-package org.woym.spec.logic;
+package org.woym.logic.spec;
 
 import javax.faces.application.FacesMessage;
 

@@ -11,8 +11,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 
-import org.woym.spec.objects.IMemento;
-import org.woym.spec.objects.IMementoObject;
+import org.woym.objects.spec.IMemento;
+import org.woym.objects.spec.IMementoObject;
 
 /**
  * Diese Klasse repräsentiert einen Standort.
@@ -186,7 +186,7 @@ public class Location extends org.woym.objects.Entity implements IMementoObject 
 			rooms = new ArrayList<Room>(actualMemento.rooms);
 		} else {
 			throw new IllegalArgumentException(
-					"Only org.woym.objects.Location.Memento as parameter allowed.");
+					"Only " + Memento.class + " as parameter allowed.");
 		}
 
 	}

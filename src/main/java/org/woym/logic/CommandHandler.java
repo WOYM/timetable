@@ -5,12 +5,12 @@ package org.woym.logic;
 
 import javax.faces.application.FacesMessage;
 
+import org.woym.logic.spec.ICommand;
+import org.woym.logic.spec.ICommandHandler;
+import org.woym.logic.spec.ILimitedQueue;
+import org.woym.logic.spec.IStatus;
 import org.woym.logic.util.LimitedQueue;
 import org.woym.messages.GenericErrorMessage;
-import org.woym.spec.logic.ICommand;
-import org.woym.spec.logic.ICommandHandler;
-import org.woym.spec.logic.ILimitedQueue;
-import org.woym.spec.logic.IStatus;
 
 /**
  * Klasse zur umsetzung des CommandHandlers nach dem Singleton Muster.

@@ -1,4 +1,4 @@
-package org.woym.spec.logic;
+package org.woym.logic.spec;
 
 public interface ICommand {
 	

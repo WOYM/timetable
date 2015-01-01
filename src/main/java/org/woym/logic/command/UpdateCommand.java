@@ -4,12 +4,12 @@ import javax.faces.application.FacesMessage;
 
 import org.woym.logic.FailureStatus;
 import org.woym.logic.SuccessStatus;
+import org.woym.logic.spec.ICommand;
+import org.woym.logic.spec.IStatus;
 import org.woym.messages.SpecificErrorMessage;
-import org.woym.messages.SuccessMessage;
+import org.woym.messages.SpecificSuccessMessage;
 import org.woym.objects.Entity;
-import org.woym.spec.logic.ICommand;
-import org.woym.spec.logic.IStatus;
-import org.woym.spec.objects.IMemento;
+import org.woym.objects.spec.IMemento;
 
 /**
  * 
@@ -25,7 +25,7 @@ public class UpdateCommand<E extends Entity> implements ICommand {
 	public UpdateCommand(E entity, IMemento memento) {
 		if (entity == null) {
 			throw new IllegalArgumentException("Entity was null");
-		} else if(memento == null) {
+		} else if (memento == null) {
 			throw new IllegalArgumentException("Memento was null");
 		}
 		this.entity = entity;
@@ -38,8 +38,8 @@ public class UpdateCommand<E extends Entity> implements ICommand {
 
 		try {
 			entity.update();
-			status = new SuccessStatus(SuccessMessage.UPDATE_OBJECT_SUCCESS,
-					entity, FacesMessage.SEVERITY_INFO);
+			status = new SuccessStatus(
+					SpecificSuccessMessage.UPDATE_OBJECT_SUCCESS, entity);
 		} catch (Exception e) {
 			status = new FailureStatus(
 					SpecificErrorMessage.UPDATE_OBJECT_DATASET_EXCEPTION,
@@ -53,12 +53,11 @@ public class UpdateCommand<E extends Entity> implements ICommand {
 		IStatus status;
 		IMemento placeholder = entity.createMemento();
 		entity.setMemento(memento);
-		
-		
+
 		try {
 			entity.update();
-			status = new SuccessStatus(SuccessMessage.UPDATE_OBJECT_SUCCESS,
-					entity, FacesMessage.SEVERITY_INFO);
+			status = new SuccessStatus(
+					SpecificSuccessMessage.UPDATE_OBJECT_SUCCESS, entity);
 			memento = placeholder;
 		} catch (Exception e) {
 			status = new FailureStatus(
@@ -74,12 +73,11 @@ public class UpdateCommand<E extends Entity> implements ICommand {
 		IStatus status;
 		IMemento placeholder = entity.createMemento();
 		entity.setMemento(memento);
-		
-		
+
 		try {
 			entity.update();
-			status = new SuccessStatus(SuccessMessage.UPDATE_OBJECT_SUCCESS,
-					entity, FacesMessage.SEVERITY_INFO);
+			status = new SuccessStatus(
+					SpecificSuccessMessage.UPDATE_OBJECT_SUCCESS, entity);
 			memento = placeholder;
 		} catch (Exception e) {
 			status = new FailureStatus(

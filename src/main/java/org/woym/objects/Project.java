@@ -3,7 +3,7 @@ package org.woym.objects;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 
-import org.woym.spec.objects.IMemento;
+import org.woym.objects.spec.IMemento;
 
 /**
  * Diese Klasse repräsentiert ein Projekt.
@@ -57,8 +57,8 @@ public class Project extends Activity {
 			Memento actualMemento = (Memento) memento;
 			projectType = actualMemento.projectType;
 		} else {
-			throw new IllegalArgumentException(
-					"Only org.woym.objects.Project.Memento as parameter allowed.");
+			throw new IllegalArgumentException("Only " + Memento.class
+					+ " as parameter allowed.");
 		}
 
 	}

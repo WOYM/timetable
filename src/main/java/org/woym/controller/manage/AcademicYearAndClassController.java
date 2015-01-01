@@ -17,13 +17,13 @@ import org.woym.logic.CommandHandler;
 import org.woym.logic.command.AddCommand;
 import org.woym.logic.command.DeleteCommand;
 import org.woym.logic.command.MacroCommand;
+import org.woym.logic.spec.IStatus;
 import org.woym.messages.GenericErrorMessage;
 import org.woym.messages.MessageHelper;
 import org.woym.objects.AcademicYear;
 import org.woym.objects.Location;
 import org.woym.objects.Schoolclass;
 import org.woym.persistence.DataAccess;
-import org.woym.spec.logic.IStatus;
 
 /**
  * <h1>AcademicYearAndClassController</h1>

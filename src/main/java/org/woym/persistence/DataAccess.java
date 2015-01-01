@@ -30,8 +30,8 @@ import org.woym.objects.Schoolclass;
 import org.woym.objects.Teacher;
 import org.woym.objects.TravelTimeList;
 import org.woym.objects.Weekday;
-import org.woym.spec.objects.IActivityObject;
-import org.woym.spec.persistence.IDataAccess;
+import org.woym.objects.spec.IActivityObject;
+import org.woym.persistence.spec.IDataAccess;
 
 /**
  * Diese Singleton-Klasse bietet mit ihren Methoden Zugriff auf
