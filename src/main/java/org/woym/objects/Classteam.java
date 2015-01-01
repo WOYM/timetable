@@ -132,7 +132,7 @@ public class Classteam extends org.woym.objects.Entity implements Serializable,
 					actualMemento.schoolclasses);
 		} else {
 			throw new IllegalArgumentException(
-					"Only org.woym.objects.Classteam.Memento as parameter allowed.");
+					"Only " + Memento.class + " as parameter allowed.");
 		}
 
 	}

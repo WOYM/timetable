@@ -114,7 +114,7 @@ public class CompoundLesson extends Activity {
 			lessonTypes = new ArrayList<LessonType>(actualMemento.lessonTypes);
 		} else {
 			throw new IllegalArgumentException(
-					"Only org.woym.objects.CompoundLesson.Memento as parameter allowed.");
+					"Only " + Memento.class + " as parameter allowed.");
 		}
 	}
 

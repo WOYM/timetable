@@ -285,8 +285,8 @@ public abstract class Activity extends org.woym.objects.Entity implements
 			employeeTimePeriods = new ArrayList<EmployeeTimePeriods>(
 					actualMemento.employeeTimePeriods);
 		} else {
-			throw new IllegalArgumentException(
-					"Parameter must from type org.woym.objects.Activity.Memento");
+			throw new IllegalArgumentException("Only " + Memento.class
+					+ " as parameter allowed.");
 
 		}
 

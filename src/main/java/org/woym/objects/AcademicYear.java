@@ -292,7 +292,7 @@ public class AcademicYear extends org.woym.objects.Entity implements
 					actualMemento.lessonDemands);
 		} else {
 			throw new IllegalArgumentException(
-					"Only org.woym.objects.AcademicYear.Memento as parameter allowed.");
+					"Only " + Memento.class + " as parameter allowed.");
 		}
 	}
 

@@ -100,7 +100,7 @@ public class NameValidatorTest {
 
 		nameValidator.validate(facesContext, uiComponent, "testSymbol");
 	}
-	
+
 	/**
 	 * Test for a symbol that is in use.
 	 * 

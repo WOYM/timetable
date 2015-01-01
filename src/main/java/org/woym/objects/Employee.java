@@ -375,8 +375,8 @@ public abstract class Employee extends org.woym.objects.Entity implements
 					actualMemento.possibleActivityTypes);
 			timeWishes = new ArrayList<TimePeriod>(actualMemento.timeWishes);
 		} else {
-			throw new IllegalArgumentException(
-					"Only org.woym.objects.Employee.Memento as parameter allowed.");
+			throw new IllegalArgumentException("Only " + Memento.class
+					+ " as parameter allowed.");
 		}
 	}
 

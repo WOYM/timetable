@@ -58,8 +58,8 @@ public class Meeting extends Activity {
 			Memento actualMemento = (Memento) memento;
 			meetingType = actualMemento.meetingType;
 		} else {
-			throw new IllegalArgumentException(
-					"Only org.woym.objects.Meeting.Memento as parameter allowed.");
+			throw new IllegalArgumentException("Only " + Memento.class
+					+ " as parameter allowed.");
 		}
 
 	}

@@ -186,7 +186,7 @@ public class Location extends org.woym.objects.Entity implements IMementoObject 
 			rooms = new ArrayList<Room>(actualMemento.rooms);
 		} else {
 			throw new IllegalArgumentException(
-					"Only org.woym.objects.Location.Memento as parameter allowed.");
+					"Only " + Memento.class + " as parameter allowed.");
 		}
 
 	}
