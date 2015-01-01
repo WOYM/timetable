@@ -71,6 +71,7 @@ public abstract class Activity extends org.woym.objects.Entity implements
 	 * {@linkplain EmployeeTimePeriods} Zeiträumen zugeordnet.
 	 */
 	@OneToMany(cascade = CascadeType.ALL)
+	@OrderBy("employee.symbol")
 	private List<EmployeeTimePeriods> employeeTimePeriods = new ArrayList<EmployeeTimePeriods>();
 
 	public Activity() {
