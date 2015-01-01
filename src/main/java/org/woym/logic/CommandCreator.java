@@ -15,8 +15,11 @@ import org.woym.objects.AcademicYear;
 import org.woym.objects.Activity;
 import org.woym.objects.ActivityType;
 import org.woym.objects.Classteam;
+import org.woym.objects.CompoundLesson;
 import org.woym.objects.Employee;
 import org.woym.objects.Entity;
+import org.woym.objects.Lesson;
+import org.woym.objects.LessonType;
 import org.woym.objects.Location;
 import org.woym.objects.Room;
 import org.woym.objects.Schoolclass;
@@ -136,7 +139,9 @@ public class CommandCreator {
 			macro.addAll(relationSchoolClass((Schoolclass) entity));
 		} else if (entity instanceof Employee) {
 			macro.addAll(relationEmployee((Employee) entity));
-		} else {
+		} else if (entity instanceof ActivityType){
+			macro.addAll(relationActivityType((ActivityType) entity));
+		}else{
 			return new LinkedList<ICommand>();
 		}
 
@@ -262,4 +267,72 @@ public class CommandCreator {
 		return macro;
 	}
 
+	private LinkedList<ICommand> relationActivityType(ActivityType activityType) {
+		LinkedList<ICommand> macro = new LinkedList<ICommand>();
+		if (activityType instanceof LessonType) {
+			try {
+				// Referenzen bei Lesson-Objekten
+				List<Lesson> lessons = DataAccess.getInstance().getAllLessons(
+						(LessonType) activityType);
+				for (Lesson l : lessons) {
+					macro.addLast(new DeleteCommand<Entity>(l));
+				}
+
+				// Referenzen bei CompoundLesson-Objekten
+				List<CompoundLesson> compoundLessons = DataAccess.getInstance()
+						.getAllCompoundLessons((LessonType) activityType);
+				for (CompoundLesson c : compoundLessons) {
+					IMemento memento = c.createMemento();
+					int size = c.remove((LessonType) activityType);
+					if (size == 0) {
+						c.setMemento(memento);
+						macro.addLast(new DeleteCommand<Entity>(c));
+					} else {
+						macro.addLast(new UpdateCommand<Entity>(c, memento));
+					}
+				}
+
+				// Referenzen bei Schulklassen
+				List<Schoolclass> schoolclasses = DataAccess.getInstance()
+						.getAllSchoolclasses();
+				for (Schoolclass s : schoolclasses) {
+					IMemento memento = s.createMemento();
+					s.remove((LessonType) activityType);
+					macro.addLast(new UpdateCommand<Entity>(s, memento));
+				}
+
+				// Referenzen bei Jahrgängen
+				List<AcademicYear> years = DataAccess.getInstance()
+						.getAllAcademicYears();
+				for (AcademicYear a : years) {
+					IMemento memento = a.createMemento();
+					a.remove((LessonType) activityType);
+					macro.addLast(new UpdateCommand<Entity>(a, memento));
+				}
+
+			} catch (DatasetException e) {
+				macro = new LinkedList<ICommand>();
+			}
+		}
+
+		// TODO: später ggf. ProjectType und MeetingType
+
+		// Referenzen bei Mitarbeitern
+		try {
+			List<Employee> employees = DataAccess.getInstance()
+					.getAllEmployees(activityType);
+
+			for (Employee e : employees) {
+				IMemento memento = e.createMemento();
+				e.remove(activityType);
+				macro.addLast(new UpdateCommand<Entity>(e, memento));
+			}
+
+			macro.addLast(new DeleteCommand<Entity>(activityType));
+		} catch (DatasetException e) {
+			macro = new LinkedList<ICommand>();
+		}
+
+		return macro;
+	}
 }
