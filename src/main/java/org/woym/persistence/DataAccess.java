@@ -749,10 +749,12 @@ public class DataAccess implements IDataAccess, Observer {
 							+ "OR (a.time.endTime BETWEEN ?1 AND ?2 AND a.time.endTime <> ?1) "
 							+ "OR (?1 BETWEEN a.time.startTime AND a.time.endTime AND ?1 <> a.time.endTime)"
 							+ "OR (?2 BETWEEN a.time.startTime AND a.time.endTime AND ?2 <> a.time.startTime)"
-							+ ") AND e.employee.id = ?3 ORDER BY a.time.startTime");
+							+ ") AND e.employee.id = ?3 "
+							+ "AND a.time.day = ?4 ORDER BY a.time.startTime");
 			query.setParameter(1, timePeriod.getStartTime());
 			query.setParameter(2, timePeriod.getEndTime());
 			query.setParameter(3, employee.getId());
+			query.setParameter(4, timePeriod.getDay());
 			return query.getResultList();
 		} catch (Exception e) {
 			LOGGER.error(String.format(
@@ -783,10 +785,12 @@ public class DataAccess implements IDataAccess, Observer {
 							+ "OR (a.time.endTime BETWEEN ?1 AND ?2 AND a.time.endTime <> ?1) "
 							+ "OR (?1 BETWEEN a.time.startTime AND a.time.endTime AND ?1 <> a.time.endTime)"
 							+ "OR (?2 BETWEEN a.time.startTime AND a.time.endTime AND ?2 <> a.time.startTime)"
-							+ ") AND ?3 MEMBER OF a.schoolclasses ORDER BY a.time.startTime");
+							+ ") AND ?3 MEMBER OF a.schoolclasses "
+							+ "AND a.time.day = ?4 ORDER BY a.time.startTime");
 			query.setParameter(1, timePeriod.getStartTime());
 			query.setParameter(2, timePeriod.getEndTime());
 			query.setParameter(3, schoolclass);
+			query.setParameter(4, timePeriod.getDay());
 			return query.getResultList();
 		} catch (Exception e) {
 			LOGGER.error(String.format(
@@ -817,10 +821,12 @@ public class DataAccess implements IDataAccess, Observer {
 							+ "OR (a.time.endTime BETWEEN ?1 AND ?2 AND a.time.endTime <> ?1) "
 							+ "OR (?1 BETWEEN a.time.startTime AND a.time.endTime AND ?1 <> a.time.endTime)"
 							+ "OR (?2 BETWEEN a.time.startTime AND a.time.endTime AND ?2 <> a.time.startTime)"
-							+ ") AND ?3 MEMBER OF a.rooms ORDER BY a.time.startTime");
+							+ ") AND ?3 MEMBER OF a.rooms "
+							+ "AND a.time.day = ?4 ORDER BY a.time.startTime");
 			query.setParameter(1, timePeriod.getStartTime());
 			query.setParameter(2, timePeriod.getEndTime());
 			query.setParameter(3, room);
+			query.setParameter(4, timePeriod.getDay());
 			return query.getResultList();
 		} catch (Exception e) {
 			LOGGER.error(String.format(

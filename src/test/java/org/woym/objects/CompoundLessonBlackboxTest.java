@@ -1,19 +1,19 @@
 package org.woym.objects;
 
-import static org.junit.Assert.*;
-
-import org.junit.Test;
+import org.testng.annotations.Test;
+import org.testng.AssertJUnit;
 import org.powermock.api.mockito.PowerMockito;
+import org.powermock.modules.testng.PowerMockTestCase;
 
-public class CompoundLessonBlackboxTest {
+public class CompoundLessonBlackboxTest extends PowerMockTestCase {
 
 	@Test
 	public void addLessonTypeNotExists() {
 		CompoundLesson c = new CompoundLesson();
 		LessonType l = PowerMockito.mock(LessonType.class);
-		assertTrue(c.add(l));
-		assertEquals(1, c.getLessonTypes().size());
-		assertEquals(l, c.getLessonTypes().get(0));
+		AssertJUnit.assertTrue(c.add(l));
+		AssertJUnit.assertEquals(1, c.getLessonTypes().size());
+		AssertJUnit.assertEquals(l, c.getLessonTypes().get(0));
 	}
 
 	@Test
@@ -21,8 +21,8 @@ public class CompoundLessonBlackboxTest {
 		CompoundLesson c = new CompoundLesson();
 		LessonType l = PowerMockito.mock(LessonType.class);
 		c.add(l);
-		assertFalse(c.add(l));
-		assertEquals(1, c.getLessonTypes().size());
+		AssertJUnit.assertFalse(c.add(l));
+		AssertJUnit.assertEquals(1, c.getLessonTypes().size());
 	}
 
 	@Test
@@ -30,14 +30,14 @@ public class CompoundLessonBlackboxTest {
 		CompoundLesson c = new CompoundLesson();
 		LessonType l = PowerMockito.mock(LessonType.class);
 		c.add(l);
-		assertTrue(c.contains(l));
+		AssertJUnit.assertTrue(c.contains(l));
 	}
 
 	@Test
 	public void containsLessonTypeNotExists() {
 		CompoundLesson c = new CompoundLesson();
 		LessonType l = PowerMockito.mock(LessonType.class);
-		assertFalse(c.contains(l));
+		AssertJUnit.assertFalse(c.contains(l));
 	}
 
 	@Test
@@ -47,19 +47,19 @@ public class CompoundLessonBlackboxTest {
 		LessonType l1 = PowerMockito.mock(LessonType.class);
 		c.add(l);
 		c.add(l1);
-		assertEquals(1, c.remove(l));
-		assertEquals(1, c.getLessonTypes().size());
-		assertEquals(0, c.remove(l1));
-		assertEquals(0, c.getLessonTypes().size());
+		AssertJUnit.assertEquals(1, c.remove(l));
+		AssertJUnit.assertEquals(1, c.getLessonTypes().size());
+		AssertJUnit.assertEquals(0, c.remove(l1));
+		AssertJUnit.assertEquals(0, c.getLessonTypes().size());
 	}
-	
+
 	@Test
 	public void removeLessonTypeNotExists() {
 		CompoundLesson c = new CompoundLesson();
 		LessonType l = PowerMockito.mock(LessonType.class);
 		LessonType l1 = PowerMockito.mock(LessonType.class);
 		c.add(l);
-		assertEquals(1, c.remove(l1));
-		assertEquals(1, c.getLessonTypes().size());
+		AssertJUnit.assertEquals(1, c.remove(l1));
+		AssertJUnit.assertEquals(1, c.getLessonTypes().size());
 	}
 }

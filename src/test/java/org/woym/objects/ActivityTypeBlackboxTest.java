@@ -1,31 +1,31 @@
 package org.woym.objects;
 
-import static org.junit.Assert.*;
-
-import org.junit.Test;
+import org.testng.annotations.Test;
+import org.testng.AssertJUnit;
 import org.powermock.api.mockito.PowerMockito;
+import org.powermock.modules.testng.PowerMockTestCase;
 
-public class ActivityTypeBlackboxTest {
+public class ActivityTypeBlackboxTest extends PowerMockTestCase {
 
 	@Test
 	public void equalsSameObject() {
 		LessonType l = new LessonType();
 		l.setName("Mathe");
-		assertTrue(l.equals(l));
+		AssertJUnit.assertTrue(l.equals(l));
 	}
 
 	@Test
 	public void equalsNull() {
 		LessonType l = new LessonType();
 		l.setName("Mathe");
-		assertFalse(l.equals(null));
+		AssertJUnit.assertFalse(l.equals(null));
 	}
 
 	@Test
 	public void equalsNoActivityType() {
 		LessonType l = new LessonType();
 		l.setName("Mathe");
-		assertFalse(l.equals(PowerMockito.mock(Location.class)));
+		AssertJUnit.assertFalse(l.equals(PowerMockito.mock(Location.class)));
 	}
 
 	@Test
@@ -34,7 +34,7 @@ public class ActivityTypeBlackboxTest {
 		LessonType l1 = new LessonType();
 		l.setName("Mathe");
 		l1.setName("Mathe");
-		assertTrue(l.equals(l1));
+		AssertJUnit.assertTrue(l.equals(l1));
 	}
 
 	@Test
@@ -43,7 +43,7 @@ public class ActivityTypeBlackboxTest {
 		LessonType l1 = new LessonType();
 		l.setName("Mathe");
 		l1.setName("MaThE");
-		assertTrue(l.equals(l1));
+		AssertJUnit.assertTrue(l.equals(l1));
 	}
 
 	@Test
@@ -52,7 +52,7 @@ public class ActivityTypeBlackboxTest {
 		LessonType l1 = new LessonType();
 		l.setName("Mathe");
 		l1.setName("Englisch");
-		assertFalse(l.equals(l1));
+		AssertJUnit.assertFalse(l.equals(l1));
 	}
 
 	@Test
@@ -60,9 +60,9 @@ public class ActivityTypeBlackboxTest {
 		LessonType l = new LessonType();
 		l.setName("Mathe");
 		Room r = PowerMockito.mock(Room.class);
-		assertTrue(l.add(r));
-		assertEquals(1, l.getRooms().size());
-		assertEquals(r, l.getRooms().get(0));
+		AssertJUnit.assertTrue(l.add(r));
+		AssertJUnit.assertEquals(1, l.getRooms().size());
+		AssertJUnit.assertEquals(r, l.getRooms().get(0));
 	}
 
 	@Test
@@ -71,7 +71,7 @@ public class ActivityTypeBlackboxTest {
 		l.setName("Mathe");
 		Room r = PowerMockito.mock(Room.class);
 		l.add(r);
-		assertFalse(l.add(r));
+		AssertJUnit.assertFalse(l.add(r));
 	}
 
 	@Test
@@ -80,8 +80,8 @@ public class ActivityTypeBlackboxTest {
 		l.setName("Mathe");
 		Room r = PowerMockito.mock(Room.class);
 		l.add(r);
-		assertTrue(l.remove(r));
-		assertEquals(0, l.getRooms().size());
+		AssertJUnit.assertTrue(l.remove(r));
+		AssertJUnit.assertEquals(0, l.getRooms().size());
 	}
 
 	@Test
@@ -89,7 +89,7 @@ public class ActivityTypeBlackboxTest {
 		LessonType l = new LessonType();
 		l.setName("Mathe");
 		Room r = PowerMockito.mock(Room.class);
-		assertFalse(l.remove(r));
+		AssertJUnit.assertFalse(l.remove(r));
 	}
 
 	@Test
@@ -98,7 +98,7 @@ public class ActivityTypeBlackboxTest {
 		l.setName("Mathe");
 		Room r = PowerMockito.mock(Room.class);
 		l.add(r);
-		assertTrue(l.contains(r));
+		AssertJUnit.assertTrue(l.contains(r));
 	}
 
 	@Test
@@ -106,7 +106,7 @@ public class ActivityTypeBlackboxTest {
 		LessonType l = new LessonType();
 		l.setName("Mathe");
 		Room r = PowerMockito.mock(Room.class);
-		assertFalse(l.contains(r));
+		AssertJUnit.assertFalse(l.contains(r));
 	}
 
 	@Test
@@ -114,7 +114,7 @@ public class ActivityTypeBlackboxTest {
 		LessonType l = new LessonType();
 		l.setName("Mathe");
 		l.setTypicalDuration(45);
-		assertEquals("45 Minuten", l.getReadableDuration());
+		AssertJUnit.assertEquals("45 Minuten", l.getReadableDuration());
 	}
 
 	@Test
@@ -122,7 +122,7 @@ public class ActivityTypeBlackboxTest {
 		LessonType l = new LessonType();
 		l.setName("Mathe");
 		l.setTypicalDuration(60);
-		assertEquals("1 Stunde", l.getReadableDuration());
+		AssertJUnit.assertEquals("1 Stunde", l.getReadableDuration());
 	}
 
 	@Test
@@ -130,7 +130,7 @@ public class ActivityTypeBlackboxTest {
 		LessonType l = new LessonType();
 		l.setName("Mathe");
 		l.setTypicalDuration(120);
-		assertEquals("2 Stunden", l.getReadableDuration());
+		AssertJUnit.assertEquals("2 Stunden", l.getReadableDuration());
 	}
 
 	@Test
@@ -138,7 +138,8 @@ public class ActivityTypeBlackboxTest {
 		LessonType l = new LessonType();
 		l.setName("Mathe");
 		l.setTypicalDuration(75);
-		assertEquals("1 Stunde, 15 Minuten", l.getReadableDuration());
+		AssertJUnit.assertEquals("1 Stunde, 15 Minuten",
+				l.getReadableDuration());
 	}
 
 }
