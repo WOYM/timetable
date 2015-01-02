@@ -1,21 +1,20 @@
 package org.woym.ui.converters;
 
-import static org.junit.Assert.assertEquals;
-
 import javax.faces.application.FacesMessage;
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.convert.ConverterException;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
+import org.powermock.modules.testng.PowerMockTestCase;
+import org.testng.Assert;
+import org.testng.AssertJUnit;
+import org.testng.annotations.Test;
 import org.woym.exceptions.DatasetException;
 import org.woym.messages.GenericErrorMessage;
 import org.woym.messages.MessageHelper;
@@ -23,10 +22,9 @@ import org.woym.objects.ActivityType;
 import org.woym.objects.LessonType;
 import org.woym.persistence.DataAccess;
 
-@RunWith(PowerMockRunner.class)
 @PowerMockIgnore("javax.management.*")
 @PrepareForTest(MessageHelper.class)
-public class LessonTypeNameConverterTest {
+public class LessonTypeNameConverterTest extends PowerMockTestCase {
 
 	@Mock
 	private DataAccess dataAccess;
@@ -48,11 +46,11 @@ public class LessonTypeNameConverterTest {
 		ActivityType a = PowerMockito.mock(LessonType.class);
 		PowerMockito.when(dataAccess.getOneActivityType(Mockito.anyString()))
 				.thenReturn(a);
-		assertEquals(a, lessonTypeNameConverter.getAsObject(facesContext,
-				uiComponent, "testString"));
+		AssertJUnit.assertEquals(a, lessonTypeNameConverter.getAsObject(
+				facesContext, uiComponent, "testString"));
 	}
 
-	@Test(expected = ConverterException.class)
+	@Test
 	public void getAsObjectException() throws DatasetException {
 		PowerMockito.mockStatic(MessageHelper.class);
 		Mockito.doThrow(DatasetException.class).when(dataAccess)
@@ -62,13 +60,20 @@ public class LessonTypeNameConverterTest {
 						Mockito.any(GenericErrorMessage.class),
 						Mockito.any(FacesMessage.Severity.class))).thenReturn(
 				PowerMockito.mock(FacesMessage.class));
-		lessonTypeNameConverter.getAsObject(facesContext, uiComponent, "test");
+		try {
+			lessonTypeNameConverter.getAsObject(facesContext, uiComponent,
+					"test");
+		} catch (ConverterException e) {
+			return;
+		}
+		Assert.fail();
 	}
-	
+
 	@Test
 	public void getAsString() {
 		ActivityType a = PowerMockito.mock(LessonType.class);
-		assertEquals(a.getName(), lessonTypeNameConverter.getAsString(facesContext, uiComponent, a));
+		AssertJUnit.assertEquals(a.getName(), lessonTypeNameConverter
+				.getAsString(facesContext, uiComponent, a));
 	}
 
 }

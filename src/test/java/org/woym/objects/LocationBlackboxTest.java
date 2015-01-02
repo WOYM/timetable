@@ -1,28 +1,28 @@
 package org.woym.objects;
 
-import static org.junit.Assert.*;
-
-import org.junit.Test;
+import org.testng.annotations.Test;
+import org.testng.AssertJUnit;
 import org.powermock.api.mockito.PowerMockito;
+import org.powermock.modules.testng.PowerMockTestCase;
 
-public class LocationBlackboxTest {
+public class LocationBlackboxTest extends PowerMockTestCase {
 
 	@Test
 	public void equalsSameObject() {
 		Location l = new Location();
-		assertTrue(l.equals(l));
+		AssertJUnit.assertTrue(l.equals(l));
 	}
 
 	@Test
 	public void equalsNull() {
 		Location l = new Location();
-		assertFalse(l.equals(null));
+		AssertJUnit.assertFalse(l.equals(null));
 	}
 
 	@Test
 	public void equalsNotInstanceOfLocation() {
 		Location l = new Location();
-		assertFalse(l.equals(PowerMockito.mock(Teacher.class)));
+		AssertJUnit.assertFalse(l.equals(PowerMockito.mock(Teacher.class)));
 	}
 
 	@Test
@@ -31,7 +31,7 @@ public class LocationBlackboxTest {
 		Location l1 = new Location();
 		l.setName("Hauptstandort");
 		l1.setName("Hauptstandort");
-		assertTrue(l.equals(l));
+		AssertJUnit.assertTrue(l.equals(l));
 	}
 
 	@Test
@@ -40,7 +40,7 @@ public class LocationBlackboxTest {
 		Location l1 = new Location();
 		l.setName("Hauptstandort");
 		l1.setName("HaUpTsTaNdOrT");
-		assertTrue(l.equals(l));
+		AssertJUnit.assertTrue(l.equals(l));
 	}
 
 	@Test
@@ -49,16 +49,16 @@ public class LocationBlackboxTest {
 		Location l1 = new Location();
 		l.setName("Hauptstandort");
 		l1.setName("Zweigstelle");
-		assertFalse(l.equals(l1));
+		AssertJUnit.assertFalse(l.equals(l1));
 	}
 
 	@Test
 	public void addRoomNotExists() {
 		Location l = new Location();
 		Room r = PowerMockito.mock(Room.class);
-		assertTrue(l.add(r));
-		assertEquals(1, l.getRooms().size());
-		assertEquals(r, l.getRooms().get(0));
+		AssertJUnit.assertTrue(l.add(r));
+		AssertJUnit.assertEquals(1, l.getRooms().size());
+		AssertJUnit.assertEquals(r, l.getRooms().get(0));
 	}
 
 	@Test
@@ -66,8 +66,8 @@ public class LocationBlackboxTest {
 		Location l = new Location();
 		Room r = PowerMockito.mock(Room.class);
 		l.add(r);
-		assertFalse(l.add(r));
-		assertEquals(1, l.getRooms().size());
+		AssertJUnit.assertFalse(l.add(r));
+		AssertJUnit.assertEquals(1, l.getRooms().size());
 	}
 
 	@Test
@@ -75,8 +75,8 @@ public class LocationBlackboxTest {
 		Location l = new Location();
 		Room r = PowerMockito.mock(Room.class);
 		l.add(r);
-		assertTrue(l.remove(r));
-		assertEquals(0, l.getRooms().size());
+		AssertJUnit.assertTrue(l.remove(r));
+		AssertJUnit.assertEquals(0, l.getRooms().size());
 	}
 
 	@Test
@@ -85,8 +85,8 @@ public class LocationBlackboxTest {
 		Room r = PowerMockito.mock(Room.class);
 		Room r1 = PowerMockito.mock(Room.class);
 		l.add(r);
-		assertFalse(l.remove(r1));
-		assertEquals(1, l.getRooms().size());
+		AssertJUnit.assertFalse(l.remove(r1));
+		AssertJUnit.assertEquals(1, l.getRooms().size());
 	}
 
 	@Test
@@ -94,14 +94,14 @@ public class LocationBlackboxTest {
 		Location l = new Location();
 		Room r = PowerMockito.mock(Room.class);
 		l.add(r);
-		assertTrue(l.contains(r));
+		AssertJUnit.assertTrue(l.contains(r));
 	}
 
 	@Test
 	public void containsRoomNotExists() {
 		Location l = new Location();
 		Room r = PowerMockito.mock(Room.class);
-		assertFalse(l.contains(r));
+		AssertJUnit.assertFalse(l.contains(r));
 	}
 
 }

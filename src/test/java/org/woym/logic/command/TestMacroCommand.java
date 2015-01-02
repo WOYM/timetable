@@ -1,14 +1,12 @@
 package org.woym.logic.command;
 
-import static org.junit.Assert.*;
-
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.powermock.modules.junit4.PowerMockRunner;
+import org.powermock.modules.testng.PowerMockTestCase;
+import org.testng.AssertJUnit;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
 import org.woym.logic.FailureStatus;
 import org.woym.logic.SuccessStatus;
 import org.woym.logic.spec.IStatus;
@@ -18,8 +16,7 @@ import org.woym.objects.Entity;
  * @author JurSch
  *
  */
-@RunWith(PowerMockRunner.class)
-public class TestMacroCommand {
+public class TestMacroCommand extends PowerMockTestCase {
 
 	@Mock
 	UpdateCommand<Entity> command1;
@@ -36,7 +33,7 @@ public class TestMacroCommand {
 	@InjectMocks
 	MacroCommand macroCommand;
 
-	@Before
+	@BeforeMethod
 	public void setUp() throws Exception {
 		Mockito.when(command1.execute()).thenReturn(successStatus);
 		Mockito.when(command1.undo()).thenReturn(successStatus);
@@ -44,7 +41,7 @@ public class TestMacroCommand {
 		Mockito.when(command2.execute()).thenReturn(failureStatus);
 		Mockito.when(command2.undo()).thenReturn(failureStatus);
 		Mockito.when(command2.redo()).thenReturn(failureStatus);
-
+		macroCommand = new MacroCommand();
 	}
 
 	@Test
@@ -57,7 +54,7 @@ public class TestMacroCommand {
 
 		Mockito.verify(command1, Mockito.times(6)).execute();
 
-		assertTrue(status instanceof SuccessStatus);
+		AssertJUnit.assertTrue(status instanceof SuccessStatus);
 
 	}
 
@@ -79,7 +76,7 @@ public class TestMacroCommand {
 		Mockito.verify(command2).execute();
 		Mockito.verify(command1, Mockito.times(3)).undo();
 
-		assertTrue(status instanceof FailureStatus);
+		AssertJUnit.assertTrue(status instanceof FailureStatus);
 
 	}
 
@@ -93,7 +90,7 @@ public class TestMacroCommand {
 
 		Mockito.verify(command1, Mockito.times(6)).undo();
 
-		assertTrue(status instanceof SuccessStatus);
+		AssertJUnit.assertTrue(status instanceof SuccessStatus);
 
 	}
 
@@ -115,7 +112,7 @@ public class TestMacroCommand {
 		Mockito.verify(command2).undo();
 		Mockito.verify(command1, Mockito.times(3)).redo();
 
-		assertTrue(status instanceof FailureStatus);
+		AssertJUnit.assertTrue(status instanceof FailureStatus);
 
 	}
 
@@ -129,7 +126,7 @@ public class TestMacroCommand {
 
 		Mockito.verify(command1, Mockito.times(6)).redo();
 
-		assertTrue(status instanceof SuccessStatus);
+		AssertJUnit.assertTrue(status instanceof SuccessStatus);
 
 	}
 
@@ -151,7 +148,7 @@ public class TestMacroCommand {
 		Mockito.verify(command2).redo();
 		Mockito.verify(command1, Mockito.times(3)).undo();
 
-		assertTrue(status instanceof FailureStatus);
+		AssertJUnit.assertTrue(status instanceof FailureStatus);
 
 	}
 

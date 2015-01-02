@@ -1,15 +1,14 @@
 package org.woym.logic.command;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.testng.AssertJUnit.assertEquals;
+import static org.testng.AssertJUnit.assertTrue;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.powermock.modules.junit4.PowerMockRunner;
+import org.powermock.modules.testng.PowerMockTestCase;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
 import org.woym.logic.CommandHandler;
 import org.woym.logic.FailureStatus;
 import org.woym.logic.SuccessStatus;
@@ -19,25 +18,24 @@ import org.woym.logic.spec.ICommand;
  * @author JurSch
  *
  */
-@RunWith(PowerMockRunner.class)
-public class TestCommandhandler {
+public class TestCommandhandler extends PowerMockTestCase {
 
 	@Mock
-	ICommand command1;
+	private ICommand command1;
 
 	@Mock
-	ICommand command2;
+	private ICommand command2;
 
 	@Mock
-	SuccessStatus successStatus;
+	private SuccessStatus successStatus;
 
 	@Mock
-	FailureStatus failureStatus;
+	private FailureStatus failureStatus;
 
 	@InjectMocks
-	CommandHandler handler = CommandHandler.getInstance();
+	private CommandHandler handler = CommandHandler.getInstance();
 
-	@Before
+	@BeforeMethod
 	public void setUp() {
 		Mockito.when(command1.execute()).thenReturn(successStatus);
 		Mockito.when(command1.undo()).thenReturn(successStatus);
@@ -46,21 +44,13 @@ public class TestCommandhandler {
 
 	}
 
-	@Test
-	public void testAll() {
-		testEmptyUndoRedo();
-		testExecuteNull();
-		testExecuteValidCommand();
-		testExecuteNonValidCommand();
-		testValidUndoRedo();
-		testNonValidUndoRedo();
-	}
-
+	@Test(priority = 1)
 	public void testEmptyUndoRedo() {
 		assertTrue(handler.undo() instanceof FailureStatus);
 		assertTrue(handler.redo() instanceof FailureStatus);
 	}
 
+	@Test(priority = 2)
 	public void testExecuteNull() {
 		try {
 			handler.execute(null);
@@ -69,6 +59,7 @@ public class TestCommandhandler {
 		}
 	}
 
+	@Test(priority = 3)
 	public void testExecuteValidCommand() {
 		assertTrue(handler.execute(command1) instanceof SuccessStatus);
 		assertEquals((Integer) 1, handler.getUndoSize());
@@ -77,6 +68,7 @@ public class TestCommandhandler {
 		Mockito.verify(command1).execute();
 	}
 
+	@Test(priority = 4)
 	public void testExecuteNonValidCommand() {
 		assertTrue(handler.execute(command2) instanceof FailureStatus);
 		// Vom vorhergehenden Test enthalten wegen Singleton
@@ -86,6 +78,7 @@ public class TestCommandhandler {
 		Mockito.verify(command2).execute();
 	}
 
+	@Test(priority = 5)
 	public void testValidUndoRedo() {
 		Mockito.when(command1.undo()).thenReturn(successStatus);
 		Mockito.when(command1.redo()).thenReturn(successStatus);
@@ -102,6 +95,7 @@ public class TestCommandhandler {
 		assertEquals((Integer) 0, handler.getRedoSize());
 	}
 
+	@Test(priority = 6)
 	public void testNonValidUndoRedo() {
 		Mockito.when(command2.execute()).thenReturn(successStatus);
 		Mockito.when(command2.undo()).thenReturn(failureStatus);
