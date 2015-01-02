@@ -41,7 +41,7 @@ public abstract class BackupRestoreHandler {
 	/**
 	 * Der Logger.
 	 */
-	private final static Logger LOGGER = LogManager
+	private static final Logger LOGGER = LogManager
 			.getLogger(BackupRestoreHandler.class);
 
 	/**

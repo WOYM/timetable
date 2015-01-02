@@ -1,6 +1,3 @@
-/**
- * 
- */
 package org.woym.logic;
 
 import javax.faces.application.FacesMessage;
@@ -20,11 +17,11 @@ import org.woym.messages.GenericErrorMessage;
  */
 public class CommandHandler implements ICommandHandler {
 
-	static final private CommandHandler COMMAND_HANDLER = new CommandHandler();
+	private static final CommandHandler COMMAND_HANDLER = new CommandHandler();
 
-	final private ILimitedQueue<ICommand> undo = new LimitedQueue<ICommand>();
+	private final ILimitedQueue<ICommand> undo = new LimitedQueue<ICommand>();
 
-	final private ILimitedQueue<ICommand> redo = new LimitedQueue<ICommand>();
+	private final ILimitedQueue<ICommand> redo = new LimitedQueue<ICommand>();
 
 	/**
 	 * Privater Konstruktor
@@ -38,7 +35,7 @@ public class CommandHandler implements ICommandHandler {
 	 * 
 	 * @return Instanz des Singleton-CommandHandler
 	 */
-	static public CommandHandler getInstance() {
+	public static CommandHandler getInstance() {
 		return COMMAND_HANDLER;
 	}
 

@@ -1,6 +1,3 @@
-/**
- * 
- */
 package org.woym.logic;
 
 import java.util.ArrayList;
@@ -15,6 +12,8 @@ import org.woym.messages.SpecificErrorMessage;
 import org.woym.objects.Entity;
 
 /**
+ * Repräsentiert einen Fehlerstatus.
+ * 
  * @author JurSch, adrian
  *
  */

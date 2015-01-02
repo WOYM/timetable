@@ -201,7 +201,7 @@ public class EmployeeBlackboxTest {
 	}
 	
 	@Test
-	public void containsTimePeriodExists(){
+	public void containsTimePeriodExists() {
 		Employee e = new Teacher();
 		TimePeriod t = PowerMockito.mock(TimePeriod.class);
 		e.add(t);
@@ -209,7 +209,7 @@ public class EmployeeBlackboxTest {
 	}
 	
 	@Test
-	public void containsTimePeriodNotExists(){
+	public void containsTimePeriodNotExists() {
 		Employee e = new Teacher();
 		TimePeriod t = PowerMockito.mock(TimePeriod.class);
 		assertFalse(e.contains(t));

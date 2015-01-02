@@ -77,14 +77,14 @@ public class RoomNameConverterTest {
 	}
 	
 	@Test
-	public void getAsStringDatasetException() throws DatasetException{
+	public void getAsStringDatasetException() throws DatasetException {
 		Room r = PowerMockito.mock(Room.class);
 		Mockito.doThrow(DatasetException.class).when(dataAccess).getAllLocations();
 		assertEquals("", roomNameConverter.getAsString(facesContext, uiComponent, r));
 	}
 	
 	@Test
-	public void getAsStringRoomNotMatching() throws DatasetException{
+	public void getAsStringRoomNotMatching() throws DatasetException {
 		Room r = PowerMockito.mock(Room.class);
 		Room r1 = PowerMockito.mock(Room.class);
 		ArrayList<Room> rooms = new ArrayList<Room>();

@@ -109,8 +109,6 @@ public abstract class MessageHelper {
 	 * 
 	 * @param message
 	 *            - die Erfolgsmeldung
-	 * @param severity
-	 *            - die Art der Meldung (Info, Warnung, Fehler)
 	 * @return
 	 */
 	public static FacesMessage generateMessage(GenericSuccessMessage message) {

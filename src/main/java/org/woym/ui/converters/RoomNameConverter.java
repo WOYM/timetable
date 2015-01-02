@@ -40,8 +40,8 @@ public class RoomNameConverter implements Converter  {
 		Room room = (Room) value;
 		
 		try {
-			for(Location location : dataAccess.getAllLocations()) {
-				if(location.getRooms().contains(room)) {
+			for (Location location : dataAccess.getAllLocations()) {
+				if (location.getRooms().contains(room)) {
 					return room.getId().toString();
 				}
 			}

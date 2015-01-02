@@ -120,5 +120,11 @@ public class EdgeBlackboxTest {
 		Edge e = new Edge(l1, l2, 10);
 		e.getAdjacentLocation(PowerMockito.mock(Location.class));
 	}
+	
+	@Test(expected=IllegalArgumentException.class)
+	public void getAdjacentLocationNull(){
+		Edge e = new Edge(l1, l2, 10);
+		e.getAdjacentLocation(null);
+	}
 
 }

@@ -117,15 +117,19 @@ public class AcademicYear extends org.woym.objects.Entity implements
 	 */
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj)
+		if (this == obj) {
 			return true;
-		if (obj == null)
+		}
+		if (obj == null) {
 			return false;
-		if (getClass() != obj.getClass())
+		}
+		if (getClass() != obj.getClass()) {
 			return false;
+		}
 		AcademicYear other = (AcademicYear) obj;
-		if (academicYear != other.academicYear)
+		if (academicYear != other.academicYear) {
 			return false;
+		}
 		return true;
 	}
 

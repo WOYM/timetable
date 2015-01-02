@@ -132,18 +132,23 @@ public abstract class ActivityType extends org.woym.objects.Entity implements
 	 */
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj)
+		if (this == obj) {
 			return true;
-		if (obj == null)
+		}
+		if (obj == null) {
 			return false;
-		if (getClass() != obj.getClass())
+		}
+		if (getClass() != obj.getClass()) {
 			return false;
+		}
 		ActivityType other = (ActivityType) obj;
 		if (name == null) {
-			if (other.name != null)
+			if (other.name != null) {
 				return false;
-		} else if (!name.toUpperCase().equals(other.name.toUpperCase()))
+			}
+		} else if (!name.toUpperCase().equals(other.name.toUpperCase())) {
 			return false;
+		}
 		return true;
 	}
 

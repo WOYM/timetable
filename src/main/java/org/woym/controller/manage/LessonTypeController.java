@@ -149,7 +149,7 @@ public class LessonTypeController implements Serializable {
 		IStatus status = commandHandler.execute(command);
 		FacesMessage msg = status.report();
 		
-		if(status instanceof SuccessStatus) {
+		if (status instanceof SuccessStatus) {
 			// Reset stuff
 			rooms = new ArrayList<Room>();
 			

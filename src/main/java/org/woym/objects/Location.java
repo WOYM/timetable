@@ -10,6 +10,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
 
 import org.woym.objects.spec.IMemento;
 import org.woym.objects.spec.IMementoObject;
@@ -45,6 +46,7 @@ public class Location extends org.woym.objects.Entity implements IMementoObject 
 	 * Die zum Standort gehörigen Räume.
 	 */
 	@OneToMany(cascade = CascadeType.ALL)
+	@OrderBy("name")
 	private List<Room> rooms = new ArrayList<Room>();
 
 	public Location() {
@@ -95,18 +97,23 @@ public class Location extends org.woym.objects.Entity implements IMementoObject 
 	 */
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj)
+		if (this == obj) {
 			return true;
-		if (obj == null)
+		}
+		if (obj == null) {
 			return false;
-		if (getClass() != obj.getClass())
+		}
+		if (getClass() != obj.getClass()) {
 			return false;
+		}
 		Location other = (Location) obj;
 		if (name == null) {
-			if (other.name != null)
+			if (other.name != null) {
 				return false;
-		} else if (!name.toUpperCase().equals(other.name.toUpperCase()))
+			}
+		} else if (!name.toUpperCase().equals(other.name.toUpperCase())) {
 			return false;
+		}
 		return true;
 	}
 

@@ -38,7 +38,7 @@ public class LocationNameConverter implements Converter {
 	public String getAsString(FacesContext context, UIComponent component,
 			Object value) {
 		
-		if(value == null) {
+		if (value == null) {
 			return null;
 		}
 		
