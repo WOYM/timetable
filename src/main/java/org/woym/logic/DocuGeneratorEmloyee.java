@@ -21,7 +21,12 @@ public class DocuGeneratorEmloyee implements IDocuGenerator {
 	
 	@Override
 	public File generateTxt() {
-		// TODO Auto-generated method stub
+		// TODO implementierung
+		String head =  "      +------------+------------+------------+------------+------------+\n" +
+					   "      |Montag	   |Dienstag    |Mittwoch    |Donnerstag  |Freitag     |\n" +
+					   "------+------------+------------+------------+------------+------------+\n";
+		List<String> body = new ArrayList<String>();
+		
 		return null;
 	}
 

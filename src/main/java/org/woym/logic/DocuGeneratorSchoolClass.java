@@ -21,7 +21,12 @@ public class DocuGeneratorSchoolClass implements IDocuGenerator {
 	
 	@Override
 	public File generateTxt() {
-		// TODO implementieren
+		// TODO implementierung
+		String head =  "      +------------+------------+------------+------------+------------+\n" +
+					   "      |Montag	   |Dienstag    |Mittwoch    |Donnerstag  |Freitag     |\n" +
+					   "------+------------+------------+------------+------------+------------+\n";
+		List<String> body = new ArrayList<String>();
+		
 		return null;
 	}
 
@@ -51,4 +56,5 @@ public class DocuGeneratorSchoolClass implements IDocuGenerator {
 		}
 		return retActivitys;
 	}
+	
 }
