@@ -4,12 +4,15 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
 
 import org.primefaces.context.RequestContext;
+import org.woym.config.Config;
+import org.woym.config.DefaultConfigEnum;
 import org.woym.exceptions.DatasetException;
 import org.woym.logic.CommandHandler;
 import org.woym.logic.SuccessStatus;
@@ -38,7 +41,7 @@ import org.woym.persistence.DataAccess;
 public class RoomController implements Serializable {
 
 	private static final long serialVersionUID = 572818674185743147L;
-	
+
 	private Room room;
 	private Location location;
 
@@ -49,6 +52,16 @@ public class RoomController implements Serializable {
 	private CommandCreator commandCreator = CommandCreator.getInstance();
 
 	private DataAccess dataAccess = DataAccess.getInstance();
+
+	private boolean hideDeletionDialog;
+	private boolean hide;
+
+	@PostConstruct
+	public void init() {
+		hideDeletionDialog = Config
+				.getBooleanValue(DefaultConfigEnum.HIDE_ROOM_DELETION_DIALOG);
+		hide = hideDeletionDialog;
+	}
 
 	/**
 	 * Liefert eine Liste mit allen Räumen eines Standortes zurück.
@@ -118,6 +131,11 @@ public class RoomController implements Serializable {
 	 * Löscht einen Raum aus der Datenbank.
 	 */
 	public void deleteRoom() {
+		if (hide != hideDeletionDialog) {
+			Config.updateProperty(
+					DefaultConfigEnum.HIDE_ROOM_DELETION_DIALOG.getPropKey(),
+					String.valueOf(hideDeletionDialog));
+		}
 		MacroCommand macroCommand = commandCreator.createDeleteCommand(room);
 		IStatus status = commandHandler.execute(macroCommand);
 		FacesMessage msg = status.report();
@@ -146,6 +164,14 @@ public class RoomController implements Serializable {
 
 	public void setLocation(Location location) {
 		this.location = location;
+	}
+
+	public boolean isHideDeletionDialog() {
+		return hideDeletionDialog;
+	}
+
+	public void setHideDeletionDialog(boolean hideDeletionDialog) {
+		this.hideDeletionDialog = hideDeletionDialog;
 	}
 
 }

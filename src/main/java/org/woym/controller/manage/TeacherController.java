@@ -16,6 +16,8 @@ import org.h2.util.StringUtils;
 import org.primefaces.context.RequestContext;
 import org.primefaces.event.TransferEvent;
 import org.primefaces.model.DualListModel;
+import org.woym.config.Config;
+import org.woym.config.DefaultConfigEnum;
 import org.woym.exceptions.DatasetException;
 import org.woym.logic.CommandHandler;
 import org.woym.logic.SuccessStatus;
@@ -63,9 +65,15 @@ public class TeacherController implements Serializable {
 
 	private DualListModel<ActivityType> activityTypes;
 
+	private boolean hideDeletionDialog;
+	private boolean hide;
+
 	@PostConstruct
 	public void init() {
 		teacher = new Teacher();
+		hideDeletionDialog = Config
+				.getBooleanValue(DefaultConfigEnum.HIDE_TEACHER_DELETION_DIALOG);
+		hide = hideDeletionDialog;
 	}
 
 	/**
@@ -162,7 +170,7 @@ public class TeacherController implements Serializable {
 			RequestContext context = RequestContext.getCurrentInstance();
 			context.execute("PF('wEditTeacherDialog').hide();");
 		}
-		
+
 		FacesContext.getCurrentInstance().addMessage(null, msg);
 	}
 
@@ -170,6 +178,11 @@ public class TeacherController implements Serializable {
 	 * Löscht den selektierten Lehrer.
 	 */
 	public void deleteTeacher() {
+		if (hide != hideDeletionDialog) {
+			Config.updateProperty(
+					DefaultConfigEnum.HIDE_TEACHER_DELETION_DIALOG.getPropKey(),
+					String.valueOf(hideDeletionDialog));
+		}
 		MacroCommand macroCommand = commandCreator.createDeleteCommand(teacher);
 		IStatus status = commandHandler.execute(macroCommand);
 		FacesMessage msg = status.report();
@@ -257,4 +270,13 @@ public class TeacherController implements Serializable {
 	public void setSelectedTeacherForSearch(Teacher selectedTeacherForSearch) {
 		this.selectedTeacherForSearch = selectedTeacherForSearch;
 	}
+
+	public boolean isHideDeletionDialog() {
+		return hideDeletionDialog;
+	}
+
+	public void setHideDeletionDialog(boolean hideDeletionDialog) {
+		this.hideDeletionDialog = hideDeletionDialog;
+	}
+
 }

@@ -137,7 +137,7 @@
 						<p:commandButton id="confirmBackupButton" value="Ja"
 							actionListener="#{backupController.doBackup}"
 							oncomplete="PF('wConfimBackup').hide();"
-							update="commandGrowl,backupBlockPanel"
+							update="commandGrowl"
 							styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
 						<p:commandButton value="Nein"
 							oncomplete="PF('wConfimBackup').hide();"

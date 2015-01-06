@@ -129,23 +129,11 @@ public final class Config {
 	 *            Der Key
 	 * @return Die Value
 	 */
-	public static int getConfValInt(DefaultConfigEnum defaultConfigEnum) {
-
-		int valInt = 0;
-
-		// Get prop-value
-		String[] valIntString = Config.getPropValue(defaultConfigEnum
-				.getPropKey());
-		if (valIntString.length < 1) {
-			return 0;
+	public static int getSingleIntValue(DefaultConfigEnum defaultConfigEnum) {
+		if (defaultConfigEnum == null) {
+			throw new IllegalArgumentException();
 		}
-		try {
-			valInt = Integer.parseInt(valIntString[0]);
-		} catch (NumberFormatException e) {
-			// Do nothing, will return 0
-		}
-
-		return valInt;
+		return propertiesConfig.getInt(defaultConfigEnum.getPropKey());
 	}
 
 	/**
@@ -157,13 +145,26 @@ public final class Config {
 	 *            - die Einstellung
 	 * @return der Wert
 	 */
-	public static String getConfValSingleString(
+	public static String getSingleStringValue(
 			DefaultConfigEnum defaultConfigEnum) {
-		String[] value = Config.getPropValue(defaultConfigEnum.getPropKey());
-		if (value.length < 1) {
-			return null;
+		if (defaultConfigEnum == null) {
+			throw new IllegalArgumentException();
 		}
-		return value[0];
+		return propertiesConfig.getString(defaultConfigEnum.getPropKey());
+	}
+
+	/**
+	 * Gibt den Boolean-Wert zur übergebenen Property zurück.
+	 * 
+	 * @param defaultConfigEnum
+	 *            - die Property
+	 * @return boolean-Wert des Property-Keys
+	 */
+	public static boolean getBooleanValue(DefaultConfigEnum defaultConfigEnum) {
+		if (defaultConfigEnum == null) {
+			throw new IllegalArgumentException();
+		}
+		return propertiesConfig.getBoolean(defaultConfigEnum.getPropKey());
 	}
 
 	/**

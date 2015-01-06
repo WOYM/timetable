@@ -36,6 +36,6 @@ public class PlanningController implements Serializable {
 	}
 
 	public int getSlotMinutes() {
-		return Config.getConfValInt(DefaultConfigEnum.TIMETABLE_GRID);
+		return Config.getSingleIntValue(DefaultConfigEnum.TIMETABLE_GRID);
 	}
 }

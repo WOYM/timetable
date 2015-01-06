@@ -13,6 +13,8 @@ import javax.faces.context.FacesContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.primefaces.context.RequestContext;
+import org.woym.config.Config;
+import org.woym.config.DefaultConfigEnum;
 import org.woym.exceptions.DatasetException;
 import org.woym.logic.CommandHandler;
 import org.woym.logic.SuccessStatus;
@@ -64,10 +66,16 @@ public class AcademicYearAndClassController implements Serializable {
 
 	private int generatorSize;
 
+	private boolean hideDeletionDialog;
+	private boolean hide;
+
 	@PostConstruct
 	public void init() {
 		schoolclass = new Schoolclass();
 		generatorSize = INITIAL_GENERATOR_SIZE;
+		hideDeletionDialog = Config
+				.getBooleanValue(DefaultConfigEnum.HIDE_SCHOOLCLASS_DELETION_DIALOG);
+		hide = hideDeletionDialog;
 	}
 
 	/**
@@ -93,7 +101,7 @@ public class AcademicYearAndClassController implements Serializable {
 		location = null;
 		schoolclass = new Schoolclass();
 		academicYearMemento = academicYear.createMemento();
-		
+
 		schoolclass.setLessonDemands(academicYear.getLessonDemands());
 	}
 
@@ -206,8 +214,9 @@ public class AcademicYearAndClassController implements Serializable {
 		List<Character> validIdentifiers = new ArrayList<>();
 
 		try {
-			
-			return SchoolclassIdentifierUtil.getAvailableCharacters(academicYear);
+
+			return SchoolclassIdentifierUtil
+					.getAvailableCharacters(academicYear);
 
 		} catch (DatasetException e) {
 			LOGGER.error(e);
@@ -275,6 +284,11 @@ public class AcademicYearAndClassController implements Serializable {
 	 * Löscht eine Klasse aus der Datennbank.
 	 */
 	public void deleteSchoolclass() {
+		if (hide != hideDeletionDialog) {
+			Config.updateProperty(
+					DefaultConfigEnum.HIDE_SCHOOLCLASS_DELETION_DIALOG
+							.getPropKey(), String.valueOf(hideDeletionDialog));
+		}
 		MacroCommand macroCommand = commandCreator
 				.createDeleteCommand(schoolclass);
 		IStatus status = commandHandler.execute(macroCommand);
@@ -320,4 +334,13 @@ public class AcademicYearAndClassController implements Serializable {
 	public void setGeneratorSize(int generatorSize) {
 		this.generatorSize = generatorSize;
 	}
+
+	public boolean isHideDeletionDialog() {
+		return hideDeletionDialog;
+	}
+
+	public void setHideDeletionDialog(boolean hideDeletionDialog) {
+		this.hideDeletionDialog = hideDeletionDialog;
+	}
+
 }

@@ -51,17 +51,17 @@ public class ConfigController implements Serializable {
 
 	@PostConstruct
 	public void init() {
-		timetableGrid = Config.getConfValInt(DefaultConfigEnum.TIMETABLE_GRID);
+		timetableGrid = Config.getSingleIntValue(DefaultConfigEnum.TIMETABLE_GRID);
 		backupInterval = Config
-				.getConfValInt(DefaultConfigEnum.BACKUP_INTERVAL);
+				.getSingleIntValue(DefaultConfigEnum.BACKUP_INTERVAL);
 		teacherSettlement = Config
-				.getConfValInt(DefaultConfigEnum.TEACHER_HOURLY_SETTLEMENT);
+				.getSingleIntValue(DefaultConfigEnum.TEACHER_HOURLY_SETTLEMENT);
 		paSettlement = Config
-				.getConfValInt(DefaultConfigEnum.PEDAGOGIC_ASSISTANT_HOURLY_SETTLEMENT);
+				.getSingleIntValue(DefaultConfigEnum.PEDAGOGIC_ASSISTANT_HOURLY_SETTLEMENT);
 		typicalActivityDuration = Config
-				.getConfValInt(DefaultConfigEnum.TYPICAL_ACTIVITY_DURATION);
+				.getSingleIntValue(DefaultConfigEnum.TYPICAL_ACTIVITY_DURATION);
 		identifierCase = Config
-				.getConfValSingleString(DefaultConfigEnum.SCHOOLCLASS_IDENTIFIER_CASE);
+				.getSingleStringValue(DefaultConfigEnum.SCHOOLCLASS_IDENTIFIER_CASE);
 	}
 
 	/**

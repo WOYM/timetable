@@ -73,9 +73,13 @@
 								oncomplete="PF('wEditSchoolclassDialog').show();"
 								icon="ui-icon-pencil" process="@this"
 								update="editSchoolclassPanel" />
-							<p:menuitem value="Löschen" icon="ui-icon-close"
-								onclick="PF('wConfirmClassDelete').show();" process="@this">
-							</p:menuitem>
+							<p:menuitem value="Löschen" icon="ui-icon-close" update="@form"
+								rendered="#{not academicYearAndClassController.hideDeletionDialog}"
+								oncomplete="PF('wConfirmClassDelete').show();" process="@this" />
+							<p:menuitem value="Löschen" icon="ui-icon-close" update="@form"
+								rendered="#{academicYearAndClassController.hideDeletionDialog}"
+								action="#{academicYearAndClassController.deleteSchoolclass}"
+								process="@this" />
 						</p:contextMenu>
 						<p:dataTable emptyMessage="Keine Klassen vorhanden"
 							id="schoolclassTable"
@@ -130,17 +134,28 @@
 
 			<!-- Confirm-Dialog -->
 			<p:dialog header="Bestätigen" modal="true" draggable="true"
-				resizable="false" appendToBody="true" id="confirmClassDelete"
-				widgetVar="wConfirmClassDelete" showEffect="fade" hideEffect="fade">
+				width="40%" resizable="false" appendToBody="true"
+				id="confirmClassDelete" widgetVar="wConfirmClassDelete"
+				showEffect="fade" hideEffect="fade">
 				<p:ajax event="close" update="@form" />
-				<h:panelGrid columns="1">
+				<h:panelGrid id="confirmClassDeleteBody" columns="1">
 					<h:outputText
 						value="Sind Sie sicher, dass die Klasse gelöscht werden soll?" />
+					<h:outputText
+						value="Es werden auch alle Aktivitäten gelöscht, an welchen dann keine Schulklasse mehr teilnimmt." />
+					<p:spacer height="10" />
+					<p:outputPanel>
+						<p:selectBooleanCheckbox
+							value="#{academicYearAndClassController.hideDeletionDialog}" />
+						<h:outputText
+							value=" Diesen Dialog zukünftig nicht mehr anzeigen." />
+					</p:outputPanel>
 					<p:separator />
 					<p:outputPanel>
 						<p:commandButton value="Bestätigen"
 							actionListener="#{academicYearAndClassController.deleteSchoolclass}"
-							process="@this" oncomplete="PF('wConfirmClassDelete').hide();"
+							process="confirmClassDeleteBody,@this"
+							oncomplete="PF('wConfirmClassDelete').hide();"
 							styleClass="ui-confirmdialog-yes" icon="ui-icon-check"
 							update="commandGrowl" />
 						<p:commandButton value="Abbrechen"
