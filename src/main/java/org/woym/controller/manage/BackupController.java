@@ -84,7 +84,7 @@ public class BackupController implements Serializable {
 	}
 
 	public boolean getFileExists() {
-		File file = new File(DataBase.DB_BACKUP_LOCATION + backupName);
+		File file = new File(DataBase.DB_BACKUP_LOCATION + backupName + ".zip");
 		return file.exists();
 	}
 

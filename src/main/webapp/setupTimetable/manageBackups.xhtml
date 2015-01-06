@@ -51,7 +51,7 @@
 									<p:outputPanel id="namePanel" style="margin-bottom:10px;"
 										rendered="#{not backupController.hasName}">
 										<p:inputText value="#{backupController.backupName}">
-											<p:ajax event="change" update="backupButtonsPanel" />
+											<p:ajax event="keyup" update="backupButtonsPanel" />
 										</p:inputText>
 									</p:outputPanel>
 
@@ -64,7 +64,7 @@
 										<p:commandButton id="createBackupConfirmDialogButton"
 											value="Backup erzeugen" process="createBackupPanel,@this"
 											rendered="#{backupController.fileExists}"
-											onclick="PF('wConfirmBackup').show();"/>
+											onclick="PF('wConfirmBackup').show();" />
 									</p:outputPanel>
 								</h:panelGrid>
 								<p:blockUI trigger="createBackupButton" block="backupBlockPanel" />
@@ -136,7 +136,8 @@
 					<p:outputPanel>
 						<p:commandButton id="confirmBackupButton" value="Ja"
 							actionListener="#{backupController.doBackup}"
-							oncomplete="PF('wConfimBackup').hide();" update="commandGrowl,backupList"
+							oncomplete="PF('wConfimBackup').hide();"
+							update="commandGrowl,backupBlockPanel"
 							styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
 						<p:commandButton value="Nein"
 							oncomplete="PF('wConfimBackup').hide();"
