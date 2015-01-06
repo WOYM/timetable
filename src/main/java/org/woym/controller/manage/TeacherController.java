@@ -12,7 +12,6 @@ import javax.faces.context.FacesContext;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.h2.util.StringUtils;
 import org.primefaces.context.RequestContext;
 import org.primefaces.event.TransferEvent;
 import org.primefaces.model.DualListModel;
@@ -58,10 +57,6 @@ public class TeacherController implements Serializable {
 	private Teacher teacher;
 
 	private IMemento teacherMemento;
-
-	// TODO Move to planningController
-	private Teacher selectedTeacherForSearch;
-	private String searchSymbol;
 
 	private DualListModel<ActivityType> activityTypes;
 
@@ -191,45 +186,6 @@ public class TeacherController implements Serializable {
 	}
 
 	/**
-	 * Returns a list of teachers that match the given search-symbol. If no
-	 * search-symbol is set the first 5 teachers will be returned.
-	 * 
-	 * TODO: Move to planningController (Maybe)
-	 * 
-	 * @return
-	 */
-	public ArrayList<Teacher> getTeachersForSearch() {
-
-		ArrayList<Teacher> tempList = new ArrayList<>();
-		if (StringUtils.isNullOrEmpty(searchSymbol)) {
-			for (Teacher teacher : getTeachers()) {
-				tempList.add(teacher);
-
-				if (tempList.size() >= 5) {
-					return tempList;
-				}
-
-			}
-
-			return tempList;
-		}
-
-		for (Teacher teacher : getTeachers()) {
-
-			if (teacher.getSymbol().contains(searchSymbol)) {
-
-				tempList.add(teacher);
-
-				if (tempList.size() >= 5) {
-					return tempList;
-				}
-			}
-		}
-
-		return tempList;
-	}
-
-	/**
 	 * Fügt einen Lehrer der Persistenz hinzu. Der momentane Lehrer im
 	 * Zwischenspeicher wird mit einem neuen Objekt ersetzt.
 	 */
@@ -253,22 +209,6 @@ public class TeacherController implements Serializable {
 		if (teacher != null) {
 			this.teacher = teacher;
 		}
-	}
-
-	public String getSearchSymbol() {
-		return searchSymbol;
-	}
-
-	public void setSearchSymbol(String searchSymbol) {
-		this.searchSymbol = searchSymbol;
-	}
-
-	public Teacher getSelectedTeacherForSearch() {
-		return selectedTeacherForSearch;
-	}
-
-	public void setSelectedTeacherForSearch(Teacher selectedTeacherForSearch) {
-		this.selectedTeacherForSearch = selectedTeacherForSearch;
 	}
 
 	public boolean isHideDeletionDialog() {
