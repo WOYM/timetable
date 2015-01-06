@@ -52,9 +52,11 @@ public class BackupController implements Serializable {
 	 */
 	public void openBackupLocation() {
 		if (!Desktop.isDesktopSupported()) {
-			FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_ERROR,
+			FacesMessage msg = new FacesMessage(
+					FacesMessage.SEVERITY_ERROR,
 					"Wird nicht unterstützt.",
-					"Diese Aktion wird auf Ihrem System nicht unterstützt.");
+					"Diese Aktion wird auf Ihrem System nicht unterstützt. Navigieren Sie manuell zum Verzeichnis: "
+							+ DataBase.DB_BACKUP_LOCATION);
 			FacesContext.getCurrentInstance().addMessage(null, msg);
 			return;
 		}
@@ -63,7 +65,8 @@ public class BackupController implements Serializable {
 		if (!file.exists()) {
 			FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_WARN,
 					"Speicherort nicht gefunden.",
-					"Der Speicherort wurde nicht gefunden.");
+					"Der Speicherort wurde nicht am erwarteten Pfad ("
+							+ DataBase.DB_BACKUP_LOCATION + ") gefunden.");
 			FacesContext.getCurrentInstance().addMessage(null, msg);
 			return;
 		}
@@ -72,10 +75,17 @@ public class BackupController implements Serializable {
 		} catch (IOException e) {
 			FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_ERROR,
 					"Fehler beim Öffnen des Speicherortes",
-					"Beim Öffnen des Speicherortes ist ein Fehler aufgetreten.");
+					"Beim Öffnen des Speicherortes ("
+							+ DataBase.DB_BACKUP_LOCATION
+							+ ") ist ein Fehler aufgetreten.");
 			FacesContext.getCurrentInstance().addMessage(null, msg);
 			return;
 		}
+	}
+
+	public boolean getFileExists() {
+		File file = new File(DataBase.DB_BACKUP_LOCATION + backupName);
+		return file.exists();
 	}
 
 	public File getBackup() {

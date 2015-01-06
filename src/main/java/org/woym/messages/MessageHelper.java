@@ -4,6 +4,7 @@ import javax.faces.application.FacesMessage;
 
 import org.woym.objects.AcademicYear;
 import org.woym.objects.Activity;
+import org.woym.objects.Classteam;
 import org.woym.objects.Entity;
 import org.woym.objects.LessonType;
 import org.woym.objects.Location;
@@ -140,6 +141,8 @@ public abstract class MessageHelper {
 		} else if (clazz == Activity.class
 				|| clazz.getSuperclass() == Activity.class) {
 			return !success ? "der Aktivität" : "Aktivität";
+		} else if (clazz == Classteam.class) {
+			return !success ? "des Klassenteams" : "Klassenteam";
 		} else if (clazz == LessonType.class) {
 			return !success ? "des Unterrichtsinhalts" : "Unterrichtsinhalt";
 		} else if (clazz == Location.class) {
