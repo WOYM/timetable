@@ -22,6 +22,18 @@
 		<p:spacer style="height:20px" />
 		<p:tabView>
 			<p:tab title="Lehrer" id="planningTeacherTab">
+				<p:inputText value="#{planningController.searchTerm}">
+					<p:ajax event="keyup" update="teacherSearchTable" />
+				</p:inputText>
+				<p:dataTable id="teacherSearchTable"
+					value="#{planningController.teachersForSearchTerm}" scrollable="false" scrollRows="5" var="teacher" style="margin-top:10px;">
+					<p:column headerText="Name">
+						<h:outputText value="#{teacher.name}" />
+					</p:column>
+					<p:column headerText="Kürzel">
+						<h:outputText value="#{teacher.symbol}" />
+					</p:column>
+				</p:dataTable>
 
 			</p:tab>
 
@@ -39,17 +51,18 @@
 			<!-- Schedule -->
 			<p:schedule showHeader="false" view="agendaWeek" allDaySlot="false"
 				axisFormat="HH:mm" slotMinutes="#{planningController.slotMinutes}"
-				columnFormat="week: 'ddd'" locale="de" ignoreTimezone="true" />
+				columnFormat="week: 'ddd'" locale="de" ignoreTimezone="true"
+				initialDate="#{planningController.initalDate}" />
 			<p:spacer style="height:50px;" />
 		</p:outputPanel>
 	</h:form>
 
 	<script type="text/javascript">
 		PrimeFaces.locales['de'] = {
-			dayNames : ['Sonntag', 'Montag', 'Dienstag', 'Mittwoch', 'Donnerstag',
-					'Freitag', 'Samstag'],
-			dayNamesShort : ['Son', 'Mon', 'Die', 'Mit', 'Don', 'Fre', 'Sam'],
-			dayNamesMin : ['So', 'Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa'],
+			dayNames : [ 'Sonntag', 'Montag', 'Dienstag', 'Mittwoch',
+					'Donnerstag', 'Freitag', 'Samstag' ],
+			dayNamesShort : [ 'Son', 'Mon', 'Die', 'Mit', 'Don', 'Fre', 'Sam' ],
+			dayNamesMin : [ 'So', 'Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa' ],
 			weekHeader : 'Hf',
 			firstDay : 1,
 			week : 'Woche',
