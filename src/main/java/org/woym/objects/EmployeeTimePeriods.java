@@ -160,19 +160,42 @@ public class EmployeeTimePeriods extends org.woym.objects.Entity {
 	}
 
 	/**
-	 * @deprecated In dieser Klasse ohne Funktion.
+	 * {@inheritDoc}
 	 */
 	@Override
-	@Deprecated
 	public IMemento createMemento() {
-		return null;
+		return new Memento(this);
 	}
 
 	/**
-	 * @deprecated In dieser Klasse ohne Funktion.
+	 * {@inheritDoc}
 	 */
 	@Override
-	@Deprecated
 	public void setMemento(IMemento memento) {
+		if (memento == null) {
+			throw new IllegalArgumentException();
+		}
+		if (memento instanceof Memento) {
+			Memento actualMemento = (Memento) memento;
+			this.id = actualMemento.id;
+			this.employee = actualMemento.employee;
+			this.timePeriods = new ArrayList<TimePeriod>(
+					actualMemento.timePeriods);
+		}
+	}
+
+	public static class Memento implements IMemento {
+
+		private final Long id;
+
+		private final Employee employee;
+
+		private final List<TimePeriod> timePeriods;
+
+		Memento(EmployeeTimePeriods originator) {
+			this.id = originator.id;
+			this.employee = originator.employee;
+			this.timePeriods = new ArrayList<TimePeriod>(originator.timePeriods);
+		}
 	}
 }

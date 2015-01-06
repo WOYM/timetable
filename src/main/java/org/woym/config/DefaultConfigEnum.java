@@ -95,41 +95,49 @@ public enum DefaultConfigEnum {
 			"pedagogic_assistant_hourly_settlement", "60"),
 
 	/**
-	 * True, wenn ein Bestätigungsdialog beim Löschen eines Lehrers angezeigt
+	 * True, wenn kein Bestätigungsdialog beim Löschen eines Lehrers angezeigt
 	 * werden soll, der auf die Folgen hinweist.
 	 */
-	SHOW_TEACHER_DELETION_DIALOG("show_teacher_deletion_dialog", "true"),
+	HIDE_TEACHER_DELETION_DIALOG("hide_teacher_deletion_dialog", "false"),
 
 	/**
-	 * True, wenn ein Bestätigungsdialog beim Löschen eines päd. Mitarbeiters
+	 * True, wenn kein Bestätigungsdialog beim Löschen eines päd. Mitarbeiters
 	 * angezeigt werden soll, der auf die Folgen hinweist.
 	 */
-	SHOW_PA_DELETION_DIALOG("show_pa_deletion_dialog", "true"),
+	HIDE_PA_DELETION_DIALOG("hide_pa_deletion_dialog", "false"),
 
 	/**
-	 * True, wenn ein Bestätigungsdialog beim Löschen einer Schulklasse
+	 * True, wenn kein Bestätigungsdialog beim Löschen einer Schulklasse
 	 * angezeigt werden soll, der auf die Folgen hinweist.
 	 */
-	SHOW_SCHOOLCLASS_DELETION_DIALOG("show_schoolclass_deletion_dialog", "true"),
+	HIDE_SCHOOLCLASS_DELETION_DIALOG("hide_schoolclass_deletion_dialog",
+			"false"),
 
 	/**
-	 * True, wenn ein Bestätigungsdialog beim Löschen eines Standortes angezeigt
+	 * True, wenn kein Bestätigungsdialog beim Löschen eines Standortes
+	 * angezeigt werden soll, der auf die Folgen hinweist.
+	 */
+	HIDE_LOCATION_DELETION_DIALOG("hide_location_deletion_dialog", "false"),
+
+	/**
+	 * True, wenn kein Bestätigungsdialog beim Löschen eines Raumes angezeigt
 	 * werden soll, der auf die Folgen hinweist.
 	 */
-	SHOW_LOCATION_DELETION_DIALOG("show_location_deletion_dialog", "true"),
+	HIDE_ROOM_DELETION_DIALOG("hide_room_deletion_dialog", "false"),
 
 	/**
-	 * True, wenn ein Bestätigungsdialog beim Löschen eines Raumes angezeigt
-	 * werden soll, der auf die Folgen hinweist.
-	 */
-	SHOW_ROOM_DELETION_DIALOG("show_room_deletion_dialog", "true"),
-
-	/**
-	 * True, wenn ein Bestätigungsdialog beim Löschen eines Aktivitätstypens
+	 * True, wenn kein Bestätigungsdialog beim Löschen eines Aktivitätstypens
 	 * angezeigt werden soll, der auf die Folgen hinweist.
 	 */
-	SHOW_ACTIVITYTYPE_DELETION_DIALOG("show_activitytype_deletion_dialog",
-			"true");
+	HIDE_ACTIVITYTYPE_DELETION_DIALOG("hide_activitytype_deletion_dialog",
+			"false"),
+
+	/**
+	 * both für Groß- und Kleinbuchstaben, als Bezeichner für Schulklassen.
+	 * lower nur für Kleinbuchstaben, upper nur für Großbuchstaben.
+	 */
+	SCHOOLCLASS_IDENTIFIER_CASE("schoolclass_identifier_case",
+			Config.IDENTIFIER_UPPER_CASE);
 
 	/**
 	 * Der Key der Property.

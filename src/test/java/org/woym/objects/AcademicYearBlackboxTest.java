@@ -1,31 +1,32 @@
 package org.woym.objects;
 
-import static org.junit.Assert.*;
-
-import org.junit.Test;
+import org.testng.annotations.Test;
+import org.testng.AssertJUnit;
 import org.powermock.api.mockito.PowerMockito;
+import org.powermock.modules.testng.PowerMockTestCase;
 
-public class AcademicYearBlackboxTest {
+@Test(groups = "unit")
+public class AcademicYearBlackboxTest extends PowerMockTestCase {
 
 	@Test
 	public void equalsSameObject() {
 		AcademicYear a = new AcademicYear();
 		a.setAcademicYear(1);
-		assertTrue(a.equals(a));
+		AssertJUnit.assertTrue(a.equals(a));
 	}
 
 	@Test
 	public void equalsNull() {
 		AcademicYear a = new AcademicYear();
 		a.setAcademicYear(1);
-		assertFalse(a.equals(null));
+		AssertJUnit.assertFalse(a.equals(null));
 	}
 
 	@Test
 	public void equalsNoAcademicYear() {
 		AcademicYear a = new AcademicYear();
 		a.setAcademicYear(1);
-		assertFalse(a.equals(PowerMockito.mock(Location.class)));
+		AssertJUnit.assertFalse(a.equals(PowerMockito.mock(Location.class)));
 	}
 
 	@Test
@@ -34,7 +35,7 @@ public class AcademicYearBlackboxTest {
 		AcademicYear a1 = new AcademicYear();
 		a.setAcademicYear(1);
 		a1.setAcademicYear(2);
-		assertFalse(a.equals(a1));
+		AssertJUnit.assertFalse(a.equals(a1));
 	}
 
 	@Test
@@ -43,16 +44,16 @@ public class AcademicYearBlackboxTest {
 		AcademicYear a1 = new AcademicYear();
 		a.setAcademicYear(1);
 		a1.setAcademicYear(1);
-		assertTrue(a.equals(a1));
+		AssertJUnit.assertTrue(a.equals(a1));
 	}
 
 	@Test
 	public void addSchoolclassSchoolclassNotExists() {
 		AcademicYear a = new AcademicYear();
 		Schoolclass s = PowerMockito.mock(Schoolclass.class);
-		assertTrue(a.add(s));
-		assertEquals(1, a.getSchoolclasses().size());
-		assertEquals(s, a.getSchoolclasses().get(0));
+		AssertJUnit.assertTrue(a.add(s));
+		AssertJUnit.assertEquals(1, a.getSchoolclasses().size());
+		AssertJUnit.assertEquals(s, a.getSchoolclasses().get(0));
 	}
 
 	@Test
@@ -60,7 +61,7 @@ public class AcademicYearBlackboxTest {
 		AcademicYear a = new AcademicYear();
 		Schoolclass s = PowerMockito.mock(Schoolclass.class);
 		a.add(s);
-		assertFalse(a.add(s));
+		AssertJUnit.assertFalse(a.add(s));
 	}
 
 	@Test
@@ -68,15 +69,15 @@ public class AcademicYearBlackboxTest {
 		AcademicYear a = new AcademicYear();
 		Schoolclass s = PowerMockito.mock(Schoolclass.class);
 		a.add(s);
-		assertTrue(a.remove(s));
-		assertEquals(0, a.getSchoolclasses().size());
+		AssertJUnit.assertTrue(a.remove(s));
+		AssertJUnit.assertEquals(0, a.getSchoolclasses().size());
 	}
 
 	@Test
 	public void removeSchoolclassSchoolclassNotExists() {
 		AcademicYear a = new AcademicYear();
 		Schoolclass s = PowerMockito.mock(Schoolclass.class);
-		assertFalse(a.remove(s));
+		AssertJUnit.assertFalse(a.remove(s));
 	}
 
 	@Test
@@ -84,23 +85,23 @@ public class AcademicYearBlackboxTest {
 		AcademicYear a = new AcademicYear();
 		Schoolclass s = PowerMockito.mock(Schoolclass.class);
 		a.add(s);
-		assertTrue(a.contains(s));
+		AssertJUnit.assertTrue(a.contains(s));
 	}
 
 	@Test
 	public void containsSchoolclassSchoolclassNotExists() {
 		AcademicYear a = new AcademicYear();
 		Schoolclass s = PowerMockito.mock(Schoolclass.class);
-		assertFalse(a.contains(s));
+		AssertJUnit.assertFalse(a.contains(s));
 	}
 
 	@Test
 	public void addLessonTypeNotExists() {
 		AcademicYear a = new AcademicYear();
 		LessonType l = PowerMockito.mock(LessonType.class);
-		assertTrue(a.add(l, 3));
-		assertEquals(1, a.getLessonDemands().size());
-		assertEquals(new Integer(3), a.getLessonDemands().get(l));
+		AssertJUnit.assertTrue(a.add(l, 3));
+		AssertJUnit.assertEquals(1, a.getLessonDemands().size());
+		AssertJUnit.assertEquals(new Integer(3), a.getLessonDemands().get(l));
 	}
 
 	@Test
@@ -108,7 +109,7 @@ public class AcademicYearBlackboxTest {
 		AcademicYear a = new AcademicYear();
 		LessonType l = PowerMockito.mock(LessonType.class);
 		a.add(l, 3);
-		assertFalse(a.add(l, 3));
+		AssertJUnit.assertFalse(a.add(l, 3));
 	}
 
 	@Test
@@ -116,17 +117,17 @@ public class AcademicYearBlackboxTest {
 		AcademicYear a = new AcademicYear();
 		LessonType l = PowerMockito.mock(LessonType.class);
 		a.add(l, 3);
-		assertTrue(a.replace(l, 10));
-		assertEquals(1, a.getLessonDemands().size());
-		assertEquals(new Integer(10), a.getLessonDemands().get(l));
+		AssertJUnit.assertTrue(a.replace(l, 10));
+		AssertJUnit.assertEquals(1, a.getLessonDemands().size());
+		AssertJUnit.assertEquals(new Integer(10), a.getLessonDemands().get(l));
 	}
 
 	@Test
 	public void replaceLessonTypeNotExists() {
 		AcademicYear a = new AcademicYear();
 		LessonType l = PowerMockito.mock(LessonType.class);
-		assertFalse(a.replace(l, 10));
-		assertEquals(0, a.getLessonDemands().size());
+		AssertJUnit.assertFalse(a.replace(l, 10));
+		AssertJUnit.assertEquals(0, a.getLessonDemands().size());
 	}
 
 	@Test
@@ -134,15 +135,15 @@ public class AcademicYearBlackboxTest {
 		AcademicYear a = new AcademicYear();
 		LessonType l = PowerMockito.mock(LessonType.class);
 		a.add(l, 3);
-		assertTrue(a.remove(l));
-		assertEquals(0, a.getLessonDemands().size());
+		AssertJUnit.assertTrue(a.remove(l));
+		AssertJUnit.assertEquals(0, a.getLessonDemands().size());
 	}
 
 	@Test
 	public void removeLessonTypeNotExists() {
 		AcademicYear a = new AcademicYear();
 		LessonType l = PowerMockito.mock(LessonType.class);
-		assertFalse(a.remove(l));
+		AssertJUnit.assertFalse(a.remove(l));
 	}
 
 	@Test
@@ -150,13 +151,13 @@ public class AcademicYearBlackboxTest {
 		AcademicYear a = new AcademicYear();
 		LessonType l = PowerMockito.mock(LessonType.class);
 		a.add(l, 3);
-		assertTrue(a.contains(l));
+		AssertJUnit.assertTrue(a.contains(l));
 	}
 
 	public void containsLessonTypeNotExists() {
 		AcademicYear a = new AcademicYear();
 		LessonType l = PowerMockito.mock(LessonType.class);
-		assertFalse(a.contains(l));
+		AssertJUnit.assertFalse(a.contains(l));
 	}
 
 }

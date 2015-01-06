@@ -1,15 +1,17 @@
 package org.woym.objects;
 
-import static org.junit.Assert.*;
+import org.testng.annotations.Test;
+import org.testng.AssertJUnit;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import org.junit.Test;
 import org.powermock.api.mockito.PowerMockito;
+import org.powermock.modules.testng.PowerMockTestCase;
 import org.woym.objects.spec.IActivityObject;
 
-public class ActivityBlackboxTest {
+@Test(groups = "unit")
+public class ActivityBlackboxTest extends PowerMockTestCase {
 
 	@Test
 	public void removeRoomRoomExists() {
@@ -20,10 +22,10 @@ public class ActivityBlackboxTest {
 		rooms.add(r);
 		rooms.add(r1);
 		p.setRooms(rooms);
-		assertEquals(1, p.remove(r));
-		assertEquals(1, p.getRooms().size());
-		assertEquals(0, p.remove(r1));
-		assertEquals(0, p.getRooms().size());
+		AssertJUnit.assertEquals(1, p.remove(r));
+		AssertJUnit.assertEquals(1, p.getRooms().size());
+		AssertJUnit.assertEquals(0, p.remove(r1));
+		AssertJUnit.assertEquals(0, p.getRooms().size());
 	}
 
 	@Test
@@ -34,26 +36,26 @@ public class ActivityBlackboxTest {
 		Room r1 = PowerMockito.mock(Room.class);
 		rooms.add(r);
 		p.setRooms(rooms);
-		assertEquals(1, p.remove(r1));
-		assertEquals(1, p.getRooms().size());
+		AssertJUnit.assertEquals(1, p.remove(r1));
+		AssertJUnit.assertEquals(1, p.getRooms().size());
 	}
 
 	@Test
 	public void addSchoolclassSchoolclassNotExists() {
 		Pause p = new Pause();
 		Schoolclass s = PowerMockito.mock(Schoolclass.class);
-		assertTrue(p.add(s));
-		assertEquals(1, p.getSchoolclasses().size());
-		assertEquals(s, p.getSchoolclasses().get(0));
+		AssertJUnit.assertTrue(p.add(s));
+		AssertJUnit.assertEquals(1, p.getSchoolclasses().size());
+		AssertJUnit.assertEquals(s, p.getSchoolclasses().get(0));
 	}
 
 	@Test
 	public void addSchoolclassSchoolclassExists() {
 		Pause p = new Pause();
 		Schoolclass s = PowerMockito.mock(Schoolclass.class);
-		assertTrue(p.add(s));
-		assertFalse(p.add(s));
-		assertEquals(1, p.getSchoolclasses().size());
+		AssertJUnit.assertTrue(p.add(s));
+		AssertJUnit.assertFalse(p.add(s));
+		AssertJUnit.assertEquals(1, p.getSchoolclasses().size());
 	}
 
 	@Test
@@ -63,10 +65,10 @@ public class ActivityBlackboxTest {
 		Schoolclass s1 = PowerMockito.mock(Schoolclass.class);
 		p.add(s);
 		p.add(s1);
-		assertEquals(1, p.remove(s));
-		assertEquals(1, p.getSchoolclasses().size());
-		assertEquals(0, p.remove(s1));
-		assertEquals(0, p.getSchoolclasses().size());
+		AssertJUnit.assertEquals(1, p.remove(s));
+		AssertJUnit.assertEquals(1, p.getSchoolclasses().size());
+		AssertJUnit.assertEquals(0, p.remove(s1));
+		AssertJUnit.assertEquals(0, p.getSchoolclasses().size());
 	}
 
 	@Test
@@ -75,8 +77,8 @@ public class ActivityBlackboxTest {
 		Schoolclass s = PowerMockito.mock(Schoolclass.class);
 		Schoolclass s1 = PowerMockito.mock(Schoolclass.class);
 		p.add(s);
-		assertEquals(1, p.remove(s1));
-		assertEquals(1, p.getSchoolclasses().size());
+		AssertJUnit.assertEquals(1, p.remove(s1));
+		AssertJUnit.assertEquals(1, p.getSchoolclasses().size());
 	}
 
 	@Test
@@ -86,8 +88,8 @@ public class ActivityBlackboxTest {
 		Schoolclass s1 = PowerMockito.mock(Schoolclass.class);
 		p.add(s);
 		p.add(s1);
-		assertTrue(p.contains(s));
-		assertTrue(p.contains(s1));
+		AssertJUnit.assertTrue(p.contains(s));
+		AssertJUnit.assertTrue(p.contains(s1));
 	}
 
 	@Test
@@ -96,16 +98,16 @@ public class ActivityBlackboxTest {
 		Schoolclass s = PowerMockito.mock(Schoolclass.class);
 		Schoolclass s1 = PowerMockito.mock(Schoolclass.class);
 		p.add(s);
-		assertFalse(p.contains(s1));
+		AssertJUnit.assertFalse(p.contains(s1));
 	}
 
 	@Test
 	public void addEmployeeTimePeriodsNotExists() {
 		Pause p = new Pause();
 		EmployeeTimePeriods e = PowerMockito.mock(EmployeeTimePeriods.class);
-		assertTrue(p.add(e));
-		assertEquals(1, p.getEmployeeTimePeriods().size());
-		assertEquals(e, p.getEmployeeTimePeriods().get(0));
+		AssertJUnit.assertTrue(p.add(e));
+		AssertJUnit.assertEquals(1, p.getEmployeeTimePeriods().size());
+		AssertJUnit.assertEquals(e, p.getEmployeeTimePeriods().get(0));
 	}
 
 	@Test
@@ -113,8 +115,8 @@ public class ActivityBlackboxTest {
 		Pause p = new Pause();
 		EmployeeTimePeriods e = PowerMockito.mock(EmployeeTimePeriods.class);
 		p.add(e);
-		assertFalse(p.add(e));
-		assertEquals(1, p.getEmployeeTimePeriods().size());
+		AssertJUnit.assertFalse(p.add(e));
+		AssertJUnit.assertEquals(1, p.getEmployeeTimePeriods().size());
 	}
 
 	@Test
@@ -128,10 +130,10 @@ public class ActivityBlackboxTest {
 		e1.setEmployee(t1);
 		p.add(e);
 		p.add(e1);
-		assertEquals(1, p.remove(t));
-		assertEquals(1, p.getEmployeeTimePeriods().size());
-		assertEquals(0, p.remove(t1));
-		assertEquals(0, p.getEmployeeTimePeriods().size());
+		AssertJUnit.assertEquals(1, p.remove(t));
+		AssertJUnit.assertEquals(1, p.getEmployeeTimePeriods().size());
+		AssertJUnit.assertEquals(0, p.remove(t1));
+		AssertJUnit.assertEquals(0, p.getEmployeeTimePeriods().size());
 	}
 
 	@Test
@@ -144,8 +146,8 @@ public class ActivityBlackboxTest {
 		e.setEmployee(t);
 		e1.setEmployee(t1);
 		p.add(e);
-		assertEquals(1, p.remove(t1));
-		assertEquals(1, p.getEmployeeTimePeriods().size());
+		AssertJUnit.assertEquals(1, p.remove(t1));
+		AssertJUnit.assertEquals(1, p.getEmployeeTimePeriods().size());
 	}
 
 	@Test
@@ -159,8 +161,8 @@ public class ActivityBlackboxTest {
 		e1.setEmployee(t1);
 		p.add(e);
 		p.add(e1);
-		assertTrue(p.contains(t));
-		assertTrue(p.contains(t1));
+		AssertJUnit.assertTrue(p.contains(t));
+		AssertJUnit.assertTrue(p.contains(t1));
 	}
 
 	@Test
@@ -169,7 +171,7 @@ public class ActivityBlackboxTest {
 		EmployeeTimePeriods e = new EmployeeTimePeriods();
 		Teacher t = PowerMockito.mock(Teacher.class);
 		e.setEmployee(t);
-		assertFalse(p.contains(t));
+		AssertJUnit.assertFalse(p.contains(t));
 	}
 
 	@Test
@@ -179,11 +181,11 @@ public class ActivityBlackboxTest {
 		IActivityObject a = PowerMockito.mock(Teacher.class);
 		e.setEmployee((Teacher) a);
 		p.add(e);
-		assertEquals(0, p.getSchoolclasses().size());
-		assertEquals(0, p.getRooms().size());
-		assertEquals(1, p.getEmployeeTimePeriods().size());
-		assertEquals(0, p.remove(a));
-		assertEquals(0, p.getEmployeeTimePeriods().size());
+		AssertJUnit.assertEquals(0, p.getSchoolclasses().size());
+		AssertJUnit.assertEquals(0, p.getRooms().size());
+		AssertJUnit.assertEquals(1, p.getEmployeeTimePeriods().size());
+		AssertJUnit.assertEquals(0, p.remove(a));
+		AssertJUnit.assertEquals(0, p.getEmployeeTimePeriods().size());
 	}
 
 	@Test
@@ -193,23 +195,23 @@ public class ActivityBlackboxTest {
 		List<Room> rooms = new ArrayList<Room>();
 		rooms.add((Room) a);
 		p.setRooms(rooms);
-		assertEquals(0, p.getSchoolclasses().size());
-		assertEquals(1, p.getRooms().size());
-		assertEquals(0, p.getEmployeeTimePeriods().size());
-		assertEquals(0, p.remove(a));
-		assertEquals(0, p.getRooms().size());
+		AssertJUnit.assertEquals(0, p.getSchoolclasses().size());
+		AssertJUnit.assertEquals(1, p.getRooms().size());
+		AssertJUnit.assertEquals(0, p.getEmployeeTimePeriods().size());
+		AssertJUnit.assertEquals(0, p.remove(a));
+		AssertJUnit.assertEquals(0, p.getRooms().size());
 	}
-	
+
 	@Test
 	public void removeIActivityObjectInstanceOfSchoolclass() {
 		Pause p = new Pause();
 		IActivityObject a = PowerMockito.mock(Schoolclass.class);
-		p.add((Schoolclass)a);
-		assertEquals(1, p.getSchoolclasses().size());
-		assertEquals(0, p.getRooms().size());
-		assertEquals(0, p.getEmployeeTimePeriods().size());
-		assertEquals(0, p.remove(a));
-		assertEquals(0, p.getSchoolclasses().size());
+		p.add((Schoolclass) a);
+		AssertJUnit.assertEquals(1, p.getSchoolclasses().size());
+		AssertJUnit.assertEquals(0, p.getRooms().size());
+		AssertJUnit.assertEquals(0, p.getEmployeeTimePeriods().size());
+		AssertJUnit.assertEquals(0, p.remove(a));
+		AssertJUnit.assertEquals(0, p.getSchoolclasses().size());
 	}
 
 }

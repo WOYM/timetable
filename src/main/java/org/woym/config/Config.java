@@ -30,6 +30,24 @@ public final class Config {
 			+ PROPERTIES_FILE_NAME;
 
 	/**
+	 * Der Einstellungswerte, für Schulklassenbezeichner in Kleinbuchstaben.
+	 */
+	public static final String IDENTIFIER_LOWER_CASE = "lower";
+
+	/**
+	 * Der einstellungswert für Schulklassenbezeichner in Großbuchstaben.
+	 */
+	public static final String IDENTIFIER_UPPER_CASE = "upper";
+
+	/**
+	 * Der Einstellungswert für Schulklassenbezeichner in Groß- und
+	 * Kleinbuchstaben.
+	 */
+	public static final String IDENTIFIER_BOTH_CASES = "both";
+
+	public static final String RESET_DIALOGS_IDENTFIER_STRING = "dialog";
+
+	/**
 	 * Der Logger dieser Klasse.
 	 */
 	private static final Logger LOGGER = LogManager.getLogger("Config");
@@ -54,10 +72,11 @@ public final class Config {
 			propertiesConfig = new PropertiesConfiguration(PROPERTIES_FILE_PATH);
 			propertiesConfig.setListDelimiter(',');
 			propertiesConfig.setAutoSave(true);
-			LOGGER.info("Configuration file loaded.");
+			LOGGER.info("Configuration file loaded: " + PROPERTIES_FILE_PATH);
 		} catch (ConfigurationException e) {
 			LOGGER.warn("No configuration file found.");
-			LOGGER.info("Creating new configuration file.");
+			LOGGER.info("Creating new configuration file: "
+					+ PROPERTIES_FILE_PATH);
 			createNewConfig();
 		}
 	}
@@ -98,6 +117,53 @@ public final class Config {
 			return true;
 		}
 		return false;
+	}
+
+	/**
+	 * Diese Methode lädt eine Einstellung mit genau einem Zahlenwert aus der
+	 * Konfiguration.
+	 * 
+	 * Prüft nur nach dem ersten Wert des Konfigurationselementes.
+	 * 
+	 * @param defaultConfigEnum
+	 *            Der Key
+	 * @return Die Value
+	 */
+	public static int getConfValInt(DefaultConfigEnum defaultConfigEnum) {
+
+		int valInt = 0;
+
+		// Get prop-value
+		String[] valIntString = Config.getPropValue(defaultConfigEnum
+				.getPropKey());
+		if (valIntString.length < 1) {
+			return 0;
+		}
+		try {
+			valInt = Integer.parseInt(valIntString[0]);
+		} catch (NumberFormatException e) {
+			// Do nothing, will return 0
+		}
+
+		return valInt;
+	}
+
+	/**
+	 * Diese Methode lädt eine Einstellung mit genau einem String-Wert aus der
+	 * Konfiguration. Hat eine Einstellung mehr als einen Wert, wird nur der
+	 * erste zurückgegeben. Hat sie keinen Wert, {@code null}.
+	 * 
+	 * @param defaultConfigEnum
+	 *            - die Einstellung
+	 * @return der Wert
+	 */
+	public static String getConfValSingleString(
+			DefaultConfigEnum defaultConfigEnum) {
+		String[] value = Config.getPropValue(defaultConfigEnum.getPropKey());
+		if (value.length < 1) {
+			return null;
+		}
+		return value[0];
 	}
 
 	/**

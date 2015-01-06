@@ -6,20 +6,19 @@ import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.validator.ValidatorException;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.powermock.api.mockito.PowerMockito;
-import org.powermock.modules.junit4.PowerMockRunner;
+import org.powermock.modules.testng.PowerMockTestCase;
+import org.testng.annotations.Test;
 import org.woym.exceptions.DatasetException;
 import org.woym.objects.LessonType;
 import org.woym.objects.Teacher;
 import org.woym.persistence.DataAccess;
 
-@RunWith(PowerMockRunner.class)
-public class NameValidatorTest {
+@Test(groups = "unit")
+public class NameValidatorTest extends PowerMockTestCase {
 
 	@Mock
 	DataAccess dataAccess;
@@ -44,7 +43,7 @@ public class NameValidatorTest {
 	 * 
 	 * @throws DatasetException
 	 */
-	@Test(expected = ValidatorException.class)
+	@Test(expectedExceptions = ValidatorException.class)
 	public void testSymbolInuseTeacher() throws DatasetException {
 
 		Teacher t1 = Mockito.mock(Teacher.class);
@@ -106,7 +105,7 @@ public class NameValidatorTest {
 	 * 
 	 * @throws DatasetException
 	 */
-	@Test(expected = ValidatorException.class)
+	@Test(expectedExceptions = ValidatorException.class)
 	public void testSymbolInuseLessonType() throws DatasetException {
 
 		LessonType lt1 = Mockito.mock(LessonType.class);

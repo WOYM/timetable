@@ -33,6 +33,11 @@ public class Lesson extends Activity {
 		this.lessonType = lessonType;
 	}
 
+	@Override
+	public String toString() {
+		return lessonType.getName() + ", " + super.toString();
+	}
+
 	/**
 	 * {@inheritDoc}
 	 */

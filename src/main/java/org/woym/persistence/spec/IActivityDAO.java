@@ -25,6 +25,15 @@ import org.woym.objects.Weekday;
 public interface IActivityDAO {
 
 	/**
+	 * Gibt eine Liste aller vorhandenen Aktivitäten zurück. Wirft eine
+	 * {@linkplain DatasetException}, wenn dabei ein Fehler auftritt.
+	 * 
+	 * @return Liste aller in der der Datenbank vorhandenen Aktivitäten
+	 * @throws DatasetException
+	 */
+	public List<Activity> getAllActivities() throws DatasetException;
+
+	/**
 	 * Wird {@code null} übergeben, wird eine
 	 * {@linkplain IllegalArgumentException} geworfen. Ansonsten wird in der
 	 * Datenbank nach allen Aktivitäten des übergebenen Mitarbeiters gesucht und

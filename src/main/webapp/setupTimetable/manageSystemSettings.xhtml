@@ -25,33 +25,147 @@
 
 				<p:separator style="margin-top:10px;" />
 
-				<p:panel header="Datensicherung">
+
+				<p:panel header="Planungsperiode">
+					<p:outputPanel>
+						<h:outputText
+							value="Wenn Sie wünschen, 
+						können Sie alle Aktivitäten löschen, um eine komplett neue Planung zu beginnen. 
+						Sie können jederzeit zum vorherigen Status zurückkehren, 
+						indem Sie ein entsprechendes Backup wiederherstellen." />
+					</p:outputPanel>
+					<p:spacer height="20" />
+					<p:outputPanel>
+						<p:commandButton value="Alle Aktivitäten löschen"
+							actionListener="#{configController.deleteAllActivities}"
+							update="commandGrowl">
+						</p:commandButton>
+					</p:outputPanel>
+				</p:panel>
+
+				<p:spacer height="40" />
+
+				<p:panel id="generalSettings" header="Allgemeine Einstellungen">
+
+					<h:panelGrid columns="2" style="width:100%;"
+						columnClasses="half-column">
+						<p:outputLabel for="timetableGrid"
+							value="Darstellungsgröße Stundenplananzeige:" />
+						<p:outputPanel>
+							<p:spinner id="timetableGrid"
+								value="#{configController.timetableGrid}"
+								max="#{configController.maxSpinnerValue}"
+								min="#{configController.minSpinnerValue}" />
+							<h:outputText value=" Minuten" />
+						</p:outputPanel>
+					</h:panelGrid>
+
+					<p:separator style="margin-top:20px;margin-bottom:20px" />
+
+					<h:panelGrid columns="2" style="width:100%;"
+						columnClasses="half-column">
+						<p:outputLabel for="teacherSettlement"
+							value="Zeitliche Abrechnung einer Lehrkraft" />
+						<p:outputPanel>
+							<h:outputText value="1 Wochenstunde à " />
+							<p:spinner id="teacherSettlement"
+								value="#{configController.teacherSettlement}"
+								max="#{configController.maxSpinnerValue}"
+								min="#{configController.minSpinnerValue}" />
+							<h:outputText value=" Minuten" />
+						</p:outputPanel>
+					</h:panelGrid>
+
+					<h:panelGrid columns="2" style="width:100%;"
+						columnClasses="half-column">
+						<p:outputLabel for="paSettlement"
+							value="Zeitliche Abrechnung eines päd. Mitarbeiters" />
+						<p:outputPanel>
+							<h:outputText value="1 Wochenstunde à " />
+							<p:spinner id="paSettlement"
+								value="#{configController.paSettlement}"
+								max="#{configController.maxSpinnerValue}"
+								min="#{configController.minSpinnerValue}" />
+							<h:outputText value=" Minuten" />
+						</p:outputPanel>
+					</h:panelGrid>
+
+					<p:separator style="margin-top:20px;margin-bottom:20px" />
+
+					<h:panelGrid columns="2" style="width:100%;"
+						columnClasses="half-column">
+						<p:outputLabel for="schoolclassIdentifiers"
+							value="Art der Bezeichner für Schulklassen" />
+						<p:selectOneRadio id="schoolclassIdentifiers"
+							value="#{configController.identifierCase}" layout="grid"
+							columns="1">
+							<f:selectItem itemLabel="Kleinbuchstaben"
+								itemValue="#{configController.lowerCase}" />
+							<f:selectItem itemLabel="Großbuchstaben"
+								itemValue="#{configController.upperCase}" />
+							<f:selectItem itemLabel="Beides"
+								itemValue="#{configController.bothCases}" />
+						</p:selectOneRadio>
+					</h:panelGrid>
+
+					<p:separator style="margin-top:20px;margin-bottom:20px" />
+
+					<h:panelGrid columns="2" style="width:100%;"
+						columnClasses="half-column">
+						<p:outputLabel for="typicalActivityDuration"
+							value="Typische Dauer einer Aktivität (eines Unterrichtsfaches)" />
+						<p:outputPanel>
+							<p:spinner id="typicalActivityDuration"
+								value="#{configController.typicalActivityDuration}"
+								max="#{configController.maxSpinnerValue}"
+								min="#{configController.minSpinnerValue}" />
+							<h:outputText value=" Minuten" />
+						</p:outputPanel>
+					</h:panelGrid>
+
+					<p:separator style="margin-top:20px;margin-bottom:20px" />
+
+					<h:panelGrid columns="2" style="width:100%;"
+						columnClasses="half-column">
+						<h:outputText
+							value="Dialoge zurücksetzen, so dass erneut alle Dialoge angezeigt werden" />
+						<p:commandButton value="Zurücksetzen"
+							icon="ui-icon-arrowreturnthick-1-w"
+							actionListener="#{configController.resetDialogs}"
+							update="commandGrowl">
+						</p:commandButton>
+					</h:panelGrid>
+
+				</p:panel>
+
+				<p:spacer height="40" />
+
+				<p:panel id="backupSettings" header="Backup-Einstellungen">
 					<h:outputText
-						value="Intervall in Minuten in dem die Datensicherung erfolgen soll." />
+						value="Intervall in Minuten, in dem die Datensicherung erfolgen soll." />
 					<h:panelGrid columns="2" style="width:100%;"
 						columnClasses="half-column">
 						<p:outputLabel for="backupInterval" value="Intervall" />
 						<p:spinner id="backupInterval"
 							value="#{configController.backupInterval}"
-							max="#{configController.maxBackupInterval}" min="1" />
+							max="#{configController.maxBackupInterval}"
+							min="#{configController.minBackupInterval}" />
 					</h:panelGrid>
 				</p:panel>
 
-				<p:outputPanel style="float:right; margin-top:10px;">
+				<p:outputPanel style="height:60px; float:right; margin-top:10px;">
 					<p:commandButton value="Aktualisieren" icon="ui-icon-plusthick"
 						onclick="PF('wConfimSettings').show();"
-						process="@form">
+						process="generalSettings,backupSettings,@this">
 					</p:commandButton>
 				</p:outputPanel>
-
-
 			</p:outputPanel>
 
 			<!-- Confirm-Dialog -->
 			<p:dialog header="Bestätigen" modal="true" draggable="true"
 				resizable="false" appendToBody="true" dynamic="true"
-				id="confimSettings" widgetVar="wConfimSettings"
-				showEffect="fade" hideEffect="fade">
+				id="confimSettings" widgetVar="wConfimSettings" showEffect="fade"
+				hideEffect="fade">
 				<h:panelGrid columns="1">
 					<h:outputText
 						value="Sind Sie sicher, dass die Einstellungen übernommen werden soll?" />
@@ -59,8 +173,7 @@
 					<p:outputPanel>
 						<p:commandButton value="Bestätigen"
 							actionListener="#{configController.updateProperties}"
-							oncomplete="PF('wConfimSettings').hide();"
-							update="commandGrowl"
+							oncomplete="PF('wConfimSettings').hide();" update="commandGrowl"
 							styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
 						<p:commandButton value="Abbrechen"
 							oncomplete="PF('wConfimSettings').hide();"
@@ -68,11 +181,12 @@
 					</p:outputPanel>
 					<p:outputPanel>
 						<h:outputText value="Sie können die Aktion " />
-						<b><h:outputText value="nicht " /></b>
+						<b><h:outputText value="nicht via den Rückgängig-Button" /></b>
 						<h:outputText value="nachträglich rückgängig machen." />
 					</p:outputPanel>
 				</h:panelGrid>
 			</p:dialog>
+
 
 		</ui:define>
 	</ui:composition>

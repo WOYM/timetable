@@ -13,6 +13,7 @@ import java.nio.file.StandardCopyOption;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -138,7 +139,7 @@ public abstract class BackupRestoreHandler {
 			return new SuccessStatus(GenericSuccessMessage.RESTORE_SUCCESS);
 		} catch (IOException e) {
 			LOGGER.error(e);
-			return new FailureStatus(GenericErrorMessage.BACKUP_FAILURE,
+			return new FailureStatus(GenericErrorMessage.RESTORE_FAILURE,
 					FacesMessage.SEVERITY_ERROR);
 		}
 	}
@@ -146,8 +147,9 @@ public abstract class BackupRestoreHandler {
 	/**
 	 * Gibt ein eine Liste von {@linkplain File}-Objekten von Dateien zurück,
 	 * die sich im Pfad {@linkplain DataBase#DB_BACKUP_LOCATION} befinden und
-	 * mit ".zip" enden. Gibt es keine solchen Dateien oder existiert der Ordner
-	 * gar nicht, wird eine leere Liste zurückgegeben.
+	 * mit ".zip" enden. Diese sind absteigend nach Erstellungsdatum sortiert.
+	 * Gibt es keine solchen Dateien oder existiert der Ordner gar nicht, wird
+	 * eine leere Liste zurückgegeben.
 	 * 
 	 * @return {@linkplain File}-Liste mit allen zip-Dateien aus dem Ordner
 	 *         {@linkplain DataBase#DB_BACKUP_LOCATION} oder eine leere
@@ -163,6 +165,23 @@ public abstract class BackupRestoreHandler {
 				public boolean accept(File dir, String name) {
 					return name.toLowerCase().endsWith(".zip");
 				}
+			});
+
+			Arrays.sort(files, new Comparator<File>() {
+
+				@Override
+				public int compare(File file1, File file2) {
+					if (file1.getName().compareTo(file2.getName()) > 0) {
+						return -1;
+					}
+
+					if (file1.getName().compareTo(file2.getName()) < 0) {
+						return 1;
+					}
+
+					return 0;
+				}
+
 			});
 			return Arrays.asList(files);
 		}

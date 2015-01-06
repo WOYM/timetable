@@ -12,6 +12,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.MapKeyJoinColumn;
+import javax.persistence.OrderBy;
 
 import org.woym.exceptions.DatasetException;
 import org.woym.objects.spec.IActivityObject;
@@ -56,6 +57,7 @@ public class Schoolclass extends org.woym.objects.Entity implements
 	@CollectionTable(name = "SCHOOLCLASS_LESSONDEMANDS", joinColumns = @JoinColumn(name = "SCHOOLCLASS"))
 	@Column(name = "DEMAND")
 	@MapKeyJoinColumn(name = "LESSONTYPE", referencedColumnName = "ID")
+	@OrderBy("name")
 	private Map<LessonType, Integer> lessonDemands = new HashMap<>();
 
 	/**

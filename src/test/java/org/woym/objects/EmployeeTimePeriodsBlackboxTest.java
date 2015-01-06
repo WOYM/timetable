@@ -1,28 +1,29 @@
 package org.woym.objects;
 
-import static org.junit.Assert.*;
-
-import org.junit.Test;
+import org.testng.annotations.Test;
+import org.testng.AssertJUnit;
 import org.powermock.api.mockito.PowerMockito;
+import org.powermock.modules.testng.PowerMockTestCase;
 
-public class EmployeeTimePeriodsBlackboxTest {
+@Test(groups = "unit")
+public class EmployeeTimePeriodsBlackboxTest extends PowerMockTestCase {
 
 	@Test
 	public void equalsSameObject() {
 		EmployeeTimePeriods e = new EmployeeTimePeriods();
-		assertTrue(e.equals(e));
+		AssertJUnit.assertTrue(e.equals(e));
 	}
 
 	@Test
 	public void equalsNull() {
 		EmployeeTimePeriods e = new EmployeeTimePeriods();
-		assertFalse(e.equals(null));
+		AssertJUnit.assertFalse(e.equals(null));
 	}
 
 	@Test
 	public void equalsNotInstanceOfEmployeeTimePeriods() {
 		EmployeeTimePeriods e = new EmployeeTimePeriods();
-		assertFalse(e.equals(PowerMockito.mock(Location.class)));
+		AssertJUnit.assertFalse(e.equals(PowerMockito.mock(Location.class)));
 	}
 
 	@Test
@@ -32,7 +33,7 @@ public class EmployeeTimePeriodsBlackboxTest {
 		Employee employee = PowerMockito.mock(Teacher.class);
 		e.setEmployee(employee);
 		e1.setEmployee(employee);
-		assertTrue(e.equals(e1));
+		AssertJUnit.assertTrue(e.equals(e1));
 	}
 
 	@Test
@@ -41,16 +42,16 @@ public class EmployeeTimePeriodsBlackboxTest {
 		EmployeeTimePeriods e1 = new EmployeeTimePeriods();
 		e.setEmployee(PowerMockito.mock(Teacher.class));
 		e1.setEmployee(PowerMockito.mock(Teacher.class));
-		assertFalse(e.equals(e1));
+		AssertJUnit.assertFalse(e.equals(e1));
 	}
 
 	@Test
 	public void addTimePeriodNotExists() {
 		EmployeeTimePeriods e = new EmployeeTimePeriods();
 		TimePeriod t = PowerMockito.mock(TimePeriod.class);
-		assertTrue(e.add(t));
-		assertEquals(1, e.getTimePeriods().size());
-		assertEquals(t, e.getTimePeriods().get(0));
+		AssertJUnit.assertTrue(e.add(t));
+		AssertJUnit.assertEquals(1, e.getTimePeriods().size());
+		AssertJUnit.assertEquals(t, e.getTimePeriods().get(0));
 	}
 
 	@Test
@@ -58,8 +59,8 @@ public class EmployeeTimePeriodsBlackboxTest {
 		EmployeeTimePeriods e = new EmployeeTimePeriods();
 		TimePeriod t = PowerMockito.mock(TimePeriod.class);
 		e.add(t);
-		assertFalse(e.add(t));
-		assertEquals(1, e.getTimePeriods().size());
+		AssertJUnit.assertFalse(e.add(t));
+		AssertJUnit.assertEquals(1, e.getTimePeriods().size());
 	}
 
 	@Test
@@ -67,8 +68,8 @@ public class EmployeeTimePeriodsBlackboxTest {
 		EmployeeTimePeriods e = new EmployeeTimePeriods();
 		TimePeriod t = PowerMockito.mock(TimePeriod.class);
 		e.add(t);
-		assertTrue(e.remove(t));
-		assertEquals(0, e.getTimePeriods().size());
+		AssertJUnit.assertTrue(e.remove(t));
+		AssertJUnit.assertEquals(0, e.getTimePeriods().size());
 	}
 
 	@Test
@@ -77,8 +78,8 @@ public class EmployeeTimePeriodsBlackboxTest {
 		TimePeriod t = PowerMockito.mock(TimePeriod.class);
 		TimePeriod t1 = PowerMockito.mock(TimePeriod.class);
 		e.add(t);
-		assertFalse(e.remove(t1));
-		assertEquals(1, e.getTimePeriods().size());
+		AssertJUnit.assertFalse(e.remove(t1));
+		AssertJUnit.assertEquals(1, e.getTimePeriods().size());
 	}
 
 	@Test
@@ -86,13 +87,13 @@ public class EmployeeTimePeriodsBlackboxTest {
 		EmployeeTimePeriods e = new EmployeeTimePeriods();
 		TimePeriod t = PowerMockito.mock(TimePeriod.class);
 		e.add(t);
-		assertTrue(e.contains(t));
+		AssertJUnit.assertTrue(e.contains(t));
 	}
 
 	@Test
 	public void containsTimePeriodNotExists() {
 		EmployeeTimePeriods e = new EmployeeTimePeriods();
 		TimePeriod t = PowerMockito.mock(TimePeriod.class);
-		assertFalse(e.contains(t));
+		AssertJUnit.assertFalse(e.contains(t));
 	}
 }

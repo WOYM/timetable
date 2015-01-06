@@ -1,31 +1,32 @@
 package org.woym.ui.converters;
 
-import static org.junit.Assert.*;
+import static org.testng.AssertJUnit.assertNull;
 
 import javax.faces.application.FacesMessage;
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.convert.ConverterException;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
+import org.powermock.modules.testng.PowerMockTestCase;
+import org.testng.Assert;
+import org.testng.AssertJUnit;
+import org.testng.annotations.Test;
 import org.woym.exceptions.DatasetException;
 import org.woym.messages.GenericErrorMessage;
 import org.woym.messages.MessageHelper;
 import org.woym.objects.Location;
 import org.woym.persistence.DataAccess;
 
-@RunWith(PowerMockRunner.class)
+@Test(groups = "unit")
 @PowerMockIgnore("javax.management.*")
 @PrepareForTest(MessageHelper.class)
-public class LocationNameConverterTest {
+public class LocationNameConverterTest extends PowerMockTestCase {
 
 	@Mock
 	private DataAccess dataAccess;
@@ -47,11 +48,11 @@ public class LocationNameConverterTest {
 		Location l = PowerMockito.mock(Location.class);
 		PowerMockito.when(dataAccess.getOneLocation(Mockito.anyString()))
 				.thenReturn(l);
-		assertEquals(l, locationNameConverter.getAsObject(facesContext,
-				uiComponent, "test"));
+		AssertJUnit.assertEquals(l, locationNameConverter.getAsObject(
+				facesContext, uiComponent, "test"));
 	}
 
-	@Test(expected = ConverterException.class)
+	@Test
 	public void getAsObjectException() throws DatasetException {
 		PowerMockito.mockStatic(MessageHelper.class);
 		Mockito.doThrow(DatasetException.class).when(dataAccess)
@@ -61,14 +62,21 @@ public class LocationNameConverterTest {
 						Mockito.any(GenericErrorMessage.class),
 						Mockito.any(FacesMessage.Severity.class))).thenReturn(
 				PowerMockito.mock(FacesMessage.class));
-		locationNameConverter.getAsObject(facesContext, uiComponent, "test");
+		try {
+			locationNameConverter
+					.getAsObject(facesContext, uiComponent, "test");
+		} catch (ConverterException e) {
+			return;
+		}
+		Assert.fail();
 	}
 
 	@Test
 	public void getAsString() {
 		Location l = PowerMockito.mock(Location.class);
-		assertEquals(l.getName(),
-				locationNameConverter.getAsString(facesContext, uiComponent, l));
+		AssertJUnit
+				.assertEquals(l.getName(), locationNameConverter.getAsString(
+						facesContext, uiComponent, l));
 	}
 
 	@Test

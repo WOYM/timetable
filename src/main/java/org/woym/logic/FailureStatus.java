@@ -64,6 +64,25 @@ public class FailureStatus implements IStatus {
 		facesMessage = MessageHelper.generateMessage(message, severity);
 	}
 
+	/**
+	 * Erzeugt ein neues {@linkplain FailureStatus}-Objekt, dass eine
+	 * {@linkplain FacesMessage} mit den übergebenen Parametern enthält.
+	 * 
+	 * @param summary
+	 *            - Zusammenfassung der Nachricht
+	 * @param message
+	 *            - Detaillierte Nachricht
+	 * @param severity
+	 *            - Schweregrad der Nachricht
+	 */
+	public FailureStatus(String summary, String message,
+			FacesMessage.Severity severity) {
+		if (summary == null || message == null || severity == null) {
+			throw new IllegalArgumentException();
+		}
+		facesMessage = new FacesMessage(severity, summary, message);
+	}
+
 	public List<Exception> getExceptions() {
 		return exceptions;
 	}

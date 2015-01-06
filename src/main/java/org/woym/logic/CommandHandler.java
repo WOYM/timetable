@@ -1,5 +1,7 @@
 package org.woym.logic;
 
+import java.io.Serializable;
+
 import javax.faces.application.FacesMessage;
 
 import org.woym.logic.spec.ICommand;
@@ -15,7 +17,9 @@ import org.woym.messages.GenericErrorMessage;
  * @author JurSch
  *
  */
-public class CommandHandler implements ICommandHandler {
+public class CommandHandler implements ICommandHandler, Serializable {
+
+	private static final long serialVersionUID = 6813999792545121039L;
 
 	private static final CommandHandler COMMAND_HANDLER = new CommandHandler();
 

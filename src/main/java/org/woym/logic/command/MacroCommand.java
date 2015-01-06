@@ -1,5 +1,6 @@
 package org.woym.logic.command;
 
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -57,17 +58,20 @@ public class MacroCommand implements ICommand {
 		LinkedList<ICommand> commandsToRevert = new LinkedList<>();
 		IStatus status = new FailureStatus(
 				GenericErrorMessage.DATABASE_COMMUNICATION_ERROR,
-				FacesMessage.SEVERITY_INFO);
-		for (ICommand c : commands) {
-			status = c.undo();
+				FacesMessage.SEVERITY_ERROR);
 
+		for (Iterator<ICommand> it = commands.descendingIterator(); it
+				.hasNext();) {
+
+			ICommand command = it.next();
+			status = command.undo();
 			if (status instanceof FailureStatus) {
 				for (ICommand ctr : commandsToRevert) {
 					ctr.redo();
 				}
 				return status;
 			}
-			commandsToRevert.addFirst(c);
+			commandsToRevert.addFirst(command);
 		}
 		return status;
 	}

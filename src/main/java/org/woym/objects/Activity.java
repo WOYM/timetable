@@ -118,6 +118,27 @@ public abstract class Activity extends org.woym.objects.Entity implements
 		this.employeeTimePeriods = employeeTimePeriods;
 	}
 
+	/**
+	 * Gibt das zum übergebenen Lehrer gehörige {@linkplain EmployeeTimePeriods}
+	 * -Objekt zurück. Ist keins für den übergebenen Lehrer vorhanden, wird
+	 * {@code null} zurückgegeben.
+	 * 
+	 * @param employee
+	 *            - Lehrer, für welchen das {@linkplain EmployeeTimePeriods
+	 *            -Objekt} erwartet wird
+	 * @return EmployeeTimePeriods-Objekt für den übergebenen Lehrer oder
+	 *         {@code null}, wenn kein solches vorhanden
+	 */
+	public EmployeeTimePeriods getEmployeeTimePeriods(Employee employee) {
+		EmployeeTimePeriods employeeTimePeriods = new EmployeeTimePeriods();
+		employeeTimePeriods.setEmployee(employee);
+		int index = this.employeeTimePeriods.indexOf(employeeTimePeriods);
+		if (index >= 0) {
+			return this.employeeTimePeriods.get(index);
+		}
+		return null;
+	}
+
 	@Override
 	public String toString() {
 		String day = time.getDay().toString();
@@ -125,6 +146,36 @@ public abstract class Activity extends org.woym.objects.Entity implements
 		String starttime = df.format(time.getStartTime());
 		String endtime = df.format(time.getEndTime());
 		return String.format("%s (%s-%s Uhr)", day, starttime, endtime);
+	}
+
+	/**
+	 * Fügt das übergebenene {@linkplain Room}-Objekt der entsprechenden Liste
+	 * hinzu, sofern es noch nicht darin vorhanden ist.
+	 * 
+	 * @param room
+	 *            - das hinzuzufügende Objekt
+	 * @return {@code true}, wenn das Objekt sich noch nicht in der Liste
+	 *         befindet und hinzugefügt wurde, ansonsten {@code false}
+	 */
+	public boolean add(Room room) {
+		if (!rooms.contains(room)) {
+			return rooms.add(room);
+		}
+		return false;
+	}
+
+	/**
+	 * Gibt {@code true} zurück, wenn sich das übergebene {@linkplain Room}
+	 * -Objekt in der Liste befindet, ansonsten {@code false}.
+	 * 
+	 * @param room
+	 *            - das Objekt, für das geprüft werden soll, ob es sich in der
+	 *            Liste befindet
+	 * @return {@code true}, wenn das Objekt sich in der Liste befindet,
+	 *         ansonsten {@code false}
+	 */
+	public boolean contains(Room room) {
+		return rooms.contains(room);
 	}
 
 	/**

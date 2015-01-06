@@ -13,7 +13,8 @@ import org.primefaces.context.RequestContext;
 import org.woym.exceptions.DatasetException;
 import org.woym.logic.CommandHandler;
 import org.woym.logic.SuccessStatus;
-import org.woym.logic.command.DeleteCommand;
+import org.woym.logic.command.CommandCreator;
+import org.woym.logic.command.MacroCommand;
 import org.woym.logic.command.UpdateCommand;
 import org.woym.logic.spec.IStatus;
 import org.woym.messages.GenericErrorMessage;
@@ -36,7 +37,8 @@ import org.woym.persistence.DataAccess;
 @ManagedBean(name = "roomController")
 public class RoomController implements Serializable {
 
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 572818674185743147L;
+	
 	private Room room;
 	private Location location;
 
@@ -44,6 +46,7 @@ public class RoomController implements Serializable {
 	private IMemento locationMemento;
 
 	private CommandHandler commandHandler = CommandHandler.getInstance();
+	private CommandCreator commandCreator = CommandCreator.getInstance();
 
 	private DataAccess dataAccess = DataAccess.getInstance();
 
@@ -115,8 +118,8 @@ public class RoomController implements Serializable {
 	 * Löscht einen Raum aus der Datenbank.
 	 */
 	public void deleteRoom() {
-		DeleteCommand<Room> command = new DeleteCommand<>(room);
-		IStatus status = commandHandler.execute(command);
+		MacroCommand macroCommand = commandCreator.createDeleteCommand(room);
+		IStatus status = commandHandler.execute(macroCommand);
 		FacesMessage msg = status.report();
 
 		FacesContext.getCurrentInstance().addMessage(null, msg);
@@ -125,10 +128,8 @@ public class RoomController implements Serializable {
 	/**
 	 * Öffnet einen neuen Dialog, mit dem sich ein Raum hinzufügen lässt.
 	 */
-	public void addRoomDialog() {
+	public void doBeforeAdd() {
 		room = new Room();
-		RequestContext context = RequestContext.getCurrentInstance();
-		context.execute("PF('wAddRoomDialog').show();");
 	}
 
 	public Room getRoom() {

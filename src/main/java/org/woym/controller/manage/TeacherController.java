@@ -20,7 +20,8 @@ import org.woym.exceptions.DatasetException;
 import org.woym.logic.CommandHandler;
 import org.woym.logic.SuccessStatus;
 import org.woym.logic.command.AddCommand;
-import org.woym.logic.command.DeleteCommand;
+import org.woym.logic.command.CommandCreator;
+import org.woym.logic.command.MacroCommand;
 import org.woym.logic.command.UpdateCommand;
 import org.woym.logic.spec.IStatus;
 import org.woym.messages.GenericErrorMessage;
@@ -42,7 +43,7 @@ import org.woym.persistence.DataAccess;
 @ManagedBean(name = "teacherController")
 public class TeacherController implements Serializable {
 
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = -8212155094392549715L;
 
 	private static Logger LOGGER = LogManager
 			.getLogger(TeacherController.class);
@@ -50,6 +51,7 @@ public class TeacherController implements Serializable {
 	private DataAccess dataAccess = DataAccess.getInstance();
 
 	private CommandHandler commandHandler = CommandHandler.getInstance();
+	private CommandCreator commandCreator = CommandCreator.getInstance();
 
 	private Teacher teacher;
 
@@ -168,8 +170,8 @@ public class TeacherController implements Serializable {
 	 * Löscht den selektierten Lehrer.
 	 */
 	public void deleteTeacher() {
-		DeleteCommand<Teacher> command = new DeleteCommand<>(teacher);
-		IStatus status = commandHandler.execute(command);
+		MacroCommand macroCommand = commandCreator.createDeleteCommand(teacher);
+		IStatus status = commandHandler.execute(macroCommand);
 		FacesMessage msg = status.report();
 
 		FacesContext.getCurrentInstance().addMessage(null, msg);

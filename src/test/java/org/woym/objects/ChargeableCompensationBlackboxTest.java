@@ -1,16 +1,17 @@
 package org.woym.objects;
 
-import static org.junit.Assert.*;
-
-import org.junit.Before;
-import org.junit.Test;
+import org.testng.annotations.Test;
+import org.testng.annotations.BeforeMethod;
+import org.testng.AssertJUnit;
 import org.powermock.api.mockito.PowerMockito;
+import org.powermock.modules.testng.PowerMockTestCase;
 
-public class ChargeableCompensationBlackboxTest {
+@Test(groups = "unit")
+public class ChargeableCompensationBlackboxTest extends PowerMockTestCase {
 
 	ChargeableCompensation c;
 
-	@Before
+	@BeforeMethod
 	public void init() {
 		c = new ChargeableCompensation();
 		c.setDescription("Test");
@@ -19,17 +20,17 @@ public class ChargeableCompensationBlackboxTest {
 
 	@Test
 	public void equalsSameObject() {
-		assertTrue(c.equals(c));
+		AssertJUnit.assertTrue(c.equals(c));
 	}
 
 	@Test
 	public void equalsNull() {
-		assertFalse(c.equals(null));
+		AssertJUnit.assertFalse(c.equals(null));
 	}
 
 	@Test
 	public void equalsNotInstanceOfChargeableCompensation() {
-		assertFalse(c.equals(PowerMockito.mock(Location.class)));
+		AssertJUnit.assertFalse(c.equals(PowerMockito.mock(Location.class)));
 	}
 
 	@Test
@@ -37,7 +38,7 @@ public class ChargeableCompensationBlackboxTest {
 		ChargeableCompensation c1 = new ChargeableCompensation();
 		c1.setDescription("Test");
 		c1.setValue(10);
-		assertTrue(c.equals(c1));
+		AssertJUnit.assertTrue(c.equals(c1));
 	}
 
 	@Test
@@ -45,7 +46,7 @@ public class ChargeableCompensationBlackboxTest {
 		ChargeableCompensation c1 = new ChargeableCompensation();
 		c1.setDescription("Test 1");
 		c1.setValue(10);
-		assertFalse(c.equals(c1));
+		AssertJUnit.assertFalse(c.equals(c1));
 	}
 
 	@Test
@@ -53,7 +54,7 @@ public class ChargeableCompensationBlackboxTest {
 		ChargeableCompensation c1 = new ChargeableCompensation();
 		c1.setDescription("Test");
 		c1.setValue(11);
-		assertFalse(c.equals(c1));
+		AssertJUnit.assertFalse(c.equals(c1));
 	}
 
 	@Test
@@ -61,7 +62,7 @@ public class ChargeableCompensationBlackboxTest {
 		ChargeableCompensation c1 = new ChargeableCompensation();
 		c1.setDescription("Test 1");
 		c1.setValue(11);
-		assertFalse(c.equals(c1));
+		AssertJUnit.assertFalse(c.equals(c1));
 	}
 
 }

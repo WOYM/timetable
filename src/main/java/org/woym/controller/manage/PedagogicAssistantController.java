@@ -19,7 +19,8 @@ import org.woym.exceptions.DatasetException;
 import org.woym.logic.CommandHandler;
 import org.woym.logic.SuccessStatus;
 import org.woym.logic.command.AddCommand;
-import org.woym.logic.command.DeleteCommand;
+import org.woym.logic.command.CommandCreator;
+import org.woym.logic.command.MacroCommand;
 import org.woym.logic.command.UpdateCommand;
 import org.woym.logic.spec.IStatus;
 import org.woym.messages.GenericErrorMessage;
@@ -40,8 +41,8 @@ import org.woym.persistence.DataAccess;
 @ViewScoped
 @ManagedBean(name = "pedagogicAssistantController")
 public class PedagogicAssistantController implements Serializable {
-
-	private static final long serialVersionUID = 1L;
+	
+	private static final long serialVersionUID = 9002430508451329221L;
 
 	private static Logger LOGGER = LogManager
 			.getLogger(PedagogicAssistantController.class);
@@ -49,6 +50,7 @@ public class PedagogicAssistantController implements Serializable {
 	private DataAccess dataAccess = DataAccess.getInstance();
 
 	private CommandHandler commandHandler = CommandHandler.getInstance();
+	private CommandCreator commandCreator = CommandCreator.getInstance();
 
 	private PedagogicAssistant pedagogicAssistant;
 	private IMemento pedagogicAssistantMemento;
@@ -155,7 +157,7 @@ public class PedagogicAssistantController implements Serializable {
 			RequestContext context = RequestContext.getCurrentInstance();
 			context.execute("PF('wEditPedagogicAssistantDialog').hide();");
 		}
-		
+
 		FacesContext.getCurrentInstance().addMessage(null, msg);
 	}
 
@@ -163,9 +165,9 @@ public class PedagogicAssistantController implements Serializable {
 	 * Löscht den selektierten Mitarbeiter.
 	 */
 	public void deletePedagogicAssistant() {
-		DeleteCommand<PedagogicAssistant> command = new DeleteCommand<>(
-				pedagogicAssistant);
-		IStatus status = commandHandler.execute(command);
+		MacroCommand macroCommand = commandCreator
+				.createDeleteCommand(pedagogicAssistant);
+		IStatus status = commandHandler.execute(macroCommand);
 		FacesMessage msg = status.report();
 
 		FacesContext.getCurrentInstance().addMessage(null, msg);

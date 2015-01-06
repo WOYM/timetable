@@ -85,7 +85,10 @@ public enum GenericErrorMessage {
 	 * Diese Statusnachricht wird gewählt, wenn an einer Stelle eine ungültige
 	 * Datei gewählt wurde.
 	 */
-	INVALID_FILE("Ungültige Datei", "Die ausgewählte Datei ist ungültig.");
+	INVALID_FILE("Ungültige Datei", "Die ausgewählte Datei ist ungültig."),
+
+	NO_ACTIVITIES_TO_DELETE("Keine Aktivitäten zu löschen.",
+			"Es sind keine zu löschenden Aktivitäten vorhanden.");
 
 	/**
 	 * Zusammenfassung der Nachricht.

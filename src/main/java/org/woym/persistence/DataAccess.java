@@ -18,6 +18,7 @@ import org.woym.objects.ActivityType;
 import org.woym.objects.Classteam;
 import org.woym.objects.CompoundLesson;
 import org.woym.objects.Employee;
+import org.woym.objects.EmployeeTimePeriods;
 import org.woym.objects.Entity;
 import org.woym.objects.Lesson;
 import org.woym.objects.LessonType;
@@ -622,6 +623,15 @@ public class DataAccess implements IDataAccess, Observer {
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
+	public List<Activity> getAllActivities() throws DatasetException {
+		return (List<Activity>) getAll(Activity.class, null);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@SuppressWarnings("unchecked")
+	@Override
 	public List<Activity> getAllActivities(Employee employee)
 			throws DatasetException {
 		if (employee == null) {
@@ -744,15 +754,17 @@ public class DataAccess implements IDataAccess, Observer {
 		}
 		try {
 			final Query query = em
-					.createQuery("SELECT DISTINCT a from Activity a INNER JOIN a.employeeTimePeriods e WHERE ("
-							+ "(a.time.startTime BETWEEN ?1 AND ?2 AND a.time.startTime <> ?2)"
-							+ "OR (a.time.endTime BETWEEN ?1 AND ?2 AND a.time.endTime <> ?1) "
-							+ "OR (?1 BETWEEN a.time.startTime AND a.time.endTime AND ?1 <> a.time.endTime)"
-							+ "OR (?2 BETWEEN a.time.startTime AND a.time.endTime AND ?2 <> a.time.startTime)"
-							+ ") AND e.employee.id = ?3 ORDER BY a.time.startTime");
+					.createQuery("SELECT DISTINCT a from Activity a INNER JOIN a.employeeTimePeriods e INNER JOIN e.timePeriods t WHERE ("
+							+ "(t.startTime BETWEEN ?1 AND ?2 AND t.startTime <> ?2)"
+							+ "OR (t.endTime BETWEEN ?1 AND ?2 AND t.endTime <> ?1) "
+							+ "OR (?1 BETWEEN t.startTime AND t.endTime AND ?1 <> t.endTime)"
+							+ "OR (?2 BETWEEN t.startTime AND t.endTime AND ?2 <> t.startTime)"
+							+ ") AND e.employee.id = ?3 "
+							+ "AND a.time.day = ?4 ORDER BY a.time.startTime");
 			query.setParameter(1, timePeriod.getStartTime());
 			query.setParameter(2, timePeriod.getEndTime());
 			query.setParameter(3, employee.getId());
+			query.setParameter(4, timePeriod.getDay());
 			return query.getResultList();
 		} catch (Exception e) {
 			LOGGER.error(String.format(
@@ -783,10 +795,12 @@ public class DataAccess implements IDataAccess, Observer {
 							+ "OR (a.time.endTime BETWEEN ?1 AND ?2 AND a.time.endTime <> ?1) "
 							+ "OR (?1 BETWEEN a.time.startTime AND a.time.endTime AND ?1 <> a.time.endTime)"
 							+ "OR (?2 BETWEEN a.time.startTime AND a.time.endTime AND ?2 <> a.time.startTime)"
-							+ ") AND ?3 MEMBER OF a.schoolclasses ORDER BY a.time.startTime");
+							+ ") AND ?3 MEMBER OF a.schoolclasses "
+							+ "AND a.time.day = ?4 ORDER BY a.time.startTime");
 			query.setParameter(1, timePeriod.getStartTime());
 			query.setParameter(2, timePeriod.getEndTime());
 			query.setParameter(3, schoolclass);
+			query.setParameter(4, timePeriod.getDay());
 			return query.getResultList();
 		} catch (Exception e) {
 			LOGGER.error(String.format(
@@ -817,10 +831,12 @@ public class DataAccess implements IDataAccess, Observer {
 							+ "OR (a.time.endTime BETWEEN ?1 AND ?2 AND a.time.endTime <> ?1) "
 							+ "OR (?1 BETWEEN a.time.startTime AND a.time.endTime AND ?1 <> a.time.endTime)"
 							+ "OR (?2 BETWEEN a.time.startTime AND a.time.endTime AND ?2 <> a.time.startTime)"
-							+ ") AND ?3 MEMBER OF a.rooms ORDER BY a.time.startTime");
+							+ ") AND ?3 MEMBER OF a.rooms "
+							+ "AND a.time.day = ?4 ORDER BY a.time.startTime");
 			query.setParameter(1, timePeriod.getStartTime());
 			query.setParameter(2, timePeriod.getEndTime());
 			query.setParameter(3, room);
+			query.setParameter(4, timePeriod.getDay());
 			return query.getResultList();
 		} catch (Exception e) {
 			LOGGER.error(String.format(
@@ -971,8 +987,9 @@ public class DataAccess implements IDataAccess, Observer {
 		}
 		try {
 			final Query query = em
-					.createQuery("SELECT c FROM Classteam c WHERE ?1 = c.teacher OR ?1 MEMBER OF c.employees");
-			query.setParameter(1, employee);
+					.createQuery("SELECT c FROM Classteam c LEFT JOIN c.employees e WHERE ?1 = c.teacher.id OR e = ?2");
+			query.setParameter(1, employee.getId());
+			query.setParameter(2, employee);
 			return query.getResultList();
 		} catch (Exception e) {
 			LOGGER.error("Exception while getting all classteams for employee "
@@ -1008,6 +1025,55 @@ public class DataAccess implements IDataAccess, Observer {
 			throw new DatasetException(
 					"Exception while getting classteam for schoolclass "
 							+ schoolclass + ": " + e.getMessage());
+		}
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Character> getUsedChars(AcademicYear academicYear)
+			throws DatasetException {
+		if (academicYear == null) {
+			throw new IllegalArgumentException();
+		}
+		try {
+			final Query query = em
+					.createQuery("SELECT s.identifier FROM AcademicYear a "
+							+ "INNER JOIN a.schoolclasses s WHERE a = ?1");
+			query.setParameter(1, academicYear);
+			return query.getResultList();
+		} catch (Exception e) {
+			LOGGER.error(
+					"Exception while getting used characters for academic year "
+							+ academicYear, e);
+			throw new DatasetException(
+					"Error while getting used characters for academic year "
+							+ academicYear + ": " + e.getMessage());
+		}
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<EmployeeTimePeriods> getEmployeeTimePeriods(Employee employee)
+			throws DatasetException {
+		try {
+			final Query query = em
+					.createQuery("SELECT DISTINCT e FROM Activity a INNER JOIN a.employeeTimePeriods e "
+							+ "WHERE ?1 = e.employee AND SIZE(a.employeeTimePeriods) > 1");
+			query.setParameter(1, employee);
+			return query.getResultList();
+		} catch (Exception e) {
+			LOGGER.error(
+					"Exception while getting all EmployeeTimePeriods for given employee "
+							+ employee, e);
+			throw new DatasetException(
+					"Error while getting all EmployeeTimePeriods for given employee "
+							+ employee + ": " + e.getMessage());
 		}
 	}
 
@@ -1071,5 +1137,4 @@ public class DataAccess implements IDataAccess, Observer {
 					+ e.getMessage());
 		}
 	}
-
 }

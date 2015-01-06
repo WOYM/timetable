@@ -1,28 +1,29 @@
 package org.woym.objects;
 
-import static org.junit.Assert.*;
-
-import org.junit.Test;
+import org.testng.annotations.Test;
+import org.testng.AssertJUnit;
 import org.powermock.api.mockito.PowerMockito;
+import org.powermock.modules.testng.PowerMockTestCase;
 
-public class EmployeeBlackboxTest {
+@Test(groups = "unit")
+public class EmployeeBlackboxTest extends PowerMockTestCase {
 
 	@Test
 	public void equalsSameObject() {
 		Employee e = new Teacher();
-		assertTrue(e.equals(e));
+		AssertJUnit.assertTrue(e.equals(e));
 	}
 
 	@Test
 	public void equalsNull() {
 		Employee e = new Teacher();
-		assertFalse(e.equals(null));
+		AssertJUnit.assertFalse(e.equals(null));
 	}
 
 	@Test
 	public void equalsNotInstanceOfEmployee() {
 		Employee e = new Teacher();
-		assertFalse(e.equals(PowerMockito.mock(Location.class)));
+		AssertJUnit.assertFalse(e.equals(PowerMockito.mock(Location.class)));
 	}
 
 	@Test
@@ -31,7 +32,7 @@ public class EmployeeBlackboxTest {
 		Employee e1 = new Teacher();
 		e.setSymbol("MEY");
 		e1.setSymbol("MEY");
-		assertTrue(e.equals(e1));
+		AssertJUnit.assertTrue(e.equals(e1));
 	}
 
 	@Test
@@ -40,7 +41,7 @@ public class EmployeeBlackboxTest {
 		Employee e1 = new Teacher();
 		e.setSymbol("MEY");
 		e1.setSymbol("Mey");
-		assertTrue(e.equals(e1));
+		AssertJUnit.assertTrue(e.equals(e1));
 	}
 
 	@Test
@@ -49,7 +50,7 @@ public class EmployeeBlackboxTest {
 		Employee e1 = new Teacher();
 		e.setSymbol("MEY");
 		e1.setSymbol("MUS");
-		assertFalse(e.equals(e1));
+		AssertJUnit.assertFalse(e.equals(e1));
 	}
 
 	@Test
@@ -57,9 +58,9 @@ public class EmployeeBlackboxTest {
 		Employee e = new Teacher();
 		ChargeableCompensation c = PowerMockito
 				.mock(ChargeableCompensation.class);
-		assertTrue(e.add(c));
-		assertEquals(1, e.getCompensations().size());
-		assertEquals(c, e.getCompensations().get(0));
+		AssertJUnit.assertTrue(e.add(c));
+		AssertJUnit.assertEquals(1, e.getCompensations().size());
+		AssertJUnit.assertEquals(c, e.getCompensations().get(0));
 	}
 
 	@Test
@@ -68,8 +69,8 @@ public class EmployeeBlackboxTest {
 		ChargeableCompensation c = PowerMockito
 				.mock(ChargeableCompensation.class);
 		e.add(c);
-		assertFalse(e.add(c));
-		assertEquals(1, e.getCompensations().size());
+		AssertJUnit.assertFalse(e.add(c));
+		AssertJUnit.assertEquals(1, e.getCompensations().size());
 	}
 
 	@Test
@@ -78,8 +79,8 @@ public class EmployeeBlackboxTest {
 		ChargeableCompensation c = PowerMockito
 				.mock(ChargeableCompensation.class);
 		e.add(c);
-		assertTrue(e.remove(c));
-		assertEquals(0, e.getCompensations().size());
+		AssertJUnit.assertTrue(e.remove(c));
+		AssertJUnit.assertEquals(0, e.getCompensations().size());
 	}
 
 	@Test
@@ -90,8 +91,8 @@ public class EmployeeBlackboxTest {
 		ChargeableCompensation c1 = PowerMockito
 				.mock(ChargeableCompensation.class);
 		e.add(c);
-		assertFalse(e.remove(c1));
-		assertEquals(1, e.getCompensations().size());
+		AssertJUnit.assertFalse(e.remove(c1));
+		AssertJUnit.assertEquals(1, e.getCompensations().size());
 	}
 
 	@Test
@@ -100,7 +101,7 @@ public class EmployeeBlackboxTest {
 		ChargeableCompensation c = PowerMockito
 				.mock(ChargeableCompensation.class);
 		e.add(c);
-		assertTrue(e.contains(c));
+		AssertJUnit.assertTrue(e.contains(c));
 	}
 
 	@Test
@@ -108,16 +109,16 @@ public class EmployeeBlackboxTest {
 		Employee e = new Teacher();
 		ChargeableCompensation c = PowerMockito
 				.mock(ChargeableCompensation.class);
-		assertFalse(e.contains(c));
+		AssertJUnit.assertFalse(e.contains(c));
 	}
 
 	@Test
 	public void addActivityTypeNotExists() {
 		Employee e = new Teacher();
 		ActivityType a = PowerMockito.mock(LessonType.class);
-		assertTrue(e.add(a));
-		assertEquals(1, e.getPossibleActivityTypes().size());
-		assertEquals(a, e.getPossibleActivityTypes().get(0));
+		AssertJUnit.assertTrue(e.add(a));
+		AssertJUnit.assertEquals(1, e.getPossibleActivityTypes().size());
+		AssertJUnit.assertEquals(a, e.getPossibleActivityTypes().get(0));
 	}
 
 	@Test
@@ -125,8 +126,8 @@ public class EmployeeBlackboxTest {
 		Employee e = new Teacher();
 		ActivityType a = PowerMockito.mock(LessonType.class);
 		e.add(a);
-		assertFalse(e.add(a));
-		assertEquals(1, e.getPossibleActivityTypes().size());
+		AssertJUnit.assertFalse(e.add(a));
+		AssertJUnit.assertEquals(1, e.getPossibleActivityTypes().size());
 	}
 
 	@Test
@@ -134,8 +135,8 @@ public class EmployeeBlackboxTest {
 		Employee e = new Teacher();
 		ActivityType a = PowerMockito.mock(LessonType.class);
 		e.add(a);
-		assertTrue(e.remove(a));
-		assertEquals(0, e.getPossibleActivityTypes().size());
+		AssertJUnit.assertTrue(e.remove(a));
+		AssertJUnit.assertEquals(0, e.getPossibleActivityTypes().size());
 	}
 
 	@Test
@@ -144,8 +145,8 @@ public class EmployeeBlackboxTest {
 		ActivityType a = PowerMockito.mock(LessonType.class);
 		ActivityType a1 = PowerMockito.mock(LessonType.class);
 		e.add(a);
-		assertFalse(e.remove(a1));
-		assertEquals(1, e.getPossibleActivityTypes().size());
+		AssertJUnit.assertFalse(e.remove(a1));
+		AssertJUnit.assertEquals(1, e.getPossibleActivityTypes().size());
 	}
 
 	@Test
@@ -153,23 +154,23 @@ public class EmployeeBlackboxTest {
 		Employee e = new Teacher();
 		ActivityType a = PowerMockito.mock(LessonType.class);
 		e.add(a);
-		assertTrue(e.contains(a));
+		AssertJUnit.assertTrue(e.contains(a));
 	}
 
 	@Test
 	public void containsActivityTypeNotExists() {
 		Employee e = new Teacher();
 		ActivityType a = PowerMockito.mock(LessonType.class);
-		assertFalse(e.contains(a));
+		AssertJUnit.assertFalse(e.contains(a));
 	}
 
 	@Test
 	public void addTimePeriodNotExists() {
 		Employee e = new Teacher();
 		TimePeriod t = PowerMockito.mock(TimePeriod.class);
-		assertTrue(e.add(t));
-		assertEquals(1, e.getTimeWishes().size());
-		assertEquals(t, e.getTimeWishes().get(0));
+		AssertJUnit.assertTrue(e.add(t));
+		AssertJUnit.assertEquals(1, e.getTimeWishes().size());
+		AssertJUnit.assertEquals(t, e.getTimeWishes().get(0));
 	}
 
 	@Test
@@ -177,8 +178,8 @@ public class EmployeeBlackboxTest {
 		Employee e = new Teacher();
 		TimePeriod t = PowerMockito.mock(TimePeriod.class);
 		e.add(t);
-		assertFalse(e.add(t));
-		assertEquals(1, e.getTimeWishes().size());
+		AssertJUnit.assertFalse(e.add(t));
+		AssertJUnit.assertEquals(1, e.getTimeWishes().size());
 	}
 
 	@Test
@@ -186,8 +187,8 @@ public class EmployeeBlackboxTest {
 		Employee e = new Teacher();
 		TimePeriod t = PowerMockito.mock(TimePeriod.class);
 		e.add(t);
-		assertTrue(e.remove(t));
-		assertEquals(0, e.getTimeWishes().size());
+		AssertJUnit.assertTrue(e.remove(t));
+		AssertJUnit.assertEquals(0, e.getTimeWishes().size());
 	}
 
 	@Test
@@ -196,23 +197,23 @@ public class EmployeeBlackboxTest {
 		TimePeriod t = PowerMockito.mock(TimePeriod.class);
 		TimePeriod t1 = PowerMockito.mock(TimePeriod.class);
 		e.add(t);
-		assertFalse(e.remove(t1));
-		assertEquals(1, e.getTimeWishes().size());
+		AssertJUnit.assertFalse(e.remove(t1));
+		AssertJUnit.assertEquals(1, e.getTimeWishes().size());
 	}
-	
+
 	@Test
 	public void containsTimePeriodExists() {
 		Employee e = new Teacher();
 		TimePeriod t = PowerMockito.mock(TimePeriod.class);
 		e.add(t);
-		assertTrue(e.contains(t));
+		AssertJUnit.assertTrue(e.contains(t));
 	}
-	
+
 	@Test
 	public void containsTimePeriodNotExists() {
 		Employee e = new Teacher();
 		TimePeriod t = PowerMockito.mock(TimePeriod.class);
-		assertFalse(e.contains(t));
+		AssertJUnit.assertFalse(e.contains(t));
 	}
 
 }

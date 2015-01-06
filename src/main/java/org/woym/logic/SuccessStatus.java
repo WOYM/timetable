@@ -54,6 +54,25 @@ public class SuccessStatus implements IStatus {
 	}
 
 	/**
+	 * Erzeugt ein neues {@linkplain SuccesStatus}-Objekt, dass eine
+	 * {@linkplain FacesMessage} mit den übergebenen Parametern enthält.
+	 * 
+	 * @param summary
+	 *            - Zusammenfassung der Nachricht
+	 * @param message
+	 *            - Detaillierte Nachricht
+	 * @param severity
+	 *            - Schweregrad der Nachricht
+	 */
+	public SuccessStatus(String summary, String message,
+			FacesMessage.Severity severity) {
+		if (summary == null || message == null || severity == null) {
+			throw new IllegalArgumentException();
+		}
+		facesMessage = new FacesMessage(severity, summary, message);
+	}
+
+	/**
 	 * {@inheritDoc}
 	 */
 	@Override

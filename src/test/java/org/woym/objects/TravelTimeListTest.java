@@ -1,38 +1,36 @@
 package org.woym.objects;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.testng.AssertJUnit.assertEquals;
+import static org.testng.AssertJUnit.assertFalse;
+import static org.testng.AssertJUnit.assertNotNull;
+import static org.testng.AssertJUnit.assertTrue;
 
 import java.lang.reflect.Field;
 import java.util.List;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
+import org.powermock.modules.testng.PowerMockTestCase;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
 import org.woym.exceptions.DatasetException;
 import org.woym.objects.TravelTimeList.Edge;
 import org.woym.persistence.DataAccess;
 
-@RunWith(PowerMockRunner.class)
+@Test(groups = "unit")
 @PowerMockIgnore("javax.management.*")
 @PrepareForTest({ DataAccess.class, TravelTimeList.class })
-public class TravelTimeListTest {
+public class TravelTimeListTest extends PowerMockTestCase {
 
 	@Mock
 	private DataAccess dataAccess;
 
-	@InjectMocks
+	@Mock
 	private TravelTimeList list;
 
-	@Before
+	@BeforeMethod
 	public void init() throws Exception {
 		PowerMockito.mockStatic(DataAccess.class);
 		PowerMockito.when(DataAccess.getInstance()).thenReturn(dataAccess);
@@ -104,7 +102,7 @@ public class TravelTimeListTest {
 		assertTrue(TravelTimeList.getInstance().add(l, l1, 1));
 		assertEquals(1, TravelTimeList.getInstance().getEdges().size());
 	}
-	
+
 	@Test
 	public void removeValidParameters() {
 		Location l = PowerMockito.mock(Location.class);
@@ -112,12 +110,12 @@ public class TravelTimeListTest {
 		TravelTimeList.getInstance().add(l, l1, 1);
 		assertTrue(TravelTimeList.getInstance().remove(l, l1));
 	}
-	
-	@Test(expected = IllegalArgumentException.class)
+
+	@Test(expectedExceptions = IllegalArgumentException.class)
 	public void getTravelTimesLocationNull() {
 		TravelTimeList.getInstance().getTravelTimes(null);
 	}
-	
+
 	@Test
 	public void getTravelTimesSuccess() {
 		Location l = PowerMockito.mock(Location.class);

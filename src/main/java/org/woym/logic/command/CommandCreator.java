@@ -1,12 +1,9 @@
-package org.woym.logic;
+package org.woym.logic.command;
 
 import java.util.LinkedList;
 import java.util.List;
 
 import org.woym.exceptions.DatasetException;
-import org.woym.logic.command.DeleteCommand;
-import org.woym.logic.command.MacroCommand;
-import org.woym.logic.command.UpdateCommand;
 import org.woym.logic.spec.ICommand;
 import org.woym.objects.AcademicYear;
 import org.woym.objects.Activity;
@@ -14,6 +11,7 @@ import org.woym.objects.ActivityType;
 import org.woym.objects.Classteam;
 import org.woym.objects.CompoundLesson;
 import org.woym.objects.Employee;
+import org.woym.objects.EmployeeTimePeriods;
 import org.woym.objects.Entity;
 import org.woym.objects.Lesson;
 import org.woym.objects.LessonType;
@@ -106,7 +104,8 @@ public class CommandCreator {
 							.getSchoolclasses();
 
 					for (Schoolclass s : list) {
-						commands.addAll(relationSchoolClass(s));
+						commands.addAll(relationActivity(s));
+						commands.addAll(relationSchoolClass(s, true));
 					}
 					commands.addLast(new DeleteCommand<Entity>(entity));
 
@@ -118,7 +117,8 @@ public class CommandCreator {
 					List<Room> rooms = ((Location) entity).getRooms();
 
 					for (Room r : rooms) {
-						commands.addAll(relationRoom(r));
+						commands.addAll(relationActivity(r));
+						commands.addAll(relationRoom(r, true));
 					}
 					commands.addLast(new DeleteCommand<Entity>(entity));
 				} else {
@@ -186,6 +186,7 @@ public class CommandCreator {
 				macro.add(new UpdateCommand<Entity>(a, memento));
 			}
 		}
+
 		return macro;
 	}
 
@@ -217,10 +218,10 @@ public class CommandCreator {
 		LinkedList<ICommand> macro = new LinkedList<ICommand>();
 		if (entity instanceof Room) {
 			macro.addAll(relationRoomLocation((Room) entity));
-			macro.addAll(relationRoom((Room) entity));
+			macro.addAll(relationRoom((Room) entity, false));
 		} else if (entity instanceof Schoolclass) {
 			macro.addAll(relationSchoolClassAcademicYear((Schoolclass) entity));
-			macro.addAll(relationSchoolClass((Schoolclass) entity));
+			macro.addAll(relationSchoolClass((Schoolclass) entity, false));
 		} else if (entity instanceof Employee) {
 			macro.addAll(relationEmployee((Employee) entity));
 		} else if (entity instanceof ActivityType) {
@@ -253,10 +254,17 @@ public class CommandCreator {
 	private LinkedList<ICommand> relationEmployee(Employee employee)
 			throws DatasetException {
 		LinkedList<ICommand> macro = new LinkedList<ICommand>();
+
+		// Referenzen bei EmployeeTimePeriods-Objekten auflösen
+		List<EmployeeTimePeriods> employeeTimePeriods = DataAccess
+				.getInstance().getEmployeeTimePeriods(employee);
+		for (EmployeeTimePeriods e : employeeTimePeriods) {
+			macro.addLast(new DeleteCommand<Entity>(e));
+		}
+
+		// Referenzen bei den Klassenteams auflösen
 		List<Classteam> classteams = DataAccess.getInstance().getAllClassteams(
 				employee);
-
-		// Refernzen bei den Klassenteams auflösen
 		for (Classteam c : classteams) {
 			IMemento memento = c.createMemento();
 
@@ -304,20 +312,27 @@ public class CommandCreator {
 	 * 
 	 * @param schoolclass
 	 *            - die zu löschende Schulklasse
+	 * @param deleteAcademicYear
+	 *            - true, wenn diese Methode beim Löschen eines Jahrgangs
+	 *            aufgerufen wird
 	 * @return Liste von {@linkplain ICommand}-Objekten (s.a. Hinweis oben)
 	 * @throws DatasetException
 	 */
-	private LinkedList<ICommand> relationSchoolClass(Schoolclass schoolclass)
-			throws DatasetException {
+	private LinkedList<ICommand> relationSchoolClass(Schoolclass schoolclass,
+			boolean deleteAcademicYear) throws DatasetException {
 		LinkedList<ICommand> macro = new LinkedList<ICommand>();
 
 		Classteam team = DataAccess.getInstance().getOneClassteam(schoolclass);
-		IMemento memento = team.createMemento();
-		team.remove(schoolclass);
+		if (team != null) {
+			IMemento memento = team.createMemento();
+			team.remove(schoolclass);
 
-		macro.addLast(new UpdateCommand<Entity>(team, memento));
+			macro.addLast(new UpdateCommand<Entity>(team, memento));
+		}
 
-		macro.addLast(new DeleteCommand<Entity>(schoolclass));
+		if (!deleteAcademicYear) {
+			macro.addLast(new DeleteCommand<Entity>(schoolclass));
+		}
 		return macro;
 	}
 
@@ -346,11 +361,12 @@ public class CommandCreator {
 
 		AcademicYear year = DataAccess.getInstance().getOneAcademicYear(
 				schoolclass);
-		IMemento yearMemento = year.createMemento();
-		year.remove(schoolclass);
+		if (year != null) {
+			IMemento yearMemento = year.createMemento();
+			year.remove(schoolclass);
 
-		macro.addLast(new UpdateCommand<Entity>(year, yearMemento));
-
+			macro.addLast(new UpdateCommand<Entity>(year, yearMemento));
+		}
 		return macro;
 	}
 
@@ -370,13 +386,15 @@ public class CommandCreator {
 	 * 
 	 * @param room
 	 *            - der zu löschende Raum
+	 * @param - {@code true}, wenn diese Methode bei der Löschung eines
+	 *        Jahrgangs aufgerufen wird, ansonsten {@code false}
 	 * @return Liste von {@linkplain ICommand}-Objekten, die in der Lage sind,
 	 *         Referenzen in {@linkplain Schoolclass} und
 	 *         {@linkplain ActivityType}-Objekten für den übergebenen Raum
 	 *         aufzulösen
 	 * @throws DatasetException
 	 */
-	private LinkedList<ICommand> relationRoom(Room room)
+	private LinkedList<ICommand> relationRoom(Room room, boolean deleteLocation)
 			throws DatasetException {
 		LinkedList<ICommand> macro = new LinkedList<ICommand>();
 
@@ -398,7 +416,9 @@ public class CommandCreator {
 			macro.addLast(new UpdateCommand<Entity>(a, thirdMemento));
 		}
 
-		macro.addLast(new DeleteCommand<Entity>(room));
+		if (!deleteLocation) {
+			macro.addLast(new DeleteCommand<Entity>(room));
+		}
 
 		return macro;
 	}
@@ -423,10 +443,13 @@ public class CommandCreator {
 		LinkedList<ICommand> macro = new LinkedList<ICommand>();
 
 		Location location = DataAccess.getInstance().getOneLocation(room);
-		IMemento firstMemento = location.createMemento();
-		location.remove(room);
+		if (location != null) {
+			IMemento firstMemento = location.createMemento();
+			location.remove(room);
 
-		macro.addLast(new UpdateCommand<Entity>((Entity) location, firstMemento));
+			macro.addLast(new UpdateCommand<Entity>((Entity) location,
+					firstMemento));
+		}
 		return macro;
 	}
 

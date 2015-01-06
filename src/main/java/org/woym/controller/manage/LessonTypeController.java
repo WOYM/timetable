@@ -6,7 +6,8 @@ import org.woym.exceptions.DatasetException;
 import org.woym.logic.CommandHandler;
 import org.woym.logic.SuccessStatus;
 import org.woym.logic.command.AddCommand;
-import org.woym.logic.command.DeleteCommand;
+import org.woym.logic.command.CommandCreator;
+import org.woym.logic.command.MacroCommand;
 import org.woym.logic.command.UpdateCommand;
 import org.woym.logic.spec.IStatus;
 import org.woym.messages.GenericErrorMessage;
@@ -43,7 +44,7 @@ import org.primefaces.context.RequestContext;
 @ManagedBean(name = "lessonTypeController")
 public class LessonTypeController implements Serializable {
 
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = -3486820231036039086L;
 
 	private static Logger LOGGER = LogManager
 			.getLogger(LessonTypeController.class);
@@ -53,10 +54,10 @@ public class LessonTypeController implements Serializable {
 	private DataAccess dataAccess = DataAccess.getInstance();
 
 	private CommandHandler commandHandler = CommandHandler.getInstance();
+	private CommandCreator commandCreator = CommandCreator.getInstance();
+	private IMemento lessonTypeMemento;
 
 	private List<Room> rooms;
-
-	private IMemento lessonTypeMemento;
 
 	@PostConstruct
 	public void init() {
@@ -121,8 +122,8 @@ public class LessonTypeController implements Serializable {
 	 * Löscht den selektierten Unterrichtsinhalt.
 	 */
 	public void deleteLessonType() {
-		DeleteCommand<LessonType> command = new DeleteCommand<>(lessonType);
-		IStatus status = commandHandler.execute(command);
+		MacroCommand macroCommand = commandCreator.createDeleteCommand(lessonType);
+		IStatus status = commandHandler.execute(macroCommand);
 		FacesMessage msg = status.report();
 
 		FacesContext.getCurrentInstance().addMessage(null, msg);

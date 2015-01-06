@@ -16,7 +16,8 @@ import org.woym.exceptions.DatasetException;
 import org.woym.logic.CommandHandler;
 import org.woym.logic.SuccessStatus;
 import org.woym.logic.command.AddCommand;
-import org.woym.logic.command.DeleteCommand;
+import org.woym.logic.command.CommandCreator;
+import org.woym.logic.command.MacroCommand;
 import org.woym.logic.command.UpdateCommand;
 import org.woym.logic.spec.IStatus;
 import org.woym.messages.GenericErrorMessage;
@@ -37,7 +38,7 @@ import org.woym.persistence.DataAccess;
 @ManagedBean(name = "locationController")
 public class LocationController implements Serializable {
 
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 5092669270191337498L;
 
 	private DataAccess dataAccess = DataAccess.getInstance();
 
@@ -45,6 +46,7 @@ public class LocationController implements Serializable {
 			.getLogger(LocationController.class);
 
 	private CommandHandler commandHandler = CommandHandler.getInstance();
+	private CommandCreator commandCreator = CommandCreator.getInstance();
 
 	private IMemento locationMemento;
 
@@ -94,8 +96,8 @@ public class LocationController implements Serializable {
 	 * Löscht einen Standort aus der Datenbank.
 	 */
 	public void deleteLocation() {
-		DeleteCommand<Location> command = new DeleteCommand<Location>(location);
-		IStatus status = commandHandler.execute(command);
+		MacroCommand macroCommand = commandCreator.createDeleteCommand(location);
+		IStatus status = commandHandler.execute(macroCommand);
 		FacesMessage msg = status.report();
 
 		FacesContext.getCurrentInstance().addMessage(null, msg);

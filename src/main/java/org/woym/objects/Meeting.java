@@ -33,6 +33,11 @@ public class Meeting extends Activity {
 		this.meetingType = meetingType;
 	}
 
+	@Override
+	public String toString() {
+		return meetingType.getName() + ", " + super.toString();
+	}
+
 	/**
 	 * {@inheritDoc}
 	 */

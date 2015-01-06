@@ -63,6 +63,7 @@ public class AcademicYear extends org.woym.objects.Entity implements
 	@CollectionTable(name = "ACADEMICYEAR_LESSONDEMANDS", joinColumns = @JoinColumn(name = "ACADEMICYEAR"))
 	@Column(name = "DEMAND")
 	@MapKeyJoinColumn(name = "LESSONTYPE", referencedColumnName = "ID")
+	@OrderBy("name")
 	private Map<LessonType, Integer> lessonDemands = new HashMap<>();
 
 	public AcademicYear() {

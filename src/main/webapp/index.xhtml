@@ -6,62 +6,56 @@
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:p="http://primefaces.org/ui">
-
 <h:head>
-	<title>Timetable</title>
+	<title>Timetable - Planung</title>
+	<h:outputStylesheet name="style.css" library="css" />
 </h:head>
 
 <h:body>
-	<h:form>
-		<p:outputPanel style="margin-left:30px;">
-			<h1>
-				<h:outputText value="timetable by WoyM" />
-			</h1>
-			<h2>
-				<h:outputText value="Willkommen!" />
-			</h2>
-		</p:outputPanel>
-		<p:outputPanel style="width:80%; margin-left:auto; margin-right:auto;">
-			<p:panel header="Einrichtung">
-				<p:outputPanel>
-					<h:outputText
-						value="In diesem Bereich wird das grundsätzliche System eingerichtet. Dazu gehört z.B. das Verwalten des Personals, der Klassen und der Räumlichkeiten." />
+	<h:form id="planningForm">
+		<p:menubar>
+			<f:facet name="options">
+				<p:commandButton value="Systemeinrichtung" icon="ui-icon-gear"
+					process="@this" action="/setupTimetable/index" />
+			</f:facet>
+		</p:menubar>
+		<p:spacer style="height:20px" />
+		<p:tabView>
+			<p:tab title="Lehrer" id="planningTeacherTab">
+
+			</p:tab>
+
+			<p:tab title="Klassen">
+
+			</p:tab>
+		</p:tabView>
+		<p:outputPanel>
+			<p:outputPanel>
+				<p:spacer style="height:60px" />
+				<p:outputPanel style="float:right; padding:10px">
+					<p:commandButton value="Hinzufügen" />
 				</p:outputPanel>
-				<p:spacer style="height:10px;" />
-				<p:outputPanel>
-				    <h:outputText value="Lehrkräfte: x" />
-				</p:outputPanel>
-				<p:spacer style="height:80px;" />
-				<p:outputPanel style="float:right;">
-					<p:spacer style="height:60px;" />
-					<p:commandButton value="Einrichtung" action="setupTimetable/index" />
-				</p:outputPanel>
-			</p:panel>
-			<p:spacer style="height:30px;" />
-			<p:panel header="Planung">
-				<p:outputPanel>
-					<h:outputText
-						value="Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua." />
-				</p:outputPanel>
-				<p:spacer style="height:100px;" />
-				<p:outputPanel style="float:right;">
-					<p:spacer style="height:80px;" />
-					<p:commandButton value="Planung" action="planTimetable/index" />
-				</p:outputPanel>
-			</p:panel>
-			<p:spacer style="height:30px;" />
-			<p:panel header="Ausgabe">
-				<p:outputPanel>
-					<h:outputText
-						value="Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua." />
-				</p:outputPanel>
-				<p:spacer style="height:100px;" />
-				<p:outputPanel style="float:right;">
-					<p:spacer style="height:80px;" />
-					<p:commandButton value="Ausgabe" />
-				</p:outputPanel>
-			</p:panel>
+			</p:outputPanel>
+			<!-- Schedule -->
+			<p:schedule showHeader="false" view="agendaWeek" allDaySlot="false"
+				axisFormat="HH:mm" slotMinutes="#{planningController.slotMinutes}"
+				columnFormat="week: 'ddd'" locale="de" ignoreTimezone="true" />
+			<p:spacer style="height:50px;" />
 		</p:outputPanel>
 	</h:form>
+
+	<script type="text/javascript">
+		PrimeFaces.locales['de'] = {
+			dayNames : ['Sonntag', 'Montag', 'Dienstag', 'Mittwoch', 'Donnerstag',
+					'Freitag', 'Samstag'],
+			dayNamesShort : ['Son', 'Mon', 'Die', 'Mit', 'Don', 'Fre', 'Sam'],
+			dayNamesMin : ['So', 'Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa'],
+			weekHeader : 'Hf',
+			firstDay : 1,
+			week : 'Woche',
+			day : 'Tag',
+		};
+	</script>
+
 </h:body>
 </html>

@@ -1,31 +1,28 @@
 package org.woym.ui.converters;
 
-import static org.junit.Assert.*;
-
 import javax.faces.application.FacesMessage;
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.convert.ConverterException;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
+import org.powermock.modules.testng.PowerMockTestCase;
+import org.testng.Assert;
+import org.testng.AssertJUnit;
+import org.testng.annotations.Test;
 import org.woym.exceptions.DatasetException;
 import org.woym.messages.GenericErrorMessage;
 import org.woym.messages.MessageHelper;
 import org.woym.objects.Teacher;
 import org.woym.persistence.DataAccess;
 
-@RunWith(PowerMockRunner.class)
-@PowerMockIgnore("javax.management.*")
+@Test(groups = "unit")
 @PrepareForTest(MessageHelper.class)
-public class TeacherNameConverterTest {
+public class TeacherNameConverterTest extends PowerMockTestCase {
 
 	@Mock
 	private DataAccess dataAccess;
@@ -47,11 +44,11 @@ public class TeacherNameConverterTest {
 		Teacher t = PowerMockito.mock(Teacher.class);
 		PowerMockito.when(dataAccess.getOneEmployee(Mockito.anyString()))
 				.thenReturn(t);
-		assertEquals(t, teacherNameConverter.getAsObject(facesContext,
-				uiComponent, "test"));
+		AssertJUnit.assertEquals(t, teacherNameConverter.getAsObject(
+				facesContext, uiComponent, "test"));
 	}
 
-	@Test(expected = ConverterException.class)
+	@Test
 	public void getAsObjectDatasetException() throws DatasetException {
 		PowerMockito.mockStatic(MessageHelper.class);
 		Mockito.doThrow(DatasetException.class).when(dataAccess)
@@ -61,19 +58,25 @@ public class TeacherNameConverterTest {
 						Mockito.any(GenericErrorMessage.class),
 						Mockito.any(FacesMessage.Severity.class))).thenReturn(
 				PowerMockito.mock(FacesMessage.class));
-		teacherNameConverter.getAsObject(facesContext, uiComponent, "test");
+		try {
+			teacherNameConverter.getAsObject(facesContext, uiComponent, "test");
+		} catch (ConverterException e) {
+			return;
+		}
+		Assert.fail();
+
 	}
 
 	@Test
 	public void getAsStringNullValue() {
-		assertEquals(null, teacherNameConverter.getAsString(facesContext,
-				uiComponent, null));
+		AssertJUnit.assertEquals(null, teacherNameConverter.getAsString(
+				facesContext, uiComponent, null));
 	}
 
 	@Test
 	public void getAsStringSucess() {
 		Teacher t = PowerMockito.mock(Teacher.class);
-		assertEquals(t.getName(),
+		AssertJUnit.assertEquals(t.getName(),
 				teacherNameConverter.getAsString(facesContext, uiComponent, t));
 	}
 }
