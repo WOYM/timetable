@@ -261,7 +261,7 @@ public class CommandCreator {
 			IMemento memento = c.createMemento();
 
 			if (employee instanceof Teacher) {
-				if (c.getTeacher().equals(employee)) {
+				if (employee.equals(c.getTeacher())) {
 					macro.addLast(new DeleteCommand<Entity>(c));
 					continue;
 				}
