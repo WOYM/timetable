@@ -59,10 +59,16 @@ public class LessonTypeController implements Serializable {
 
 	private List<Room> rooms;
 
+	private boolean hideDeletionDialog;
+	private boolean hide;
+
 	@PostConstruct
 	public void init() {
 		lessonType = new LessonType();
 		lessonType.setTypicalDuration(getTypicalDuration());
+		hideDeletionDialog = Config
+				.getBooleanValue(DefaultConfigEnum.HIDE_ACTIVITYTYPE_DELETION_DIALOG);
+		hide = hideDeletionDialog;
 	}
 
 	/**
@@ -122,7 +128,13 @@ public class LessonTypeController implements Serializable {
 	 * Löscht den selektierten Unterrichtsinhalt.
 	 */
 	public void deleteLessonType() {
-		MacroCommand macroCommand = commandCreator.createDeleteCommand(lessonType);
+		if (hide != hideDeletionDialog) {
+			Config.updateProperty(
+					DefaultConfigEnum.HIDE_ACTIVITYTYPE_DELETION_DIALOG
+							.getPropKey(), String.valueOf(hideDeletionDialog));
+		}
+		MacroCommand macroCommand = commandCreator
+				.createDeleteCommand(lessonType);
 		IStatus status = commandHandler.execute(macroCommand);
 		FacesMessage msg = status.report();
 
@@ -149,11 +161,11 @@ public class LessonTypeController implements Serializable {
 				lessonTypeMemento);
 		IStatus status = commandHandler.execute(command);
 		FacesMessage msg = status.report();
-		
+
 		if (status instanceof SuccessStatus) {
 			// Reset stuff
 			rooms = new ArrayList<Room>();
-			
+
 			RequestContext context = RequestContext.getCurrentInstance();
 			context.execute("PF('wEditLessonTypeDialog').hide();");
 		}
@@ -194,6 +206,14 @@ public class LessonTypeController implements Serializable {
 
 	public List<Room> getRooms() {
 		return rooms;
+	}
+
+	public boolean isHideDeletionDialog() {
+		return hideDeletionDialog;
+	}
+
+	public void setHideDeletionDialog(boolean hideDeletionDialog) {
+		this.hideDeletionDialog = hideDeletionDialog;
 	}
 
 	private int getTypicalDuration() {

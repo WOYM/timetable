@@ -64,7 +64,7 @@ public class PlanningController implements Serializable {
 	 * @return Minutenwert, wie groß ein 'Slot' ist
 	 */
 	public int getSlotMinutes() {
-		return Config.getConfValInt(DefaultConfigEnum.TIMETABLE_GRID);
+		return Config.getSingleIntValue(DefaultConfigEnum.TIMETABLE_GRID);
 	}
 
 	/**

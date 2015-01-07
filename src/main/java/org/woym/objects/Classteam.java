@@ -93,12 +93,25 @@ public class Classteam extends org.woym.objects.Entity implements Serializable,
 	public void setSchoolclasses(List<Schoolclass> schoolclasses) {
 		this.schoolclasses = schoolclasses;
 	}
-	
+
+	@Override
+	public String toString() {
+		String classes = "Klassen: ";
+		for (int i = 0; i < schoolclasses.size(); i++) {
+			if (i == schoolclasses.size() - 1) {
+				classes += schoolclasses.get(i).toString();
+				return teacher + ", " + classes;
+			}
+			classes += schoolclasses.get(i).toString() + ", ";
+		}
+		return teacher + ", " + classes;
+	}
+
 	public boolean remove(Employee employee) {
 		return employees.remove(employee);
 	}
-	
-	public boolean remove (Schoolclass schoolclass) {
+
+	public boolean remove(Schoolclass schoolclass) {
 		return schoolclasses.remove(schoolclass);
 	}
 
@@ -133,8 +146,8 @@ public class Classteam extends org.woym.objects.Entity implements Serializable,
 			this.schoolclasses = new ArrayList<Schoolclass>(
 					actualMemento.schoolclasses);
 		} else {
-			throw new IllegalArgumentException(
-					"Only " + Memento.class + " as parameter allowed.");
+			throw new IllegalArgumentException("Only " + Memento.class
+					+ " as parameter allowed.");
 		}
 
 	}

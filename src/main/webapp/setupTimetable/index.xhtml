@@ -16,8 +16,8 @@
 		<p:growl id="commandGrowl" showDetail="true" />
 		<p:toolbar id="setupToolbar">
 			<f:facet name="left">
-				<p:commandButton process="@this" title="Zurück" value="Zurück"
-					icon="ui-icon-arrowreturnthick-1-w" action="/index" />
+				<p:commandButton process="@this" title="Planungsansicht" value="Planungsansicht"
+					icon="ui-icon-calendar" action="/index" />
 			</f:facet>
 			<f:facet name="right">
 				<p:commandButton title="Rückgängig"
@@ -44,7 +44,9 @@
 								action="manageRooms" update="@all" process="@this" />
 						</p:submenu>
 						<p:submenu label="Unterricht">
-							<p:menuitem value="Inhalte" action="manageLessonTypes"
+							<p:menuitem value="Unterrichtsinhalte" action="manageLessonTypes"
+								update="@all" icon="ui-icon-tag" process="@this" />
+							<p:menuitem value="Personalsitzungen" action="manageMeetings"
 								update="@all" icon="ui-icon-tag" process="@this" />
 						</p:submenu>
 						<p:submenu label="Personal">
@@ -58,6 +60,10 @@
 							<p:menuitem value="Jahrgänge und Klassen"
 								action="manageAcademicYearsAndClasses" update="@all"
 								icon="ui-icon-calculator" process="@this" />
+						</p:submenu>
+						<p:submenu label="Teams">
+							<p:menuitem value="Klassenteams" action="manageClassteams"
+								update="@all" process="@this" />
 						</p:submenu>
 					</p:menu>
 					<p:menu style="width:300px; top:10px; position:relative">
