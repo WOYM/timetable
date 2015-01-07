@@ -12,6 +12,7 @@ import org.woym.config.Config;
 import org.woym.config.DefaultConfigEnum;
 import org.woym.logic.spec.IStatus;
 import org.woym.logic.util.ConfigControllerUtil;
+import org.woym.objects.Weekday;
 
 /**
  * <h1>AcademicYearAndClassController</h1>
@@ -25,9 +26,9 @@ import org.woym.logic.util.ConfigControllerUtil;
 @ViewScoped
 @ManagedBean(name = "configController")
 public class ConfigController implements Serializable {
-	
+
 	private static final long serialVersionUID = -5701369389504640808L;
-	
+
 	private static final int MAX_SPINNER_VALUE = 1440;
 	private static final int MIN_SPINNER_VALUE = 1;
 
@@ -49,9 +50,13 @@ public class ConfigController implements Serializable {
 
 	private int backupInterval;
 
+	private Weekday[] weekdays = Weekday.values();
+	private Weekday[] selectedWeekdays;
+
 	@PostConstruct
 	public void init() {
-		timetableGrid = Config.getSingleIntValue(DefaultConfigEnum.TIMETABLE_GRID);
+		timetableGrid = Config
+				.getSingleIntValue(DefaultConfigEnum.TIMETABLE_GRID);
 		backupInterval = Config
 				.getSingleIntValue(DefaultConfigEnum.BACKUP_INTERVAL);
 		teacherSettlement = Config
@@ -62,6 +67,9 @@ public class ConfigController implements Serializable {
 				.getSingleIntValue(DefaultConfigEnum.TYPICAL_ACTIVITY_DURATION);
 		identifierCase = Config
 				.getSingleStringValue(DefaultConfigEnum.SCHOOLCLASS_IDENTIFIER_CASE);
+		for(Weekday day: weekdays){
+			
+		}
 	}
 
 	/**
@@ -72,7 +80,8 @@ public class ConfigController implements Serializable {
 
 		works = singleSwitch(
 				works,
-				Config.updateProperty(DefaultConfigEnum.TIMETABLE_GRID.getPropKey(),
+				Config.updateProperty(
+						DefaultConfigEnum.TIMETABLE_GRID.getPropKey(),
 						String.valueOf(timetableGrid)));
 
 		works = singleSwitch(
@@ -253,6 +262,18 @@ public class ConfigController implements Serializable {
 		}
 
 		this.timetableGrid = timetableGrid;
+	}
+
+	public Weekday[] getWeekdays() {
+		return weekdays;
+	}
+
+	public Weekday[] getSelectedWeekdays() {
+		return selectedWeekdays;
+	}
+
+	public void setSelectedWeekdays(Weekday[] selectedWeekdays) {
+		this.selectedWeekdays = selectedWeekdays;
 	}
 
 }

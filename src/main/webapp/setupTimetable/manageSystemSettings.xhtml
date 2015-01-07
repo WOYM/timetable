@@ -51,6 +51,19 @@
 
 					<h:panelGrid columns="2" style="width:100%;"
 						columnClasses="half-column">
+						<p:outputLabel for="weekDaySelection"
+							value="Zu verplanende Wochentage" />
+						<p:outputPanel>
+							<p:selectCheckboxMenu id="weekDaySelection"
+								value="#{configController.selectedWeekdays}" filter="false">
+								<f:selectItems value="#{configController.weekdays}"
+									var="weekday" itemLabel="#{weekday}" itemValue="#{weekday}" />
+							</p:selectCheckboxMenu>
+						</p:outputPanel>
+					</h:panelGrid>
+					
+					<h:panelGrid columns="2" style="width:100%;"
+						columnClasses="half-column">
 						<p:outputLabel for="timetableGrid"
 							value="Zeitraster des Stundenplans:" />
 						<p:outputPanel>
@@ -137,7 +150,6 @@
 							update="commandGrowl">
 						</p:commandButton>
 					</h:panelGrid>
-
 				</p:panel>
 
 				<p:spacer height="40" />
@@ -183,7 +195,7 @@
 					</p:outputPanel>
 					<p:outputPanel>
 						<h:outputText value="Sie können die Aktion " />
-						<b><h:outputText value="nicht via dem Rückgängig-Button " /></b>
+						<b><h:outputText value="nicht via Rückgängig-Button " /></b>
 						<h:outputText value="nachträglich rückgängig machen." />
 					</p:outputPanel>
 				</h:panelGrid>
