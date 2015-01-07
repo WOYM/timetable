@@ -139,7 +139,10 @@ public abstract class BackupRestoreHandler {
 			return new SuccessStatus(GenericSuccessMessage.RESTORE_SUCCESS);
 		} catch (IOException e) {
 			LOGGER.error(e);
-			return new FailureStatus(GenericErrorMessage.RESTORE_FAILURE,
+			return new FailureStatus(
+					"System nicht vollständig wiederhergestellt",
+					"Die Systemeinstellungen konnten nicht erfolgreich wiederhergestellt werden. "
+							+ "Kopieren Sie sie manuell aus dem gezippten Backup in das Arbeitsverzeichnis.",
 					FacesMessage.SEVERITY_ERROR);
 		}
 	}
@@ -171,11 +174,11 @@ public abstract class BackupRestoreHandler {
 
 				@Override
 				public int compare(File file1, File file2) {
-					if (file1.getName().compareTo(file2.getName()) > 0) {
+					if (file1.lastModified() > file2.lastModified()) {
 						return -1;
 					}
 
-					if (file1.getName().compareTo(file2.getName()) < 0) {
+					if (file1.lastModified() < file2.lastModified()) {
 						return 1;
 					}
 

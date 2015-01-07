@@ -27,7 +27,8 @@
 					<p:selectOneMenu id="selectLocation"
 						value="#{roomController.location}"
 						converter="LocationNameConverter">
-						<p:ajax event="change" update="addNewRoomButton,roomTablePanel,roomTable" />
+						<p:ajax event="change"
+							update="addNewRoomButton,roomTablePanel,roomTable" />
 						<f:selectItem value="#{null}" itemLabel="Bitte auswählen" />
 						<f:selectItems value="#{locationController.locations}"
 							var="location" itemLabel="#{location.name}" />
@@ -49,18 +50,22 @@
 						actionListener="#{roomController.generateRoomMemento}"
 						oncomplete="PF('wEditRoomDialog').show();" icon="ui-icon-pencil" />
 					<p:menuitem value="Löschen" update="@form" icon="ui-icon-close"
-						oncomplete="PF('wConfirmRoomDelete').show();">
-					</p:menuitem>
+						rendered="#{not roomController.hideDeletionDialog}"
+						oncomplete="PF('wConfirmRoomDelete').show();" />
+					<p:menuitem value="Löschen" update="@form" icon="ui-icon-close"
+						rendered="#{roomController.hideDeletionDialog}"
+						action="#{roomController.deleteRoom}" />
 				</p:contextMenu>
 				<p:outputPanel id="roomTablePanel">
-				    <p:outputPanel rendered="#{roomController.location == null}">
-				        <p:separator />
-				        <h:outputText value="Bitte zunächst einen Standort wählen." />
-				    </p:outputPanel>
+					<p:outputPanel rendered="#{roomController.location == null}">
+						<p:separator />
+						<h:outputText value="Bitte zunächst einen Standort wählen." />
+					</p:outputPanel>
 					<p:dataTable emptyMessage="Keine Räume vorhanden" id="roomTable"
 						var="room" selection="#{roomController.room}"
 						value="#{roomController.rooms}" selectionMode="single"
-						rowKey="#{room.name}" scrollable="true" scrollHeight="500" rendered="#{roomController.location != null}">
+						rowKey="#{room.name}" scrollable="true" scrollHeight="500"
+						rendered="#{roomController.location != null}">
 						<p:column headerText="Name">
 							<h:outputText value="#{room.name}" />
 						</p:column>
@@ -76,13 +81,22 @@
 
 			<!-- Confirm-Dialog -->
 			<p:dialog header="Bestätigen" modal="true" draggable="true"
-				resizable="false" appendToBody="true" dynamic="true"
+				width="40%" resizable="false" appendToBody="true" dynamic="true"
 				id="confirmRoomDelete" widgetVar="wConfirmRoomDelete"
 				showEffect="fade" hideEffect="fade">
 				<p:ajax event="close" update="@form" />
 				<h:panelGrid columns="1">
 					<h:outputText
 						value="Sind Sie sicher, dass der Raum gelöscht werden soll?" />
+					<h:outputText
+						value="Es werden auch alle Aktivitäten gelöscht, die dann keinen Raum mehr besitzen." />
+					<p:spacer height="10" />
+					<p:outputPanel>
+						<p:selectBooleanCheckbox
+							value="#{roomController.hideDeletionDialog}" />
+						<h:outputText
+							value=" Diesen Dialog zukünftig nicht mehr anzeigen." />
+					</p:outputPanel>
 					<p:separator />
 					<p:outputPanel>
 						<p:commandButton value="Bestätigen"

@@ -32,7 +32,9 @@
 							value="Wenn Sie wünschen, 
 						können Sie alle Aktivitäten löschen, um eine komplett neue Planung zu beginnen. 
 						Sie können jederzeit zum vorherigen Status zurückkehren, 
-						indem Sie ein entsprechendes Backup wiederherstellen." />
+						indem Sie ein entsprechendes Backup wiederherstellen. 
+						Sollten Sie versehentlich auf den Button geklickt haben, 
+						können Sie dies durch einen Klick auf den Rückgängig-Button rückgängig machen." />
 					</p:outputPanel>
 					<p:spacer height="20" />
 					<p:outputPanel>
@@ -50,7 +52,7 @@
 					<h:panelGrid columns="2" style="width:100%;"
 						columnClasses="half-column">
 						<p:outputLabel for="timetableGrid"
-							value="Darstellungsgröße Stundenplananzeige:" />
+							value="Zeitraster des Stundenplans:" />
 						<p:outputPanel>
 							<p:spinner id="timetableGrid"
 								value="#{configController.timetableGrid}"
@@ -181,7 +183,7 @@
 					</p:outputPanel>
 					<p:outputPanel>
 						<h:outputText value="Sie können die Aktion " />
-						<b><h:outputText value="nicht via den Rückgängig-Button" /></b>
+						<b><h:outputText value="nicht via dem Rückgängig-Button " /></b>
 						<h:outputText value="nachträglich rückgängig machen." />
 					</p:outputPanel>
 				</h:panelGrid>

@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
@@ -12,6 +13,8 @@ import javax.faces.context.FacesContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.primefaces.context.RequestContext;
+import org.woym.config.Config;
+import org.woym.config.DefaultConfigEnum;
 import org.woym.exceptions.DatasetException;
 import org.woym.logic.CommandHandler;
 import org.woym.logic.SuccessStatus;
@@ -51,6 +54,16 @@ public class LocationController implements Serializable {
 	private IMemento locationMemento;
 
 	private Location location;
+
+	private boolean hideDeletionDialog;
+	private boolean hide;
+
+	@PostConstruct
+	public void init() {
+		hideDeletionDialog = Config
+				.getBooleanValue(DefaultConfigEnum.HIDE_LOCATION_DELETION_DIALOG);
+		hide = hideDeletionDialog;
+	}
 
 	/**
 	 * Liefert eine Liste mit allen Standorten zurück.
@@ -96,7 +109,13 @@ public class LocationController implements Serializable {
 	 * Löscht einen Standort aus der Datenbank.
 	 */
 	public void deleteLocation() {
-		MacroCommand macroCommand = commandCreator.createDeleteCommand(location);
+		if (hideDeletionDialog != hide) {
+			Config.updateProperty(
+					DefaultConfigEnum.HIDE_LOCATION_DELETION_DIALOG
+							.getPropKey(), String.valueOf(hideDeletionDialog));
+		}
+		MacroCommand macroCommand = commandCreator
+				.createDeleteCommand(location);
 		IStatus status = commandHandler.execute(macroCommand);
 		FacesMessage msg = status.report();
 
@@ -133,5 +152,13 @@ public class LocationController implements Serializable {
 
 	public void setLocation(Location location) {
 		this.location = location;
+	}
+
+	public boolean isHideDeletionDialog() {
+		return hideDeletionDialog;
+	}
+
+	public void setHideDeletionDialog(boolean hideDeletionDialog) {
+		this.hideDeletionDialog = hideDeletionDialog;
 	}
 }

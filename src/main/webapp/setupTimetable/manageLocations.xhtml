@@ -31,13 +31,20 @@
 				<p:spacer style="height:50px;" />
 
 				<!-- Existierende Standorte -->
-				<p:contextMenu for="locationTable">
+				<p:contextMenu id="locationContext" for="locationTable">
 					<p:menuitem value="Bearbeiten"
 						actionListener="#{locationController.generateLocationMemento}"
 						oncomplete="PF('wEditLocationDialog').show();"
 						icon="ui-icon-pencil" />
-					<p:menuitem value="Löschen" update="@form" icon="ui-icon-close"
+					<p:menuitem value="Löschen"
+						rendered="#{not locationController.hideDeletionDialog}"
+						update="@form" icon="ui-icon-close"
 						oncomplete="PF('wConfirmLocationDelete').show();">
+					</p:menuitem>
+					<p:menuitem value="Löschen"
+						rendered="#{locationController.hideDeletionDialog}" update="@form"
+						icon="ui-icon-close"
+						action="#{locationController.deleteLocation}">
 					</p:menuitem>
 				</p:contextMenu>
 				<p:dataTable emptyMessage="Keine Standorte vorhanden"
@@ -52,19 +59,27 @@
 			</p:outputPanel>
 
 			<!-- Confirm-Dialog -->
-			<p:dialog header="Bestätigen" modal="true" draggable="true"
+			<p:dialog header="Bestätigen" modal="true" draggable="true" width="40%"
 				resizable="false" appendToBody="true" dynamic="true"
 				id="confirmLocationDelete" widgetVar="wConfirmLocationDelete"
 				showEffect="fade" hideEffect="fade">
 				<p:ajax event="close" update="@form" />
-				<h:panelGrid columns="1">
+				<h:panelGrid id="confirmDialogPanel" columns="1">
 					<h:outputText
 						value="Sind Sie sicher, dass der Standort gelöscht werden soll?" />
 					<h:outputText
-						value="Beim Löschen eines Standortes werden auch seine Räume gelöscht." />
+						value="Beim Löschen eines Standortes werden auch seine Räume gelöscht, 
+						so wie alle Aktivitäten, die dann keinen Raum mehr besitzen." />
+					<p:spacer height="10" />
+					<p:outputPanel>
+						<p:selectBooleanCheckbox
+							value="#{locationController.hideDeletionDialog}" />
+						<h:outputText value=" Diesen Dialog zukünftig nicht mehr anzeigen." />
+					</p:outputPanel>
 					<p:separator />
 					<p:outputPanel>
 						<p:commandButton value="Bestätigen"
+							process="confirmDialogPanel, @this"
 							actionListener="#{locationController.deleteLocation}"
 							oncomplete="PF('wConfirmLocationDelete').hide();"
 							styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />

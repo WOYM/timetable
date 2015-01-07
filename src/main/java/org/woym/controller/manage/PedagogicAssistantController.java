@@ -15,6 +15,8 @@ import org.apache.logging.log4j.Logger;
 import org.primefaces.context.RequestContext;
 import org.primefaces.event.TransferEvent;
 import org.primefaces.model.DualListModel;
+import org.woym.config.Config;
+import org.woym.config.DefaultConfigEnum;
 import org.woym.exceptions.DatasetException;
 import org.woym.logic.CommandHandler;
 import org.woym.logic.SuccessStatus;
@@ -41,7 +43,7 @@ import org.woym.persistence.DataAccess;
 @ViewScoped
 @ManagedBean(name = "pedagogicAssistantController")
 public class PedagogicAssistantController implements Serializable {
-	
+
 	private static final long serialVersionUID = 9002430508451329221L;
 
 	private static Logger LOGGER = LogManager
@@ -57,9 +59,15 @@ public class PedagogicAssistantController implements Serializable {
 
 	private DualListModel<ActivityType> activityTypes;
 
+	private boolean hideDeletionDialog;
+	private boolean hide;
+
 	@PostConstruct
 	public void init() {
 		pedagogicAssistant = new PedagogicAssistant();
+		hideDeletionDialog = Config
+				.getBooleanValue(DefaultConfigEnum.HIDE_PA_DELETION_DIALOG);
+		hide = hideDeletionDialog;
 	}
 
 	/**
@@ -165,6 +173,11 @@ public class PedagogicAssistantController implements Serializable {
 	 * Löscht den selektierten Mitarbeiter.
 	 */
 	public void deletePedagogicAssistant() {
+		if (hide != hideDeletionDialog) {
+			Config.updateProperty(
+					DefaultConfigEnum.HIDE_PA_DELETION_DIALOG.getPropKey(),
+					String.valueOf(hideDeletionDialog));
+		}
 		MacroCommand macroCommand = commandCreator
 				.createDeleteCommand(pedagogicAssistant);
 		IStatus status = commandHandler.execute(macroCommand);
@@ -196,6 +209,14 @@ public class PedagogicAssistantController implements Serializable {
 
 	public void setPedagogicAssistant(PedagogicAssistant pedagogicAssistant) {
 		this.pedagogicAssistant = pedagogicAssistant;
+	}
+
+	public boolean isHideDeletionDialog() {
+		return hideDeletionDialog;
+	}
+
+	public void setHideDeletionDialog(boolean hideDeletionDialog) {
+		this.hideDeletionDialog = hideDeletionDialog;
 	}
 
 }
