@@ -164,15 +164,15 @@ public class PlanningController implements Serializable {
 	}
 
 	/**
-	 * Diese Methode liefert alle Räume für einen bestimmten Standort
-	 * zurück. Dies lässt die Auswahl über ein Dropdown-Menü zu.
+	 * Diese Methode liefert alle Räume für einen bestimmten Standort zurück.
+	 * Dies lässt die Auswahl über ein Dropdown-Menü zu.
 	 * 
 	 * @return Eine Liste aller Räume für einen Standort
 	 */
 	public List<Room> getRoomsForLocation() {
 		return location.getRooms();
 	}
-	
+
 	/**
 	 * Diese Methode gibt an, ob eine Lehrkraft oder eine Klasse ausgewählt
 	 * wurde. So wird bestimmt, ob ein Stundenplan gerendert wird.
@@ -236,7 +236,8 @@ public class PlanningController implements Serializable {
 	 */
 	public Boolean getExistPedagogicAssistants() {
 		try {
-			List<PedagogicAssistant> pedagogicAssistants = dataAccess.getAllPAs();
+			List<PedagogicAssistant> pedagogicAssistants = dataAccess
+					.getAllPAs();
 
 			if (pedagogicAssistants.size() > 0) {
 				return true;
@@ -248,7 +249,7 @@ public class PlanningController implements Serializable {
 
 		return false;
 	}
-	
+
 	/**
 	 * Diese Methode gibt an, ob dem System pädagogische Mitarbeiter bekannt
 	 * sind.
@@ -257,10 +258,10 @@ public class PlanningController implements Serializable {
 	 */
 	public Boolean getExistRooms() {
 		try {
-			List<Location> locations = dataAccess.getAllLocations();			
-			
-			for(Location location : locations) {
-				if(location.getRooms().size() > 0) {
+			List<Location> locations = dataAccess.getAllLocations();
+
+			for (Location location : locations) {
+				if (location.getRooms().size() > 0) {
 					return true;
 				}
 			}
@@ -298,7 +299,7 @@ public class PlanningController implements Serializable {
 			scheduleModel = activityParser.getActivityModel(schoolclass);
 		}
 	}
-	
+
 	/**
 	 * Setzt das ActivityModel für einen Raum.
 	 */
@@ -310,6 +311,9 @@ public class PlanningController implements Serializable {
 
 	/**
 	 * Setzt alle Objekte außer dem Übergebenen {@code null}.
+	 * <p>
+	 * Bei einer Klasse oder einem Raum wird das Elternobjekt, also Jahrgang
+	 * oder Standort nicht zurückgesetzt.
 	 * 
 	 * @param entity
 	 *            Die Entity, die nicht null gesetzt werden soll.
@@ -321,7 +325,8 @@ public class PlanningController implements Serializable {
 		if (!(entity instanceof PedagogicAssistant)) {
 			pedagogicAssistant = null;
 		}
-		if (!(entity instanceof AcademicYear) && !(entity instanceof Schoolclass)) {
+		if (!(entity instanceof AcademicYear)
+				&& !(entity instanceof Schoolclass)) {
 			academicYear = null;
 		}
 		if (!(entity instanceof Schoolclass)) {
@@ -335,9 +340,9 @@ public class PlanningController implements Serializable {
 		}
 	}
 
-	////////////////////////////////////////////////////////////////////////////
+	// //////////////////////////////////////////////////////////////////////////
 	// Getters & Setters
-	////////////////////////////////////////////////////////////////////////////
+	// //////////////////////////////////////////////////////////////////////////
 
 	public Teacher getTeacher() {
 		return teacher;
