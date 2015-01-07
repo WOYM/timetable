@@ -22,18 +22,34 @@
 		<p:spacer style="height:20px" />
 		<p:tabView>
 			<p:tab title="Lehrer" id="planningTeacherTab">
-				<p:inputText value="#{planningController.searchTerm}">
+			    <p:outputLabel for="teacherSearchInput" value="Suche" />
+				<p:inputText id="teacherSearchInput" value="#{planningController.searchTerm}">
 					<p:ajax event="keyup" update="teacherSearchTable" />
 				</p:inputText>
-				<p:dataTable id="teacherSearchTable"
-					value="#{planningController.teachersForSearchTerm}" scrollable="false" scrollRows="5" var="teacher" style="margin-top:10px;">
-					<p:column headerText="Name">
-						<h:outputText value="#{teacher.name}" />
-					</p:column>
-					<p:column headerText="Kürzel">
-						<h:outputText value="#{teacher.symbol}" />
-					</p:column>
-				</p:dataTable>
+				<p:outputPanel rendered="#{planningController.existTeachers}">
+					<p:dataTable id="teacherSearchTable"
+						selection="#{planningController.teacher}" selectionMode="single"
+						value="#{planningController.teachersForSearchTerm}"
+						scrollable="false" scrollRows="5" var="teacher"
+						rowKey="#{teacher.symbol}" style="margin-top:10px;"
+						emptyMessage="Keine Lehrkräfte mit dem entsprechenden Kürzel">
+						<p:ajax event="rowSelect" update="@form" process="@this" listener="#{planningController.setTeacherActivityModel}" />
+						<p:ajax event="rowUnselect" update="@form" process="@this" />
+						<p:column headerText="Name">
+							<h:outputText value="#{teacher.name}" />
+						</p:column>
+						<p:column headerText="Kürzel">
+							<h:outputText value="#{teacher.symbol}" />
+						</p:column>
+					</p:dataTable>
+				</p:outputPanel>
+				<p:outputPanel rendered="#{not planningController.existTeachers}">
+					<h:outputText value="Dem System sind keine Lehrkräfte bekannt. " />
+					<h:outputText value="Neue Lehrkräfte können in den " />
+					<p:commandLink action="setupTimetable/manageTeachers"
+						value="Systemeinstellungen" process="@this" />
+					<h:outputText value=" festgelegt werden." />
+				</p:outputPanel>
 
 			</p:tab>
 
@@ -41,7 +57,8 @@
 
 			</p:tab>
 		</p:tabView>
-		<p:outputPanel>
+		<p:outputPanel id="scheduleMainPanel"
+			rendered="#{planningController.hasChosen}">
 			<p:outputPanel>
 				<p:spacer style="height:60px" />
 				<p:outputPanel style="float:right; padding:10px">
@@ -50,13 +67,14 @@
 			</p:outputPanel>
 			<!-- Schedule -->
 			<p:schedule showHeader="false" view="agendaWeek" allDaySlot="false"
-				axisFormat="HH:mm" slotMinutes="#{planningController.slotMinutes}"
+				axisFormat="HH:mm" value="#{planningController.scheduleModel}" slotMinutes="#{planningController.slotMinutes}"
 				columnFormat="week: 'ddd'" locale="de" ignoreTimezone="true"
 				initialDate="#{planningController.initalDate}" />
 			<p:spacer style="height:50px;" />
 		</p:outputPanel>
 	</h:form>
 
+	<!-- Schedule locales -->
 	<script type="text/javascript">
 		PrimeFaces.locales['de'] = {
 			dayNames : [ 'Sonntag', 'Montag', 'Dienstag', 'Mittwoch',

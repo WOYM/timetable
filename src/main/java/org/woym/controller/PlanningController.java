@@ -7,16 +7,24 @@ import java.util.Date;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
+import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.primefaces.model.DefaultScheduleEvent;
+import org.primefaces.model.DefaultScheduleModel;
+import org.primefaces.model.ScheduleModel;
 import org.woym.config.Config;
 import org.woym.config.DefaultConfigEnum;
 import org.woym.exceptions.DatasetException;
+import org.woym.messages.GenericErrorMessage;
+import org.woym.messages.MessageHelper;
 import org.woym.objects.AcademicYear;
+import org.woym.objects.Activity;
+import org.woym.objects.Entity;
 import org.woym.objects.Schoolclass;
 import org.woym.objects.Teacher;
 import org.woym.persistence.DataAccess;
@@ -40,11 +48,17 @@ public class PlanningController implements Serializable {
 	private static Logger LOGGER = LogManager
 			.getLogger(PlanningController.class);
 
+	private static final int CALENDAR_YEAR = 1970;
+	private static final int CALENDAR_MONTH = Calendar.JANUARY;
+	private static final int CALENDAR_DAY = 5;
+
 	private Teacher teacher;
-	private Schoolclass schoolClass;
+	private Schoolclass schoolclass;
 	private AcademicYear academicYear;
 
 	private String searchTerm;
+
+	private ScheduleModel scheduleModel;
 
 	/**
 	 * Erzwingt die Erzeugung einer neuen User-Session vor dem Rendern des
@@ -54,8 +68,9 @@ public class PlanningController implements Serializable {
 	@PostConstruct
 	public void init() {
 		FacesContext.getCurrentInstance().getExternalContext().getSession(true);
-		
+
 		searchTerm = "";
+		scheduleModel = new DefaultScheduleModel();
 	}
 
 	/**
@@ -79,7 +94,7 @@ public class PlanningController implements Serializable {
 	 */
 	public Date getInitalDate() {
 		Calendar calendar = Calendar.getInstance();
-		calendar.set(1970, Calendar.JANUARY, 5, 0, 0, 0);
+		calendar.set(CALENDAR_YEAR, CALENDAR_MONTH, CALENDAR_DAY, 0, 0, 0);
 
 		return calendar.getTime();
 	}
@@ -92,7 +107,7 @@ public class PlanningController implements Serializable {
 	 * Die Methode ist ausfallsicher, das heißt, dass im Falle eines
 	 * Datenbankfehlers eine leere Liste zurückgeliefert wird.
 	 * 
-	 * @return Liste aller Lehrkräfte, deren Kürzel den Suchbegriff enthält.
+	 * @return Liste aller Lehrkräfte, deren Kürzel den Suchbegriff enthält
 	 */
 	public List<Teacher> getTeachersForSearchTerm() {
 
@@ -136,6 +151,140 @@ public class PlanningController implements Serializable {
 		return academicYear.getSchoolclasses();
 	}
 
+	/**
+	 * Diese Methode gibt an, ob eine Lehrkraft oder eine Klasse ausgewählt
+	 * wurde. So wird bestimmt, ob ein Stundenplan gerendert wird.
+	 * 
+	 * @return Wahrheitswert, ob ein Objekt gewählt wurde
+	 */
+	public Boolean getHasChosen() {
+		if (teacher != null || schoolclass != null) {
+			return true;
+		}
+
+		return false;
+	}
+
+	/**
+	 * Diese Methode gibt an, ob dem System Lehrkräfte bekannt sind.
+	 * 
+	 * @return Wahrheitswert, ob es im System Lehrkräfte gibt
+	 */
+	public Boolean getExistTeachers() {
+		List<Teacher> teachers;
+		try {
+			teachers = dataAccess.getAllTeachers();
+
+			if (teachers.size() > 0) {
+				return true;
+			}
+
+		} catch (DatasetException e) {
+			LOGGER.error(e);
+		}
+
+		return false;
+	}
+
+	/**
+	 * Setzt das ActivityModel für eine Lehrkraft.
+	 */
+	public void setTeacherActivityModel() {
+		if (teacher != null) {
+			setActivityModel(teacher);
+		}
+	}
+
+	/**
+	 * Lädt und setzt das ActivityModel des Controllers für ein bestimmtes
+	 * Objekt.
+	 * <p>
+	 * Mögliche Objekte:
+	 * <ul>
+	 * <li>Teacher</li>
+	 * <li>Schoolclass</li>
+	 * </ul>
+	 * 
+	 * Bei einem Datenbankfehler wird eine Nachricht auf der GUI dargestellt und
+	 * das ActivityModel nicht verändert.
+	 * 
+	 * @param entity
+	 *            Die Entity, deren ActivityModel gesetzt werden soll
+	 * @throws IllegalArgumentException
+	 *             Wenn eine ungültige Entity übergeben wird
+	 */
+	private void setActivityModel(Entity entity) {
+		try {
+
+			List<Activity> activities = new ArrayList<>();
+
+			// Validate
+			if (entity instanceof Teacher) {
+				activities = dataAccess.getAllActivities(teacher);
+			} else if (entity instanceof Schoolclass) {
+				activities = dataAccess.getAllActivities(schoolclass);
+			} else {
+				throw new IllegalArgumentException();
+			}
+
+			ScheduleModel activityModel = new DefaultScheduleModel();
+
+			// Iteration
+			for (Activity activity : activities) {
+				Date startDate = getActivityStartDate(activity);
+				Date endDate = getActivityEndDate(activity);
+
+				// TODO Style-Class?
+				DefaultScheduleEvent event = new DefaultScheduleEvent(
+						activity.toString(), startDate, endDate);
+
+				activityModel.addEvent(event);
+			}
+
+			// Set scheduleModel
+			scheduleModel = activityModel;
+
+		} catch (DatasetException e) {
+			LOGGER.error(e);
+			FacesMessage msg = MessageHelper.generateMessage(
+					GenericErrorMessage.DATABASE_COMMUNICATION_ERROR,
+					FacesMessage.SEVERITY_ERROR);
+			FacesContext.getCurrentInstance().addMessage(null, msg);
+		}
+	}
+
+	private Date getActivityStartDate(Activity activity) {
+		long time = activity.getTime().getStartTime().getTime();
+
+		return getActivityDate(activity, time);
+	}
+
+	private Date getActivityEndDate(Activity activity) {
+		long time = activity.getTime().getEndTime().getTime();
+
+		return getActivityDate(activity, time);
+	}
+
+	/**
+	 * Erzeugt ein {@link Date}-Objekt, dass in der Stundenplandarstellung
+	 * angezeigt werden kann.
+	 * 
+	 * @param activity
+	 *            Die Aktivität
+	 * @param time
+	 *            Die Zeit in Millisekunden
+	 * @return Das darstellbare Datum
+	 */
+	private Date getActivityDate(Activity activity, long time) {
+		int day = CALENDAR_DAY + activity.getTime().getDay().getOrdinal();
+
+		Calendar calendar = Calendar.getInstance();
+		calendar.setTimeInMillis(time);
+		calendar.set(CALENDAR_YEAR, CALENDAR_MONTH, day);
+
+		return calendar.getTime();
+	}
+
 	// /////////////////////////////////////////////////////////////////////////
 	// Getters & Setters
 	// /////////////////////////////////////////////////////////////////////////
@@ -156,12 +305,12 @@ public class PlanningController implements Serializable {
 		this.searchTerm = searchTerm;
 	}
 
-	public Schoolclass getSchoolClass() {
-		return schoolClass;
+	public Schoolclass getSchoolclass() {
+		return schoolclass;
 	}
 
-	public void setSchoolClass(Schoolclass schoolClass) {
-		this.schoolClass = schoolClass;
+	public void setSchoolclass(Schoolclass schoolclass) {
+		this.schoolclass = schoolclass;
 	}
 
 	public AcademicYear getAcademicYear() {
@@ -170,5 +319,13 @@ public class PlanningController implements Serializable {
 
 	public void setAcademicYear(AcademicYear academicYear) {
 		this.academicYear = academicYear;
+	}
+	
+	public ScheduleModel getScheduleModel() {
+		return scheduleModel;
+	}
+
+	public void setScheduleModel(ScheduleModel scheduleModel) {
+		this.scheduleModel = scheduleModel;
 	}
 }
