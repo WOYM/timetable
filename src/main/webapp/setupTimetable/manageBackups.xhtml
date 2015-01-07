@@ -127,7 +127,7 @@
 			<!-- Confirm-Backup-Override-Dialog -->
 			<p:dialog header="Bestätigen" modal="true" draggable="true"
 				resizable="false" appendToBody="true" dynamic="true"
-				id="confimBackup" widgetVar="wConfirmBackup" showEffect="fade"
+				id="confirmBackup" widgetVar="wConfirmBackup" showEffect="fade"
 				hideEffect="fade">
 				<h:panelGrid columns="1" id="confirmBackupBody">
 					<h:outputText
@@ -136,11 +136,11 @@
 					<p:outputPanel>
 						<p:commandButton id="confirmBackupButton" value="Ja"
 							actionListener="#{backupController.doBackup}"
-							oncomplete="PF('wConfimBackup').hide();"
+							oncomplete="PF('wConfirmBackup').hide();"
 							update="commandGrowl"
 							styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
 						<p:commandButton value="Nein"
-							oncomplete="PF('wConfimBackup').hide();"
+							oncomplete="PF('wConfirmBackup').hide();"
 							styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
 					</p:outputPanel>
 					<p:outputPanel>
