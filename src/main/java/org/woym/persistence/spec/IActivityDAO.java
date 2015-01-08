@@ -6,6 +6,7 @@ import org.woym.exceptions.DatasetException;
 import org.woym.objects.Activity;
 import org.woym.objects.CompoundLesson;
 import org.woym.objects.Employee;
+import org.woym.objects.EmployeeTimePeriods;
 import org.woym.objects.Lesson;
 import org.woym.objects.LessonType;
 import org.woym.objects.Meeting;
@@ -219,5 +220,22 @@ public interface IActivityDAO {
 	 * @throws DatasetException
 	 */
 	public List<Meeting> getAllMeetings(MeetingType meetingType)
+			throws DatasetException;
+
+	/**
+	 * Gibt eine Liste aller {@linkplain EmployeeTimePeriods}-Objekte von
+	 * Aktivitäten für den übergebenen {@linkplain Employee} zurück, bei welchen
+	 * weitere Mitarbeiter außer dem übergebenen {@linkplain Employee}
+	 * teilnehmen.
+	 * 
+	 * @param employee
+	 *            - {@linkplain Employee}, für welchen die
+	 *            {@linkplain EmployeeTimePeriods}-Objekte erwartet werden
+	 * @return Liste aller {@linkplain EmployeeTimePeriods}-Objekte, des
+	 *         übergebenen {@linkplain Employee} von Aktivitäten, an welchen er
+	 *         nicht als einziger Mitarbeiter teilnimmt
+	 * @throws DatasetException
+	 */
+	public List<EmployeeTimePeriods> getEmployeeTimePeriods(Employee employee)
 			throws DatasetException;
 }

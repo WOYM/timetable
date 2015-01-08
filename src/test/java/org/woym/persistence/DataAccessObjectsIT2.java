@@ -158,39 +158,49 @@ public class DataAccessObjectsIT2 {
 		assertTrue(list.isEmpty());
 	}
 
-//	@Test(priority = 2, groups = "DataAccessActivity")
-//	public void getAllActivitiesEmployeeTimePeriodSuccess() throws Exception {
-//		TimePeriod t = new TimePeriod();
-//		t.setDay(Weekday.MONDAY);
-//		t.setStartTime(sdf.parse("10:00"));
-//		t.setEndTime(sdf.parse("10:30"));
-//		t.setDuration(30);
-//
-//		List<Activity> list = dataAccess.getAllActivities(
-//				dataAccess.getOneEmployee("MEY"), t);
-//		assertEquals(1, list.size());
-//		assertTrue(list.contains(l));
-//
-//		t.setStartTime(sdf.parse("10:00"));
-//		t.setEndTime(sdf.parse("10:45"));
-//		list = dataAccess.getAllActivities(dataAccess.getOneEmployee("MEY"), t);
-//		assertEquals(1, list.size());
-//		assertTrue(list.contains(l));
-//
-//		t.setStartTime(sdf.parse("10:00"));
-//		t.setEndTime(sdf.parse("12:00"));
-//		list = dataAccess.getAllActivities(dataAccess.getOneEmployee("MEY"), t);
-//		assertEquals(2, list.size());
-//		assertTrue(list.contains(l));
-//		assertTrue(list.contains(m));
-//
-//		t.setDay(Weekday.TUESDAY);
-//		t.setStartTime(sdf.parse("11:00"));
-//		t.setEndTime(sdf.parse("11:30"));
-//		list = dataAccess.getAllActivities(dataAccess.getOneEmployee("MEY"), t);
-//		assertEquals(1, list.size());
-//		assertTrue(list.contains(c));
-//	}
+	@Test(priority = 2, groups = "DataAccessActivity")
+	public void getAllActivitiesEmployeeTimePeriodSuccess() throws Exception {
+		// Test 1
+		TimePeriod t = new TimePeriod();
+		t.setDay(Weekday.MONDAY);
+		t.setStartTime(sdf.parse("10:00"));
+		t.setEndTime(sdf.parse("10:30"));
+		t.setDuration(30);
+
+		List<Activity> list = dataAccess.getAllActivities(
+				dataAccess.getOneEmployee("MEY"), t);
+		assertEquals(1, list.size());
+		assertTrue(list.contains(l));
+
+		// Test 2
+		t.setStartTime(sdf.parse("10:00"));
+		t.setEndTime(sdf.parse("10:45"));
+		list = dataAccess.getAllActivities(dataAccess.getOneEmployee("MEY"), t);
+		assertEquals(1, list.size());
+		assertTrue(list.contains(l));
+
+		// Prüfen, ob alle Aktivitäten für den Mitarbeiter da sind, um
+		// auszuschließen, dass Test 3 aufgrund eines unvollständigen
+		// Datenbankzustandes fehlschlägt
+		assertEquals(3,
+				dataAccess.getAllActivities(dataAccess.getOneEmployee("MEY"))
+						.size());
+		// Test 3
+		t.setStartTime(sdf.parse("10:00"));
+		t.setEndTime(sdf.parse("12:00"));
+		list = dataAccess.getAllActivities(dataAccess.getOneEmployee("MEY"), t);
+		assertEquals(2, list.size());
+		assertTrue(list.contains(l));
+		assertTrue(list.contains(m));
+
+		// Test 4
+		t.setDay(Weekday.TUESDAY);
+		t.setStartTime(sdf.parse("11:00"));
+		t.setEndTime(sdf.parse("11:30"));
+		list = dataAccess.getAllActivities(dataAccess.getOneEmployee("MEY"), t);
+		assertEquals(1, list.size());
+		assertTrue(list.contains(c));
+	}
 
 	@Test(priority = 2, groups = "DataAccessActivity")
 	public void getAllActivitiesEmployeeTimePeriodEmptyList() throws Exception {

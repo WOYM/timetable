@@ -121,6 +121,7 @@ public abstract class BackupRestoreHandler {
 	public static IStatus restore(String filePath) {
 		try {
 			DataBase.getInstance().restore(filePath);
+			CommandHandler.getInstance().emptyQueues();
 		} catch (DatasetException | IOException e) {
 			return new FailureStatus(GenericErrorMessage.RESTORE_FAILURE,
 					FacesMessage.SEVERITY_ERROR);
@@ -132,10 +133,13 @@ public abstract class BackupRestoreHandler {
 			return new FailureStatus(GenericErrorMessage.INVALID_FILE,
 					FacesMessage.SEVERITY_ERROR);
 		}
+
 		try (FileSystem fs = createFileSystem(filePath)) {
 			Path properties = Paths.get(Config.PROPERTIES_FILE_PATH);
 			Path zippath = fs.getPath(Config.PROPERTIES_FILE_NAME);
 			Files.copy(zippath, properties, StandardCopyOption.REPLACE_EXISTING);
+			//Neue Properties-Datei laden
+			Config.init();
 			return new SuccessStatus(GenericSuccessMessage.RESTORE_SUCCESS);
 		} catch (IOException e) {
 			LOGGER.error(e);
