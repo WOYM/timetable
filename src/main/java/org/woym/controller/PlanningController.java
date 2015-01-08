@@ -7,12 +7,15 @@ import java.util.Date;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
+import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.primefaces.event.ScheduleEntryMoveEvent;
+import org.primefaces.event.ScheduleEntryResizeEvent;
 import org.primefaces.event.SelectEvent;
 import org.primefaces.model.DefaultScheduleModel;
 import org.primefaces.model.ScheduleEvent;
@@ -20,7 +23,14 @@ import org.primefaces.model.ScheduleModel;
 import org.woym.config.Config;
 import org.woym.config.DefaultConfigEnum;
 import org.woym.exceptions.DatasetException;
+import org.woym.logic.CommandHandler;
+import org.woym.logic.FailureStatus;
+import org.woym.logic.command.UpdateCommand;
+import org.woym.logic.spec.IStatus;
 import org.woym.logic.util.ActivityParser;
+import org.woym.logic.util.ActivityValidator;
+import org.woym.messages.GenericErrorMessage;
+import org.woym.messages.MessageHelper;
 import org.woym.objects.AcademicYear;
 import org.woym.objects.Activity;
 import org.woym.objects.CompoundLesson;
@@ -33,6 +43,8 @@ import org.woym.objects.PedagogicAssistant;
 import org.woym.objects.Room;
 import org.woym.objects.Schoolclass;
 import org.woym.objects.Teacher;
+import org.woym.objects.TimePeriod;
+import org.woym.objects.spec.IMemento;
 import org.woym.persistence.DataAccess;
 
 /**
@@ -59,6 +71,9 @@ public class PlanningController implements Serializable {
 
 	private DataAccess dataAccess = DataAccess.getInstance();
 	private ActivityParser activityParser = ActivityParser.getInstance();
+	private ActivityValidator activityValidator = ActivityValidator
+			.getInstance();
+	private CommandHandler commandHandler = CommandHandler.getInstance();
 
 	private Teacher teacher;
 	private PedagogicAssistant pedagogicAssistant;
@@ -111,10 +126,81 @@ public class PlanningController implements Serializable {
 		return calendar.getTime();
 	}
 
+	/**
+	 * Wird aufgerufen, wenn in der Darstellung eine Aktivität selektiert wird.
+	 * <p>
+	 * Setzt die lokale Aktivität entsprechend der Angeklickten.
+	 * 
+	 * @param selectEvent
+	 *            Das Event
+	 */
 	public void onEventSelect(SelectEvent selectEvent) {
 		ScheduleEvent event = (ScheduleEvent) selectEvent.getObject();
 
 		setActivity((Activity) event.getData());
+	}
+
+	/**
+	 * Diese Methode wird aufgerufen, wenn ein Element in der Darstellung bewegt
+	 * wird.
+	 * <p>
+	 * Die {@link Activity} im Event wird dabei so angepasst, dass ihre
+	 * Anfangszeit entsprechend des Event-Deltas gesetzt wird, wobei auch die
+	 * Endzeit entsprechend angepasst wird.
+	 * 
+	 * @param event
+	 *            Das Event
+	 */
+	public void onEventMove(ScheduleEntryMoveEvent event) {
+
+		FacesMessage msg;
+
+		Activity activity = (Activity) event.getScheduleEvent().getData();
+
+		IMemento activityMemento = activity.createMemento();
+
+		Date startTime = changeDateByDelta(activity.getTime().getStartTime(),
+				event.getDayDelta(), event.getMinuteDelta());
+		Date endTime = changeDateByDelta(activity.getTime().getEndTime(),
+				event.getDayDelta(), event.getMinuteDelta());
+
+		TimePeriod time = new TimePeriod();
+		time.setStartTime(startTime);
+		time.setEndTime(endTime);
+
+		activity.setTime(time);
+
+		IStatus status = activityValidator.validateActivity(activity);
+
+		if (!(status instanceof FailureStatus)) {
+
+			UpdateCommand<Activity> command = new UpdateCommand<Activity>(
+					activity, activityMemento);
+
+			status = commandHandler.execute(command);
+
+			msg = status.report();
+
+		} else {
+			msg = status.report();
+		}
+
+		FacesContext.getCurrentInstance().addMessage(null, msg);
+	}
+
+	public void onEventResize(ScheduleEntryResizeEvent event) {
+		// TODO
+	}
+
+	private Date changeDateByDelta(Date date, int dayDelta, int minuteDelta) {
+		Calendar calendar = Calendar.getInstance();
+		calendar.setTime(date);
+
+		calendar.set(Calendar.DATE, (calendar.get(Calendar.DATE) + dayDelta));
+		calendar.set(Calendar.MINUTE,
+				(calendar.get(Calendar.MINUTE) + minuteDelta));
+
+		return calendar.getTime();
 	}
 
 	/**
@@ -390,7 +476,7 @@ public class PlanningController implements Serializable {
 	}
 
 	public String getActivityDescriptionStartTime(Activity activity) {
-		if(activity == null) {
+		if (activity == null) {
 			return "";
 		}
 		return getActivityDescriptionTime(activity.getTime().getStartTime(),
@@ -402,7 +488,7 @@ public class PlanningController implements Serializable {
 	}
 
 	public String getActivityDescriptionEndTime(Activity activity) {
-		if(activity == null) {
+		if (activity == null) {
 			return "";
 		}
 		return getActivityDescriptionTime(activity.getTime().getEndTime(),
@@ -417,7 +503,7 @@ public class PlanningController implements Serializable {
 		String readableTime = activity.getTime().getDay().toString() + ", "
 				+ calendar.get(Calendar.HOUR) + ":"
 				+ calendar.get(Calendar.MINUTE);
-		
+
 		return readableTime;
 	}
 
