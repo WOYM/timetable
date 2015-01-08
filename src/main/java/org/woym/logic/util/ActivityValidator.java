@@ -81,12 +81,11 @@ public class ActivityValidator {
 		// TODO Validierung an die Reihenfolge im Dialog anpassen, dies spart
 		// Ladezeiten
 		try {
-			
-			// TODO Not runnable
-			// status = validateEmployees(activity);
-			// if (status instanceof FailureStatus) {
-			// return status;
-			// }
+
+			status = validateEmployees(activity);
+			if (status instanceof FailureStatus) {
+				return status;
+			}
 			status = validateSchoolclasses(activity);
 			if (status instanceof FailureStatus) {
 				return status;
