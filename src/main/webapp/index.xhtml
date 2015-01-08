@@ -13,12 +13,24 @@
 
 <h:body>
 	<h:form id="planningForm">
-		<p:menubar>
-			<f:facet name="options">
+
+		<p:growl id="commandGrowl" showDetail="true" />
+		<p:toolbar id="setupToolbar">
+			<f:facet name="left">
 				<p:commandButton value="Systemeinrichtung" icon="ui-icon-gear"
 					process="@this" action="/setupTimetable/index" />
 			</f:facet>
-		</p:menubar>
+			<f:facet name="right">
+				<p:commandButton title="Rückgängig"
+					icon="ui-icon-arrowreturnthick-1-w"
+					actionListener="#{GUIController.undo}" process="@this"
+					update="@form" />
+				<p:commandButton title="Wiederholen"
+					icon="ui-icon-arrowreturnthick-1-e"
+					actionListener="#{GUIController.redo}" process="@this"
+					update="@form" />
+			</f:facet>
+		</p:toolbar>
 		<p:spacer style="height:20px" />
 		<p:tabView id="searchTabs">
 			<p:ajax event="tabChange" update="searchTabs" />
@@ -204,13 +216,17 @@
 				<div onclick="savePosition(event.pageX,event.pageY);">
 					<p:schedule showHeader="false" view="agendaWeek" allDaySlot="false"
 						axisFormat="HH:mm" value="#{planningController.scheduleModel}"
-						slotMinutes="#{planningController.slotMinutes}" 
+						slotMinutes="#{planningController.slotMinutes}"
 						columnFormat="week: 'ddd'" locale="de" timeZone="GMT+1"
 						initialDate="#{planningController.initalDate}" tooltip="true">
 						<p:ajax event="eventSelect"
 							listener="#{planningController.onEventSelect}"
 							update="activityInfoPanel" global="false"
 							oncomplete="PF('wActivityInfoDialog').show();" />
+						<p:ajax event="eventMove"
+							listener="#{planningController.onEventMove}" update="commandGrowl" />
+						<p:ajax event="eventResize"
+							listener="#{planningController.onEventResize}" update="commandGrowl" />
 					</p:schedule>
 				</div>
 				<p:spacer style="height:50px;" />

@@ -386,7 +386,7 @@ public class PlanningController implements Serializable {
 	}
 
 	public String getActivityDescriptionStartTime() {
-		return getActivityDescriptionEndTime(activity);
+		return getActivityDescriptionStartTime(activity);
 	}
 
 	public String getActivityDescriptionStartTime(Activity activity) {
