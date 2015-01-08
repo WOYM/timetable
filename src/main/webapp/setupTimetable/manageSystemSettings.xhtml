@@ -6,6 +6,7 @@
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:p="http://primefaces.org/ui">
+
 <h:head>
 
 </h:head>
@@ -55,22 +56,47 @@
 							value="Zu verplanende Wochentage" />
 						<p:outputPanel>
 							<p:selectCheckboxMenu id="weekDaySelection"
-								value="#{configController.selectedWeekdays}" filter="false">
-								<f:selectItems value="#{configController.weekdays}"
-									var="weekday" itemLabel="#{weekday}" itemValue="#{weekday}" />
+								value="#{configController.selectedWeekdays}"
+								converter="WeekdayNameConverter" filter="false">
+								<f:selectItems value="#{configController.weekdays}" />
 							</p:selectCheckboxMenu>
 						</p:outputPanel>
 					</h:panelGrid>
-					
+
+					<h:panelGrid columns="2" style="width:100%;"
+						columnClasses="half-column">
+						<p:outputLabel value="Start- und Endzeit eines Wochentags"
+							for="weekdayStartTime"></p:outputLabel>
+						<h:panelGrid columns="3">
+							<p:calendar id="weekdayStartTime" binding="#{startTime}"
+								value="#{configController.weekdayStartTime}" size="5"
+								pattern="HH:mm" locale="de" timeOnly="true" required="true"
+								requiredMessage="Angabe der Startzeit wird benötigt.">
+							</p:calendar>
+							<h:outputText value=" bis " />
+							<p:calendar id="weekdayEndTime"
+								value="#{configController.weekdayEndTime}" size="5"
+								pattern="HH:mm" locale="de" timeOnly="true" required="true"
+								requiredMessage="Angabe der Endzeit wird benötigt.">
+								<f:attribute name="startTime"
+									value="#{startTime}" />
+								<f:validator validatorId="org.woym.TimeRangeValidator" />
+							</p:calendar>
+						</h:panelGrid>
+					</h:panelGrid>
+
 					<h:panelGrid columns="2" style="width:100%;"
 						columnClasses="half-column">
 						<p:outputLabel for="timetableGrid"
 							value="Zeitraster des Stundenplans:" />
 						<p:outputPanel>
 							<p:spinner id="timetableGrid"
-								value="#{configController.timetableGrid}"
+								value="#{configController.timetableGrid}" required="true"
+								requiredMessage="Angabe des Zeitrasters wird benötigt."
 								max="#{configController.maxSpinnerValue}"
-								min="#{configController.minSpinnerValue}" />
+								min="#{configController.minSpinnerValue}">
+								<p:ajax event="keyup" update="timetableGrid" />
+							</p:spinner>
 							<h:outputText value=" Minuten" />
 						</p:outputPanel>
 					</h:panelGrid>
@@ -84,9 +110,12 @@
 						<p:outputPanel>
 							<h:outputText value="1 Wochenstunde à " />
 							<p:spinner id="teacherSettlement"
-								value="#{configController.teacherSettlement}"
+								value="#{configController.teacherSettlement}" required="true"
+								requiredMessage="Angabe der Zeitabrechnung einer Lehrkraft wird benötigt."
 								max="#{configController.maxSpinnerValue}"
-								min="#{configController.minSpinnerValue}" />
+								min="#{configController.minSpinnerValue}">
+								<p:ajax event="keyup" update="teacherSettlement" />
+							</p:spinner>
 							<h:outputText value=" Minuten" />
 						</p:outputPanel>
 					</h:panelGrid>
@@ -98,9 +127,12 @@
 						<p:outputPanel>
 							<h:outputText value="1 Wochenstunde à " />
 							<p:spinner id="paSettlement"
-								value="#{configController.paSettlement}"
+								value="#{configController.paSettlement}" required="true"
+								requiredMessage="Angabe der Zeitabrechnung eines päd. Mitarbeiters wird benötigt."
 								max="#{configController.maxSpinnerValue}"
-								min="#{configController.minSpinnerValue}" />
+								min="#{configController.minSpinnerValue}">
+								<p:ajax event="keyup" update="paSettlement" />
+							</p:spinner>
 							<h:outputText value=" Minuten" />
 						</p:outputPanel>
 					</h:panelGrid>
@@ -113,7 +145,8 @@
 							value="Art der Bezeichner für Schulklassen" />
 						<p:selectOneRadio id="schoolclassIdentifiers"
 							value="#{configController.identifierCase}" layout="grid"
-							columns="1">
+							columns="1" required="true"
+							requiredMessage="Angabe eines Schulklassenbezeichners wird benötigt.">
 							<f:selectItem itemLabel="Kleinbuchstaben"
 								itemValue="#{configController.lowerCase}" />
 							<f:selectItem itemLabel="Großbuchstaben"
@@ -130,10 +163,13 @@
 						<p:outputLabel for="typicalActivityDuration"
 							value="Typische Dauer einer Aktivität (eines Unterrichtsfaches)" />
 						<p:outputPanel>
-							<p:spinner id="typicalActivityDuration"
+							<p:spinner id="typicalActivityDuration" required="true"
+								requiredMessage="Angabe der typischen Dauer einer Aktivität wird benötigt."
 								value="#{configController.typicalActivityDuration}"
 								max="#{configController.maxSpinnerValue}"
-								min="#{configController.minSpinnerValue}" />
+								min="#{configController.minSpinnerValue}">
+								<p:ajax event="keyup" update="typicalActivityDuration" />
+							</p:spinner>
 							<h:outputText value=" Minuten" />
 						</p:outputPanel>
 					</h:panelGrid>
@@ -168,7 +204,7 @@
 				</p:panel>
 
 				<p:outputPanel style="height:60px; float:right; margin-top:10px;">
-					<p:commandButton value="Aktualisieren" icon="ui-icon-plusthick"
+					<p:commandButton value="Übernehmen" icon="ui-icon-plusthick"
 						onclick="PF('wConfimSettings').show();"
 						process="generalSettings,backupSettings,@this">
 					</p:commandButton>

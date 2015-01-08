@@ -17,6 +17,10 @@
    		<validator-id>NameValidator</validator-id>
    		<validator-class>org.woym.ui.validators.NameValidator</validator-class>
 	</validator>
+		<validator>
+   		<validator-id>TimeRangeValidator</validator-id>
+   		<validator-class>org.woym.ui.validators.TimeRangeValidator</validator-class>
+	</validator>
 	<!-- Converters -->
 	<converter>
    		<converter-id>LessonTypeNameConverter</converter-id>
@@ -37,5 +41,9 @@
     <converter>
         <converter-id>AcademicYearNameConverter</converter-id>
         <converter-class>org.woym.ui.converters.AcademicYearNameConverter</converter-class>
+    </converter>
+        <converter>
+        <converter-id>WeekdayNameConverter</converter-id>
+        <converter-class>org.woym.ui.converters.WeekdayNameConverter</converter-class>
     </converter>
 </faces-config>

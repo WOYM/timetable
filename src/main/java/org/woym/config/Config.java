@@ -112,6 +112,9 @@ public final class Config {
 	 */
 	public static boolean updateProperty(String propKey, String propValue) {
 		if (propertiesConfig.containsKey(propKey)) {
+			if (propertiesConfig.getString(propKey).equals(propValue)) {
+				return true;
+			}
 			propertiesConfig.clearProperty(propKey);
 			propertiesConfig.addProperty(propKey, propValue);
 			return true;

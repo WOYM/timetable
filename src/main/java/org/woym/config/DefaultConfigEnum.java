@@ -21,53 +21,56 @@ public enum DefaultConfigEnum {
 	BACKUP_TIME("backup_time", "12:00"),
 
 	/**
-	 * Die Uhrzeit, zu welcher die Planung montags erlaubt ist. Als Werte
-	 * sollten Start- und Endzeit durch Komma getrennt angegeben werden. Ist der
-	 * Wert {@code null} ist der Tag nicht in die Planung einzubeziehen.
+	 * Boolean-Wert, der angibt, ob der Tag zu verplanen ist {@code true} oder
+	 * nicht {@code false}.
 	 */
-	MONDAY_TIME("monday_time", "08:00,16:00"),
+	WEEKDAY_MONDAY("weekday_monday", "true"),
 
 	/**
-	 * Die Uhrzeit, zu welcher die Planung dienstags erlaubt ist. Als Werte
-	 * sollten Start- und Endzeit durch Komma getrennt angegeben werden. Ist der
-	 * Wert {@code null} ist der Tag nicht in die Planung einzubeziehen.
+	 * Boolean-Wert, der angibt, ob der Tag zu verplanen ist {@code true} oder
+	 * nicht {@code false}.
 	 */
-	TUESDAY_STARTTIME("tuesday_time", "08:00,16:00"),
+	WEEKDAY_TUESDAY("weekday_tuesday", "true"),
 
 	/**
-	 * Die Uhrzeit, zu welcher die Planung mittwochs erlaubt ist. Als Werte
-	 * sollten Start- und Endzeit durch Komma getrennt angegeben werden. Ist der
-	 * Wert {@code null} ist der Tag nicht in die Planung einzubeziehen.
+	 * Boolean-Wert, der angibt, ob der Tag zu verplanen ist {@code true} oder
+	 * nicht {@code false}.
 	 */
-	WEDNESDAY_TIME("wednesday_time", "08:00,16:00"),
+	WEEKDAY_WEDNESDAY("weekday_wednesday", "true"),
 
 	/**
-	 * Die Uhrzeit, zu welcher die Planung donnerstags erlaubt ist. Als Werte
-	 * sollten Start- und Endzeit durch Komma getrennt angegeben werden. Ist der
-	 * Wert {@code null} ist der Tag nicht in die Planung einzubeziehen.
+	 * Boolean-Wert, der angibt, ob der Tag zu verplanen ist {@code true} oder
+	 * nicht {@code false}.
 	 */
-	THURSDAY_TIME("thursday_time", "08:00,16:00"),
+
+	WEEKDAY_THURSDAY("weekday_thursday", "true"),
+	/**
+	 * Boolean-Wert, der angibt, ob der Tag zu verplanen ist {@code true} oder
+	 * nicht {@code false}.
+	 */
+	WEEKDAY_FRIDAY("weekday_friday", "true"),
 
 	/**
-	 * Die Uhrzeit, zu welcher die Planung freitags erlaubt ist. Als Werte
-	 * sollten Start- und Endzeit durch Komma getrennt angegeben werden. Ist der
-	 * Wert {@code null} ist der Tag nicht in die Planung einzubeziehen.
+	 * Boolean-Wert, der angibt, ob der Tag zu verplanen ist {@code true} oder
+	 * nicht {@code false}.
 	 */
-	FRIDAY_TIME("friday_time", "08:00,16:00"),
+	WEEKDAY_SATURDAY("weekday_saturday", "false"),
 
 	/**
-	 * Die Uhrzeit, zu welcher die Planung samstags erlaubt ist. Als Werte
-	 * sollten Start- und Endzeit durch Komma getrennt angegeben werden. Ist der
-	 * Wert {@code null} ist der Tag nicht in die Planung einzubeziehen.
+	 * Boolean-Wert, der angibt, ob der Tag zu verplanen ist {@code true} oder
+	 * nicht {@code false}.
 	 */
-	SATURDAY_TIME("saturday_time", null),
-
+	WEEKDAY_SUNDAY("weekday_sunday", "false"),
+	
 	/**
-	 * Die Uhrzeit, zu welcher die Planung sonntags erlaubt ist. Als Werte
-	 * sollten Start- und Endzeit durch Komma getrennt angegeben werden. Ist der
-	 * Wert {@code null} ist der Tag nicht in die Planung einzubeziehen.
+	 * Startzeit eines Wochentages im Format HH:mm
 	 */
-	SUNDAY_TIME("sunday_time", null),
+	WEEKDAY_STARTTIME("weekday_starttime", "08:00"),
+	
+	/**
+	 * Endzeit eines Wochentages im Format HH:mm
+	 */
+	WEEKDAY_ENDTIME("weekday_endtime", "16:00"),
 
 	/**
 	 * Die Größe des Zeitrasters des Stundenplans in Minuten.
