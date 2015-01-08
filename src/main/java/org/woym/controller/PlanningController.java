@@ -13,15 +13,22 @@ import javax.faces.context.FacesContext;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.primefaces.event.SelectEvent;
 import org.primefaces.model.DefaultScheduleModel;
+import org.primefaces.model.ScheduleEvent;
 import org.primefaces.model.ScheduleModel;
 import org.woym.config.Config;
 import org.woym.config.DefaultConfigEnum;
 import org.woym.exceptions.DatasetException;
 import org.woym.logic.util.ActivityParser;
 import org.woym.objects.AcademicYear;
+import org.woym.objects.Activity;
+import org.woym.objects.CompoundLesson;
 import org.woym.objects.Entity;
+import org.woym.objects.Lesson;
+import org.woym.objects.LessonType;
 import org.woym.objects.Location;
+import org.woym.objects.Meeting;
 import org.woym.objects.PedagogicAssistant;
 import org.woym.objects.Room;
 import org.woym.objects.Schoolclass;
@@ -59,6 +66,7 @@ public class PlanningController implements Serializable {
 	private AcademicYear academicYear;
 	private Location location;
 	private Room room;
+	private Activity activity;
 
 	private String searchTerm;
 
@@ -101,6 +109,12 @@ public class PlanningController implements Serializable {
 		calendar.set(CALENDAR_YEAR, CALENDAR_MONTH, CALENDAR_DAY, 0, 0, 0);
 
 		return calendar.getTime();
+	}
+
+	public void onEventSelect(SelectEvent selectEvent) {
+		ScheduleEvent event = (ScheduleEvent) selectEvent.getObject();
+
+		setActivity((Activity) event.getData());
 	}
 
 	/**
@@ -340,9 +354,132 @@ public class PlanningController implements Serializable {
 		}
 	}
 
-	// //////////////////////////////////////////////////////////////////////////
+	/**
+	 * Gibt einen sinnvollen Namen für die lokale Aktivität zurück.
+	 * 
+	 * @return Ein sinnvoller Name
+	 */
+	public String getActivityDescriptionName() {
+		return getActivityDescriptionName(activity);
+	}
+
+	/**
+	 * Gibt einen sinnvollen Namen für eine übergebene Aktivität zurück.
+	 * 
+	 * @param activity
+	 *            Die Aktivität, für die ein sinnvoller Name benötigt wird
+	 * @return Ein sinnvoller Name
+	 */
+	public String getActivityDescriptionName(Activity activity) {
+
+		String title = "";
+
+		if (activity instanceof Lesson) {
+			title += ((Lesson) activity).getLessonType().getName();
+		} else if (activity instanceof Meeting) {
+			title += ((Meeting) activity).getMeetingType().getName();
+		} else if (activity instanceof CompoundLesson) {
+			title += CompoundLesson.VALID_DISPLAY_NAME;
+		}
+
+		return title;
+	}
+
+	public String getActivityDescriptionStartTime() {
+		return getActivityDescriptionEndTime(activity);
+	}
+
+	public String getActivityDescriptionStartTime(Activity activity) {
+		if(activity == null) {
+			return "";
+		}
+		return getActivityDescriptionTime(activity.getTime().getStartTime(),
+				activity);
+	}
+
+	public String getActivityDescriptionEndTime() {
+		return getActivityDescriptionEndTime(activity);
+	}
+
+	public String getActivityDescriptionEndTime(Activity activity) {
+		if(activity == null) {
+			return "";
+		}
+		return getActivityDescriptionTime(activity.getTime().getEndTime(),
+				activity);
+	}
+
+	public String getActivityDescriptionTime(Date date, Activity activity) {
+
+		Calendar calendar = Calendar.getInstance();
+		calendar.setTime(date);
+
+		String readableTime = activity.getTime().getDay().toString() + ", "
+				+ calendar.get(Calendar.HOUR) + ":"
+				+ calendar.get(Calendar.MINUTE);
+		
+		return readableTime;
+	}
+
+	/**
+	 * Gibt eine Liste mit Namen von Unterrichtsinhalten für die lokal
+	 * gespeicherte {@link CompoundLesson} zurück.
+	 * <p>
+	 * Diese Methode sollte nur aufgerufen werden, wenn es sich bei der
+	 * {@link Activity} wirklich um eine {@link CompoundLesson} handelt, da
+	 * sonst eine leere Liste zurückgeliefert wird.
+	 * 
+	 * @return Eine Liste mit darstellbaren Namen.
+	 */
+	public List<String> getCompoundLessonDescriptionNames() {
+		return getCompoundLessonDescriptionNames(activity);
+	}
+
+	/**
+	 * Gibt die Namen der einzelnen Unterrichtsinhalte einer
+	 * {@link CompoundLesson} zurück.
+	 * <p>
+	 * Diese Methode sollte nur aufgerufen werden, wenn es sich bei der
+	 * {@link Activity} wirklich um eine {@link CompoundLesson} handelt, da
+	 * sonst eine leere Liste zurückgeliefert wird.
+	 * 
+	 * @param activity
+	 *            Die {@link CompoundLesson}, deren Unterrichtsinhalte benötigt
+	 *            werden
+	 * @return Eine Liste mit darstellbaren Namen
+	 */
+	public List<String> getCompoundLessonDescriptionNames(Activity activity) {
+		List<String> names = new ArrayList<String>();
+
+		if (activity instanceof CompoundLesson) {
+			for (LessonType lessonType : ((CompoundLesson) activity)
+					.getLessonTypes()) {
+				String name = "";
+				name += lessonType.getName();
+				names.add(name);
+			}
+		}
+
+		return names;
+	}
+
+	/**
+	 * Liefert einen Wahrheitswert, ob die momentane Aktivität des Controllers
+	 * eine {@link CompoundLesson} ist.
+	 * 
+	 * @return Wahrheitswert, ob die Aktivität eine {@link CompoundLesson} ist
+	 */
+	public Boolean getIsCurrentActivityCompoundLesson() {
+		if (activity instanceof CompoundLesson) {
+			return true;
+		}
+
+		return false;
+	}
+
+	// /////////////////////////////////////////////////////////////////////////
 	// Getters & Setters
-	// //////////////////////////////////////////////////////////////////////////
+	// /////////////////////////////////////////////////////////////////////////
 
 	public Teacher getTeacher() {
 		return teacher;
@@ -413,5 +550,13 @@ public class PlanningController implements Serializable {
 	public void setRoom(Room room) {
 		this.room = room;
 		unsetAllExcept(room);
+	}
+
+	public Activity getActivity() {
+		return activity;
+	}
+
+	public void setActivity(Activity activity) {
+		this.activity = activity;
 	}
 }

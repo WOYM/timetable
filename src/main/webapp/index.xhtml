@@ -38,9 +38,10 @@
 						rowKey="#{teacher.symbol}" style="margin-top:10px;"
 						emptyMessage="Keine Lehrkräfte mit dem entsprechenden Kürzel">
 						<p:ajax event="rowSelect" update=":planningForm:scheduleMainPanel"
-							process="@this"
+							process="@this" oncomplete="PF('wActivityInfoDialog').hide();"
 							listener="#{planningController.setTeacherActivityModel}" />
 						<p:ajax event="rowUnselect"
+							oncomplete="PF('wActivityInfoDialog').hide();"
 							update=":planningForm:scheduleMainPanel" process="@this" />
 						<p:column headerText="Name">
 							<h:outputText value="#{teacher.name}" />
@@ -78,9 +79,10 @@
 						rowKey="#{pedagogicAssistant.symbol}" style="margin-top:10px;"
 						emptyMessage="Keine pädagogischen Mitarbeiter mit dem entsprechenden Kürzel">
 						<p:ajax event="rowSelect" update=":planningForm:scheduleMainPanel"
-							process="@this"
+							process="@this" oncomplete="PF('wActivityInfoDialog').hide();"
 							listener="#{planningController.setPedagogicAssistantActivityModel}" />
 						<p:ajax event="rowUnselect"
+							oncomplete="PF('wActivityInfoDialog').hide();"
 							update=":planningForm:scheduleMainPanel" process="@this" />
 						<p:column headerText="Name">
 							<h:outputText value="#{pedagogicAssistant.name}" />
@@ -125,6 +127,7 @@
 								rendered="#{planningController.academicYear != null}">
 								<p:ajax event="change"
 									update="searchSchoolclassPanel,:planningForm:scheduleMainPanel"
+									oncomplete="PF('wActivityInfoDialog').hide();"
 									listener="#{planningController.setSchoolclassActivityModel}" />
 								<f:selectItem value="#{null}" itemLabel="Klasse auswählen" />
 								<f:selectItems
@@ -166,6 +169,7 @@
 								value="#{planningController.room}" converter="RoomNameConverter"
 								rendered="#{planningController.location != null}">
 								<p:ajax event="change"
+									oncomplete="PF('wActivityInfoDialog').hide();"
 									update="searchRoomPanel,:planningForm:scheduleMainPanel"
 									listener="#{planningController.setRoomActivityModel}" />
 								<f:selectItem value="#{null}" itemLabel="Raum auswählen" />
@@ -197,14 +201,65 @@
 					</p:outputPanel>
 				</p:outputPanel>
 				<!-- Schedule -->
-				<p:schedule showHeader="false" view="agendaWeek" allDaySlot="false"
-					axisFormat="HH:mm" value="#{planningController.scheduleModel}"
-					slotMinutes="#{planningController.slotMinutes}"
-					columnFormat="week: 'ddd'" locale="de" timeZone="GMT+1"
-					initialDate="#{planningController.initalDate}" />
+				<div onclick="savePosition(event.pageX,event.pageY);">
+					<p:schedule showHeader="false" view="agendaWeek" allDaySlot="false"
+						axisFormat="HH:mm" value="#{planningController.scheduleModel}"
+						slotMinutes="#{planningController.slotMinutes}" 
+						columnFormat="week: 'ddd'" locale="de" timeZone="GMT+1"
+						initialDate="#{planningController.initalDate}" tooltip="true">
+						<p:ajax event="eventSelect"
+							listener="#{planningController.onEventSelect}"
+							update="activityInfoPanel" global="false"
+							oncomplete="PF('wActivityInfoDialog').show();" />
+					</p:schedule>
+				</div>
 				<p:spacer style="height:50px;" />
 			</p:outputPanel>
 		</p:outputPanel>
+
+		<!-- ActivityInfo-Dialog -->
+		<p:dialog id="activityInfoDialog" widgetVar="wActivityInfoDialog"
+			header="Aktivitätsinformation" closable="true" draggable="true"
+			resizable="false">
+			<p:ajax event="close" update="activityInfoDialog" />
+			<p:outputPanel id="activityInfoPanel">
+				<p:outputPanel style="margin-bottom:5px;">
+					<p:outputPanel
+						rendered="#{planningController.isCurrentActivityCompoundLesson}">
+						<b><h:outputText value="Bandunterricht" /></b>
+						<ul>
+							<ui:repeat var="lessonTypeName"
+								value="#{planningController.compoundLessonDescriptionNames}">
+								<li><h:outputText value="#{lessonTypeName}" /></li>
+							</ui:repeat>
+						</ul>
+					</p:outputPanel>
+					<p:outputPanel
+						rendered="#{not planningController.isCurrentActivityCompoundLesson}">
+						<b><h:outputText
+								value="#{planningController.activityDescriptionName}" /></b>
+					</p:outputPanel>
+				</p:outputPanel>
+				<p:outputPanel style="margin-bottom:5px;">
+					<h:panelGrid columns="2">
+						<h:outputText value="Anfang:" />
+						<h:outputText
+							value="#{planningController.activityDescriptionStartTime}" />
+						<h:outputText value="Ende:" />
+						<h:outputText
+							value="#{planningController.activityDescriptionEndTime}" />
+					</h:panelGrid>
+				</p:outputPanel>
+				<p:dataList value="#{planningController.activity.rooms}" var="room"
+					type="ordered" style="padding:5px;">
+					<f:facet name="header">
+                        Räume
+                    </f:facet>
+                     #{room.name} <br /> #{room.locationName}
+                </p:dataList>
+			</p:outputPanel>
+		</p:dialog>
+
 	</h:form>
 
 	<!-- Schedule locales -->

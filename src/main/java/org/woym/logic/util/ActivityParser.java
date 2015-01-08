@@ -13,6 +13,9 @@ import org.primefaces.model.ScheduleModel;
 import org.woym.controller.PlanningController;
 import org.woym.exceptions.DatasetException;
 import org.woym.objects.Activity;
+import org.woym.objects.CompoundLesson;
+import org.woym.objects.Lesson;
+import org.woym.objects.Meeting;
 import org.woym.objects.PedagogicAssistant;
 import org.woym.objects.Room;
 import org.woym.objects.Schoolclass;
@@ -153,15 +156,6 @@ public class ActivityParser {
 
 	/**
 	 * Lädt und erzeugt das ActivityModel für ein bestimmtes Objekt.
-	 * <p>
-	 * Mögliche Objekte:
-	 * <ul>
-	 * <li>Teacher</li>
-	 * <li>Schoolclass</li>
-	 * </ul>
-	 * 
-	 * Bei einem Datenbankfehler wird eine Nachricht auf der GUI dargestellt und
-	 * das ActivityModel nicht verändert.
 	 * 
 	 * @param entity
 	 *            Die Entity, deren ActivityModel gesetzt werden soll
@@ -172,7 +166,6 @@ public class ActivityParser {
 
 		ScheduleModel activityModel = new DefaultScheduleModel();
 
-		// Iteration
 		for (Activity activity : activities) {
 			Date startDate = getActivityStartDate(activity);
 			Date endDate = getActivityEndDate(activity);
@@ -180,6 +173,10 @@ public class ActivityParser {
 			// TODO Style-Class?
 			DefaultScheduleEvent event = new DefaultScheduleEvent(
 					activity.toString(), startDate, endDate);
+
+			event.setData(activity);
+
+			event = getEvent(event, activity);
 
 			activityModel.addEvent(event);
 		}
@@ -200,8 +197,9 @@ public class ActivityParser {
 	}
 
 	/**
-	 * Erzeugt ein {@link Date}-Objekt, dass in der Stundenplandarstellung
-	 * angezeigt werden kann.
+	 * Erzeugt ein {@link Date}-Objekt, das in der Stundenplandarstellung
+	 * angezeigt werden kann. Das heißt, dass die Aktivität auf ein
+	 * entsprechendes Datum nach dem 05.01.1970 umgerechnet wird.
 	 * 
 	 * @param activity
 	 *            Die Aktivität
@@ -219,5 +217,37 @@ public class ActivityParser {
 				PlanningController.CALENDAR_MONTH, day);
 
 		return calendar.getTime();
+	}
+
+	private DefaultScheduleEvent getEvent(DefaultScheduleEvent event,
+			Activity activity) {
+
+		if (activity instanceof Lesson) {
+			return getLessonEvent(event, (Lesson) activity);
+		} else if (activity instanceof Meeting) {
+			return getMeetingEvent(event, (Meeting) activity);
+		} else if (activity instanceof CompoundLesson) {
+			return getCompoundLessonEvent(event);
+		} else {
+			return event;
+		}
+
+	}
+
+	private DefaultScheduleEvent getLessonEvent(DefaultScheduleEvent event,
+			Lesson lesson) {
+		event.setTitle(lesson.getLessonType().getName());
+		return event;
+	}
+
+	private DefaultScheduleEvent getMeetingEvent(DefaultScheduleEvent event,
+			Meeting meeting) {
+		event.setTitle(meeting.getMeetingType().getName());
+		return event;
+	}
+	
+	private DefaultScheduleEvent getCompoundLessonEvent(DefaultScheduleEvent event) {
+		event.setTitle(CompoundLesson.VALID_DISPLAY_NAME);
+		return event;
 	}
 }
