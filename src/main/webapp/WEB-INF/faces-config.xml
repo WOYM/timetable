@@ -42,8 +42,11 @@
         <converter-id>AcademicYearNameConverter</converter-id>
         <converter-class>org.woym.ui.converters.AcademicYearNameConverter</converter-class>
     </converter>
-        <converter>
+    <converter>
+        <converter-id>SchoolclassNameConverter</converter-id>
+        <converter-class>org.woym.ui.converters.SchoolclassNameConverter</converter-class>
+    </converter>
+    <converter>
         <converter-id>WeekdayNameConverter</converter-id>
         <converter-class>org.woym.ui.converters.WeekdayNameConverter</converter-class>
-    </converter>
-</faces-config>
+    </converter></faces-config>

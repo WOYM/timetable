@@ -30,6 +30,8 @@ public class CompoundLesson extends Activity {
 	@ManyToMany
 	@OrderBy("name")
 	private List<LessonType> lessonTypes = new ArrayList<LessonType>();
+	
+	public static final String VALID_DISPLAY_NAME = "Bandunterricht";
 
 	public CompoundLesson() {
 	}
