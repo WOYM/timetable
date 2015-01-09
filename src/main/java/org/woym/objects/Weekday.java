@@ -48,4 +48,8 @@ public enum Weekday {
 	public int getOrdinal() {
 		return ordinal;
 	}
+
+	public String getName() {
+		return name;
+	}
 }

@@ -69,28 +69,32 @@
 								</h:panelGrid>
 								<p:blockUI trigger="createBackupButton" block="backupBlockPanel" />
 							</p:outputPanel>
-							<p:dataList id="backupList"
-								value="#{backupController.allBackups}" var="backup"
-								itemType="none" paginator="true" rows="10"
-								styleClass="paginated">
-								<f:facet name="header"> 
+							<h:panelGrid columns="1">
+								<p:dataList id="backupList"
+									value="#{backupController.allBackups}" var="backup"
+									itemType="none" paginator="true" rows="10"
+									styleClass="paginated">
+									<f:facet name="header"> 
 							     Backups
 							</f:facet>
-								<p:commandLink update="backupList"
-									styleClass="ui-icon ui-icon-folder-collapsed"
-									style="float:left;margin-right:10px"
-									oncomplete="PF('wConfimRestore').show();">
-									<f:setPropertyActionListener value="#{backup}"
-										target="#{backupController.backup}" />
-									<h:outputText value="#{backup.name}" />
-								</p:commandLink>
-								<p:commandLink update="backupList" style="text-decoration:none;"
-									oncomplete="PF('wConfimRestore').show();">
-									<f:setPropertyActionListener value="#{backup}"
-										target="#{backupController.backup}" />
-									<h:outputText value="#{backup.name}" />
-								</p:commandLink>
-							</p:dataList>
+									<p:commandLink update="backupList"
+										styleClass="ui-icon ui-icon-folder-collapsed"
+										style="float:left;margin-right:10px"
+										oncomplete="PF('wConfimRestore').show();">
+										<f:setPropertyActionListener value="#{backup}"
+											target="#{backupController.backup}" />
+										<h:outputText value="#{backup.name}" />
+									</p:commandLink>
+									<p:commandLink update="backupList"
+										style="text-decoration:none;"
+										oncomplete="PF('wConfimRestore').show();">
+										<f:setPropertyActionListener value="#{backup}"
+											target="#{backupController.backup}" />
+										<h:outputText value="#{backup.name}" />
+									</p:commandLink>
+								</p:dataList>
+								<h:outputText value="Zum Wiederherstellen Backup anlicken" />
+							</h:panelGrid>
 						</h:panelGrid>
 					</p:outputPanel>
 				</p:panel>
@@ -136,8 +140,7 @@
 					<p:outputPanel>
 						<p:commandButton id="confirmBackupButton" value="Ja"
 							actionListener="#{backupController.doBackup}"
-							oncomplete="PF('wConfirmBackup').hide();"
-							update="commandGrowl"
+							oncomplete="PF('wConfirmBackup').hide();" update="commandGrowl"
 							styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
 						<p:commandButton value="Nein"
 							oncomplete="PF('wConfirmBackup').hide();"

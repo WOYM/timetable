@@ -71,7 +71,6 @@ public abstract class Activity extends org.woym.objects.Entity implements
 	 * {@linkplain EmployeeTimePeriods} Zeiträumen zugeordnet.
 	 */
 	@OneToMany(cascade = CascadeType.ALL)
-	@OrderBy("employee.symbol")
 	private List<EmployeeTimePeriods> employeeTimePeriods = new ArrayList<EmployeeTimePeriods>();
 
 	public Activity() {
@@ -334,8 +333,12 @@ public abstract class Activity extends org.woym.objects.Entity implements
 			rooms = new ArrayList<Room>(actualMemento.rooms);
 			schoolclasses = new ArrayList<Schoolclass>(
 					actualMemento.schoolclasses);
-			employeeTimePeriods = new ArrayList<EmployeeTimePeriods>(
-					actualMemento.employeeTimePeriods);
+			employeeTimePeriods = new ArrayList<EmployeeTimePeriods>();
+			for (IMemento m : actualMemento.employeeTimePeriods) {
+				EmployeeTimePeriods e = new EmployeeTimePeriods();
+				e.setMemento(m);
+				employeeTimePeriods.add(e);
+			}
 		} else {
 			throw new IllegalArgumentException("Only " + Memento.class
 					+ " as parameter allowed.");
@@ -360,7 +363,7 @@ public abstract class Activity extends org.woym.objects.Entity implements
 
 		private final List<Schoolclass> schoolclasses;
 
-		private final List<EmployeeTimePeriods> employeeTimePeriods;
+		private final List<IMemento> employeeTimePeriods;
 
 		Memento(Activity originator) {
 			if (originator == null) {
@@ -370,28 +373,10 @@ public abstract class Activity extends org.woym.objects.Entity implements
 			time = originator.time;
 			rooms = new ArrayList<Room>(originator.rooms);
 			schoolclasses = new ArrayList<Schoolclass>(originator.schoolclasses);
-			employeeTimePeriods = new ArrayList<EmployeeTimePeriods>(
-					originator.employeeTimePeriods);
-		}
-
-		Long getId() {
-			return id;
-		}
-
-		TimePeriod getTime() {
-			return time;
-		}
-
-		List<Room> getRooms() {
-			return rooms;
-		}
-
-		List<Schoolclass> getSchoolclasses() {
-			return schoolclasses;
-		}
-
-		List<EmployeeTimePeriods> getEmployeeTimePeriods() {
-			return employeeTimePeriods;
+			employeeTimePeriods = new ArrayList<IMemento>();
+			for (EmployeeTimePeriods e : originator.employeeTimePeriods) {
+				employeeTimePeriods.add(e.createMemento());
+			}
 		}
 	}
 }

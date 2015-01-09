@@ -11,18 +11,27 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 import javax.faces.application.FacesMessage;
+import javax.servlet.ServletContextEvent;
+import javax.servlet.ServletContextListener;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.woym.config.Config;
+import org.woym.config.DefaultConfigEnum;
 import org.woym.exceptions.DatasetException;
 import org.woym.exceptions.InvalidFileException;
 import org.woym.logic.spec.IStatus;
@@ -37,13 +46,114 @@ import org.woym.persistence.DataBase;
  * @author Adrian
  *
  */
-public abstract class BackupRestoreHandler {
+public class BackupRestoreHandler implements ServletContextListener {
 
 	/**
 	 * Der Logger.
 	 */
 	private static final Logger LOGGER = LogManager
 			.getLogger(BackupRestoreHandler.class);
+
+	private static ScheduledExecutorService scheduler;
+
+	@Override
+	public void contextInitialized(ServletContextEvent event) {
+		startScheduler();
+	}
+
+	@Override
+	public void contextDestroyed(ServletContextEvent event) {
+		stopScheduler();
+	}
+
+	public static void restartScheduler() {
+		stopScheduler();
+		startScheduler();
+	}
+
+	private static void startScheduler() {
+		scheduler = Executors.newSingleThreadScheduledExecutor();
+		int backupInterval = Integer.valueOf(DefaultConfigEnum.BACKUP_INTERVAL
+				.getPropValue());
+		try {
+			backupInterval = Config
+					.getSingleIntValue(DefaultConfigEnum.BACKUP_INTERVAL);
+		} catch (Exception e) {
+			LOGGER.error(e);
+		}
+
+		if (backupInterval <= 0) {
+			LOGGER.debug("Disabled backups.");
+			return;
+		} else if (backupInterval < 1440) {
+			scheduler.scheduleAtFixedRate(new Runnable() {
+
+				@Override
+				public void run() {
+					BackupRestoreHandler.backup(null);
+				}
+			}, backupInterval, backupInterval, TimeUnit.MINUTES);
+			LOGGER.debug("Started automatic backup scheduler. Backup every "
+					+ backupInterval + " minutes.");
+
+		} else if (backupInterval >= 1440) {
+			try {
+				SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy-HH:mm");
+				SimpleDateFormat day = new SimpleDateFormat("dd.MM.yyyy");
+				String date = Config
+						.getSingleStringValue(DefaultConfigEnum.BACKUP_NEXTDATE);
+				String time = Config
+						.getSingleStringValue(DefaultConfigEnum.BACKUP_TIME);
+
+				Date currentDate = Calendar.getInstance().getTime();
+				Date nextDate = sdf.parse(date + "-" + time);
+
+				// So lange, das nächste Backup-Datum vor dem aktuellen Datum
+				// ist, das nächste Backup Datum um das Backup-Intervall erhöhen
+				boolean done = false;
+				while (nextDate.before(currentDate)) {
+					// Backup im Nachhinein anfertigen
+					if (!done) {
+						backup(null);
+						done = true;
+					}
+					nextDate.setTime(nextDate.getTime()
+							+ TimeUnit.MINUTES.toMillis(backupInterval));
+					Config.updateProperty(
+							DefaultConfigEnum.BACKUP_NEXTDATE.getPropKey(),
+							day.format(nextDate));
+					currentDate = Calendar.getInstance().getTime();
+				}
+
+				// Absolute Differenz zwischen aktuellem Datum und nächstem
+				// Backup-Datum gibt.
+				final long initialDelay = Math.abs(currentDate.getTime()
+						- nextDate.getTime());
+				scheduler.scheduleAtFixedRate(new Runnable() {
+
+					@Override
+					public void run() {
+						SimpleDateFormat df = new SimpleDateFormat("dd.MM.yyyy");
+						BackupRestoreHandler.backup(null);
+						Config.updateProperty(
+								DefaultConfigEnum.BACKUP_NEXTDATE.getPropKey(),
+								df.format(Calendar.getInstance().getTime()));
+					}
+				}, initialDelay, (backupInterval / 1440), TimeUnit.DAYS);
+				LOGGER.debug("Started automatic backup scheduler. Next backup in "
+						+ initialDelay
+						+ "ms, then every "
+						+ (backupInterval / 1440) + " days.");
+			} catch (Exception e) {
+				LOGGER.error(e);
+			}
+		}
+	}
+
+	private static void stopScheduler() {
+		scheduler.shutdownNow();
+		LOGGER.debug("Shut down automatic backup scheduler.");
+	}
 
 	/**
 	 * Diese statische Methode erzeugt ein Backup mit dem übergebenen Namen
@@ -121,6 +231,7 @@ public abstract class BackupRestoreHandler {
 	public static IStatus restore(String filePath) {
 		try {
 			DataBase.getInstance().restore(filePath);
+			CommandHandler.getInstance().emptyQueues();
 		} catch (DatasetException | IOException e) {
 			return new FailureStatus(GenericErrorMessage.RESTORE_FAILURE,
 					FacesMessage.SEVERITY_ERROR);
@@ -132,10 +243,13 @@ public abstract class BackupRestoreHandler {
 			return new FailureStatus(GenericErrorMessage.INVALID_FILE,
 					FacesMessage.SEVERITY_ERROR);
 		}
+
 		try (FileSystem fs = createFileSystem(filePath)) {
 			Path properties = Paths.get(Config.PROPERTIES_FILE_PATH);
 			Path zippath = fs.getPath(Config.PROPERTIES_FILE_NAME);
 			Files.copy(zippath, properties, StandardCopyOption.REPLACE_EXISTING);
+			// Neue Properties-Datei laden
+			Config.init();
 			return new SuccessStatus(GenericSuccessMessage.RESTORE_SUCCESS);
 		} catch (IOException e) {
 			LOGGER.error(e);

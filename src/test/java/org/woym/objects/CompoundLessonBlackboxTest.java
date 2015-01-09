@@ -1,9 +1,9 @@
 package org.woym.objects;
 
-import org.testng.annotations.Test;
-import org.testng.AssertJUnit;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.modules.testng.PowerMockTestCase;
+import org.testng.AssertJUnit;
+import org.testng.annotations.Test;
 
 @Test(groups = "unit")
 public class CompoundLessonBlackboxTest extends PowerMockTestCase {

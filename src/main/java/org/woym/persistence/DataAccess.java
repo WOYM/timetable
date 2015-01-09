@@ -2,6 +2,7 @@ package org.woym.persistence;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
@@ -35,6 +36,7 @@ import org.woym.objects.TravelTimeList;
 import org.woym.objects.Weekday;
 import org.woym.objects.spec.IActivityObject;
 import org.woym.persistence.spec.IDataAccess;
+import org.woym.persistence.spec.IEmployeeDAO;
 
 /**
  * Diese Singleton-Klasse bietet mit ihren Methoden Zugriff auf
@@ -149,6 +151,10 @@ public class DataAccess implements IDataAccess, Observer {
 		}
 	}
 
+	// ////////////////////////////////////////////////////////////////////////////////////
+	// IAcademicYearDAO
+	// ////////////////////////////////////////////////////////////////////////////////////
+
 	/**
 	 * {@inheritDoc}
 	 */
@@ -205,6 +211,10 @@ public class DataAccess implements IDataAccess, Observer {
 							+ schoolclass + " " + e.getMessage());
 		}
 	}
+
+	// ////////////////////////////////////////////////////////////////////////////////////
+	// ISchoolclassDAO
+	// ////////////////////////////////////////////////////////////////////////////////////
 
 	/**
 	 * {@inheritDoc}
@@ -294,6 +304,10 @@ public class DataAccess implements IDataAccess, Observer {
 							+ e.getMessage());
 		}
 	}
+
+	// ////////////////////////////////////////////////////////////////////////////////////
+	// IEmployeeDAO
+	// ////////////////////////////////////////////////////////////////////////////////////
 
 	/**
 	 * {@inheritDoc}
@@ -397,6 +411,10 @@ public class DataAccess implements IDataAccess, Observer {
 				PedagogicAssistant.class, searchSymbol);
 	}
 
+	// ////////////////////////////////////////////////////////////////////////////////////
+	// ILocationDAO
+	// ////////////////////////////////////////////////////////////////////////////////////
+
 	/**
 	 * {@inheritDoc}
 	 */
@@ -457,6 +475,10 @@ public class DataAccess implements IDataAccess, Observer {
 					+ room + ": " + e.getMessage());
 		}
 	}
+
+	// ////////////////////////////////////////////////////////////////////////////////////
+	// IRoomDAO
+	// ////////////////////////////////////////////////////////////////////////////////////
 
 	/**
 	 * {@inheritDoc}
@@ -530,6 +552,10 @@ public class DataAccess implements IDataAccess, Observer {
 					"Error while getting all room purposes: " + e.getMessage());
 		}
 	}
+
+	// ////////////////////////////////////////////////////////////////////////////////////
+	// IActivityTypeDAO
+	// ////////////////////////////////////////////////////////////////////////////////////
 
 	/**
 	 * {@inheritDoc}
@@ -618,6 +644,10 @@ public class DataAccess implements IDataAccess, Observer {
 		}
 	}
 
+	// ////////////////////////////////////////////////////////////////////////////////////
+	// IActivityDAO
+	// ////////////////////////////////////////////////////////////////////////////////////
+
 	/**
 	 * {@inheritDoc}
 	 */
@@ -625,6 +655,57 @@ public class DataAccess implements IDataAccess, Observer {
 	@Override
 	public List<Activity> getAllActivities() throws DatasetException {
 		return (List<Activity>) getAll(Activity.class, null);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Activity> getAllActivities(Weekday weekday)
+			throws DatasetException {
+		if (weekday == null) {
+			throw new IllegalArgumentException();
+		}
+		try {
+			final Query query = em
+					.createQuery("SELECT a FROM Activity a WHERE a.time.day = ?1");
+			query.setParameter(1, weekday);
+			return query.getResultList();
+		} catch (Exception e) {
+			LOGGER.error("Exception while getting all activities for day "
+					+ weekday, e);
+			throw new DatasetException(
+					"Error while getting all activities for day " + weekday
+							+ ": " + e.getMessage());
+		}
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Activity> getAllActivitiesNotBetween(Date startTime,
+			Date endTime) throws DatasetException {
+		if (startTime == null || endTime == null) {
+			throw new IllegalArgumentException();
+		}
+		try {
+			final Query query = em
+					.createQuery("SELECT a FROM Activity a WHERE NOT a.time.startTime BETWEEN ?1 AND ?2"
+							+ " OR NOT a.time.endTime BETWEEN ?1 AND ?2 ");
+			query.setParameter(1, startTime);
+			query.setParameter(2, endTime);
+			return query.getResultList();
+		} catch (Exception e) {
+			LOGGER.error(
+					"Exception while getting all activities between given start and endtime.",
+					e);
+			throw new DatasetException(
+					"Error while getting all activities between given start and endtime: "
+							+ e.getMessage());
+		}
 	}
 
 	/**
@@ -754,27 +835,28 @@ public class DataAccess implements IDataAccess, Observer {
 		}
 		try {
 			final Query query = em
-					.createQuery("SELECT DISTINCT a from Activity a INNER JOIN a.employeeTimePeriods e INNER JOIN e.timePeriods t WHERE ("
-							+ "(t.startTime BETWEEN ?1 AND ?2 AND t.startTime <> ?2)"
-							+ "OR (t.endTime BETWEEN ?1 AND ?2 AND t.endTime <> ?1) "
-							+ "OR (?1 BETWEEN t.startTime AND t.endTime AND ?1 <> t.endTime)"
-							+ "OR (?2 BETWEEN t.startTime AND t.endTime AND ?2 <> t.startTime)"
-							+ ") AND e.employee.id = ?3 "
-							+ "AND a.time.day = ?4 ORDER BY a.time.startTime");
-			query.setParameter(1, timePeriod.getStartTime());
-			query.setParameter(2, timePeriod.getEndTime());
-			query.setParameter(3, employee.getId());
-			query.setParameter(4, timePeriod.getDay());
+					.createQuery("SELECT DISTINCT a from Activity a INNER JOIN a.employeeTimePeriods e"
+							+ " INNER JOIN e.timePeriods t WHERE "
+							+ " e.employee = ?1"
+							+ " AND a.time.day = ?2"
+							+ " AND ?3 < t.endTime"
+							+ " AND ?4 > t.startTime"
+							+ " ORDER BY a.time.startTime");
+			query.setParameter(1, employee);
+			query.setParameter(2, timePeriod.getDay());
+			query.setParameter(3, timePeriod.getStartTime());
+			query.setParameter(4, timePeriod.getEndTime());
 			return query.getResultList();
 		} catch (Exception e) {
 			LOGGER.error(String.format(
 					"Exception while getting all activities of employee %s, "
-							+ "which are colliding with time period %s.",
-					employee, timePeriod), e);
-			throw new DatasetException(String.format(
-					"Error while getting all activities of employee %s, "
-							+ "which are colliding with time period %s: "
-							+ e.getMessage(), employee, timePeriod));
+							+ "which overlap time period %s.", employee,
+					timePeriod), e);
+			throw new DatasetException(
+					String.format(
+							"Error while getting all activities of employee %s, "
+									+ "which overlap time period %s: "
+									+ e.getMessage(), employee, timePeriod));
 		}
 	}
 
@@ -789,18 +871,14 @@ public class DataAccess implements IDataAccess, Observer {
 			throw new IllegalArgumentException();
 		}
 		try {
-			final Query query = em
-					.createQuery("SELECT a FROM Activity a WHERE ("
-							+ "(a.time.startTime BETWEEN ?1 AND ?2 AND a.time.startTime <> ?2)"
-							+ "OR (a.time.endTime BETWEEN ?1 AND ?2 AND a.time.endTime <> ?1) "
-							+ "OR (?1 BETWEEN a.time.startTime AND a.time.endTime AND ?1 <> a.time.endTime)"
-							+ "OR (?2 BETWEEN a.time.startTime AND a.time.endTime AND ?2 <> a.time.startTime)"
-							+ ") AND ?3 MEMBER OF a.schoolclasses "
-							+ "AND a.time.day = ?4 ORDER BY a.time.startTime");
-			query.setParameter(1, timePeriod.getStartTime());
-			query.setParameter(2, timePeriod.getEndTime());
-			query.setParameter(3, schoolclass);
-			query.setParameter(4, timePeriod.getDay());
+			final Query query = em.createQuery("SELECT a FROM Activity a WHERE"
+					+ " ?1 MEMBER OF a.schoolclasses AND a.time.day = ?2"
+					+ " AND ?3 < a.time.endTime AND ?4 > a.time.startTime"
+					+ " ORDER BY a.time.startTime");
+			query.setParameter(1, schoolclass);
+			query.setParameter(2, timePeriod.getDay());
+			query.setParameter(3, timePeriod.getStartTime());
+			query.setParameter(4, timePeriod.getEndTime());
 			return query.getResultList();
 		} catch (Exception e) {
 			LOGGER.error(String.format(
@@ -825,18 +903,14 @@ public class DataAccess implements IDataAccess, Observer {
 			throw new IllegalArgumentException();
 		}
 		try {
-			final Query query = em
-					.createQuery("SELECT a FROM Activity a WHERE ("
-							+ "(a.time.startTime BETWEEN ?1 AND ?2 AND a.time.startTime <> ?2)"
-							+ "OR (a.time.endTime BETWEEN ?1 AND ?2 AND a.time.endTime <> ?1) "
-							+ "OR (?1 BETWEEN a.time.startTime AND a.time.endTime AND ?1 <> a.time.endTime)"
-							+ "OR (?2 BETWEEN a.time.startTime AND a.time.endTime AND ?2 <> a.time.startTime)"
-							+ ") AND ?3 MEMBER OF a.rooms "
-							+ "AND a.time.day = ?4 ORDER BY a.time.startTime");
-			query.setParameter(1, timePeriod.getStartTime());
-			query.setParameter(2, timePeriod.getEndTime());
-			query.setParameter(3, room);
-			query.setParameter(4, timePeriod.getDay());
+			final Query query = em.createQuery("SELECT a FROM Activity a WHERE"
+					+ " ?1 MEMBER OF a.rooms AND a.time.day = ?2"
+					+ " AND ?3 < a.time.endTime AND ?4 > a.time.startTime"
+					+ " ORDER BY a.time.startTime");
+			query.setParameter(1, room);
+			query.setParameter(2, timePeriod.getDay());
+			query.setParameter(3, timePeriod.getStartTime());
+			query.setParameter(4, timePeriod.getEndTime());
 			return query.getResultList();
 		} catch (Exception e) {
 			LOGGER.error(String.format(
@@ -927,44 +1001,29 @@ public class DataAccess implements IDataAccess, Observer {
 	/**
 	 * {@inheritDoc}
 	 */
+	@SuppressWarnings("unchecked")
 	@Override
-	public <E> E getById(Class<E> clazz, Long id) throws DatasetException {
-		if (id == null) {
-			throw new IllegalArgumentException();
-		}
+	public List<EmployeeTimePeriods> getEmployeeTimePeriods(Employee employee)
+			throws DatasetException {
 		try {
-			return em.find(clazz, id);
+			final Query query = em
+					.createQuery("SELECT DISTINCT e FROM Activity a INNER JOIN a.employeeTimePeriods e "
+							+ "WHERE ?1 = e.employee AND SIZE(a.employeeTimePeriods) > 1");
+			query.setParameter(1, employee);
+			return query.getResultList();
 		} catch (Exception e) {
 			LOGGER.error(
-					String.format("Exception while getting %s by id %s",
-							clazz.getSimpleName(), id), e);
-			throw new DatasetException(String.format(
-					"Exception while getting %s by id %s: ",
-					clazz.getSimpleName(), id)
-					+ e.getMessage());
+					"Exception while getting all EmployeeTimePeriods for given employee "
+							+ employee, e);
+			throw new DatasetException(
+					"Error while getting all EmployeeTimePeriods for given employee "
+							+ employee + ": " + e.getMessage());
 		}
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	@SuppressWarnings("unchecked")
-	public TravelTimeList getTravelTimeList() throws DatasetException {
-		try {
-			final Query query = em
-					.createQuery("SELECT t FROM TravelTimeList t");
-			List<TravelTimeList> result = query.getResultList();
-			if (result.isEmpty()) {
-				return null;
-			}
-			return result.get(0);
-		} catch (Exception e) {
-			LOGGER.error("Exception while getting TravelTimeList.", e);
-			throw new DatasetException("Error while getting TravelTimeList: "
-					+ e.getMessage());
-		}
-	}
+	// ////////////////////////////////////////////////////////////////////////////////////
+	// IClassTeamDAO
+	// ////////////////////////////////////////////////////////////////////////////////////
 
 	/**
 	 * {@inheritDoc}
@@ -1028,6 +1087,52 @@ public class DataAccess implements IDataAccess, Observer {
 		}
 	}
 
+	// ////////////////////////////////////////////////////////////////////////////////////
+	// IDataAccess
+	// ////////////////////////////////////////////////////////////////////////////////////
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public <E> E getById(Class<E> clazz, Long id) throws DatasetException {
+		if (id == null) {
+			throw new IllegalArgumentException();
+		}
+		try {
+			return em.find(clazz, id);
+		} catch (Exception e) {
+			LOGGER.error(
+					String.format("Exception while getting %s by id %s",
+							clazz.getSimpleName(), id), e);
+			throw new DatasetException(String.format(
+					"Exception while getting %s by id %s: ",
+					clazz.getSimpleName(), id)
+					+ e.getMessage());
+		}
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	@SuppressWarnings("unchecked")
+	public TravelTimeList getTravelTimeList() throws DatasetException {
+		try {
+			final Query query = em
+					.createQuery("SELECT t FROM TravelTimeList t");
+			List<TravelTimeList> result = query.getResultList();
+			if (result.isEmpty()) {
+				return null;
+			}
+			return result.get(0);
+		} catch (Exception e) {
+			LOGGER.error("Exception while getting TravelTimeList.", e);
+			throw new DatasetException("Error while getting TravelTimeList: "
+					+ e.getMessage());
+		}
+	}
+
 	/**
 	 * {@inheritDoc}
 	 */
@@ -1054,28 +1159,9 @@ public class DataAccess implements IDataAccess, Observer {
 		}
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@SuppressWarnings("unchecked")
-	@Override
-	public List<EmployeeTimePeriods> getEmployeeTimePeriods(Employee employee)
-			throws DatasetException {
-		try {
-			final Query query = em
-					.createQuery("SELECT DISTINCT e FROM Activity a INNER JOIN a.employeeTimePeriods e "
-							+ "WHERE ?1 = e.employee AND SIZE(a.employeeTimePeriods) > 1");
-			query.setParameter(1, employee);
-			return query.getResultList();
-		} catch (Exception e) {
-			LOGGER.error(
-					"Exception while getting all EmployeeTimePeriods for given employee "
-							+ employee, e);
-			throw new DatasetException(
-					"Error while getting all EmployeeTimePeriods for given employee "
-							+ employee + ": " + e.getMessage());
-		}
-	}
+	// ////////////////////////////////////////////////////////////////////////////////////
+	// Private Methoden
+	// ////////////////////////////////////////////////////////////////////////////////////
 
 	/**
 	 * Allgemeine Implementierung einer Methode die alle Objekte der übergebenen
@@ -1114,6 +1200,20 @@ public class DataAccess implements IDataAccess, Observer {
 		}
 	}
 
+	/**
+	 * Generische Implementierung für
+	 * {@linkplain IEmployeeDAO#searchEmployees(String)},
+	 * {@linkplain IEmployeeDAO#searchTeachers(String)} und
+	 * {@linkplain IEmployeeDAO#searchPAs(String)}.
+	 * 
+	 * @param clazz
+	 *            - {@linkplain Employee} erweiternde Klasse, deren Objekte
+	 *            gesucht werden sollen
+	 * @param searchSymbol
+	 *            - String, anhand dessen gesucht werden soll
+	 * @return Liste der gefunden Objekte
+	 * @throws DatasetException
+	 */
 	@SuppressWarnings("unchecked")
 	private List<? extends Serializable> searchEmployees(
 			Class<? extends Employee> clazz, String searchSymbol)
@@ -1137,4 +1237,5 @@ public class DataAccess implements IDataAccess, Observer {
 					+ e.getMessage());
 		}
 	}
+
 }

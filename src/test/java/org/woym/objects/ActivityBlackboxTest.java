@@ -1,13 +1,12 @@
 package org.woym.objects;
 
-import org.testng.annotations.Test;
-import org.testng.AssertJUnit;
-
 import java.util.ArrayList;
 import java.util.List;
 
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.modules.testng.PowerMockTestCase;
+import org.testng.AssertJUnit;
+import org.testng.annotations.Test;
 import org.woym.objects.spec.IActivityObject;
 
 @Test(groups = "unit")
