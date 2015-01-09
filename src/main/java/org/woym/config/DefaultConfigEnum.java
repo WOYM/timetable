@@ -10,7 +10,8 @@ package org.woym.config;
 public enum DefaultConfigEnum {
 
 	/**
-	 * Das Backup-Intervall. Angabe des Intervalls in Minuten.
+	 * Das Backup-Intervall. Angabe des Intervalls in Minuten. Ein Wert von 0
+	 * wird für deaktivierte automatische Backups verwendet.
 	 */
 	BACKUP_INTERVAL("backup_interval", "30"),
 
@@ -19,6 +20,12 @@ public enum DefaultConfigEnum {
 	 * Backup-Intervall >= 1440 ist.
 	 */
 	BACKUP_TIME("backup_time", "12:00"),
+
+	/**
+	 * Datum im Format dd.MM.yyy, dass das letzte Backup-Datum angibt angibt.
+	 * Benötigt bei Intervall > 1440.
+	 */
+	BACKUP_NEXTDATE("backup_nextdate", null),
 
 	/**
 	 * Boolean-Wert, der angibt, ob der Tag zu verplanen ist {@code true} oder
@@ -61,12 +68,12 @@ public enum DefaultConfigEnum {
 	 * nicht {@code false}.
 	 */
 	WEEKDAY_SUNDAY("weekday_sunday", "false"),
-	
+
 	/**
 	 * Startzeit eines Wochentages im Format HH:mm
 	 */
 	WEEKDAY_STARTTIME("weekday_starttime", "08:00"),
-	
+
 	/**
 	 * Endzeit eines Wochentages im Format HH:mm
 	 */

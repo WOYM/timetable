@@ -2,6 +2,7 @@ package org.woym.controller.manage;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
@@ -61,6 +62,9 @@ public class LessonTypeController implements Serializable {
 	private boolean hideDeletionDialog;
 	private boolean hide;
 
+	private ColorEnum color;
+	private List<ColorEnum> colors = Arrays.asList(ColorEnum.values());
+
 	@PostConstruct
 	public void init() {
 		lessonType = new LessonType();
@@ -68,6 +72,7 @@ public class LessonTypeController implements Serializable {
 		hideDeletionDialog = Config
 				.getBooleanValue(DefaultConfigEnum.HIDE_ACTIVITYTYPE_DELETION_DIALOG);
 		hide = hideDeletionDialog;
+		color = ColorEnum.YELLOW;
 	}
 
 	/**
@@ -213,6 +218,22 @@ public class LessonTypeController implements Serializable {
 
 	public void setHideDeletionDialog(boolean hideDeletionDialog) {
 		this.hideDeletionDialog = hideDeletionDialog;
+	}
+
+	public ColorEnum getColor() {
+		return color;
+	}
+
+	public void setColor(ColorEnum color) {
+		this.color = color;
+	}
+
+	public List<ColorEnum> getColors() {
+		return colors;
+	}
+
+	public void setColors(List<ColorEnum> colors) {
+		this.colors = colors;
 	}
 
 	private int getTypicalDuration() {

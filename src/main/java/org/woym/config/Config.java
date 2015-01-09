@@ -123,6 +123,34 @@ public final class Config {
 	}
 
 	/**
+	 * Fügt der PropertiesConfiguration eine neue Property aus dem übergebenem
+	 * Schlüssel und Wert hinzu, sofern der Schlüssel noch nicht vorhanden ist.
+	 * 
+	 * @param propKey
+	 *            - Property Schlüssel
+	 * @param propValue
+	 *            - Property Wert
+	 * @return {@code true}, wenn hinzugefügt, sonst {@code false}
+	 */
+	public static boolean addProperty(String propKey, String propValue) {
+		if (!propertiesConfig.containsKey(propKey)) {
+			propertiesConfig.addProperty(propKey, propValue);
+			return true;
+		}
+		return false;
+	}
+
+	/**
+	 * Entfernt den Property-Eintrag für den übergebenen Property-Key.
+	 * 
+	 * @param propKey
+	 *            - Schlüssel der zu entfernden Property
+	 */
+	public static void clearProperty(String propKey) {
+		propertiesConfig.clearProperty(propKey);
+	}
+
+	/**
 	 * Diese Methode lädt eine Einstellung mit genau einem Zahlenwert aus der
 	 * Konfiguration.
 	 * 
@@ -201,5 +229,4 @@ public final class Config {
 					e);
 		}
 	}
-
 }

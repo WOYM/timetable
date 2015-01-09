@@ -63,6 +63,7 @@
 						</p:outputPanel>
 					</h:panelGrid>
 
+
 					<h:panelGrid columns="2" style="width:100%;"
 						columnClasses="half-column">
 						<p:outputLabel value="Start- und Endzeit eines Wochentags"
@@ -78,12 +79,12 @@
 								value="#{configController.weekdayEndTime}" size="5"
 								pattern="HH:mm" locale="de" timeOnly="true" required="true"
 								requiredMessage="Angabe der Endzeit wird benötigt.">
-								<f:attribute name="startTime"
-									value="#{startTime}" />
+								<f:attribute name="startTime" value="#{startTime}" />
 								<f:validator validatorId="org.woym.TimeRangeValidator" />
 							</p:calendar>
 						</h:panelGrid>
 					</h:panelGrid>
+
 
 					<h:panelGrid columns="2" style="width:100%;"
 						columnClasses="half-column">
@@ -119,6 +120,7 @@
 							<h:outputText value=" Minuten" />
 						</p:outputPanel>
 					</h:panelGrid>
+
 
 					<h:panelGrid columns="2" style="width:100%;"
 						columnClasses="half-column">
@@ -192,14 +194,57 @@
 
 				<p:panel id="backupSettings" header="Backup-Einstellungen">
 					<h:outputText
-						value="Intervall in Minuten, in dem die Datensicherung erfolgen soll." />
+						value="Legen Sie hier das Intervall fest, in welchem automatische Backups stattfinden sollen. 
+						Konnte ein Backup innerhalb eines Tagesintervalls nicht zur angegebenen Uhrzeit ausgeführt werden,
+						da die Software zu dem Zeitpunkt nicht lief, wird beim nächsten Start nachträglich ein Backup erzeugt.
+				Achtung, Backups werden nicht automatisch gelöscht!" />
+
+					<p:spacer height="20" />
+
 					<h:panelGrid columns="2" style="width:100%;"
 						columnClasses="half-column">
-						<p:outputLabel for="backupInterval" value="Intervall" />
-						<p:spinner id="backupInterval"
-							value="#{configController.backupInterval}"
-							max="#{configController.maxBackupInterval}"
-							min="#{configController.minBackupInterval}" />
+						<p:outputLabel for="backupIntervalSettings"
+							value="Backup-Intervall" />
+						<p:outputPanel id="backupIntervalSettings">
+							<p:selectOneRadio id="backupInterval"
+								value="#{configController.intervalType}" layout="custom">
+								<f:selectItem itemLabel="Keine automatischen Backups"
+									itemValue="disabled" />
+								<f:selectItem itemLabel="Alle " itemValue="minutes" />
+								<f:selectItem itemLabel="Täglich um " itemValue="daily" />
+							</p:selectOneRadio>
+							<h:panelGrid columns="3" cellpadding="5">
+								<p:radioButton id="opt1" for="backupInterval" itemIndex="0" />
+								<p:outputPanel />
+								<h:outputLabel for="opt1" value="Keine automatischen Backups" />
+
+								<p:radioButton id="opt2" for="backupInterval" itemIndex="1" />
+								<h:outputLabel for="opt2" value="Alle " />
+								<p:outputPanel>
+									<p:spinner id="minuteInterval"
+										value="#{configController.backupInterval}" max="1439"
+										min="#{configController.minSpinnerValue}">
+										<p:ajax event="keyup" update="minuteInterval" />
+									</p:spinner>
+									<h:outputText value=" Minuten" />
+								</p:outputPanel>
+
+								<p:radioButton id="opt3" for="backupInterval" itemIndex="2" />
+								<h:outputLabel for="opt3" value="Alle " />
+								<p:outputPanel>
+									<p:spinner id="dayInterval"
+										value="#{configController.selectedDayValue}" min="1"
+										max="#{configController.maxDayValue}">
+										<p:ajax event="keyup" update="dayInterval" />
+									</p:spinner>
+									<h:outputText value=" Tage um " />
+									<p:calendar value="#{configController.backupStartTime}"
+										size="5" pattern="HH:mm" locale="de" timeOnly="true">
+									</p:calendar>
+									<h:outputText value=" Uhr" />
+								</p:outputPanel>
+							</h:panelGrid>
+						</p:outputPanel>
 					</h:panelGrid>
 				</p:panel>
 
@@ -219,6 +264,9 @@
 				<h:panelGrid columns="1">
 					<h:outputText
 						value="Sind Sie sicher, dass die Einstellungen übernommen werden soll?" />
+					<h:outputText
+						value="Wenn Sie einen Wochentag abwählen oder Start- und Endzeiten verändern, 
+						werden alle Aktivitäten gelöscht, die nicht mehr im angegeben Zeitraum liegen." />
 					<p:separator />
 					<p:outputPanel>
 						<p:commandButton value="Bestätigen"
@@ -231,12 +279,45 @@
 					</p:outputPanel>
 					<p:outputPanel>
 						<h:outputText value="Sie können die Aktion " />
-						<b><h:outputText value="nicht via Rückgängig-Button " /></b>
+						<b><h:outputText value="nicht " /></b>
 						<h:outputText value="nachträglich rückgängig machen." />
 					</p:outputPanel>
 				</h:panelGrid>
 			</p:dialog>
 
+			<script type="text/javascript">
+				PrimeFaces.locales['de'] = {
+					closeText : 'Schließen',
+					prevText : 'Zurück',
+					nextText : 'Weiter',
+					monthNames : [ 'Januar', 'Februar', 'März', 'April', 'Mai',
+							'Juni', 'Juli', 'August', 'September', 'Oktober',
+							'November', 'Dezember' ],
+					monthNamesShort : [ 'Jan', 'Feb', 'Mär', 'Apr', 'Mai',
+							'Jun', 'Jul', 'Aug', 'Sep', 'Okt', 'Nov', 'Dez' ],
+					dayNames : [ 'Sonntag', 'Montag', 'Dienstag', 'Mittwoch',
+							'Donnerstag', 'Freitag', 'Samstag' ],
+					dayNamesShort : [ 'Son', 'Mon', 'Die', 'Mit', 'Don', 'Fre',
+							'Sam' ],
+					dayNamesMin : [ 'S', 'M', 'D', 'M ', 'D', 'F ', 'S' ],
+					weekHeader : 'Woche',
+					firstDay : 1,
+					isRTL : false,
+					showMonthAfterYear : false,
+					yearSuffix : '',
+					timeOnlyTitle : 'Nur Zeit',
+					timeText : 'Zeit',
+					hourText : 'Stunde',
+					minuteText : 'Minute',
+					secondText : 'Sekunde',
+					currentText : 'Aktuelles Datum',
+					ampm : false,
+					month : 'Monat',
+					week : 'Woche',
+					day : 'Tag',
+					allDayText : 'Ganzer Tag'
+				};
+			</script>
 
 		</ui:define>
 	</ui:composition>

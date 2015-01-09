@@ -1,5 +1,6 @@
 package org.woym.persistence.spec;
 
+import java.util.Date;
 import java.util.List;
 
 import org.woym.exceptions.DatasetException;
@@ -33,6 +34,33 @@ public interface IActivityDAO {
 	 * @throws DatasetException
 	 */
 	public List<Activity> getAllActivities() throws DatasetException;
+
+	/**
+	 * Gibt eine Liste aller für den übergebenen Wochentag vorhanden Aktivitäten
+	 * zurück.
+	 * 
+	 * @param weekday
+	 *            - der Wochentag, für welchen alle Aktivitäten erwartet werden
+	 * @return Liste aller Aktivitäten für den übergebenen Wochentag
+	 * @throws DatasetException
+	 */
+	public List<Activity> getAllActivities(Weekday weekday)
+			throws DatasetException;
+
+	/**
+	 * Gibt eine Liste aller Aktivitäten zurück, deren Start- und Endzeit nicht
+	 * zwischen der übergebenen Start- und Endzeit liegen.
+	 * 
+	 * @param startTime
+	 *            - Startzeit
+	 * @param endTime
+	 *            - Endzeit
+	 * @return Liste aller Aktivitäten zurück, deren Start- und Endzeit nicht
+	 *         zwischen der übergebenen Start- und Endzeit liegen
+	 * @throws DatasetException
+	 */
+	public List<Activity> getAllActivitiesNotBetween(Date startTime,
+			Date endTime) throws DatasetException;
 
 	/**
 	 * Wird {@code null} übergeben, wird eine

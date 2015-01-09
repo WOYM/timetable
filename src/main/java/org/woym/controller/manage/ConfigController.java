@@ -1,6 +1,7 @@
 package org.woym.controller.manage;
 
 import java.io.Serializable;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -37,15 +38,14 @@ public class ConfigController implements Serializable {
 	private static final int MAX_SPINNER_VALUE = 1440;
 	private static final int MIN_SPINNER_VALUE = 1;
 
-	private static final int MAX_BACKUP_INTERVAL = 1440;
-	private static final int MIN_BACKUP_INTERVAL = 1;
-
 	private static final String LOWER_CASE = Config.IDENTIFIER_LOWER_CASE;
 	private static final String UPPER_CASE = Config.IDENTIFIER_UPPER_CASE;
 	private static final String BOTH_CASES = Config.IDENTIFIER_BOTH_CASES;
 
+	private static final int MAX_DAY_VALUE = 30;
+
 	private List<Weekday> weekdays = Arrays.asList(Weekday.values());
-	private List<Weekday> selectedWeekdays = new ArrayList<Weekday>();
+	private List<Weekday> selectedWeekdays;
 
 	private Date weekdayStartTime;
 	private Date weekdayEndTime;
@@ -60,7 +60,27 @@ public class ConfigController implements Serializable {
 
 	private String identifierCase;
 
+	/**
+	 * Interner Wert für das Backup-Interval
+	 */
+	private int backupIntervalValue;
+
+	/**
+	 * Backup-Interval bei minütlicher Auswahl.
+	 */
 	private int backupInterval;
+
+	/**
+	 * Backup Startzeit bei Auswahl täglicher Backups.
+	 */
+	private Date backupStartTime;
+
+	/**
+	 * Intervall-Typ "minutes" oder "daily"
+	 */
+	private String intervalType;
+
+	private int selectedDayValue = 1;
 
 	@PostConstruct
 	public void init() {
@@ -69,19 +89,25 @@ public class ConfigController implements Serializable {
 					.getSingleStringValue(DefaultConfigEnum.WEEKDAY_STARTTIME));
 			weekdayEndTime = sdf.parse(Config
 					.getSingleStringValue(DefaultConfigEnum.WEEKDAY_ENDTIME));
-			selectWeekdays();
+			selectedWeekdays = ConfigControllerUtil.getSelectedWeekdays();
 			timetableGrid = Config
 					.getSingleIntValue(DefaultConfigEnum.TIMETABLE_GRID);
+
 			teacherSettlement = Config
 					.getSingleIntValue(DefaultConfigEnum.TEACHER_HOURLY_SETTLEMENT);
 			paSettlement = Config
 					.getSingleIntValue(DefaultConfigEnum.PEDAGOGIC_ASSISTANT_HOURLY_SETTLEMENT);
+
 			typicalActivityDuration = Config
 					.getSingleIntValue(DefaultConfigEnum.TYPICAL_ACTIVITY_DURATION);
+
 			identifierCase = Config
 					.getSingleStringValue(DefaultConfigEnum.SCHOOLCLASS_IDENTIFIER_CASE);
-			backupInterval = Config
+
+			backupIntervalValue = Config
 					.getSingleIntValue(DefaultConfigEnum.BACKUP_INTERVAL);
+
+			selectBackupSettings();
 		} catch (Exception e) {
 			FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_WARN,
 					"Fehler beim Laden der Einstellungen",
@@ -94,43 +120,51 @@ public class ConfigController implements Serializable {
 	 * Diese Methode updated die Einstellungen.
 	 */
 	public void updateProperties() {
+
+		if (!validateBackupSettings()) {
+			return;
+		}
+
 		Boolean works = true;
 
-		works = singleSwitch(works, updateWeekdays());
+		works = ConfigControllerUtil.updateWeekdays(selectedWeekdays) && works;
 
-		works = singleSwitch(
-				works,
-				Config.updateProperty(
-						DefaultConfigEnum.WEEKDAY_STARTTIME.getPropKey(),
-						sdf.format(weekdayStartTime)));
+		works = Config.updateProperty(
+				DefaultConfigEnum.WEEKDAY_STARTTIME.getPropKey(),
+				sdf.format(weekdayStartTime))
+				&& works;
 
-		works = singleSwitch(
-				works,
-				Config.updateProperty(
-						DefaultConfigEnum.TIMETABLE_GRID.getPropKey(),
-						String.valueOf(timetableGrid)));
+		works = Config.updateProperty(
+				DefaultConfigEnum.TIMETABLE_GRID.getPropKey(),
+				String.valueOf(timetableGrid))
+				&& works;
 
-		works = singleSwitch(works, Config.updateProperty(
+		works = Config.updateProperty(
 				DefaultConfigEnum.TEACHER_HOURLY_SETTLEMENT.getPropKey(),
-				String.valueOf(teacherSettlement)));
+				String.valueOf(teacherSettlement))
+				&& works;
 
-		works = singleSwitch(works, Config.updateProperty(
+		works = Config.updateProperty(
 				DefaultConfigEnum.PEDAGOGIC_ASSISTANT_HOURLY_SETTLEMENT
-						.getPropKey(), String.valueOf(paSettlement)));
+						.getPropKey(), String.valueOf(paSettlement))
+				&& works;
 
-		works = singleSwitch(works, Config.updateProperty(
+		works = Config.updateProperty(
 				DefaultConfigEnum.TYPICAL_ACTIVITY_DURATION.getPropKey(),
-				String.valueOf(typicalActivityDuration)));
+				String.valueOf(typicalActivityDuration))
+				&& works;
 
-		works = singleSwitch(works, Config.updateProperty(
+		works = Config.updateProperty(
 				DefaultConfigEnum.SCHOOLCLASS_IDENTIFIER_CASE.getPropKey(),
-				identifierCase));
+				identifierCase)
+				&& works;
 
-		works = singleSwitch(
-				works,
-				Config.updateProperty(
-						DefaultConfigEnum.BACKUP_INTERVAL.getPropKey(),
-						String.valueOf(backupInterval)));
+		works = updateBackupInterval() && works;
+
+		List<Weekday> toBeClearedWeekdays = new ArrayList<Weekday>(weekdays);
+		toBeClearedWeekdays.removeAll(selectedWeekdays);
+		works = ConfigControllerUtil.deleteActivitiesOutOfDateRange(
+				toBeClearedWeekdays, weekdayStartTime, weekdayEndTime) && works;
 
 		FacesMessage msg;
 
@@ -177,94 +211,90 @@ public class ConfigController implements Serializable {
 		FacesContext.getCurrentInstance().addMessage(null, msg);
 	}
 
-	private void selectWeekdays() {
-		if (Config.getBooleanValue(DefaultConfigEnum.WEEKDAY_MONDAY)) {
-			selectedWeekdays.add(Weekday.MONDAY);
+	/**
+	 * Selektiert die korrekten Backup-Einstellungen ja nach Wert von
+	 * {@linkplain ConfigController#backupIntervalValue}.
+	 * 
+	 * @throws ParseException
+	 */
+	private void selectBackupSettings() throws ParseException {
+		if (backupIntervalValue == 0) {
+			intervalType = "disabled";
+		} else if (backupIntervalValue < 1440) {
+			intervalType = "minutes";
+			backupInterval = backupIntervalValue;
+		} else {
+			intervalType = "daily";
+			selectedDayValue = (backupIntervalValue / 1440);
+			if (selectedDayValue > MAX_DAY_VALUE) {
+				selectedDayValue = MAX_DAY_VALUE;
+			}
 		}
-		if (Config.getBooleanValue(DefaultConfigEnum.WEEKDAY_TUESDAY)) {
-			selectedWeekdays.add(Weekday.TUESDAY);
+		backupStartTime = sdf.parse(Config
+				.getSingleStringValue(DefaultConfigEnum.BACKUP_TIME));
+	}
+
+	/**
+	 * Aktualisiert die Backup-Einstellungen, tritt bei einem
+	 * Aktualisierungsversuch ein Fehler auf, wird nachdem alle Aktualisierungen
+	 * durchgeführt wurden {@code false} zurückgegeben, ansonsten {@code true}.
+	 * 
+	 * @return {@code false}, wenn eine Aktualisierung fehlschlägt
+	 */
+	private boolean updateBackupInterval() {
+		if (intervalType.equals("disabled")) {
+			return ConfigControllerUtil.disableBackups();
 		}
-		if (Config.getBooleanValue(DefaultConfigEnum.WEEKDAY_WEDNESDAY)) {
-			selectedWeekdays.add(Weekday.WEDNESDAY);
-		}
-		if (Config.getBooleanValue(DefaultConfigEnum.WEEKDAY_THURSDAY)) {
-			selectedWeekdays.add(Weekday.THURSDAY);
-		}
-		if (Config.getBooleanValue(DefaultConfigEnum.WEEKDAY_FRIDAY)) {
-			selectedWeekdays.add(Weekday.FRIDAY);
-		}
-		if (Config.getBooleanValue(DefaultConfigEnum.WEEKDAY_SATURDAY)) {
-			selectedWeekdays.add(Weekday.SATURDAY);
-		}
-		if (Config.getBooleanValue(DefaultConfigEnum.WEEKDAY_SUNDAY)) {
-			selectedWeekdays.add(Weekday.SUNDAY);
+		if (intervalType.equals("minutes")) {
+			return ConfigControllerUtil.minuteBackups(backupInterval);
+		} else {
+			return ConfigControllerUtil.dailyBackups(selectedDayValue,
+					backupStartTime);
 		}
 	}
 
 	/**
-	 * Aktualisiert die Property-Values für die Wochentage.
+	 * Validiert die Backupeinstellungen. Ist eine Einstellung nicht valide,
+	 * wird eine entsprechende FacesMessage mit Hinweis darauf erzeugt und dem
+	 * FacesContext hinzgefügt. Schließlich wird {@code false} zurückgegeben.
+	 * Sind alle Einstellungen valide, wird {@code true} zurückgegeben.
 	 * 
-	 * @return {@code true}, wenn alle Wochentage erfolgreich aktualisiert
-	 *         wurden, sonst {@code false}
+	 * @return {@code true} bei validen Einstellungen, ansonsten {@code false}
 	 */
-	private boolean updateWeekdays() {
+	private boolean validateBackupSettings() {
 		boolean works = true;
-		boolean configEntry = selectedWeekdays.contains(Weekday.MONDAY);
-		works = singleSwitch(
-				works,
-				Config.updateProperty(
-						DefaultConfigEnum.WEEKDAY_MONDAY.getPropKey(),
-						String.valueOf(configEntry)));
-
-		configEntry = selectedWeekdays.contains(Weekday.TUESDAY);
-		works = singleSwitch(
-				works,
-				Config.updateProperty(
-						DefaultConfigEnum.WEEKDAY_TUESDAY.getPropKey(),
-						String.valueOf(configEntry)));
-
-		configEntry = selectedWeekdays.contains(Weekday.WEDNESDAY);
-		works = singleSwitch(works, Config.updateProperty(
-				DefaultConfigEnum.WEEKDAY_WEDNESDAY.getPropKey(),
-				String.valueOf(configEntry)));
-
-		configEntry = selectedWeekdays.contains(Weekday.THURSDAY);
-		works = singleSwitch(
-				works,
-				Config.updateProperty(
-						DefaultConfigEnum.WEEKDAY_THURSDAY.getPropKey(),
-						String.valueOf(configEntry)));
-
-		configEntry = selectedWeekdays.contains(Weekday.FRIDAY);
-		works = singleSwitch(
-				works,
-				Config.updateProperty(
-						DefaultConfigEnum.WEEKDAY_FRIDAY.getPropKey(),
-						String.valueOf(configEntry)));
-
-		configEntry = selectedWeekdays.contains(Weekday.SATURDAY);
-		works = singleSwitch(
-				works,
-				Config.updateProperty(
-						DefaultConfigEnum.WEEKDAY_SATURDAY.getPropKey(),
-						String.valueOf(configEntry)));
-
-		configEntry = selectedWeekdays.contains(Weekday.SUNDAY);
-		works = singleSwitch(
-				works,
-				Config.updateProperty(
-						DefaultConfigEnum.WEEKDAY_SUNDAY.getPropKey(),
-						String.valueOf(configEntry)));
-
-		return works;
-	}
-
-	private Boolean singleSwitch(Boolean bool, Boolean bool1) {
-		if (bool && bool1) {
-			return true;
+		if (intervalType.equals("minutes")
+				&& (backupInterval < MIN_SPINNER_VALUE || backupInterval > MAX_SPINNER_VALUE)) {
+			works = false;
+			FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_ERROR,
+					"Backup-Intervall ungültig.",
+					"Geben Sie ein gültiges Backup-Intervall zwischen "
+							+ MIN_SPINNER_VALUE + " und " + MAX_SPINNER_VALUE
+							+ " an.");
+			FacesContext.getCurrentInstance().addMessage(null, msg);
 		}
-
-		return false;
+		if (intervalType.equals("daily")) {
+			if (selectedDayValue > MAX_DAY_VALUE
+					|| selectedDayValue < MIN_SPINNER_VALUE) {
+				works = false;
+				FacesMessage msg = new FacesMessage(
+						FacesMessage.SEVERITY_ERROR,
+						"Ausgewählter täglicher Abstand der Backups ungültig",
+						"Wählen Sie einen gültigen täglichen Abstand zwischen "
+								+ MIN_SPINNER_VALUE + " und "
+								+ MAX_SPINNER_VALUE + ".");
+				FacesContext.getCurrentInstance().addMessage(null, msg);
+			}
+			if (backupStartTime == null) {
+				works = false;
+				FacesMessage msg = new FacesMessage(
+						FacesMessage.SEVERITY_ERROR,
+						"Keine Uhrzeit ausgewählt.",
+						"Wählen Sie eine Uhrzeit für das Backup aus.");
+				FacesContext.getCurrentInstance().addMessage(null, msg);
+			}
+		}
+		return works;
 	}
 
 	public int getMaxSpinnerValue() {
@@ -273,14 +303,6 @@ public class ConfigController implements Serializable {
 
 	public int getMinSpinnerValue() {
 		return MIN_SPINNER_VALUE;
-	}
-
-	public int getMaxBackupInterval() {
-		return MAX_BACKUP_INTERVAL;
-	}
-
-	public int getMinBackupInterval() {
-		return MIN_BACKUP_INTERVAL;
 	}
 
 	public String getLowerCase() {
@@ -293,6 +315,10 @@ public class ConfigController implements Serializable {
 
 	public String getBothCases() {
 		return BOTH_CASES;
+	}
+
+	public int getMaxDayValue() {
+		return MAX_DAY_VALUE;
 	}
 
 	public List<Weekday> getWeekdays() {
@@ -394,12 +420,12 @@ public class ConfigController implements Serializable {
 
 	public void setBackupInterval(int backupInterval) {
 
-		if (backupInterval < MIN_BACKUP_INTERVAL) {
-			backupInterval = MIN_BACKUP_INTERVAL;
+		if (backupInterval < MIN_SPINNER_VALUE) {
+			backupInterval = MIN_SPINNER_VALUE;
 		}
 
-		if (backupInterval > MAX_BACKUP_INTERVAL) {
-			backupInterval = MAX_BACKUP_INTERVAL;
+		if (backupInterval > MAX_SPINNER_VALUE) {
+			backupInterval = MAX_SPINNER_VALUE;
 		}
 
 		this.backupInterval = backupInterval;
@@ -407,6 +433,30 @@ public class ConfigController implements Serializable {
 
 	public int getBackupInterval() {
 		return backupInterval;
+	}
+
+	public Date getBackupStartTime() {
+		return backupStartTime;
+	}
+
+	public void setBackupStartTime(Date backupStartTime) {
+		this.backupStartTime = backupStartTime;
+	}
+
+	public String getIntervalType() {
+		return intervalType;
+	}
+
+	public void setIntervalType(String intervalType) {
+		this.intervalType = intervalType;
+	}
+
+	public int getSelectedDayValue() {
+		return selectedDayValue;
+	}
+
+	public void setSelectedDayValue(int selectedDayValue) {
+		this.selectedDayValue = selectedDayValue;
 	}
 
 }
