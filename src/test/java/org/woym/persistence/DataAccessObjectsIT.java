@@ -45,6 +45,10 @@ public class DataAccessObjectsIT {
 		DataBase.getInstance().restore(path);
 	}
 
+	// ////////////////////////////////////////////////////////////////////////////////////
+	// Integration DataAccess und Location
+	// ////////////////////////////////////////////////////////////////////////////////////
+
 	@Test(priority = 1, groups = "DataAccessLocation")
 	public void getAllLocationsOrderedSuccess() throws DatasetException {
 		Location l = new Location();
@@ -78,6 +82,10 @@ public class DataAccessObjectsIT {
 	public void getOneLocationNameLocationNotExists() throws DatasetException {
 		assertNull(dataAccess.getOneLocation("Standort"));
 	}
+
+	// ////////////////////////////////////////////////////////////////////////////////////
+	// Integration Room
+	// ////////////////////////////////////////////////////////////////////////////////////
 
 	@Test(priority = 1, groups = "DataAccessRoom", dependsOnGroups = "DataAccessLocation")
 	public void getOneLocationRoomSuccess() throws DatasetException {
@@ -166,6 +174,10 @@ public class DataAccessObjectsIT {
 		assertTrue(purposes.contains("Musikzimmer"));
 	}
 
+	// ////////////////////////////////////////////////////////////////////////////////////
+	// Integration ActivityType
+	// ////////////////////////////////////////////////////////////////////////////////////
+
 	@Test(priority = 1, groups = "DataAccessActivityType", dependsOnGroups = "DataAccessRoom")
 	public void getAllActivityTypesSuccess() throws DatasetException {
 		LessonType l = new LessonType();
@@ -237,6 +249,10 @@ public class DataAccessObjectsIT {
 		assertTrue(result.contains(dataAccess.getOneActivityType("Mathe")));
 	}
 
+	// ////////////////////////////////////////////////////////////////////////////////////
+	// Integration Employee
+	// ////////////////////////////////////////////////////////////////////////////////////
+	
 	@Test(priority = 1, groups = "DataAccessEmployee", dependsOnGroups = "DataAccessActivityType")
 	public void getAllEmployeesForActivityTypeSuccess() throws DatasetException {
 		// Lehrerin 1
@@ -344,6 +360,10 @@ public class DataAccessObjectsIT {
 		assertEquals(dataAccess.getOneEmployee("MUS"), list.get(0));
 	}
 
+	// ////////////////////////////////////////////////////////////////////////////////////
+	// Integration AcademicYear
+	// ////////////////////////////////////////////////////////////////////////////////////
+	
 	@Test(priority = 1, groups = "DataAccessAcademicYear", dependsOnGroups = "DataAccessActivityType")
 	public void getAllAcademicYearsSuccess() throws DatasetException {
 		AcademicYear a = new AcademicYear();
@@ -391,6 +411,10 @@ public class DataAccessObjectsIT {
 		assertNull(a);
 	}
 
+	// ////////////////////////////////////////////////////////////////////////////////////
+	// Integration Schoolclass
+	// ////////////////////////////////////////////////////////////////////////////////////
+	
 	@Test(priority = 1, groups = "DataAccessSchoolclass", dependsOnGroups = "DataAccessAcademicYear")
 	public void getOneAcademicYearSchoolclassSuccess() throws DatasetException {
 		List<AcademicYear> years = dataAccess.getAllAcademicYears();
@@ -499,6 +523,10 @@ public class DataAccessObjectsIT {
 		assertEquals(new Character('a'), list.get(0));
 	}
 
+	// ////////////////////////////////////////////////////////////////////////////////////
+	// Integration Classteam
+	// ////////////////////////////////////////////////////////////////////////////////////
+	
 	@Test(priority = 1, groups = "DataAccessClassteam", dependsOnGroups = "DataAccessSchoolclass")
 	public void getAllClassteamsSuccess() throws DatasetException {
 		Teacher t = (Teacher) dataAccess.getOneEmployee("MEY");
@@ -569,6 +597,10 @@ public class DataAccessObjectsIT {
 		assertNull(c);
 	}
 
+	// ////////////////////////////////////////////////////////////////////////////////////
+	// Integration TravelTimeList
+	// ////////////////////////////////////////////////////////////////////////////////////
+	
 	@Test(priority = 2, groups = "DataAccessTravelTimeList")
 	public void getTravelTimeListNull() throws DatasetException {
 		TravelTimeList list = dataAccess.getTravelTimeList();

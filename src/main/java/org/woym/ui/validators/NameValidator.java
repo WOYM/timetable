@@ -13,13 +13,13 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.h2.util.StringUtils;
 import org.woym.exceptions.DatasetException;
+import org.woym.messages.GenericErrorMessage;
+import org.woym.messages.MessageHelper;
 import org.woym.objects.ActivityType;
 import org.woym.objects.Employee;
 import org.woym.objects.Location;
 import org.woym.objects.Room;
 import org.woym.persistence.DataAccess;
-import org.woym.messages.GenericErrorMessage;
-import org.woym.messages.MessageHelper;
 
 /**
  * <h1>LocationNameValidator</h1>

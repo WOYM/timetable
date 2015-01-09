@@ -17,6 +17,15 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
 
 	<!-- Name -->
 	<display-name>WOYM - Timetable</display-name>
+	<listener>
+		<listener-class>org.woym.config.ConfigServletListener</listener-class>
+	</listener>
+	<listener>
+		<listener-class>org.woym.persistence.DataBaseServletListener</listener-class>
+	</listener>
+	<listener>
+		<listener-class>org.woym.logic.BackupRestoreHandler</listener-class>
+	</listener>
 
 	<!-- Welcome-Files -->
 	<welcome-file-list>
@@ -29,16 +38,10 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
 		<servlet-class>javax.faces.webapp.FacesServlet</servlet-class>
 		<load-on-startup>1</load-on-startup>
 	</servlet>
-	<servlet>
-		<servlet-name>Config Servlet</servlet-name>
-		<servlet-class>org.woym.config.ConfigServlet</servlet-class>
-		<load-on-startup>2</load-on-startup>
-	</servlet>
-	<servlet>
-		<servlet-name>DataBase Startup Servlet</servlet-name>
-		<servlet-class>org.woym.persistence.DataBaseStartupServlet</servlet-class>
-		<load-on-startup>3</load-on-startup>
-	</servlet>
+	<!-- <servlet> <servlet-name>Config Servlet</servlet-name> <servlet-class>org.woym.config.ConfigServlet</servlet-class> 
+		<load-on-startup>2</load-on-startup> </servlet> <servlet> <servlet-name>DataBase 
+		Startup Servlet</servlet-name> <servlet-class>org.woym.persistence.DataBaseStartupServlet</servlet-class> 
+		<load-on-startup>3</load-on-startup> </servlet> -->
 
 	<!-- Servlet-Mapping -->
 	<servlet-mapping>
