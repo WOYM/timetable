@@ -20,7 +20,9 @@ public enum GenericSuccessMessage {
 	 * Backups erfolgreich war.
 	 */
 	RESTORE_SUCCESS("Backup-Wiederherstellung erfolgreich",
-			"Das Datenbank-Backup wurde erfolgreich wiederhergestellt.");
+			"Das Datenbank-Backup wurde erfolgreich wiederhergestellt."),
+	
+	VALIDATE_SUCCESS("Aktivität valide", "Valide.");
 
 	/**
 	 * Die Zusammenfassung der Erfolgsmeldung.
