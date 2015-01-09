@@ -1,5 +1,19 @@
 package org.woym.controller.manage;
 
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+import javax.annotation.PostConstruct;
+import javax.faces.application.FacesMessage;
+import javax.faces.bean.ManagedBean;
+import javax.faces.bean.ViewScoped;
+import javax.faces.context.FacesContext;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.primefaces.context.RequestContext;
 import org.woym.config.Config;
 import org.woym.config.DefaultConfigEnum;
 import org.woym.exceptions.DatasetException;
@@ -17,20 +31,6 @@ import org.woym.objects.Location;
 import org.woym.objects.Room;
 import org.woym.objects.spec.IMemento;
 import org.woym.persistence.DataAccess;
-
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.annotation.PostConstruct;
-import javax.faces.application.FacesMessage;
-import javax.faces.bean.ManagedBean;
-import javax.faces.bean.ViewScoped;
-import javax.faces.context.FacesContext;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.primefaces.context.RequestContext;
 
 /**
  * <h1>LessonTypeController</h1>
@@ -62,6 +62,9 @@ public class LessonTypeController implements Serializable {
 	private boolean hideDeletionDialog;
 	private boolean hide;
 
+	private ColorEnum color;
+	private List<ColorEnum> colors = Arrays.asList(ColorEnum.values());
+
 	@PostConstruct
 	public void init() {
 		lessonType = new LessonType();
@@ -69,6 +72,7 @@ public class LessonTypeController implements Serializable {
 		hideDeletionDialog = Config
 				.getBooleanValue(DefaultConfigEnum.HIDE_ACTIVITYTYPE_DELETION_DIALOG);
 		hide = hideDeletionDialog;
+		color = ColorEnum.YELLOW;
 	}
 
 	/**
@@ -214,6 +218,22 @@ public class LessonTypeController implements Serializable {
 
 	public void setHideDeletionDialog(boolean hideDeletionDialog) {
 		this.hideDeletionDialog = hideDeletionDialog;
+	}
+
+	public ColorEnum getColor() {
+		return color;
+	}
+
+	public void setColor(ColorEnum color) {
+		this.color = color;
+	}
+
+	public List<ColorEnum> getColors() {
+		return colors;
+	}
+
+	public void setColors(List<ColorEnum> colors) {
+		this.colors = colors;
 	}
 
 	private int getTypicalDuration() {

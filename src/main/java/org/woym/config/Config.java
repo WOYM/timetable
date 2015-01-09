@@ -112,11 +112,42 @@ public final class Config {
 	 */
 	public static boolean updateProperty(String propKey, String propValue) {
 		if (propertiesConfig.containsKey(propKey)) {
+			if (propertiesConfig.getString(propKey).equals(propValue)) {
+				return true;
+			}
 			propertiesConfig.clearProperty(propKey);
 			propertiesConfig.addProperty(propKey, propValue);
 			return true;
 		}
 		return false;
+	}
+
+	/**
+	 * Fügt der PropertiesConfiguration eine neue Property aus dem übergebenem
+	 * Schlüssel und Wert hinzu, sofern der Schlüssel noch nicht vorhanden ist.
+	 * 
+	 * @param propKey
+	 *            - Property Schlüssel
+	 * @param propValue
+	 *            - Property Wert
+	 * @return {@code true}, wenn hinzugefügt, sonst {@code false}
+	 */
+	public static boolean addProperty(String propKey, String propValue) {
+		if (!propertiesConfig.containsKey(propKey)) {
+			propertiesConfig.addProperty(propKey, propValue);
+			return true;
+		}
+		return false;
+	}
+
+	/**
+	 * Entfernt den Property-Eintrag für den übergebenen Property-Key.
+	 * 
+	 * @param propKey
+	 *            - Schlüssel der zu entfernden Property
+	 */
+	public static void clearProperty(String propKey) {
+		propertiesConfig.clearProperty(propKey);
 	}
 
 	/**
@@ -198,5 +229,4 @@ public final class Config {
 					e);
 		}
 	}
-
 }
