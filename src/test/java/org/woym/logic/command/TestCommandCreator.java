@@ -249,10 +249,10 @@ public class TestCommandCreator extends PowerMockTestCase {
 		MacroCommand macro = CommandCreator.getInstance().createDeleteCommand(
 				location);
 
-		AssertJUnit.assertEquals(11, macro.getCommands().size());
+		AssertJUnit.assertEquals(12, macro.getCommands().size());
 
 		AssertJUnit
-				.assertTrue(macro.getCommands().get(10) instanceof DeleteCommand);
+				.assertTrue(macro.getCommands().get(11) instanceof DeleteCommand);
 
 	}
 
