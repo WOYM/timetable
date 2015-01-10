@@ -10,6 +10,7 @@ import javax.faces.application.FacesMessage;
 
 import org.woym.config.Config;
 import org.woym.config.DefaultConfigEnum;
+import org.woym.controller.manage.ConfigController;
 import org.woym.exceptions.DatasetException;
 import org.woym.logic.BackupRestoreHandler;
 import org.woym.logic.CommandHandler;
@@ -23,6 +24,13 @@ import org.woym.objects.Activity;
 import org.woym.objects.Weekday;
 import org.woym.persistence.DataAccess;
 
+/**
+ * Eine Hilfsklasse, die Methoden für {@linkplain ConfigController}
+ * bereitstellt.
+ * 
+ * @author Adrian
+ *
+ */
 public abstract class ConfigControllerUtil {
 
 	/**
@@ -64,8 +72,7 @@ public abstract class ConfigControllerUtil {
 	public static boolean disableBackups() {
 		boolean works = true;
 		if (Config.getSingleStringValue(DefaultConfigEnum.BACKUP_NEXTDATE) != null) {
-			Config.clearProperty(DefaultConfigEnum.BACKUP_NEXTDATE
-					.getPropKey());
+			Config.clearProperty(DefaultConfigEnum.BACKUP_NEXTDATE.getPropKey());
 		}
 
 		// Um zu verhindern, dass der Scheduler neu gestartet wird, wenn die
@@ -94,12 +101,11 @@ public abstract class ConfigControllerUtil {
 	public static boolean minuteBackups(int interval) {
 		boolean works = true;
 		if (Config.getSingleStringValue(DefaultConfigEnum.BACKUP_NEXTDATE) != null) {
-			Config.clearProperty(DefaultConfigEnum.BACKUP_NEXTDATE
-					.getPropKey());
+			Config.clearProperty(DefaultConfigEnum.BACKUP_NEXTDATE.getPropKey());
 		}
 		int currentInterval = Config
 				.getSingleIntValue(DefaultConfigEnum.BACKUP_INTERVAL);
-		
+
 		// Um zu verhindern, dass der Scheduler neu gestartet wird, wenn die
 		// Einstellungen nicht geändert wurden
 		if (currentInterval <= 0 || currentInterval >= 1440) {

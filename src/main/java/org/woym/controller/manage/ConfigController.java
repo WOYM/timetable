@@ -44,6 +44,10 @@ public class ConfigController implements Serializable {
 
 	private static final int MAX_DAY_VALUE = 30;
 
+	public static final String DISABLED_BACKUPS = "disabled";
+	public static final String MINUTE_BACKUPS = "minutes";
+	public static final String DAILY_BACKUPS = "daily";
+
 	private List<Weekday> weekdays = Arrays.asList(Weekday.values());
 	private List<Weekday> selectedWeekdays;
 
@@ -219,12 +223,12 @@ public class ConfigController implements Serializable {
 	 */
 	private void selectBackupSettings() throws ParseException {
 		if (backupIntervalValue == 0) {
-			intervalType = "disabled";
+			intervalType = DISABLED_BACKUPS;
 		} else if (backupIntervalValue < 1440) {
-			intervalType = "minutes";
+			intervalType = MINUTE_BACKUPS;
 			backupInterval = backupIntervalValue;
 		} else {
-			intervalType = "daily";
+			intervalType = DAILY_BACKUPS;
 			selectedDayValue = (backupIntervalValue / 1440);
 			if (selectedDayValue > MAX_DAY_VALUE) {
 				selectedDayValue = MAX_DAY_VALUE;
@@ -242,10 +246,10 @@ public class ConfigController implements Serializable {
 	 * @return {@code false}, wenn eine Aktualisierung fehlschlägt
 	 */
 	private boolean updateBackupInterval() {
-		if (intervalType.equals("disabled")) {
+		if (intervalType.equals(DISABLED_BACKUPS)) {
 			return ConfigControllerUtil.disableBackups();
 		}
-		if (intervalType.equals("minutes")) {
+		if (intervalType.equals(MINUTE_BACKUPS)) {
 			return ConfigControllerUtil.minuteBackups(backupInterval);
 		} else {
 			return ConfigControllerUtil.dailyBackups(selectedDayValue,
@@ -263,7 +267,15 @@ public class ConfigController implements Serializable {
 	 */
 	private boolean validateBackupSettings() {
 		boolean works = true;
-		if (intervalType.equals("minutes")
+		if (intervalType == null) {
+			FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_ERROR,
+					"Keine Backup-Einstellung gewählt",
+					"Wählen Sie eine Backup-Einstellung aus.");
+			FacesContext.getCurrentInstance().addMessage(null, msg);
+			return false;
+		}
+		
+		if (intervalType.equals(MINUTE_BACKUPS)
 				&& (backupInterval < MIN_SPINNER_VALUE || backupInterval > MAX_SPINNER_VALUE)) {
 			works = false;
 			FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_ERROR,
@@ -273,7 +285,7 @@ public class ConfigController implements Serializable {
 							+ " an.");
 			FacesContext.getCurrentInstance().addMessage(null, msg);
 		}
-		if (intervalType.equals("daily")) {
+		if (intervalType.equals(DAILY_BACKUPS)) {
 			if (selectedDayValue > MAX_DAY_VALUE
 					|| selectedDayValue < MIN_SPINNER_VALUE) {
 				works = false;
@@ -457,6 +469,18 @@ public class ConfigController implements Serializable {
 
 	public void setSelectedDayValue(int selectedDayValue) {
 		this.selectedDayValue = selectedDayValue;
+	}
+
+	public String getDisabledBackups() {
+		return DISABLED_BACKUPS;
+	}
+
+	public String getMinuteBackups() {
+		return MINUTE_BACKUPS;
+	}
+
+	public String getDailyBackups() {
+		return DAILY_BACKUPS;
 	}
 
 }
