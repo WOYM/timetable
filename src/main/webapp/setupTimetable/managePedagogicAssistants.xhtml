@@ -60,6 +60,9 @@
 					<p:column headerText="Wochenstunden">
 						<h:outputText value="#{pedagogicAssistant.hoursPerWeek} Stunden" />
 					</p:column>
+					<p:column headerText="Verteilte Stunden">
+						<h:outputText value="#{pedagogicAssistant.allocatedHours} Stunden" />
+					</p:column>
 				</p:dataTable>
 
 				<p:fieldset legend="Information"
@@ -137,7 +140,9 @@
 						</p:inputText>
 						<p:outputLabel for="addWeekhours" value="Wochenstunden:" />
 						<p:spinner id="addWeekhours" min="0" max="100" stepFactor="0.01"
-							value="#{pedagogicAssistantController.pedagogicAssistant.hoursPerWeek}" />
+							value="#{pedagogicAssistantController.pedagogicAssistant.hoursPerWeek}" >
+							<p:ajax event="keyup" update="addWeekhours"/>
+							</p:spinner>
 					</h:panelGrid>
 					<p:fieldset legend="Schulfächer" toggleable="true"
 						toggleSpeed="500" collapsed="true">
@@ -202,7 +207,9 @@
 						</p:inputText>
 						<p:outputLabel for="editWeekhours" value="Wochenstunden:" />
 						<p:spinner id="editWeekhours" min="0" max="100" stepFactor="0.01"
-							value="#{pedagogicAssistantController.pedagogicAssistant.hoursPerWeek}" />
+							value="#{pedagogicAssistantController.pedagogicAssistant.hoursPerWeek}" >
+							<p:ajax event="keyup" update="editWeekhours"/>
+							</p:spinner>
 					</h:panelGrid>
 					<p:fieldset legend="Schulfächer" toggleable="true"
 						toggleSpeed="500" collapsed="true">

@@ -118,7 +118,9 @@
 					<p:outputLabel for="generateAmount" value="Anzahl" />
 					<p:spinner id="generateAmount"
 						max="#{academicYearAndClassController.maxGeneratorSize}" min="1"
-						value="#{academicYearAndClassController.generatorSize}" />
+						value="#{academicYearAndClassController.generatorSize}">
+						<p:ajax event="keyup" update="generateAmount" />
+					</p:spinner>
 				</h:panelGrid>
 				<p:outputPanel id="generateAcademicYearsButton"
 					style="float:right;margin-top:10px;">
@@ -130,6 +132,10 @@
 				<p:separator style="margin-top:50px;" />
 				<h:outputText
 					value="Die generierten Jahrgänge werden an den höchsten bekannten Jahrgang angehängt." />
+				<p:defaultCommand target="generateAcademicYearsButton" />
+				<p:outputPanel style="clear:right; margin-top:60px;">
+					<p:messages showDetail="true" autoUpdate="true" closable="false" />
+				</p:outputPanel>
 			</p:dialog>
 
 			<!-- Confirm-Dialog -->

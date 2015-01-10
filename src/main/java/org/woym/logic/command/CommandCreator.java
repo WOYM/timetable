@@ -19,6 +19,8 @@ import org.woym.objects.Location;
 import org.woym.objects.Room;
 import org.woym.objects.Schoolclass;
 import org.woym.objects.Teacher;
+import org.woym.objects.TravelTimeList;
+import org.woym.objects.TravelTimeList.Edge;
 import org.woym.objects.spec.IActivityObject;
 import org.woym.objects.spec.IMemento;
 import org.woym.persistence.DataAccess;
@@ -120,6 +122,11 @@ public class CommandCreator {
 						commands.addAll(relationActivity(r));
 						commands.addAll(relationRoom(r, true));
 					}
+					IMemento memento = TravelTimeList.getInstance().createMemento();
+					for(Edge e: TravelTimeList.getInstance().getTravelTimes((Location) entity)){
+						TravelTimeList.getInstance().remove(e);
+					}
+					commands.addLast(new UpdateCommand<Entity>(TravelTimeList.getInstance(), memento));
 					commands.addLast(new DeleteCommand<Entity>(entity));
 				} else {
 					throw new UnsupportedOperationException(

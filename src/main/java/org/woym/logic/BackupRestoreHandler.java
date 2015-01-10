@@ -151,8 +151,8 @@ public class BackupRestoreHandler implements ServletContextListener {
 
 				// Absolute Differenz zwischen aktuellem Datum und nächstem
 				// Backup-Datum
-				final long initialDelay = Math.abs(currentDate.getTime()
-						- nextDate.getTime());
+				final long initialDelay = Math.abs(Calendar.getInstance()
+						.getTimeInMillis() - nextDate.getTime());
 				// ScheduledExecutorService starten
 
 				final int interval = backupInterval;

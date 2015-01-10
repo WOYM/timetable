@@ -10,6 +10,7 @@ import javax.persistence.Id;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.eclipse.persistence.annotations.PrivateOwned;
 import org.woym.exceptions.DatasetException;
 import org.woym.objects.spec.IMemento;
 import org.woym.objects.spec.IMementoObject;
@@ -45,6 +46,7 @@ public final class TravelTimeList extends org.woym.objects.Entity implements
 	 * Die Liste von Kanten.
 	 */
 	@ElementCollection
+	@PrivateOwned
 	private List<Edge> edges = new ArrayList<Edge>();
 
 	/**
@@ -92,6 +94,11 @@ public final class TravelTimeList extends org.woym.objects.Entity implements
 			throw new IllegalArgumentException();
 		}
 		this.edges = edges;
+	}
+	
+	@Override
+	public String toString(){
+		return "Wegzeiten-Liste";
 	}
 
 	/**

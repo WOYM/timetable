@@ -129,7 +129,9 @@
 						</p:inputText>
 						<p:outputLabel for="addDuration" value="Typische Dauer (Minuten):" />
 						<p:spinner id="addDuration" min="0" max="1000"
-							value="#{lessonTypeController.lessonType.typicalDuration}" />
+							value="#{lessonTypeController.lessonType.typicalDuration}">
+							<p:ajax event="keyup" update="addDuration"/>
+						</p:spinner>
 						<p:outputLabel value="Räume:" />
 						<p:outputPanel>
 							<p:selectCheckboxMenu id="addRooms"
@@ -178,7 +180,9 @@
 						<p:outputLabel for="editDuration"
 							value="Typische Dauer (Minuten):" />
 						<p:spinner id="editDuration" min="0" max="1000"
-							value="#{lessonTypeController.lessonType.typicalDuration}" />
+							value="#{lessonTypeController.lessonType.typicalDuration}">
+							<p:ajax event="keyup" update="editDuration"/>
+						</p:spinner>
 						<p:outputLabel value="Räume:" />
 						<p:outputPanel>
 							<p:selectCheckboxMenu id="editRooms"
