@@ -43,8 +43,8 @@
         <converter-class>org.woym.ui.converters.RoomNameConverter</converter-class>
     </converter>
     <converter>
-        <converter-id>TeacherNameConverter</converter-id>
-        <converter-class>org.woym.ui.converters.TeacherNameConverter</converter-class>
+        <converter-id>EmployeeNameConverter</converter-id>
+        <converter-class>org.woym.ui.converters.EmployeeNameConverter</converter-class>
     </converter>
     <converter>
         <converter-id>AcademicYearNameConverter</converter-id>

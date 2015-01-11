@@ -52,7 +52,7 @@ public class BackupRestoreHandler implements ServletContextListener {
 	 * Der Logger.
 	 */
 	private static final Logger LOGGER = LogManager
-			.getLogger(BackupRestoreHandler.class);
+			.getLogger(BackupRestoreHandler.class.getName());
 
 	/**
 	 * Der ScheduledExecutorService, welcher die automatischen Backups umsetzt.

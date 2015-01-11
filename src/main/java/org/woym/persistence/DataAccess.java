@@ -1046,9 +1046,8 @@ public class DataAccess implements IDataAccess, Observer {
 		}
 		try {
 			final Query query = em
-					.createQuery("SELECT c FROM Classteam c LEFT JOIN c.employees e WHERE ?1 = c.teacher.id OR e = ?2");
-			query.setParameter(1, employee.getId());
-			query.setParameter(2, employee);
+					.createQuery("SELECT c FROM Classteam c WHERE ?1 MEMBER OF c.employees");
+			query.setParameter(1, employee);
 			return query.getResultList();
 		} catch (Exception e) {
 			LOGGER.error("Exception while getting all classteams for employee "

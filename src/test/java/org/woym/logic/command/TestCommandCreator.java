@@ -259,14 +259,21 @@ public class TestCommandCreator extends PowerMockTestCase {
 	@Test
 	public void testPedagogicAssistant() throws Exception {
 		IMemento teamMemento = Mockito
-				.mock(org.woym.objects.Employee.Memento.class);
+				.mock(org.woym.objects.Classteam.Memento.class);
 		List<Classteam> classteams = Arrays.asList(team1, team1);
 
 		Mockito.when(
 				DataAccess.getInstance().getAllClassteams(pedagogicAssistant))
 				.thenReturn(classteams);
 		Mockito.when(team1.createMemento()).thenReturn(
-				(org.woym.objects.Employee.Memento) teamMemento);
+				(org.woym.objects.Classteam.Memento) teamMemento);
+
+		List<Employee> employees = new ArrayList<Employee>();
+		employees.add(teacher);
+		employees.add(pedagogicAssistant);
+
+		Mockito.when(team1.getEmployees()).thenReturn(employees);
+		Mockito.when(team1.teacherLeft()).thenReturn(true);
 
 		MacroCommand macro = CommandCreator.getInstance().createDeleteCommand(
 				pedagogicAssistant);
@@ -298,14 +305,23 @@ public class TestCommandCreator extends PowerMockTestCase {
 				schoolclass);
 		Teacher otherTeatcher = Mockito.mock(Teacher.class);
 
+		List<Employee> teacher1 = new ArrayList<Employee>();
+		teacher1.add(teacher);
+
+		List<Employee> teacher2 = new ArrayList<Employee>();
+		teacher2.add(otherTeatcher);
+		teacher2.add(teacher);
+
 		Mockito.when(DataAccess.getInstance().getAllClassteams(teacher))
 				.thenReturn(classteams);
 		Mockito.when(team1.createMemento()).thenReturn(
 				(org.woym.objects.Employee.Memento) teamMemento);
 		Mockito.when(team2.createMemento()).thenReturn(
 				(org.woym.objects.Employee.Memento) teamMemento);
-		Mockito.when(team1.getTeacher()).thenReturn(otherTeatcher);
-		Mockito.when(team2.getTeacher()).thenReturn(teacher);
+		Mockito.when(team1.getEmployees()).thenReturn(teacher2);
+		Mockito.when(team2.getEmployees()).thenReturn(teacher1);
+		Mockito.when(team1.teacherLeft()).thenReturn(true);
+		Mockito.when(team2.teacherLeft()).thenReturn(false);
 
 		Mockito.when(DataAccess.getInstance().getAllSchoolclasses(teacher))
 				.thenReturn(schoolclasses);

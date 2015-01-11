@@ -112,6 +112,7 @@
 							<f:validator validatorId="org.woym.NameValidator" />
 							<f:attribute name="validateBean"
 								value="#{locationController.location}" />
+							<f:validateLength maximum="255" />
 						</p:inputText>
 					</h:panelGrid>
 					<p:outputPanel id="addLocationButton"
@@ -144,6 +145,7 @@
 							<f:validator validatorId="org.woym.NameValidator" />
 							<f:attribute name="validateBean"
 								value="#{locationController.location}" />
+							<f:validateLength maximum="255" />
 						</p:inputText>
 					</h:panelGrid>
 					<p:outputPanel id="editLocationButton"
@@ -197,14 +199,14 @@
 							update="travelTimePanel,travelTimeTable" />
 					</h:panelGrid>
 					<p:watermark for="travelTime" value="Wegzeit in Minuten" />
-					
+
 					<p:contextMenu id="travelTimeContext" for="travelTimeTable">
-						<p:menuitem value="Löschen"
-							update="travelTimeTable" icon="ui-icon-close" process="travelTimeTable,@this"
+						<p:menuitem value="Löschen" update="travelTimeTable"
+							icon="ui-icon-close" process="travelTimeTable,@this"
 							action="#{locationController.deleteTravelTime}">
 						</p:menuitem>
 					</p:contextMenu>
-					
+
 					<h:panelGrid columns="1">
 						<p:dataTable emptyMessage="Keine Wegzeiten vorhanden"
 							id="travelTimeTable" var="travelTime"

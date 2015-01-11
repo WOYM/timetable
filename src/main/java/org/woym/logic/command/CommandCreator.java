@@ -122,11 +122,14 @@ public class CommandCreator {
 						commands.addAll(relationActivity(r));
 						commands.addAll(relationRoom(r, true));
 					}
-					IMemento memento = TravelTimeList.getInstance().createMemento();
-					for(Edge e: TravelTimeList.getInstance().getTravelTimes((Location) entity)){
+					IMemento memento = TravelTimeList.getInstance()
+							.createMemento();
+					for (Edge e : TravelTimeList.getInstance().getTravelTimes(
+							(Location) entity)) {
 						TravelTimeList.getInstance().remove(e);
 					}
-					commands.addLast(new UpdateCommand<Entity>(TravelTimeList.getInstance(), memento));
+					commands.addLast(new UpdateCommand<Entity>(TravelTimeList
+							.getInstance(), memento));
 					commands.addLast(new DeleteCommand<Entity>(entity));
 				} else {
 					throw new UnsupportedOperationException(
@@ -275,15 +278,13 @@ public class CommandCreator {
 				employee);
 		for (Classteam c : classteams) {
 			IMemento memento = c.createMemento();
-
-			if (employee instanceof Teacher) {
-				if (c.getTeacher().equals(employee)) {
-					macro.addLast(new DeleteCommand<Entity>(c));
-					continue;
-				}
-			}
 			c.remove(employee);
-			macro.addLast(new UpdateCommand<Entity>(c, memento));
+			if (!c.teacherLeft()) {
+				c.setMemento(memento);
+				macro.addLast(new DeleteCommand<Entity>(c));
+			} else {
+				macro.addLast(new UpdateCommand<Entity>(c, memento));
+			}
 		}
 
 		// Referenzen bei den Schulklassen auflösen, sofern der übergebene

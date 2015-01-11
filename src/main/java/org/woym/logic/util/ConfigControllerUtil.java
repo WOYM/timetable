@@ -5,9 +5,12 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import javax.faces.application.FacesMessage;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.woym.config.Config;
 import org.woym.config.DefaultConfigEnum;
 import org.woym.controller.manage.ConfigController;
@@ -32,6 +35,9 @@ import org.woym.persistence.DataAccess;
  *
  */
 public abstract class ConfigControllerUtil {
+
+	private static final Logger LOGGER = LogManager
+			.getLogger(ConfigControllerUtil.class.getName());
 
 	/**
 	 * Löscht alle vorhandenen Aktivitäten und gibt ein entsprechendes
@@ -133,31 +139,51 @@ public abstract class ConfigControllerUtil {
 	 */
 	public static boolean dailyBackups(int selectedDayValue, Date selectedTime) {
 		boolean works = true;
-		SimpleDateFormat df = new SimpleDateFormat("dd.MM.yyy");
-		Date startDate = Calendar.getInstance().getTime();
-		if (Config.getSingleStringValue(DefaultConfigEnum.BACKUP_NEXTDATE) == null) {
-			works = Config.addProperty(
-					DefaultConfigEnum.BACKUP_NEXTDATE.getPropKey(),
-					df.format(startDate))
-					&& works;
-		} else {
-			works = Config.updateProperty(
-					DefaultConfigEnum.BACKUP_NEXTDATE.getPropKey(),
-					df.format(startDate))
-					&& works;
-		}
-		int backupIntervalValue = selectedDayValue * 1440;
-		works = Config.updateProperty(
-				DefaultConfigEnum.BACKUP_INTERVAL.getPropKey(),
-				String.valueOf(backupIntervalValue))
-				&& works;
+		boolean updated = false;
+		try {
+			SimpleDateFormat day = new SimpleDateFormat("dd.MM.yyy");
+			SimpleDateFormat time = new SimpleDateFormat("HH:mm");
+			Date nextDate = new Date(Calendar.getInstance().getTimeInMillis()
+					+ TimeUnit.DAYS.toMillis(selectedDayValue));
 
-		df = new SimpleDateFormat("HH:mm");
-		works = Config.updateProperty(
-				DefaultConfigEnum.BACKUP_TIME.getPropKey(),
-				df.format(selectedTime))
-				&& works;
-		BackupRestoreHandler.restartScheduler();
+			long backupInterval = TimeUnit.DAYS.toMinutes(selectedDayValue);
+
+			if (Config.getSingleIntValue(DefaultConfigEnum.BACKUP_INTERVAL) != backupInterval) {
+				works = Config.updateProperty(
+						DefaultConfigEnum.BACKUP_INTERVAL.getPropKey(),
+						String.valueOf(backupInterval))
+						&& works;
+				updated = true;
+			}
+
+			String timeString = time.format(selectedTime);
+			if (!Config.getSingleStringValue(DefaultConfigEnum.BACKUP_TIME)
+					.equals(timeString)) {
+				works = Config.updateProperty(
+						DefaultConfigEnum.BACKUP_TIME.getPropKey(), timeString)
+						&& works;
+				updated = true;
+			}
+
+			if (Config.getSingleStringValue(DefaultConfigEnum.BACKUP_NEXTDATE) == null) {
+				works = Config.addProperty(
+						DefaultConfigEnum.BACKUP_NEXTDATE.getPropKey(),
+						day.format(nextDate))
+						&& works;
+			} else if (updated) {
+				works = Config.updateProperty(
+						DefaultConfigEnum.BACKUP_NEXTDATE.getPropKey(),
+						day.format(nextDate))
+						&& works;
+			}
+			
+			if (updated) {
+				BackupRestoreHandler.restartScheduler();
+			}
+		} catch (Exception e) {
+			LOGGER.error(e);
+			return false;
+		}
 		return works;
 	}
 
@@ -288,7 +314,7 @@ public abstract class ConfigControllerUtil {
 			return true;
 
 		} catch (Exception e) {
-			e.printStackTrace();
+			LOGGER.error(e);
 			return false;
 		}
 	}

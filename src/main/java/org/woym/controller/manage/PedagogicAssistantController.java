@@ -47,7 +47,7 @@ public class PedagogicAssistantController implements Serializable {
 	private static final long serialVersionUID = 9002430508451329221L;
 
 	private static Logger LOGGER = LogManager
-			.getLogger(PedagogicAssistantController.class);
+			.getLogger(PedagogicAssistantController.class.getName());
 
 	private DataAccess dataAccess = DataAccess.getInstance();
 
@@ -62,12 +62,16 @@ public class PedagogicAssistantController implements Serializable {
 	private boolean hideDeletionDialog;
 	private boolean hide;
 
+	private int hourlySettlement;
+
 	@PostConstruct
 	public void init() {
 		pedagogicAssistant = new PedagogicAssistant();
 		hideDeletionDialog = Config
 				.getBooleanValue(DefaultConfigEnum.HIDE_PA_DELETION_DIALOG);
 		hide = hideDeletionDialog;
+		hourlySettlement = Config
+				.getSingleIntValue(DefaultConfigEnum.PEDAGOGIC_ASSISTANT_HOURLY_SETTLEMENT);
 	}
 
 	/**
@@ -217,6 +221,10 @@ public class PedagogicAssistantController implements Serializable {
 
 	public void setHideDeletionDialog(boolean hideDeletionDialog) {
 		this.hideDeletionDialog = hideDeletionDialog;
+	}
+
+	public int getHourlySettlement() {
+		return hourlySettlement;
 	}
 
 }

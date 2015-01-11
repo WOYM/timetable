@@ -49,7 +49,7 @@ public class LocationController implements Serializable {
 	private DataAccess dataAccess = DataAccess.getInstance();
 
 	private static Logger LOGGER = LogManager
-			.getLogger(LocationController.class);
+			.getLogger(LocationController.class.getName());
 
 	private CommandHandler commandHandler = CommandHandler.getInstance();
 	private CommandCreator commandCreator = CommandCreator.getInstance();

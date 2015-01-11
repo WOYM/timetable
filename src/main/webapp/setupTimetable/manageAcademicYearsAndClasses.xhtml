@@ -219,7 +219,7 @@
 						<p:outputLabel for="addTeacher" value="Klassenlehrkraft:" />
 						<p:selectOneMenu id="addTeacher"
 							value="#{academicYearAndClassController.schoolclass.teacher}"
-							converter="TeacherNameConverter">
+							converter="EmployeeNameConverter">
 							<p:ajax event="change" process="@this" />
 							<f:selectItem value="#{null}" itemLabel="Lehrkraft" />
 							<f:selectItems value="#{teacherController.teachers}"
@@ -290,7 +290,7 @@
 						<p:outputLabel for="editTeacher" value="Klassenlehrkraft:" />
 						<p:selectOneMenu id="editTeacher"
 							value="#{academicYearAndClassController.schoolclass.teacher}"
-							converter="TeacherNameConverter">
+							converter="EmployeeNameConverter">
 							<p:ajax event="change" process="@this" />
 							<f:selectItem value="#{null}" itemLabel="Lehrkraft" />
 							<f:selectItems value="#{teacherController.teachers}"
