@@ -2,8 +2,8 @@ package org.woym.persistence.spec;
 
 import java.util.List;
 
-import org.woym.exceptions.DatasetException;
-import org.woym.objects.Room;
+import org.woym.common.exceptions.DatasetException;
+import org.woym.common.objects.Room;
 
 /**
  * Dieses Interface beschreibt Methoden, die von einem {@linkplain Room}

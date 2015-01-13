@@ -4,28 +4,28 @@
 	xsi:schemaLocation="http://java.sun.com/xml/ns/persistence http://java.sun.com/xml/ns/persistence/persistence_2_0.xsd">
 	<persistence-unit name="timetable" transaction-type="RESOURCE_LOCAL">
 		<provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
-		<class>org.woym.objects.AcademicYear</class>
-		<class>org.woym.objects.Activity</class>
-		<class>org.woym.objects.ActivityType</class>
-		<class>org.woym.objects.ChargeableCompensation</class>
-		<class>org.woym.objects.CompoundLesson</class>
-		<class>org.woym.objects.Classteam</class>
-		<class>org.woym.objects.Employee</class>
-		<class>org.woym.objects.EmployeeTimePeriods</class>
-		<class>org.woym.objects.Lesson</class>
-		<class>org.woym.objects.LessonType</class>
-		<class>org.woym.objects.Location</class>
-		<class>org.woym.objects.Meeting</class>
-		<class>org.woym.objects.MeetingType</class>
-		<class>org.woym.objects.Pause</class>
-		<class>org.woym.objects.PedagogicAssistant</class>
-		<class>org.woym.objects.Project</class>
-		<class>org.woym.objects.ProjectType</class>
-		<class>org.woym.objects.Room</class>
-		<class>org.woym.objects.Schoolclass</class>
-		<class>org.woym.objects.Teacher</class>
-		<class>org.woym.objects.TimePeriod</class>
-		<class>org.woym.objects.TravelTimeList</class>
+		<class>org.woym.common.objects.AcademicYear</class>
+		<class>org.woym.common.objects.Activity</class>
+		<class>org.woym.common.objects.ActivityType</class>
+		<class>org.woym.common.objects.ChargeableCompensation</class>
+		<class>org.woym.common.objects.CompoundLesson</class>
+		<class>org.woym.common.objects.Classteam</class>
+		<class>org.woym.common.objects.Employee</class>
+		<class>org.woym.common.objects.EmployeeTimePeriods</class>
+		<class>org.woym.common.objects.Lesson</class>
+		<class>org.woym.common.objects.LessonType</class>
+		<class>org.woym.common.objects.Location</class>
+		<class>org.woym.common.objects.Meeting</class>
+		<class>org.woym.common.objects.MeetingType</class>
+		<class>org.woym.common.objects.Pause</class>
+		<class>org.woym.common.objects.PedagogicAssistant</class>
+		<class>org.woym.common.objects.Project</class>
+		<class>org.woym.common.objects.ProjectType</class>
+		<class>org.woym.common.objects.Room</class>
+		<class>org.woym.common.objects.Schoolclass</class>
+		<class>org.woym.common.objects.Teacher</class>
+		<class>org.woym.common.objects.TimePeriod</class>
+		<class>org.woym.common.objects.TravelTimeList</class>
 
 
 		<properties>

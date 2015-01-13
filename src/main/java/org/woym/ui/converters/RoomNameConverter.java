@@ -7,9 +7,9 @@ import javax.faces.convert.FacesConverter;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.woym.exceptions.DatasetException;
-import org.woym.objects.Location;
-import org.woym.objects.Room;
+import org.woym.common.exceptions.DatasetException;
+import org.woym.common.objects.Location;
+import org.woym.common.objects.Room;
 import org.woym.persistence.DataAccess;
 
 @FacesConverter("org.woym.RoomNameConverter")

@@ -7,10 +7,10 @@ import org.powermock.modules.testng.PowerMockTestCase;
 import org.testng.AssertJUnit;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
+import org.woym.common.objects.Entity;
 import org.woym.logic.FailureStatus;
 import org.woym.logic.SuccessStatus;
 import org.woym.logic.spec.IStatus;
-import org.woym.objects.Entity;
 
 /**
  * @author JurSch

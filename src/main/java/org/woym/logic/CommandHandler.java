@@ -4,12 +4,12 @@ import java.io.Serializable;
 
 import javax.faces.application.FacesMessage;
 
+import org.woym.common.messages.GenericErrorMessage;
 import org.woym.logic.spec.ICommand;
 import org.woym.logic.spec.ICommandHandler;
 import org.woym.logic.spec.ILimitedQueue;
 import org.woym.logic.spec.IStatus;
 import org.woym.logic.util.LimitedQueue;
-import org.woym.messages.GenericErrorMessage;
 
 /**
  * Klasse zur umsetzung des CommandHandlers nach dem Singleton Muster.

@@ -3,19 +3,19 @@ package org.woym.persistence.spec;
 import java.util.Date;
 import java.util.List;
 
-import org.woym.exceptions.DatasetException;
-import org.woym.objects.Activity;
-import org.woym.objects.CompoundLesson;
-import org.woym.objects.Employee;
-import org.woym.objects.EmployeeTimePeriods;
-import org.woym.objects.Lesson;
-import org.woym.objects.LessonType;
-import org.woym.objects.Meeting;
-import org.woym.objects.MeetingType;
-import org.woym.objects.Room;
-import org.woym.objects.Schoolclass;
-import org.woym.objects.TimePeriod;
-import org.woym.objects.Weekday;
+import org.woym.common.exceptions.DatasetException;
+import org.woym.common.objects.Activity;
+import org.woym.common.objects.CompoundLesson;
+import org.woym.common.objects.Employee;
+import org.woym.common.objects.EmployeeTimePeriods;
+import org.woym.common.objects.Lesson;
+import org.woym.common.objects.LessonType;
+import org.woym.common.objects.Meeting;
+import org.woym.common.objects.MeetingType;
+import org.woym.common.objects.Room;
+import org.woym.common.objects.Schoolclass;
+import org.woym.common.objects.TimePeriod;
+import org.woym.common.objects.Weekday;
 
 /**
  * Dieses Interface beschreibt Methoden, die von einem {@linkplain Activity}

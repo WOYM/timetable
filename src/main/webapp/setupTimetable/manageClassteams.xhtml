@@ -35,29 +35,27 @@
 
 				<!-- Existierende Unterrichtsinhalte -->
 				<p:contextMenu for="classteamTable">
-					<p:menuitem value="Bearbeiten"
+					<p:menuitem value="Bearbeiten" process="classteamTable,@this"
 						actionListener="#{classteamController.doBeforeEdit}"
 						oncomplete="PF('wEditClassteamDialog').show();"
 						icon="ui-icon-pencil" />
 					<p:menuitem value="Löschen" icon="ui-icon-close" update="@form"
 						rendered="#{not classteamController.hideDeletionDialog}"
-						oncomplete="PF('wConfirmClassteamDelete').show();" />
+						oncomplete="PF('wConfirmClassteamDelete').show();"
+						process="classteamTable,@this" />
 					<p:menuitem value="Löschen" icon="ui-icon-close" update="@form"
 						rendered="#{classteamController.hideDeletionDialog}"
-						action="#{classteamController.deleteClassteam}" />
+						action="#{classteamController.deleteClassteam}"
+						process="classteamTable,@this" />
 				</p:contextMenu>
 				<p:dataTable emptyMessage="Keine Klassenteams vorhanden"
 					id="classteamTable" var="classteam"
 					selection="#{classteamController.selectedClassteam}"
 					value="#{classteamController.classteams}" selectionMode="single"
-					rowKey="#{classteam.teacher.symbol}" scrollable="true"
-					scrollHeight="500">
-					<p:column headerText="Lehrkraft">
-						<h:outputText value="#{classteam.teacher.symbol}" />
-					</p:column>
-					<p:column headerText="Weitere Lehrkräfte und päd. Mitarbeiter">
+					rowKey="#{classteam.id}" scrollable="true" scrollHeight="500">
+					<p:column headerText="Lehrkräft und päd. Mitarbeiter">
 						<ui:repeat var="employee" value="#{classteam.employees}">
-							<h:outputText value="#{employee.symbol}" />
+							<h:outputText value="#{employee.symbol}, #{employee.name}" />
 							<br />
 						</ui:repeat>
 					</p:column>
@@ -76,7 +74,7 @@
 				id="confirmClassteamDelete" widgetVar="wConfirmClassteamDelete"
 				showEffect="fade" hideEffect="fade">
 				<p:ajax event="close" update="@form" />
-				<h:panelGrid columns="1">
+				<h:panelGrid id="confirmClassteamDeleteBody" columns="1">
 					<h:outputText
 						value="Sind Sie sicher, dass das Klassenteam gelöscht werden soll?" />
 					<p:spacer height="10" />
@@ -91,7 +89,8 @@
 						<p:commandButton value="Bestätigen"
 							actionListener="#{classteamController.deleteClassteam}"
 							oncomplete="PF('wConfirmClassteamDelete').hide();"
-							styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+							styleClass="ui-confirmdialog-yes" icon="ui-icon-check"
+							process="confirmClassteamDeleteBody,@this" />
 						<p:commandButton value="Abbrechen"
 							oncomplete="PF('wConfirmClassteamDelete').hide();"
 							styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
@@ -110,29 +109,32 @@
 				<p:outputPanel id="addClassteamPanel">
 					<b><h:outputText value="Neues Klassenteam" /></b>
 					<h:panelGrid columns="2">
-						<p:outputLabel for="addTeacher" value="Lehrer:" />
-						<p:selectOneMenu id="addTeacher"
-							value="#{classteamController.selectedTeacher}" required="true"
-							requiredMessage="Sie müssen mindestens einen Lehrer auswählen."
-							converter="EmployeeNameConverter" label="Bitte auswählen">
+						<p:outputLabel for="addEmployees"
+							value="Mitarbeiter (min. eine Lehrkraft)" />
+						<p:selectCheckboxMenu id="addEmployees"
+							value="#{classteamController.selectedEmployees}" filter="true"
+							filterMatchMode="contains" converter="EmployeeNameConverter"
+							label="Bitte auswählen" required="true"
+							requiredMessage="Wählen Sie mindestens einen Mitarbeiter aus.">
+							<f:selectItem
+								value="#{classteamController.disabledTeacherSelectItem}" />
 							<f:selectItems value="#{classteamController.teachers}"
 								var="teacher" itemLabel="#{teacher.symbol}, #{teacher.name}" />
-							<p:ajax event="change" update="addEmployees" />
-						</p:selectOneMenu>
-						<p:outputLabel for="addEmployees" value="Weitere Mitarbeiter:" />
-						<p:selectCheckboxMenu id="addEmployees" min="0" max="1000"
-							value="#{classteamController.selectedEmployees}"
-							converter="EmployeeNameConverter" label="Bitte auswählen">
-							<f:selectItems value="#{classteamController.employees}"
-								var="employee" itemLabel="#{employee.symbol}, #{employee.name}" />
+							<f:selectItem
+								value="#{classteamController.disabledPedagogicAssistantSelectItem}" />
+							<f:selectItems value="#{classteamController.pedagogicAssistants}"
+								var="pedagogicAssistant"
+								itemLabel="#{pedagogicAssistant.symbol}, #{pedagogicAssistant.name}" />
 						</p:selectCheckboxMenu>
 						<p:outputLabel for="addSchoolclasses" value="Schulklassen:" />
 						<p:outputPanel>
 							<p:selectCheckboxMenu id="addSchoolclasses"
 								value="#{classteamController.selectedSchoolclasses}"
 								label="Bitte auswählen" filter="true" filterMatchMode="contains"
-								converter="SchoolclassNameConverter" panelStyle="width:500px;">
-								<f:selectItems value="#{classteamController.schoolclasses}"
+								converter="SchoolclassNameConverter" panelStyle="width:500px;"
+								required="true"
+								requiredMessage="Wählen Sie mindestens eine Schulklasse aus.">
+								<f:selectItems value="#{classteamController.validSchoolclasses}"
 									var="schoolclass" itemLabel="Klasse #{schoolclass.name}" />
 							</p:selectCheckboxMenu>
 						</p:outputPanel>
@@ -161,21 +163,22 @@
 				<p:outputPanel id="editClassteamPanel">
 					<b><h:outputText value="Klassenteam bearbeiten" /></b>
 					<h:panelGrid columns="2">
-						<p:outputLabel for="editTeacher" value="Lehrer:" />
-						<p:selectOneMenu id="editTeacher"
-							value="#{classteamController.selectedTeacher}" required="true"
-							requiredMessage="Sie müssen mindestens einen Lehrer auswählen."
-							converter="EmployeeNameConverter" label="Bitte auswählen">
+						<p:outputLabel for="editEmployees"
+							value="Mitarbeiter (min. eine Lehrkraft)" />
+						<p:selectCheckboxMenu id="editEmployees"
+							value="#{classteamController.selectedEmployees}" filter="true"
+							filterMatchMode="contains" converter="EmployeeNameConverter"
+							label="Bitte auswählen" required="true"
+							requiredMessage="Wählen Sie mindestens einen Mitarbeiter aus.">
+							<f:selectItem
+								value="#{classteamController.disabledTeacherSelectItem}" />
 							<f:selectItems value="#{classteamController.teachers}"
 								var="teacher" itemLabel="#{teacher.symbol}, #{teacher.name}" />
-							<p:ajax event="change" update="editEmployees" />
-						</p:selectOneMenu>
-						<p:outputLabel for="editEmployees" value="Weitere Mitarbeiter:" />
-						<p:selectCheckboxMenu id="editEmployees" min="0" max="1000"
-							value="#{classteamController.selectedEmployees}"
-							converter="EmployeeNameConverter" label="Bitte auswählen">
-							<f:selectItems value="#{classteamController.employees}"
-								var="employee" itemLabel="#{employee.symbol}, #{employee.name}" />
+							<f:selectItem
+								value="#{classteamController.disabledPedagogicAssistantSelectItem}" />
+							<f:selectItems value="#{classteamController.pedagogicAssistants}"
+								var="pedagogicAssistant"
+								itemLabel="#{pedagogicAssistant.symbol}, #{pedagogicAssistant.name}" />
 						</p:selectCheckboxMenu>
 						<p:outputLabel for="editSchoolclasses" value="Schulklassen:" />
 						<p:outputPanel>
@@ -183,7 +186,7 @@
 								value="#{classteamController.selectedSchoolclasses}"
 								label="Bitte auswählen" filter="true" filterMatchMode="contains"
 								converter="SchoolclassNameConverter" panelStyle="width:500px;">
-								<f:selectItems value="#{classteamController.schoolclasses}"
+								<f:selectItems value="#{classteamController.validSchoolclasses}"
 									var="schoolclass" itemLabel="Klasse #{schoolclass.name}" />
 							</p:selectCheckboxMenu>
 						</p:outputPanel>

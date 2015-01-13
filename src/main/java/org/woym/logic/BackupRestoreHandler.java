@@ -30,18 +30,19 @@ import javax.servlet.ServletContextListener;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.woym.config.Config;
-import org.woym.config.DefaultConfigEnum;
-import org.woym.exceptions.DatasetException;
-import org.woym.exceptions.InvalidFileException;
+import org.woym.common.config.Config;
+import org.woym.common.config.DefaultConfigEnum;
+import org.woym.common.exceptions.DatasetException;
+import org.woym.common.exceptions.InvalidFileException;
+import org.woym.common.messages.GenericErrorMessage;
+import org.woym.common.messages.GenericSuccessMessage;
 import org.woym.logic.spec.IStatus;
-import org.woym.messages.GenericErrorMessage;
-import org.woym.messages.GenericSuccessMessage;
 import org.woym.persistence.DataBase;
 
 /**
- * Diese abstrakte Klasse stellt Methoden bereit, die ein Backup des Systems
- * erzeugen und wiederherstellen können.
+ * Diese Klasse stellt Methoden bereit, die ein Backup des Systems erzeugen und
+ * wiederherstellen können. Die Klasse ist nicht abstrakt, die sie sonst nicht
+ * als Listener genutzt werden kann.
  * 
  * @author Adrian
  *
