@@ -10,19 +10,20 @@ import javax.faces.convert.FacesConverter;
 import org.woym.exceptions.DatasetException;
 import org.woym.messages.GenericErrorMessage;
 import org.woym.messages.MessageHelper;
+import org.woym.objects.Employee;
 import org.woym.objects.Teacher;
 import org.woym.persistence.DataAccess;
 
 /**
- * <h1>TeacherNameConverter</h1>
+ * <h1>EmployeeNameConverter</h1>
  * <p>
- * Konvertiert intern ein {@link Teacher}-Objekt in das Kürzel des Lehrers und
- * sucht anhand des Kürzels den richtigen Lehrer aus der Datenbank.
+ * Konvertiert intern ein {@link Employee}-Objekt in das Kürzel des Mitarbeiters und
+ * sucht anhand des Kürzels den richtigen Mitarbeiter aus der Datenbank.
  * 
  * @author tihansen
  */
-@FacesConverter("org.woym.TeacherNameConverter")
-public class TeacherNameConverter implements Converter {
+@FacesConverter("org.woym.EmployeeNameConverter")
+public class EmployeeNameConverter implements Converter {
 
 	DataAccess dataAccess = DataAccess.getInstance();
 
@@ -30,10 +31,10 @@ public class TeacherNameConverter implements Converter {
 	public Object getAsObject(FacesContext context, UIComponent component,
 			String value) {
 
-		Teacher teacher = new Teacher();
+		Employee employee = new Teacher();
 
 		try {
-			teacher = (Teacher) dataAccess.getOneEmployee(value);
+			employee = dataAccess.getOneEmployee(value);
 		} catch (DatasetException e) {
 			FacesMessage msg = MessageHelper.generateMessage(
 					GenericErrorMessage.DATABASE_COMMUNICATION_ERROR,
@@ -41,7 +42,7 @@ public class TeacherNameConverter implements Converter {
 			throw new ConverterException(msg);
 		}
 
-		return teacher;
+		return employee;
 	}
 
 	@Override
@@ -52,7 +53,7 @@ public class TeacherNameConverter implements Converter {
 			return null;
 		}
 
-		return ((Teacher) value).getSymbol();
+		return ((Employee) value).getSymbol();
 	}
 
 }

@@ -14,6 +14,7 @@ import org.woym.objects.ProjectType;
 import org.woym.objects.Room;
 import org.woym.objects.Schoolclass;
 import org.woym.objects.Teacher;
+import org.woym.objects.TravelTimeList;
 
 /**
  * Diese Klasse dient der Generierung von Fehlernachrichten.
@@ -159,6 +160,8 @@ public abstract class MessageHelper {
 			return !success ? "der Schulklasse" : "Schulklasse";
 		} else if (clazz == Teacher.class) {
 			return !success ? "der Lehrkraft" : "Lehrkraft";
+		} else if(clazz == TravelTimeList.class){
+			return !success ? "der Wegzeiten-Liste" : "";
 		}
 		return null;
 	}

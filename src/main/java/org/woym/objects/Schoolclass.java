@@ -115,6 +115,10 @@ public class Schoolclass extends org.woym.objects.Entity implements
 		this.teacher = teacher;
 	}
 
+	public String getName(){
+		return toString();
+	}
+	
 	@Override
 	public String toString() {
 		try {
@@ -126,6 +130,7 @@ public class Schoolclass extends org.woym.objects.Entity implements
 			return String.valueOf(identifier);
 		}
 	}
+	
 
 	/**
 	 * Fügt ein Mapping für den übergebenen {@linkplain LessonType} mit dem

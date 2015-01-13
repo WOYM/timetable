@@ -14,50 +14,51 @@
 	<ui:composition template="index.xhtml">
 
 		<ui:define name="setupContent">
+
 			<p:outputPanel>
 				<p:outputPanel>
 					<h1>
-						<h:outputText value="Unterrichtsinhaltsverwaltung" />
+						<h:outputText value="Personalssitzungsverwaltung" />
 					</h1>
 					<h:outputText
-						value="In dieser Ansicht werden die verschiedenen Inhalte, die eine Unterrichtseinheit verwenden kann verwaltet." />
+						value="In dieser Ansicht werden die verschiedenen Sitzungen des Personals angelegt und verwaltet.)" />
 				</p:outputPanel>
 
 				<p:spacer style="height:50px;" />
 
 				<p:outputPanel style="float:right">
 					<p:commandButton value="Hinzufügen" icon="ui-icon-plusthick"
-						onclick="PF('wAddLessonTypeDialog').show();" process="@this"
-						update="addLessonTypePanel">
+						onclick="PF('wAddMeetingTypeDialog').show();" process="@this"
+						update="addMeetingTypePanel">
 					</p:commandButton>
 				</p:outputPanel>
 
-				<!-- Existierende Unterrichtsinhalte -->
-				<p:contextMenu for="lessonTypeTable">
+				<!-- Existierende Personalsitzungen -->
+				<p:contextMenu for="meetingTypeTable">
 					<p:menuitem value="Bearbeiten"
-						actionListener="#{lessonTypeController.doBeforeEdit}"
-						oncomplete="PF('wEditLessonTypeDialog').show();"
+						actionListener="#{meetingTypeController.doBeforeEdit}"
+						oncomplete="PF('wEditMeetingTypeDialog').show();"
 						icon="ui-icon-pencil" />
 					<p:menuitem value="Löschen" icon="ui-icon-close" update="@form"
-						rendered="#{not lessonTypeController.hideDeletionDialog}"
-						oncomplete="PF('wConfirmLessonTypeDelete').show();" />
+						rendered="#{not meetingTypeController.hideDeletionDialog}"
+						oncomplete="PF('wConfirmMeetingTypeDelete').show();" />
 					<p:menuitem value="Löschen" icon="ui-icon-close" update="@form"
-						rendered="#{lessonTypeController.hideDeletionDialog}"
-						action="#{lessonTypeController.deleteLessonType}" />
+						rendered="#{meetingTypeController.hideDeletionDialog}"
+						action="#{meetingTypeController.deleteMeetingType}" />
 				</p:contextMenu>
-				<p:dataTable emptyMessage="Keine Unterrichtsinhalte vorhanden"
-					id="lessonTypeTable" var="lessonType"
-					selection="#{lessonTypeController.lessonType}"
-					value="#{lessonTypeController.lessonTypes}" selectionMode="single"
-					rowKey="#{lessonType.name}" scrollable="true" scrollHeight="500">
+				<p:dataTable emptyMessage="Keine Personalsitzungen vorhanden"
+					id="meetingTypeTable" var="meetingType"
+					selection="#{meetingTypeController.meetingType}"
+					value="#{meetingTypeController.meetingTypes}" selectionMode="single"
+					rowKey="#{meetingType.name}" scrollable="true" scrollHeight="500">
 					<p:column width="300" headerText="Name">
-						<h:outputText value="#{lessonType.name}" />
+						<h:outputText value="#{meetingType.name}" />
 					</p:column>
 					<p:column width="200" headerText="Standarddauer">
-						<h:outputText value="#{lessonType.readableDuration}" />
+						<h:outputText value="#{meetingType.readableDuration}" />
 					</p:column>
 					<p:column headerText="Standardräume">
-						<ui:repeat var="room" value="#{lessonType.rooms}">
+						<ui:repeat var="room" value="#{meetingType.rooms}">
 							<h:outputText
 								value="#{room.locationName} - #{room.name} (#{room.purpose})" />
 							<br />
@@ -79,29 +80,29 @@
 			<!-- Confirm-Dialog -->
 			<p:dialog header="Bestätigen" modal="true" draggable="true"
 				resizable="false" appendToBody="true" dynamic="true" width="40%"
-				id="confirmLessonTypeDelete" widgetVar="wConfirmLessonTypeDelete"
+				id="confirmMeetingTypeDelete" widgetVar="wConfirmMeetingTypeDelete"
 				showEffect="fade" hideEffect="fade">
 				<p:ajax event="close" update="@form" />
 				<h:panelGrid columns="1">
 					<h:outputText
-						value="Sind Sie sicher, dass der Stundeninhalt gelöscht werden soll?" />
+						value="Sind Sie sicher, dass die Personalsitzung gelöscht werden soll?" />
 					<h:outputText
 						value="Alle Aktivitäten, welche dann keinen Inhalt mehr besitzen, werden auch gelöscht." />
 					<p:spacer height="10" />
 					<p:outputPanel>
 						<p:selectBooleanCheckbox
-							value="#{lessonTypeController.hideDeletionDialog}" />
+							value="#{meetingTypeController.hideDeletionDialog}" />
 						<h:outputText
 							value=" Diesen Dialog zukünftig nicht mehr anzeigen." />
 					</p:outputPanel>
 					<p:separator />
 					<p:outputPanel>
 						<p:commandButton value="Bestätigen"
-							actionListener="#{lessonTypeController.deleteLessonType}"
-							oncomplete="PF('wConfirmLessonTypeDelete').hide();"
+							actionListener="#{meetingTypeController.deleteMeetingType}"
+							oncomplete="PF('wConfirmMeetingTypeDelete').hide();"
 							styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
 						<p:commandButton value="Abbrechen"
-							oncomplete="PF('wConfirmLessonTypeDelete').hide();"
+							oncomplete="PF('wConfirmMeetingTypeDelete').hide();"
 							styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
 					</p:outputPanel>
 					<h:outputText
@@ -110,49 +111,49 @@
 			</p:dialog>
 
 			<!-- Add-Dialog -->
-			<p:dialog header="Hinzufügen von Unterrichtsinhalten"
-				id="addLessonTypeDialog" widgetVar="wAddLessonTypeDialog"
+			<p:dialog header="Hinzufügen von Personalsitzungen"
+				id="addMeetingTypeDialog" widgetVar="wAddMeetingTypeDialog"
 				width="500" modal="true" draggable="true" resizable="false"
 				appendToBody="true" dynamic="true" showEffect="fade"
 				hideEffect="fade">
 				<p:ajax event="close" update="@form" />
-				<p:outputPanel id="addLessonTypePanel">
-					<b><h:outputText value="Neuer Unterrichtsinhalt" /></b>
+				<p:outputPanel id="addMeetingTypePanel">
+					<b><h:outputText value="Neue Personalsitzung" /></b>
 					<h:panelGrid columns="2">
 						<p:outputLabel for="addName" value="Name:" />
 						<p:inputText id="addName"
-							value="#{lessonTypeController.lessonType.name}" required="true"
+							value="#{meetingTypeController.meetingType.name}" required="true"
 							requiredMessage="Ein leerer Name ist nicht gültig.">
 							<f:validator validatorId="org.woym.NameValidator" />
 							<f:attribute name="validateBean"
-								value="#{lessonTypeController.lessonType}" />
+								value="#{meetingTypeController.meetingType}" />
 							<f:validateLength maximum="255" />
 						</p:inputText>
 						<p:outputLabel for="addDuration" value="Typische Dauer (Minuten):" />
 						<p:spinner id="addDuration" min="0" max="1000"
-							value="#{lessonTypeController.lessonType.typicalDuration}">
+							value="#{meetingTypeController.meetingType.typicalDuration}">
 							<p:ajax event="keyup" update="addDuration" />
 						</p:spinner>
 						<p:outputLabel value="Räume:" />
 						<p:outputPanel>
 							<p:selectCheckboxMenu id="addRooms"
-								value="#{lessonTypeController.rooms}" label="Bitte auswählen"
+								value="#{meetingTypeController.rooms}" label="Bitte auswählen"
 								filter="true" filterMatchMode="contains"
 								converter="RoomNameConverter" panelStyle="width:500px;">
-								<f:selectItems value="#{lessonTypeController.allRooms}"
+								<f:selectItems value="#{meetingTypeController.allRooms}"
 									var="room"
 									itemLabel="#{room.locationName} - #{room.name} (#{room.purpose})" />
 							</p:selectCheckboxMenu>
 						</p:outputPanel>
 					</h:panelGrid>
-					<p:outputPanel id="addLessonTypeButton"
+					<p:outputPanel id="addMeetingTypeButton"
 						style="float:right;margin-top:10px;">
 						<p:commandButton value="Hinzufügen"
-							actionListener="#{lessonTypeController.addLessonType}"
+							actionListener="#{meetingTypeController.addMeetingType}"
 							process="addName,addDuration,addRooms,@this"
-							update="addLessonTypePanel,lessonTypeTable" />
+							update="addMeetingTypePanel,meetingTypeTable" />
 					</p:outputPanel>
-					<p:defaultCommand target="addLessonTypeButton" />
+					<p:defaultCommand target="addMeetingTypeButton" />
 					<p:outputPanel style="clear:right; margin-top:60px;">
 						<p:messages showDetail="true" autoUpdate="true" closable="false" />
 					</p:outputPanel>
@@ -160,50 +161,50 @@
 			</p:dialog>
 
 			<!-- Edit-Dialog -->
-			<p:dialog header="Bearbeiten von Unterrichtsinhalt"
-				id="editLessonTypeDialog" widgetVar="wEditLessonTypeDialog"
+			<p:dialog header="Bearbeiten einer Personalsitzung"
+				id="editMeetingTypeDialog" widgetVar="wEditMeetingTypeDialog"
 				width="500" modal="true" draggable="true" resizable="false"
 				appendToBody="true" dynamic="true" showEffect="fade"
 				hideEffect="fade">
 				<p:ajax event="close" update="@form" />
-				<p:outputPanel id="editLessonTypePanel">
+				<p:outputPanel id="editMeetingTypePanel">
 					<b><h:outputText
-							value="Bearbeiten von #{lessonTypeController.lessonType.name}" /></b>
+							value="Bearbeiten von #{meetingTypeController.meetingType.name}" /></b>
 					<h:panelGrid columns="2">
 						<p:outputLabel for="editName" value="Name:" />
 						<p:inputText id="editName"
-							value="#{lessonTypeController.lessonType.name}" required="true"
+							value="#{meetingTypeController.meetingType.name}" required="true"
 							requiredMessage="Ein leerer Name ist nicht gültig.">
 							<f:validator validatorId="org.woym.NameValidator" />
 							<f:attribute name="validateBean"
-								value="#{lessonTypeController.lessonType}" />
+								value="#{meetingTypeController.meetingType}" />
 							<f:validateLength maximum="255" />
 						</p:inputText>
 						<p:outputLabel for="editDuration"
 							value="Typische Dauer (Minuten):" />
 						<p:spinner id="editDuration" min="0" max="1000"
-							value="#{lessonTypeController.lessonType.typicalDuration}">
+							value="#{meetingTypeController.meetingType.typicalDuration}">
 							<p:ajax event="keyup" update="editDuration" />
 						</p:spinner>
 						<p:outputLabel value="Räume:" />
 						<p:outputPanel>
 							<p:selectCheckboxMenu id="editRooms"
-								value="#{lessonTypeController.rooms}" label="Bitte auswählen"
+								value="#{meetingTypeController.rooms}" label="Bitte auswählen"
 								filter="true" filterMatchMode="contains"
 								converter="RoomNameConverter" panelStyle="width:500px;">
-								<f:selectItems value="#{lessonTypeController.allRooms}"
+								<f:selectItems value="#{meetingTypeController.allRooms}"
 									var="room"
 									itemLabel="#{room.locationName} - #{room.name} (#{room.purpose})" />
 							</p:selectCheckboxMenu>
 						</p:outputPanel>
 					</h:panelGrid>
 					<p:outputPanel style="margin-top:10px; float:right">
-						<p:commandButton id="editLessonTypeButton" value="Aktualisieren"
-							actionListener="#{lessonTypeController.editLessonType}"
+						<p:commandButton id="editMeetingTypeButton" value="Aktualisieren"
+							actionListener="#{meetingTypeController.editMeetingType}"
 							process="editName,editDuration,editRooms,@this"
-							update="editLessonTypePanel,lessonTypeTable" />
+							update="editMeetingTypePanel,meetingTypeTable" />
 					</p:outputPanel>
-					<p:defaultCommand target="editLessonTypeButton" />
+					<p:defaultCommand target="editMeetingTypeButton" />
 					<p:outputPanel style="clear:right; margin-top:60px;">
 						<p:messages showDetail="true" />
 					</p:outputPanel>

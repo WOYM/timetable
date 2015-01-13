@@ -128,13 +128,18 @@
 							<f:validator validatorId="org.woym.NameValidator" />
 							<f:attribute name="validateBean" value="#{roomController.room}" />
 							<f:attribute name="parentBean" value="#{roomController.location}" />
+							<f:validateLength maximum="255" />
 						</p:inputText>
 						<p:outputLabel for="addPurpose" value="Verwendung:" />
 						<p:inputText id="addPurpose"
-							value="#{roomController.room.purpose}" />
+							value="#{roomController.room.purpose}">
+							<f:validateLength maximum="255" />
+						</p:inputText>
 						<p:outputLabel for="addAdditional" value="Zusätz. Information:" />
 						<p:inputTextarea id="addAdditional"
-							value="#{roomController.room.additionalInformation}" />
+							value="#{roomController.room.additionalInformation}">
+							<f:validateLength maximum="255" />
+						</p:inputTextarea>
 					</h:panelGrid>
 					<p:outputPanel id="addRoomButton"
 						style="float:right; margin-top:10px;">
@@ -167,13 +172,18 @@
 							<f:validator validatorId="org.woym.NameValidator" />
 							<f:attribute name="validateBean" value="#{roomController.room}" />
 							<f:attribute name="parentBean" value="#{roomController.location}" />
+							<f:validateLength maximum="255" />
 						</p:inputText>
 						<p:outputLabel for="editPurpose" value="Verwendung:" />
 						<p:inputText id="editPurpose"
-							value="#{roomController.room.purpose}" />
+							value="#{roomController.room.purpose}">
+							<f:validateLength maximum="255" />
+						</p:inputText>
 						<p:outputLabel for="editAdditional" value="Zusätz. Information:" />
 						<p:inputTextarea id="editAdditional"
-							value="#{roomController.room.additionalInformation}" />
+							value="#{roomController.room.additionalInformation}">
+							<f:validateLength maximum="255" />
+						</p:inputTextarea>
 					</h:panelGrid>
 					<p:outputPanel id="editRoomButton"
 						style="float:right; margin-top:10px;">

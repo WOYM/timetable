@@ -47,7 +47,7 @@ public class TeacherController implements Serializable {
 	private static final long serialVersionUID = -8212155094392549715L;
 
 	private static Logger LOGGER = LogManager
-			.getLogger(TeacherController.class);
+			.getLogger(TeacherController.class.getName());
 
 	private DataAccess dataAccess = DataAccess.getInstance();
 
@@ -63,12 +63,16 @@ public class TeacherController implements Serializable {
 	private boolean hideDeletionDialog;
 	private boolean hide;
 
+	private int hourlySettlement;
+
 	@PostConstruct
 	public void init() {
 		teacher = new Teacher();
 		hideDeletionDialog = Config
 				.getBooleanValue(DefaultConfigEnum.HIDE_TEACHER_DELETION_DIALOG);
 		hide = hideDeletionDialog;
+		hourlySettlement = Config
+				.getSingleIntValue(DefaultConfigEnum.TEACHER_HOURLY_SETTLEMENT);
 	}
 
 	/**
@@ -87,7 +91,7 @@ public class TeacherController implements Serializable {
 			allActivityTypes = new ArrayList<>();
 			possibleActivityTypes = teacher.getPossibleActivityTypes();
 
-			for (ActivityType activityType : dataAccess.getAllActivityTypes()) {
+			for (ActivityType activityType : dataAccess.getAllLessonTypes()) {
 				if (!possibleActivityTypes.contains(activityType)) {
 					allActivityTypes.add(activityType);
 				}
@@ -217,6 +221,10 @@ public class TeacherController implements Serializable {
 
 	public void setHideDeletionDialog(boolean hideDeletionDialog) {
 		this.hideDeletionDialog = hideDeletionDialog;
+	}
+
+	public int getHourlySettlement() {
+		return hourlySettlement;
 	}
 
 }

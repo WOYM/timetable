@@ -209,9 +209,11 @@
 							<p:selectOneRadio id="backupInterval"
 								value="#{configController.intervalType}" layout="custom">
 								<f:selectItem itemLabel="Keine automatischen Backups"
-									itemValue="disabled" />
-								<f:selectItem itemLabel="Alle " itemValue="minutes" />
-								<f:selectItem itemLabel="Täglich um " itemValue="daily" />
+									itemValue="#{configController.disabledBackups}" />
+								<f:selectItem itemLabel="Alle "
+									itemValue="#{configController.minuteBackups}" />
+								<f:selectItem itemLabel="Täglich um "
+									itemValue="#{configController.dailyBackups}" />
 							</p:selectOneRadio>
 							<h:panelGrid columns="3" cellpadding="5">
 								<p:radioButton id="opt1" for="backupInterval" itemIndex="0" />

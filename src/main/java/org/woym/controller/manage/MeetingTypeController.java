@@ -25,36 +25,34 @@ import org.woym.logic.command.UpdateCommand;
 import org.woym.logic.spec.IStatus;
 import org.woym.messages.GenericErrorMessage;
 import org.woym.messages.MessageHelper;
-import org.woym.objects.LessonType;
 import org.woym.objects.Location;
+import org.woym.objects.MeetingType;
 import org.woym.objects.Room;
 import org.woym.objects.spec.IMemento;
 import org.woym.persistence.DataAccess;
 
 /**
- * <h1>LessonTypeController</h1>
- * <p>
- * Dieser Controller verwaltet die verschiedenen Unterrichtsinhalte.
+ * Dieser Controller verwaltet die Personalsitzungen.
  * 
- * @author Tim Hansen (tihansen)
+ * @author Adrian
  *
  */
 @ViewScoped
-@ManagedBean(name = "lessonTypeController")
-public class LessonTypeController implements Serializable {
+@ManagedBean(name = "meetingTypeController")
+public class MeetingTypeController implements Serializable {
 
-	private static final long serialVersionUID = -3486820231036039086L;
+	private static final long serialVersionUID = 855625183204337451L;
 
 	private static Logger LOGGER = LogManager
-			.getLogger(LessonTypeController.class.getName());
+			.getLogger(MeetingTypeController.class.getName());
 
-	private LessonType lessonType;
+	private MeetingType meetingType;
 
 	private DataAccess dataAccess = DataAccess.getInstance();
 
 	private CommandHandler commandHandler = CommandHandler.getInstance();
 	private CommandCreator commandCreator = CommandCreator.getInstance();
-	private IMemento lessonTypeMemento;
+	private IMemento meetingTypeMemento;
 
 	private List<Room> rooms;
 
@@ -63,21 +61,21 @@ public class LessonTypeController implements Serializable {
 
 	@PostConstruct
 	public void init() {
-		lessonType = new LessonType();
-		lessonType.setTypicalDuration(getTypicalDuration());
+		meetingType = new MeetingType();
+		meetingType.setTypicalDuration(getTypicalDuration());
 		hideDeletionDialog = Config
 				.getBooleanValue(DefaultConfigEnum.HIDE_ACTIVITYTYPE_DELETION_DIALOG);
 		hide = hideDeletionDialog;
 	}
 
 	/**
-	 * Liefert eine Liste mit allen Unterrichtsinhalten zurück.
+	 * Liefert eine Liste mit allen Personalsitzungen zurück.
 	 * 
-	 * @return Liste mit allen Unterrichtsinhalten
+	 * @return Liste mit allen Personalsitzungen
 	 */
-	public List<LessonType> getLessonTypes() {
+	public List<MeetingType> getMeetingTypes() {
 		try {
-			return dataAccess.getAllLessonTypes();
+			return dataAccess.getAllMeetingTypes();
 		} catch (DatasetException e) {
 			LOGGER.error(e);
 			FacesMessage msg = MessageHelper.generateMessage(
@@ -85,7 +83,7 @@ public class LessonTypeController implements Serializable {
 					FacesMessage.SEVERITY_ERROR);
 			FacesContext.getCurrentInstance().addMessage(null, msg);
 
-			return new ArrayList<LessonType>();
+			return new ArrayList<MeetingType>();
 		}
 	}
 
@@ -112,16 +110,16 @@ public class LessonTypeController implements Serializable {
 	}
 
 	/**
-	 * Löscht den selektierten Unterrichtsinhalt.
+	 * Löscht die selektierte Personalsitzung.
 	 */
-	public void deleteLessonType() {
+	public void deleteMeetingType() {
 		if (hide != hideDeletionDialog) {
 			Config.updateProperty(
 					DefaultConfigEnum.HIDE_ACTIVITYTYPE_DELETION_DIALOG
 							.getPropKey(), String.valueOf(hideDeletionDialog));
 		}
 		MacroCommand macroCommand = commandCreator
-				.createDeleteCommand(lessonType);
+				.createDeleteCommand(meetingType);
 		IStatus status = commandHandler.execute(macroCommand);
 		FacesMessage msg = status.report();
 
@@ -135,17 +133,17 @@ public class LessonTypeController implements Serializable {
 	 * Dazu gehören das Erzeugen eines Mementos und das Setzen der Räume.
 	 */
 	public void doBeforeEdit() {
-		lessonTypeMemento = lessonType.createMemento();
-		rooms = lessonType.getRooms();
+		meetingTypeMemento = meetingType.createMemento();
+		rooms = meetingType.getRooms();
 	}
 
 	/**
-	 * Bearbeitet einen Unterrichtsinhalt.
+	 * Bearbeitet ein Personalsitzung.
 	 */
-	public void editLessonType() {
-		lessonType.setRooms(rooms);
-		UpdateCommand<LessonType> command = new UpdateCommand<>(lessonType,
-				lessonTypeMemento);
+	public void editMeetingType() {
+		meetingType.setRooms(rooms);
+		UpdateCommand<MeetingType> command = new UpdateCommand<>(meetingType,
+				meetingTypeMemento);
 		IStatus status = commandHandler.execute(command);
 		FacesMessage msg = status.report();
 
@@ -154,37 +152,37 @@ public class LessonTypeController implements Serializable {
 			rooms = new ArrayList<Room>();
 
 			RequestContext context = RequestContext.getCurrentInstance();
-			context.execute("PF('wEditLessonTypeDialog').hide();");
+			context.execute("PF('wEditMeetingTypeDialog').hide();");
 		}
 
 		FacesContext.getCurrentInstance().addMessage(null, msg);
 	}
 
 	/**
-	 * Fügt einen neuen Unterrichtsinhalt hinzu.
+	 * Fügt eine neue Personalsitzung hinzu.
 	 */
-	public void addLessonType() {
-		lessonType.setRooms(rooms);
+	public void addMeetingType() {
+		meetingType.setRooms(rooms);
 
-		AddCommand<LessonType> command = new AddCommand<>(lessonType);
+		AddCommand<MeetingType> command = new AddCommand<>(meetingType);
 		IStatus status = commandHandler.execute(command);
 		FacesMessage msg = status.report();
 
 		if (status instanceof SuccessStatus) {
-			lessonType = new LessonType();
-			lessonType.setTypicalDuration(getTypicalDuration());
+			meetingType = new MeetingType();
+			meetingType.setTypicalDuration(getTypicalDuration());
 			rooms = new ArrayList<Room>();
 		}
 
 		FacesContext.getCurrentInstance().addMessage(null, msg);
 	}
 
-	public LessonType getLessonType() {
-		return lessonType;
+	public MeetingType getMeetingType() {
+		return meetingType;
 	}
 
-	public void setLessonType(LessonType lessonType) {
-		this.lessonType = lessonType;
+	public void setMeetingType(MeetingType meetingType) {
+		this.meetingType = meetingType;
 	}
 
 	public void setRooms(List<Room> rooms) {

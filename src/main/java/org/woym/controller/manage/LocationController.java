@@ -25,7 +25,10 @@ import org.woym.logic.command.UpdateCommand;
 import org.woym.logic.spec.IStatus;
 import org.woym.messages.GenericErrorMessage;
 import org.woym.messages.MessageHelper;
+import org.woym.objects.Entity;
 import org.woym.objects.Location;
+import org.woym.objects.TravelTimeList;
+import org.woym.objects.TravelTimeList.Edge;
 import org.woym.objects.spec.IMemento;
 import org.woym.persistence.DataAccess;
 
@@ -46,7 +49,7 @@ public class LocationController implements Serializable {
 	private DataAccess dataAccess = DataAccess.getInstance();
 
 	private static Logger LOGGER = LogManager
-			.getLogger(LocationController.class);
+			.getLogger(LocationController.class.getName());
 
 	private CommandHandler commandHandler = CommandHandler.getInstance();
 	private CommandCreator commandCreator = CommandCreator.getInstance();
@@ -55,14 +58,35 @@ public class LocationController implements Serializable {
 
 	private Location location;
 
+	/**
+	 * Wert der Checkbox im Löschen bestätigen Dialog.
+	 */
 	private boolean hideDeletionDialog;
+	/**
+	 * Interner Wert.
+	 */
 	private boolean hide;
+
+	/**
+	 * Der erste der beiden Standorte im Wegzeiten Dialog.
+	 */
+	private Location firstLocation;
+
+	/**
+	 * Der zweite der beiden Standorte im Wegzeiten Dialog;
+	 */
+	private Location secondLocation;
+
+	private String travelTimeValue;
+	private Edge selectedTravelTimeEdge;
 
 	@PostConstruct
 	public void init() {
 		hideDeletionDialog = Config
 				.getBooleanValue(DefaultConfigEnum.HIDE_LOCATION_DELETION_DIALOG);
 		hide = hideDeletionDialog;
+		location = new Location();
+		TravelTimeList.getInstance();
 	}
 
 	/**
@@ -138,12 +162,40 @@ public class LocationController implements Serializable {
 	}
 
 	/**
-	 * Öffnet einen neuen Dialog, mit dem sich ein Standort hinzufügen lässt.
+	 * Fügt der Wegzeiten Liste eine Wegzeit hinzu.
 	 */
-	public void addLocationDialog() {
-		location = new Location();
-		RequestContext context = RequestContext.getCurrentInstance();
-		context.execute("PF('wAddLocationDialog').show();");
+	public void addTravelTime() {
+		IMemento memento = TravelTimeList.getInstance().createMemento();
+		if (!TravelTimeList.getInstance().add(firstLocation, secondLocation,
+				Integer.parseInt(travelTimeValue))) {
+			FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_ERROR,
+					"Wegzeit bereits vorhanden.",
+					"Eine Wegzeit für die beiden gewählten Standorte ist bereits vorhanden.");
+			FacesContext.getCurrentInstance().addMessage(null, msg);
+		} else {
+			IStatus status = commandHandler.execute(new UpdateCommand<Entity>(
+					TravelTimeList.getInstance(), memento));
+			if (status instanceof SuccessStatus) {
+				travelTimeValue = null;
+				firstLocation = null;
+				secondLocation = null;
+			}
+			FacesContext.getCurrentInstance().addMessage(null, status.report());
+		}
+	}
+
+	/**
+	 * Entfernt eine Wegzeit aus der Wegzeiten-Liste.
+	 */
+	public void deleteTravelTime() {
+		IMemento memento = TravelTimeList.getInstance().createMemento();
+		TravelTimeList.getInstance().remove(selectedTravelTimeEdge);
+		IStatus status = commandHandler.execute(new UpdateCommand<Entity>(
+				TravelTimeList.getInstance(), memento));
+		if (status instanceof SuccessStatus) {
+			selectedTravelTimeEdge = null;
+		}
+		FacesContext.getCurrentInstance().addMessage(null, status.report());
 	}
 
 	public Location getLocation() {
@@ -161,4 +213,41 @@ public class LocationController implements Serializable {
 	public void setHideDeletionDialog(boolean hideDeletionDialog) {
 		this.hideDeletionDialog = hideDeletionDialog;
 	}
+
+	public Location getFirstLocation() {
+		return firstLocation;
+	}
+
+	public void setFirstLocation(Location firstLocation) {
+		this.firstLocation = firstLocation;
+	}
+
+	public Location getSecondLocation() {
+		return secondLocation;
+	}
+
+	public void setSecondLocation(Location secondLocation) {
+		this.secondLocation = secondLocation;
+	}
+
+	public String getTravelTimeValue() {
+		return travelTimeValue;
+	}
+
+	public void setTravelTimeValue(String travelTimeValue) {
+		this.travelTimeValue = travelTimeValue;
+	}
+
+	public Edge getSelectedTravelTimeEdge() {
+		return selectedTravelTimeEdge;
+	}
+
+	public void setSelectedTravelTimeEdge(Edge selectedTravelTimeEdge) {
+		this.selectedTravelTimeEdge = selectedTravelTimeEdge;
+	}
+
+	public List<Edge> getTravelTimeEdges() {
+		return TravelTimeList.getInstance().getEdges();
+	}
+
 }

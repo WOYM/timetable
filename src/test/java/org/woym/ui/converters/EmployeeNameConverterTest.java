@@ -22,7 +22,7 @@ import org.woym.persistence.DataAccess;
 
 @Test(groups = "unit")
 @PrepareForTest(MessageHelper.class)
-public class TeacherNameConverterTest extends PowerMockTestCase {
+public class EmployeeNameConverterTest extends PowerMockTestCase {
 
 	@Mock
 	private DataAccess dataAccess;
@@ -37,7 +37,7 @@ public class TeacherNameConverterTest extends PowerMockTestCase {
 	private UIComponent uiComponent;
 
 	@InjectMocks
-	private TeacherNameConverter teacherNameConverter;
+	private EmployeeNameConverter teacherNameConverter;
 
 	@Test
 	public void getAsObjectSuccess() throws DatasetException {
