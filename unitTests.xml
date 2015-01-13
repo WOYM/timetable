@@ -4,7 +4,7 @@
 	<test name="Unit Tests">
 		<classes>
 			<class name="org.woym.logic.command.TestUpdateCommand" />
-			<class name="org.woym.ui.converters.TeacherNameConverterTest" />
+			<class name="org.woym.ui.converters.EmployeeNameConverterTest" />
 			<class name="org.woym.objects.SchoolclassBlackboxTest" />
 			<class name="org.woym.objects.ActivityBlackboxTest" />
 			<class name="org.woym.logic.command.TestMacroCommand" />

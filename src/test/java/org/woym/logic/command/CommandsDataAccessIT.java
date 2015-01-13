@@ -19,6 +19,7 @@ import org.woym.objects.PedagogicAssistant;
 import org.woym.objects.Room;
 import org.woym.objects.Schoolclass;
 import org.woym.objects.Teacher;
+import org.woym.objects.TravelTimeList;
 import org.woym.objects.spec.IMemento;
 import org.woym.persistence.DataAccess;
 
@@ -279,12 +280,14 @@ public class CommandsDataAccessIT {
 		assertNull(dataAccess.getOneLocation("Hauptstandort"));
 		assertEquals(1, dataAccess.getAllActivities().size());
 		assertEquals(2, dataAccess.getAllSchoolclasses().size());
+		assertTrue(TravelTimeList.getInstance().getEdges().isEmpty());
 
 		assertTrue(macro.undo() instanceof SuccessStatus);
 		assertEquals(3, dataAccess.getAllActivities().size());
 		assertEquals(location, dataAccess.getOneLocation("Hauptstandort"));
 		assertEquals(2, dataAccess.getOneLocation("Hauptstandort").getRooms()
 				.size());
+		assertEquals(1, TravelTimeList.getInstance().getEdges().size());
 
 		assertTrue(macro.redo() instanceof SuccessStatus);
 		assertEquals(1, dataAccess.getAllActivities().size());

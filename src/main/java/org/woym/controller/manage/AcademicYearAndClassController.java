@@ -48,7 +48,7 @@ public class AcademicYearAndClassController implements Serializable {
 	private static final long serialVersionUID = -720596768882714799L;
 
 	private static Logger LOGGER = LogManager
-			.getLogger(AcademicYearAndClassController.class);
+			.getLogger(AcademicYearAndClassController.class.getName());
 
 	private static int INITIAL_GENERATOR_SIZE = 1;
 	private static int MAX_GENERATOR_SIZE = 20;
