@@ -14,7 +14,13 @@
 <h:body>
 	<h:form id="planningForm">
 
-		<p:growl id="commandGrowl" showDetail="true" />
+		<p:hotkey bind="ctrl+z" update="@form"
+			actionListener="#{GUIController.undo}" />
+		<p:hotkey bind="ctrl+y" update="@form"
+			actionListener="#{GUIController.redo}" />
+
+
+		<p:growl id="commandGrowl" widgetVar="wCommandGrowl" showDetail="true" />
 		<p:toolbar id="setupToolbar">
 			<f:facet name="left">
 				<p:commandButton value="Systemeinrichtung" icon="ui-icon-gear"
@@ -213,20 +219,37 @@
 					</p:outputPanel>
 				</p:outputPanel>
 				<!-- Schedule -->
-					<p:schedule id="scheduleMain" showHeader="false" view="agendaWeek" allDaySlot="false"
-						axisFormat="HH:mm" value="#{planningController.scheduleModel}"
-						slotMinutes="#{planningController.slotMinutes}"
-						columnFormat="week: 'ddd'" locale="de" timeZone="GMT+1"
-						initialDate="#{planningController.initalDate}" tooltip="true">
-						<p:ajax event="eventSelect"
-							listener="#{planningController.onEventSelect}"
-							update="activityInfoPanel" global="false"
-							oncomplete="PF('wActivityInfoDialog').show();" />
-						<p:ajax event="eventMove"
-							listener="#{planningController.onEventMove}" update="commandGrowl,@this" />
-						<p:ajax event="eventResize"
-							listener="#{planningController.onEventResize}" update="commandGrowl,@this" />
-					</p:schedule>
+				<p:contextMenu for="scheduleMain">
+					<p:menuitem value="Bearbeiten"
+						actionListener="#{academicYearAndClassController.doBeforeEdit}"
+						oncomplete="PF('wEditSchoolclassDialog').show();"
+						icon="ui-icon-pencil" process="@this" />
+					<p:menuitem value="Löschen" icon="ui-icon-close" update="@form"
+						rendered="#{not academicYearAndClassController.hideDeletionDialog}"
+						oncomplete="PF('wConfirmClassDelete').show();" process="@this" />
+					<p:menuitem value="Löschen" icon="ui-icon-close" update="@form"
+						rendered="#{academicYearAndClassController.hideDeletionDialog}"
+						action="#{academicYearAndClassController.deleteSchoolclass}"
+						process="@this" />
+				</p:contextMenu>
+				<p:schedule id="scheduleMain" widgetVar="wScheduleMain"
+					showHeader="false" view="agendaWeek" allDaySlot="false"
+					axisFormat="HH:mm" value="#{planningController.scheduleModel}"
+					slotMinutes="#{planningController.slotMinutes}"
+					columnFormat="week: 'ddd'" locale="de" timeZone="GMT+1"
+					initialDate="#{planningController.initalDate}" tooltip="true"
+					timeFormat="HH:mm{ - HH:mm}">
+					<p:ajax event="eventSelect"
+						listener="#{planningController.onEventSelect}"
+						update="activityInfoPanel" global="false"
+						oncomplete="PF('wActivityInfoDialog').show();" />
+					<p:ajax event="eventMove"
+						listener="#{planningController.onEventMove}"
+						oncomplete="PF('wScheduleMain').update();" update="commandGrowl" />
+					<p:ajax event="eventResize"
+						listener="#{planningController.onEventResize}"
+						oncomplete="PF('wScheduleMain').update();" update="commandGrowl" />
+				</p:schedule>
 				<p:spacer style="height:50px;" />
 			</p:outputPanel>
 		</p:outputPanel>

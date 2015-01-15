@@ -19,7 +19,6 @@ import org.primefaces.event.ScheduleEntryResizeEvent;
 import org.primefaces.event.SelectEvent;
 import org.primefaces.model.DefaultScheduleEvent;
 import org.primefaces.model.DefaultScheduleModel;
-import org.primefaces.model.ScheduleEvent;
 import org.primefaces.model.ScheduleModel;
 import org.woym.common.config.Config;
 import org.woym.common.config.DefaultConfigEnum;
@@ -165,7 +164,8 @@ public class PlanningController implements Serializable {
 		FacesMessage msg;
 
 		Activity activity = (Activity) event.getScheduleEvent().getData();
-
+		TimePeriod oldTime = activity.getTime();
+		
 		IMemento activityMemento = activity.createMemento();
 
 		Date startTime = changeDateByDelta(activity.getTime().getStartTime(),
@@ -187,8 +187,6 @@ public class PlanningController implements Serializable {
 			time.setEndTime(endTime);
 			time.setDay(Weekday.getByOrdinal(localDayDelta));
 
-			TimePeriod oldTime = activity.getTime();
-
 			activity.setTime(time);
 
 			IStatus status = activityValidator.validateActivity(activity);
@@ -207,16 +205,20 @@ public class PlanningController implements Serializable {
 						.getScheduleEvent();
 				defaultScheduleEvent.setData(activity);
 				scheduleModel.updateEvent(defaultScheduleEvent);
+				FacesContext.getCurrentInstance().addMessage(null, msg);
+				return;
 			} else {
 				msg = status.report();
-				DefaultScheduleEvent defaultScheduleEvent = (DefaultScheduleEvent) event
-						.getScheduleEvent();
-				defaultScheduleEvent.setStartDate(oldTime.getStartTime());
-				defaultScheduleEvent.setEndDate(oldTime.getEndTime());
-				scheduleModel.updateEvent(defaultScheduleEvent);
 			}
 		}
 
+		// Fallback
+		DefaultScheduleEvent defaultScheduleEvent = (DefaultScheduleEvent) event
+				.getScheduleEvent();
+		defaultScheduleEvent.setStartDate(oldTime.getStartTime());
+		defaultScheduleEvent.setEndDate(oldTime.getEndTime());
+		scheduleModel.updateEvent(defaultScheduleEvent);
+		
 		FacesContext.getCurrentInstance().addMessage(null, msg);
 	}
 
