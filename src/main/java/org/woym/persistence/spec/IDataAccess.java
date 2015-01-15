@@ -2,10 +2,10 @@ package org.woym.persistence.spec;
 
 import java.util.List;
 
-import org.woym.exceptions.DatasetException;
-import org.woym.objects.AcademicYear;
-import org.woym.objects.Entity;
-import org.woym.objects.TravelTimeList;
+import org.woym.common.exceptions.DatasetException;
+import org.woym.common.objects.AcademicYear;
+import org.woym.common.objects.Entity;
+import org.woym.common.objects.TravelTimeList;
 
 public interface IDataAccess extends IAcademicYearDAO, IActivityDAO,
 		IActivityTypeDAO, IClassteamDAO, IEmployeeDAO, ILocationDAO, IRoomDAO,

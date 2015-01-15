@@ -5,29 +5,29 @@
 		<classes>
 			<class name="org.woym.logic.command.TestUpdateCommand" />
 			<class name="org.woym.ui.converters.EmployeeNameConverterTest" />
-			<class name="org.woym.objects.SchoolclassBlackboxTest" />
-			<class name="org.woym.objects.ActivityBlackboxTest" />
+			<class name="org.woym.common.objects.SchoolclassBlackboxTest" />
+			<class name="org.woym.common.objects.ActivityBlackboxTest" />
 			<class name="org.woym.logic.command.TestMacroCommand" />
-			<class name="org.woym.objects.EdgeBlackboxTest" />
+			<class name="org.woym.common.objects.EdgeBlackboxTest" />
 			<class name="org.woym.logic.command.TestAddCommand" />
-			<class name="org.woym.objects.EmployeeBlackboxTest" />
-			<class name="org.woym.objects.CompoundLessonBlackboxTest" />
-			<class name="org.woym.objects.ChargeableCompensationBlackboxTest" />
-			<class name="org.woym.objects.TravelTimeListTest" />
-			<class name="org.woym.objects.AcademicYearBlackboxTest" />
+			<class name="org.woym.common.objects.EmployeeBlackboxTest" />
+			<class name="org.woym.common.objects.CompoundLessonBlackboxTest" />
+			<class name="org.woym.common.objects.ChargeableCompensationBlackboxTest" />
+			<class name="org.woym.common.objects.TravelTimeListTest" />
+			<class name="org.woym.common.objects.AcademicYearBlackboxTest" />
 			<class name="org.woym.persistence.DataBaseTest" />
 			<class name="org.woym.logic.util.LimitedQueueBlackboxTest" />
 			<class name="org.woym.logic.command.TestDeleteCommand" />
-			<class name="org.woym.objects.LocationBlackboxTest" />
-			<class name="org.woym.objects.ActivityTypeBlackboxTest" />
+			<class name="org.woym.common.objects.LocationBlackboxTest" />
+			<class name="org.woym.common.objects.ActivityTypeBlackboxTest" />
 			<class name="org.woym.ui.converters.LessonTypeNameConverterTest" />
 			<class name="org.woym.ui.validators.NameValidatorTest" />
 			<class name="org.woym.logic.command.TestCommandCreator" />
-			<class name="org.woym.objects.EmployeeTimePeriodsBlackboxTest" />
+			<class name="org.woym.common.objects.EmployeeTimePeriodsBlackboxTest" />
 			<class name="org.woym.logic.command.TestCommandhandler" />
 			<class name="org.woym.ui.converters.RoomNameConverterTest" />
 			<class name="org.woym.ui.converters.LocationNameConverterTest" />
-			<class name="org.woym.config.ConfigTest" />
+			<class name="org.woym.common.config.ConfigTest" />
 		</classes>
 	</test>
 </suite>

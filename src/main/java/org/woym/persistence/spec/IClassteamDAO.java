@@ -2,10 +2,10 @@ package org.woym.persistence.spec;
 
 import java.util.List;
 
-import org.woym.exceptions.DatasetException;
-import org.woym.objects.Classteam;
-import org.woym.objects.Employee;
-import org.woym.objects.Schoolclass;
+import org.woym.common.exceptions.DatasetException;
+import org.woym.common.objects.Classteam;
+import org.woym.common.objects.Employee;
+import org.woym.common.objects.Schoolclass;
 
 /**
  * Dieses Interface beschreibt Methoden, die von einem {@linkplain Classteam}

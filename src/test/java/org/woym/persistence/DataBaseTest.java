@@ -9,8 +9,8 @@ import org.testng.AssertJUnit;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
-import org.woym.exceptions.DatasetException;
-import org.woym.exceptions.InvalidFileException;
+import org.woym.common.exceptions.DatasetException;
+import org.woym.common.exceptions.InvalidFileException;
 
 @Test(groups = "UnitTest")
 public class DataBaseTest extends PowerMockTestCase {

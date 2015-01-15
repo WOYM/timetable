@@ -2,8 +2,8 @@ package org.woym.logic.spec;
 
 import java.util.List;
 
-import org.woym.objects.Activity;
-import org.woym.objects.TimePeriod;
+import org.woym.common.objects.Activity;
+import org.woym.common.objects.TimePeriod;
 
 /**
  * Modeliert die Funktionalität der Logikebene in der Plannungs-Seite

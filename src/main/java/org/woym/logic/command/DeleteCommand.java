@@ -2,14 +2,14 @@ package org.woym.logic.command;
 
 import javax.faces.application.FacesMessage;
 
-import org.woym.exceptions.DatasetException;
+import org.woym.common.exceptions.DatasetException;
+import org.woym.common.messages.SpecificErrorMessage;
+import org.woym.common.messages.SpecificSuccessMessage;
+import org.woym.common.objects.Entity;
 import org.woym.logic.FailureStatus;
 import org.woym.logic.SuccessStatus;
 import org.woym.logic.spec.ICommand;
 import org.woym.logic.spec.IStatus;
-import org.woym.messages.SpecificErrorMessage;
-import org.woym.messages.SpecificSuccessMessage;
-import org.woym.objects.Entity;
 
 /**
  * 
