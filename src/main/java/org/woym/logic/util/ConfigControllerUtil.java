@@ -11,10 +11,13 @@ import javax.faces.application.FacesMessage;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.woym.config.Config;
-import org.woym.config.DefaultConfigEnum;
+import org.woym.common.config.Config;
+import org.woym.common.config.DefaultConfigEnum;
+import org.woym.common.exceptions.DatasetException;
+import org.woym.common.messages.GenericErrorMessage;
+import org.woym.common.objects.Activity;
+import org.woym.common.objects.Weekday;
 import org.woym.controller.manage.ConfigController;
-import org.woym.exceptions.DatasetException;
 import org.woym.logic.BackupRestoreHandler;
 import org.woym.logic.CommandHandler;
 import org.woym.logic.FailureStatus;
@@ -22,9 +25,6 @@ import org.woym.logic.SuccessStatus;
 import org.woym.logic.command.CommandCreator;
 import org.woym.logic.command.MacroCommand;
 import org.woym.logic.spec.IStatus;
-import org.woym.messages.GenericErrorMessage;
-import org.woym.objects.Activity;
-import org.woym.objects.Weekday;
 import org.woym.persistence.DataAccess;
 
 /**
@@ -114,7 +114,7 @@ public abstract class ConfigControllerUtil {
 
 		// Um zu verhindern, dass der Scheduler neu gestartet wird, wenn die
 		// Einstellungen nicht geändert wurden
-		if (currentInterval <= 0 || currentInterval >= 1440) {
+		if (interval != currentInterval) {
 			works = Config.updateProperty(
 					DefaultConfigEnum.BACKUP_INTERVAL.getPropKey(),
 					String.valueOf(interval));

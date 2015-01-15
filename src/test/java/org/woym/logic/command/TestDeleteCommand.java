@@ -6,10 +6,10 @@ import org.mockito.Mockito;
 import org.powermock.modules.testng.PowerMockTestCase;
 import org.testng.AssertJUnit;
 import org.testng.annotations.Test;
-import org.woym.exceptions.DatasetException;
+import org.woym.common.exceptions.DatasetException;
+import org.woym.common.objects.Activity;
 import org.woym.logic.FailureStatus;
 import org.woym.logic.SuccessStatus;
-import org.woym.objects.Activity;
 
 /**
  * @author JurSch

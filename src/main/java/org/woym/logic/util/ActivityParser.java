@@ -10,16 +10,16 @@ import org.apache.logging.log4j.Logger;
 import org.primefaces.model.DefaultScheduleEvent;
 import org.primefaces.model.DefaultScheduleModel;
 import org.primefaces.model.ScheduleModel;
+import org.woym.common.exceptions.DatasetException;
+import org.woym.common.objects.Activity;
+import org.woym.common.objects.CompoundLesson;
+import org.woym.common.objects.Lesson;
+import org.woym.common.objects.Meeting;
+import org.woym.common.objects.PedagogicAssistant;
+import org.woym.common.objects.Room;
+import org.woym.common.objects.Schoolclass;
+import org.woym.common.objects.Teacher;
 import org.woym.controller.PlanningController;
-import org.woym.exceptions.DatasetException;
-import org.woym.objects.Activity;
-import org.woym.objects.CompoundLesson;
-import org.woym.objects.Lesson;
-import org.woym.objects.Meeting;
-import org.woym.objects.PedagogicAssistant;
-import org.woym.objects.Room;
-import org.woym.objects.Schoolclass;
-import org.woym.objects.Teacher;
 import org.woym.persistence.DataAccess;
 
 /**

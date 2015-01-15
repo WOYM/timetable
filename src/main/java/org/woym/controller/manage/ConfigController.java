@@ -14,11 +14,11 @@ import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
 
-import org.woym.config.Config;
-import org.woym.config.DefaultConfigEnum;
+import org.woym.common.config.Config;
+import org.woym.common.config.DefaultConfigEnum;
+import org.woym.common.objects.Weekday;
 import org.woym.logic.spec.IStatus;
 import org.woym.logic.util.ConfigControllerUtil;
-import org.woym.objects.Weekday;
 
 /**
  * <h1>AcademicYearAndClassController</h1>

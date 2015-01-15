@@ -5,11 +5,11 @@ import java.util.List;
 
 import javax.faces.application.FacesMessage;
 
+import org.woym.common.messages.GenericErrorMessage;
+import org.woym.common.messages.MessageHelper;
+import org.woym.common.messages.SpecificErrorMessage;
+import org.woym.common.objects.Entity;
 import org.woym.logic.spec.IStatus;
-import org.woym.messages.GenericErrorMessage;
-import org.woym.messages.MessageHelper;
-import org.woym.messages.SpecificErrorMessage;
-import org.woym.objects.Entity;
 
 /**
  * Repräsentiert einen Fehlerstatus.

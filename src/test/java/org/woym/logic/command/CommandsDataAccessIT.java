@@ -8,19 +8,19 @@ import static org.testng.AssertJUnit.assertTrue;
 
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
-import org.woym.exceptions.DatasetException;
+import org.woym.common.exceptions.DatasetException;
+import org.woym.common.objects.AcademicYear;
+import org.woym.common.objects.ActivityType;
+import org.woym.common.objects.Lesson;
+import org.woym.common.objects.LessonType;
+import org.woym.common.objects.Location;
+import org.woym.common.objects.PedagogicAssistant;
+import org.woym.common.objects.Room;
+import org.woym.common.objects.Schoolclass;
+import org.woym.common.objects.Teacher;
+import org.woym.common.objects.TravelTimeList;
+import org.woym.common.objects.spec.IMemento;
 import org.woym.logic.SuccessStatus;
-import org.woym.objects.AcademicYear;
-import org.woym.objects.ActivityType;
-import org.woym.objects.Lesson;
-import org.woym.objects.LessonType;
-import org.woym.objects.Location;
-import org.woym.objects.PedagogicAssistant;
-import org.woym.objects.Room;
-import org.woym.objects.Schoolclass;
-import org.woym.objects.Teacher;
-import org.woym.objects.TravelTimeList;
-import org.woym.objects.spec.IMemento;
 import org.woym.persistence.DataAccess;
 
 @Test(groups = { "CommandsDataAccessIT", "integration" }, dependsOnGroups = {

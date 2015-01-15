@@ -7,8 +7,8 @@ import javax.faces.convert.FacesConverter;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.woym.exceptions.DatasetException;
-import org.woym.objects.Schoolclass;
+import org.woym.common.exceptions.DatasetException;
+import org.woym.common.objects.Schoolclass;
 import org.woym.persistence.DataAccess;
 
 /**

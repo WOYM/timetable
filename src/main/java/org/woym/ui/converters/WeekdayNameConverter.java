@@ -5,7 +5,7 @@ import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
 import javax.faces.convert.FacesConverter;
 
-import org.woym.objects.Weekday;
+import org.woym.common.objects.Weekday;
 
 @FacesConverter("org.woym.WeekdayConverter")
 public class WeekdayNameConverter implements Converter {

@@ -212,7 +212,7 @@
 							id="travelTimeTable" var="travelTime"
 							selection="#{locationController.selectedTravelTimeEdge}"
 							value="#{locationController.travelTimeEdges}"
-							selectionMode="single" rowKey="#{travelTime.location1.name}"
+							selectionMode="single" rowKey="#{travelTime.hashCode()}"
 							scrollable="true" scrollHeight="250">
 							<p:column headerText="Standort A">
 								<h:outputText value="#{travelTime.location1.name}" />

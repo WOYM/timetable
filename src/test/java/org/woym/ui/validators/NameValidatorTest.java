@@ -12,9 +12,9 @@ import org.mockito.Mockito;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.modules.testng.PowerMockTestCase;
 import org.testng.annotations.Test;
-import org.woym.exceptions.DatasetException;
-import org.woym.objects.LessonType;
-import org.woym.objects.Teacher;
+import org.woym.common.exceptions.DatasetException;
+import org.woym.common.objects.LessonType;
+import org.woym.common.objects.Teacher;
 import org.woym.persistence.DataAccess;
 
 @Test(groups = "unit")
