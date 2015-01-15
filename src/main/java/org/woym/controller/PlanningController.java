@@ -109,6 +109,24 @@ public class PlanningController implements Serializable {
 	public int getSlotMinutes() {
 		return Config.getSingleIntValue(DefaultConfigEnum.TIMETABLE_GRID);
 	}
+	
+	/**
+	 * Liefert die Startzeit der Anzeige zurück.
+	 * 
+	 * @return Startzeit
+	 */
+	public String getMinTime() {
+		return Config.getSingleStringValue(DefaultConfigEnum.WEEKDAY_STARTTIME);
+	}
+	
+	/**
+	 * Liefert die Endzeit der Anzeige zurück.
+	 * 
+	 * @return Startzeit
+	 */
+	public String getMaxTime() {
+		return Config.getSingleStringValue(DefaultConfigEnum.WEEKDAY_ENDTIME);
+	}
 
 	/**
 	 * Setzt das initiale Darstellungsdatum des Kalenders auf den ersten Montag
