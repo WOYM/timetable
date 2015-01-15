@@ -1,5 +1,7 @@
 package org.woym.logic.util;
 
+import java.util.List;
+
 import javax.faces.application.FacesMessage;
 
 import org.apache.logging.log4j.LogManager;
@@ -117,12 +119,20 @@ public class ActivityValidator {
 			throws DatasetException {
 		for (EmployeeTimePeriods employeeTimePeriods : activity
 				.getEmployeeTimePeriods()) {
-			if (dataAccess.getAllActivities(employeeTimePeriods.getEmployee(),
-					activity.getTime()).size() > 0) {
-				return new FailureStatus(
-						SpecificErrorMessage.VALIDATE_ACTIVITY_EXCEPTION,
-						employeeTimePeriods.getEmployee().getClass(),
-						FacesMessage.SEVERITY_ERROR);
+
+			List<Activity> activities = dataAccess.getAllActivities(
+					employeeTimePeriods.getEmployee(), activity.getTime());
+
+			if (activities.size() > 0) {
+				for (Activity localActivity : activities) {
+					if (!activity.equals(localActivity)) {
+						return new FailureStatus(
+								SpecificErrorMessage.VALIDATE_ACTIVITY_EXCEPTION,
+								employeeTimePeriods.getEmployee().getClass(),
+								FacesMessage.SEVERITY_ERROR);
+					}
+				}
+
 			}
 
 		}
@@ -145,11 +155,18 @@ public class ActivityValidator {
 	private IStatus validateSchoolclasses(Activity activity)
 			throws DatasetException {
 		for (Schoolclass schoolclass : activity.getSchoolclasses()) {
-			if (dataAccess.getAllActivities(schoolclass, activity.getTime())
-					.size() > 0) {
-				return new FailureStatus(
-						SpecificErrorMessage.VALIDATE_ACTIVITY_EXCEPTION,
-						Schoolclass.class, FacesMessage.SEVERITY_ERROR);
+
+			List<Activity> activities = dataAccess.getAllActivities(
+					schoolclass, activity.getTime());
+
+			if (activities.size() > 0) {
+				for (Activity localActivity : activities) {
+					if (!activity.equals(localActivity)) {
+						return new FailureStatus(
+								SpecificErrorMessage.VALIDATE_ACTIVITY_EXCEPTION,
+								Schoolclass.class, FacesMessage.SEVERITY_ERROR);
+					}
+				}
 			}
 
 		}

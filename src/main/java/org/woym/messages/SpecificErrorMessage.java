@@ -37,7 +37,7 @@ public enum SpecificErrorMessage {
 	 * Überschneidung auftritt.
 	 */
 	VALIDATE_ACTIVITY_EXCEPTION("Validierungsfehler",
-			"Es ist eine Überschneidung für %s aufgetreten.");
+			"Beim Validieren %s ist eine Überschneidung aufgetreten.");
 
 	/**
 	 * Zusammenfassung der Nachricht.

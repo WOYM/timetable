@@ -213,8 +213,7 @@
 					</p:outputPanel>
 				</p:outputPanel>
 				<!-- Schedule -->
-				<div onclick="savePosition(event.pageX,event.pageY);">
-					<p:schedule showHeader="false" view="agendaWeek" allDaySlot="false"
+					<p:schedule id="scheduleMain" showHeader="false" view="agendaWeek" allDaySlot="false"
 						axisFormat="HH:mm" value="#{planningController.scheduleModel}"
 						slotMinutes="#{planningController.slotMinutes}"
 						columnFormat="week: 'ddd'" locale="de" timeZone="GMT+1"
@@ -224,11 +223,10 @@
 							update="activityInfoPanel" global="false"
 							oncomplete="PF('wActivityInfoDialog').show();" />
 						<p:ajax event="eventMove"
-							listener="#{planningController.onEventMove}" update="commandGrowl" />
+							listener="#{planningController.onEventMove}" update="commandGrowl,@this" />
 						<p:ajax event="eventResize"
-							listener="#{planningController.onEventResize}" update="commandGrowl" />
+							listener="#{planningController.onEventResize}" update="commandGrowl,@this" />
 					</p:schedule>
-				</div>
 				<p:spacer style="height:50px;" />
 			</p:outputPanel>
 		</p:outputPanel>
