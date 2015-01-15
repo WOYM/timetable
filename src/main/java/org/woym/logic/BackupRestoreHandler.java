@@ -30,18 +30,19 @@ import javax.servlet.ServletContextListener;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.woym.config.Config;
-import org.woym.config.DefaultConfigEnum;
-import org.woym.exceptions.DatasetException;
-import org.woym.exceptions.InvalidFileException;
+import org.woym.common.config.Config;
+import org.woym.common.config.DefaultConfigEnum;
+import org.woym.common.exceptions.DatasetException;
+import org.woym.common.exceptions.InvalidFileException;
+import org.woym.common.messages.GenericErrorMessage;
+import org.woym.common.messages.GenericSuccessMessage;
 import org.woym.logic.spec.IStatus;
-import org.woym.messages.GenericErrorMessage;
-import org.woym.messages.GenericSuccessMessage;
 import org.woym.persistence.DataBase;
 
 /**
- * Diese abstrakte Klasse stellt Methoden bereit, die ein Backup des Systems
- * erzeugen und wiederherstellen können.
+ * Diese Klasse stellt Methoden bereit, die ein Backup des Systems erzeugen und
+ * wiederherstellen können. Die Klasse ist nicht abstrakt, die sie sonst nicht
+ * als Listener genutzt werden kann.
  * 
  * @author Adrian
  *
@@ -52,13 +53,16 @@ public class BackupRestoreHandler implements ServletContextListener {
 	 * Der Logger.
 	 */
 	private static final Logger LOGGER = LogManager
-			.getLogger(BackupRestoreHandler.class);
+			.getLogger(BackupRestoreHandler.class.getName());
 
+	/**
+	 * Der ScheduledExecutorService, welcher die automatischen Backups umsetzt.
+	 */
 	private static ScheduledExecutorService scheduler;
 
 	@Override
 	public void contextInitialized(ServletContextEvent event) {
-		startScheduler();
+		startScheduler(false);
 	}
 
 	@Override
@@ -66,12 +70,22 @@ public class BackupRestoreHandler implements ServletContextListener {
 		stopScheduler();
 	}
 
+	/**
+	 * Stoppt den Dienst für die automatischen Backups und startet ihn neu.
+	 */
 	public static void restartScheduler() {
 		stopScheduler();
-		startScheduler();
+		startScheduler(false);
 	}
 
-	private static void startScheduler() {
+	/**
+	 * Startet den Dienst für die automatischen Backups.
+	 * 
+	 * @param afterRestore
+	 *            {@code true}, wenn das Starten nach einer Wiederherstellung
+	 *            geschieht, ansonsten {@code false}
+	 */
+	private static void startScheduler(boolean afterRestore) {
 		scheduler = Executors.newSingleThreadScheduledExecutor();
 		int backupInterval = Integer.valueOf(DefaultConfigEnum.BACKUP_INTERVAL
 				.getPropValue());
@@ -98,8 +112,9 @@ public class BackupRestoreHandler implements ServletContextListener {
 
 		} else if (backupInterval >= 1440) {
 			try {
-				SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy-HH:mm");
-				SimpleDateFormat day = new SimpleDateFormat("dd.MM.yyyy");
+				final SimpleDateFormat sdf = new SimpleDateFormat(
+						"dd.MM.yyyy-HH:mm");
+				final SimpleDateFormat day = new SimpleDateFormat("dd.MM.yyyy");
 				String date = Config
 						.getSingleStringValue(DefaultConfigEnum.BACKUP_NEXTDATE);
 				String time = Config
@@ -108,38 +123,56 @@ public class BackupRestoreHandler implements ServletContextListener {
 				Date currentDate = Calendar.getInstance().getTime();
 				Date nextDate = sdf.parse(date + "-" + time);
 
-				// So lange, das nächste Backup-Datum vor dem aktuellen Datum
-				// ist, das nächste Backup Datum um das Backup-Intervall erhöhen
-				boolean done = false;
-				while (nextDate.before(currentDate)) {
-					// Backup im Nachhinein anfertigen
-					if (!done) {
-						backup(null);
-						done = true;
+				// Falls das nächste Backup-Datum vor dem aktuellen liegt
+				if (nextDate.before(currentDate)) {
+					// Wenn kein Restore, Backup im Nachhinein anfertigen
+					if (!afterRestore) {
+						BackupRestoreHandler.backup(null);
+					} else {
+						// Nach Restore das Backup-Intervall ab der aktuellen
+						// Zeit beginnen
+						nextDate = sdf.parse(day.format(currentDate) + "-"
+								+ time);
 					}
-					nextDate.setTime(nextDate.getTime()
-							+ TimeUnit.MINUTES.toMillis(backupInterval));
+
+					currentDate = Calendar.getInstance().getTime();
+
+					// So lange das nächste Backup-Datum nicht nach dem
+					// aktuellen liegt, das Datum um das Backup-Intervall
+					// erhöhen
+					while (nextDate.before(currentDate)) {
+						nextDate.setTime(nextDate.getTime()
+								+ TimeUnit.MINUTES.toMillis(backupInterval));
+						currentDate = Calendar.getInstance().getTime();
+					}
 					Config.updateProperty(
 							DefaultConfigEnum.BACKUP_NEXTDATE.getPropKey(),
 							day.format(nextDate));
-					currentDate = Calendar.getInstance().getTime();
 				}
 
 				// Absolute Differenz zwischen aktuellem Datum und nächstem
-				// Backup-Datum gibt.
-				final long initialDelay = Math.abs(currentDate.getTime()
-						- nextDate.getTime());
+				// Backup-Datum
+				final long initialDelay = Math.abs(Calendar.getInstance()
+						.getTimeInMillis() - nextDate.getTime());
+				// ScheduledExecutorService starten
+
+				final int interval = backupInterval;
 				scheduler.scheduleAtFixedRate(new Runnable() {
 
 					@Override
 					public void run() {
-						SimpleDateFormat df = new SimpleDateFormat("dd.MM.yyyy");
 						BackupRestoreHandler.backup(null);
+
+						// Nächstes Backup-Datum in der Properties-Datei
+						// aktualisieren
+						Date nextBackupDate = Calendar.getInstance().getTime();
+						nextBackupDate.setTime(nextBackupDate.getTime()
+								+ TimeUnit.MINUTES.toMillis(interval));
 						Config.updateProperty(
 								DefaultConfigEnum.BACKUP_NEXTDATE.getPropKey(),
-								df.format(Calendar.getInstance().getTime()));
+								day.format(nextBackupDate));
 					}
-				}, initialDelay, (backupInterval / 1440), TimeUnit.DAYS);
+				}, initialDelay, backupInterval, TimeUnit.MINUTES);
 				LOGGER.debug("Started automatic backup scheduler. Next backup in "
 						+ initialDelay
 						+ "ms, then every "
@@ -150,6 +183,9 @@ public class BackupRestoreHandler implements ServletContextListener {
 		}
 	}
 
+	/**
+	 * Stoppt den Dienst für die automatischen Backups.
+	 */
 	private static void stopScheduler() {
 		scheduler.shutdownNow();
 		LOGGER.debug("Shut down automatic backup scheduler.");
@@ -229,6 +265,7 @@ public class BackupRestoreHandler implements ServletContextListener {
 	 *         {@linkplain FailureStatus}
 	 */
 	public static IStatus restore(String filePath) {
+		stopScheduler();
 		try {
 			DataBase.getInstance().restore(filePath);
 			CommandHandler.getInstance().emptyQueues();
@@ -250,6 +287,7 @@ public class BackupRestoreHandler implements ServletContextListener {
 			Files.copy(zippath, properties, StandardCopyOption.REPLACE_EXISTING);
 			// Neue Properties-Datei laden
 			Config.init();
+			startScheduler(true);
 			return new SuccessStatus(GenericSuccessMessage.RESTORE_SUCCESS);
 		} catch (IOException e) {
 			LOGGER.error(e);

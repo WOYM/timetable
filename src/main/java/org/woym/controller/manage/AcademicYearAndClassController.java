@@ -13,9 +13,15 @@ import javax.faces.context.FacesContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.primefaces.context.RequestContext;
-import org.woym.config.Config;
-import org.woym.config.DefaultConfigEnum;
-import org.woym.exceptions.DatasetException;
+import org.woym.common.config.Config;
+import org.woym.common.config.DefaultConfigEnum;
+import org.woym.common.exceptions.DatasetException;
+import org.woym.common.messages.GenericErrorMessage;
+import org.woym.common.messages.MessageHelper;
+import org.woym.common.objects.AcademicYear;
+import org.woym.common.objects.Location;
+import org.woym.common.objects.Schoolclass;
+import org.woym.common.objects.spec.IMemento;
 import org.woym.logic.CommandHandler;
 import org.woym.logic.SuccessStatus;
 import org.woym.logic.command.AddCommand;
@@ -24,12 +30,6 @@ import org.woym.logic.command.MacroCommand;
 import org.woym.logic.command.UpdateCommand;
 import org.woym.logic.spec.IStatus;
 import org.woym.logic.util.SchoolclassIdentifierUtil;
-import org.woym.messages.GenericErrorMessage;
-import org.woym.messages.MessageHelper;
-import org.woym.objects.AcademicYear;
-import org.woym.objects.Location;
-import org.woym.objects.Schoolclass;
-import org.woym.objects.spec.IMemento;
 import org.woym.persistence.DataAccess;
 
 /**
@@ -48,7 +48,7 @@ public class AcademicYearAndClassController implements Serializable {
 	private static final long serialVersionUID = -720596768882714799L;
 
 	private static Logger LOGGER = LogManager
-			.getLogger(AcademicYearAndClassController.class);
+			.getLogger(AcademicYearAndClassController.class.getName());
 
 	private static int INITIAL_GENERATOR_SIZE = 1;
 	private static int MAX_GENERATOR_SIZE = 20;

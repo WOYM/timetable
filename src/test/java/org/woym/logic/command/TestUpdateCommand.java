@@ -7,11 +7,11 @@ import org.powermock.modules.testng.PowerMockTestCase;
 import org.testng.AssertJUnit;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
-import org.woym.exceptions.DatasetException;
+import org.woym.common.exceptions.DatasetException;
+import org.woym.common.objects.Activity;
+import org.woym.common.objects.Activity.Memento;
 import org.woym.logic.FailureStatus;
 import org.woym.logic.SuccessStatus;
-import org.woym.objects.Activity;
-import org.woym.objects.Activity.Memento;
 
 /**
  * @author JurSch

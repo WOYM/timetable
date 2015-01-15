@@ -2,11 +2,11 @@ package org.woym.persistence.spec;
 
 import java.util.List;
 
-import org.woym.exceptions.DatasetException;
-import org.woym.objects.ActivityType;
-import org.woym.objects.Employee;
-import org.woym.objects.PedagogicAssistant;
-import org.woym.objects.Teacher;
+import org.woym.common.exceptions.DatasetException;
+import org.woym.common.objects.ActivityType;
+import org.woym.common.objects.Employee;
+import org.woym.common.objects.PedagogicAssistant;
+import org.woym.common.objects.Teacher;
 
 /**
  * Dieses Interface beschreibt Methoden, die von einem {@linkplain Employee}

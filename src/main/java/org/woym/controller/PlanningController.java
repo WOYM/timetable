@@ -19,33 +19,34 @@ import org.primefaces.event.ScheduleEntryResizeEvent;
 import org.primefaces.event.SelectEvent;
 import org.primefaces.model.DefaultScheduleEvent;
 import org.primefaces.model.DefaultScheduleModel;
+import org.primefaces.model.ScheduleEvent;
 import org.primefaces.model.ScheduleModel;
-import org.woym.config.Config;
-import org.woym.config.DefaultConfigEnum;
-import org.woym.exceptions.DatasetException;
+import org.woym.common.config.Config;
+import org.woym.common.config.DefaultConfigEnum;
+import org.woym.common.exceptions.DatasetException;
+import org.woym.common.messages.GenericErrorMessage;
+import org.woym.common.messages.MessageHelper;
+import org.woym.common.objects.AcademicYear;
+import org.woym.common.objects.Activity;
+import org.woym.common.objects.CompoundLesson;
+import org.woym.common.objects.Entity;
+import org.woym.common.objects.Lesson;
+import org.woym.common.objects.LessonType;
+import org.woym.common.objects.Location;
+import org.woym.common.objects.Meeting;
+import org.woym.common.objects.PedagogicAssistant;
+import org.woym.common.objects.Room;
+import org.woym.common.objects.Schoolclass;
+import org.woym.common.objects.Teacher;
+import org.woym.common.objects.TimePeriod;
+import org.woym.common.objects.Weekday;
+import org.woym.common.objects.spec.IMemento;
 import org.woym.logic.CommandHandler;
 import org.woym.logic.SuccessStatus;
 import org.woym.logic.command.UpdateCommand;
 import org.woym.logic.spec.IStatus;
 import org.woym.logic.util.ActivityParser;
 import org.woym.logic.util.ActivityValidator;
-import org.woym.messages.GenericErrorMessage;
-import org.woym.messages.MessageHelper;
-import org.woym.objects.AcademicYear;
-import org.woym.objects.Activity;
-import org.woym.objects.CompoundLesson;
-import org.woym.objects.Entity;
-import org.woym.objects.Lesson;
-import org.woym.objects.LessonType;
-import org.woym.objects.Location;
-import org.woym.objects.Meeting;
-import org.woym.objects.PedagogicAssistant;
-import org.woym.objects.Room;
-import org.woym.objects.Schoolclass;
-import org.woym.objects.Teacher;
-import org.woym.objects.TimePeriod;
-import org.woym.objects.Weekday;
-import org.woym.objects.spec.IMemento;
 import org.woym.persistence.DataAccess;
 
 /**
@@ -186,6 +187,8 @@ public class PlanningController implements Serializable {
 			time.setEndTime(endTime);
 			time.setDay(Weekday.getByOrdinal(localDayDelta));
 
+			TimePeriod oldTime = activity.getTime();
+
 			activity.setTime(time);
 
 			IStatus status = activityValidator.validateActivity(activity);
@@ -200,9 +203,17 @@ public class PlanningController implements Serializable {
 				msg = status.report();
 
 				// Update event
-				scheduleModel.updateEvent(event.getScheduleEvent());
+				DefaultScheduleEvent defaultScheduleEvent = (DefaultScheduleEvent) event
+						.getScheduleEvent();
+				defaultScheduleEvent.setData(activity);
+				scheduleModel.updateEvent(defaultScheduleEvent);
 			} else {
 				msg = status.report();
+				DefaultScheduleEvent defaultScheduleEvent = (DefaultScheduleEvent) event
+						.getScheduleEvent();
+				defaultScheduleEvent.setStartDate(oldTime.getStartTime());
+				defaultScheduleEvent.setEndDate(oldTime.getEndTime());
+				scheduleModel.updateEvent(defaultScheduleEvent);
 			}
 		}
 
@@ -221,7 +232,7 @@ public class PlanningController implements Serializable {
 	 * Aktivitäten.
 	 * 
 	 * @param event
-	 * 			Das Event
+	 *            Das Event
 	 */
 	public void onEventResize(ScheduleEntryResizeEvent event) {
 

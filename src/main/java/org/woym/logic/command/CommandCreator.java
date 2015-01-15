@@ -3,24 +3,26 @@ package org.woym.logic.command;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.woym.exceptions.DatasetException;
+import org.woym.common.exceptions.DatasetException;
+import org.woym.common.objects.AcademicYear;
+import org.woym.common.objects.Activity;
+import org.woym.common.objects.ActivityType;
+import org.woym.common.objects.Classteam;
+import org.woym.common.objects.CompoundLesson;
+import org.woym.common.objects.Employee;
+import org.woym.common.objects.EmployeeTimePeriods;
+import org.woym.common.objects.Entity;
+import org.woym.common.objects.Lesson;
+import org.woym.common.objects.LessonType;
+import org.woym.common.objects.Location;
+import org.woym.common.objects.Room;
+import org.woym.common.objects.Schoolclass;
+import org.woym.common.objects.Teacher;
+import org.woym.common.objects.TravelTimeList;
+import org.woym.common.objects.TravelTimeList.Edge;
+import org.woym.common.objects.spec.IActivityObject;
+import org.woym.common.objects.spec.IMemento;
 import org.woym.logic.spec.ICommand;
-import org.woym.objects.AcademicYear;
-import org.woym.objects.Activity;
-import org.woym.objects.ActivityType;
-import org.woym.objects.Classteam;
-import org.woym.objects.CompoundLesson;
-import org.woym.objects.Employee;
-import org.woym.objects.EmployeeTimePeriods;
-import org.woym.objects.Entity;
-import org.woym.objects.Lesson;
-import org.woym.objects.LessonType;
-import org.woym.objects.Location;
-import org.woym.objects.Room;
-import org.woym.objects.Schoolclass;
-import org.woym.objects.Teacher;
-import org.woym.objects.spec.IActivityObject;
-import org.woym.objects.spec.IMemento;
 import org.woym.persistence.DataAccess;
 
 /**
@@ -120,7 +122,17 @@ public class CommandCreator {
 						commands.addAll(relationActivity(r));
 						commands.addAll(relationRoom(r, true));
 					}
+					IMemento memento = TravelTimeList.getInstance()
+							.createMemento();
+					for (Edge e : TravelTimeList.getInstance().getTravelTimes(
+							(Location) entity)) {
+						TravelTimeList.getInstance().remove(e);
+					}
+					commands.addLast(new UpdateCommand<Entity>(TravelTimeList
+							.getInstance(), memento));
 					commands.addLast(new DeleteCommand<Entity>(entity));
+				} else if (entity instanceof Classteam) {
+					commands.add(new DeleteCommand<Entity>(entity));
 				} else {
 					throw new UnsupportedOperationException(
 							"Entity not supported.");
@@ -268,15 +280,13 @@ public class CommandCreator {
 				employee);
 		for (Classteam c : classteams) {
 			IMemento memento = c.createMemento();
-
-			if (employee instanceof Teacher) {
-				if (c.getTeacher().equals(employee)) {
-					macro.addLast(new DeleteCommand<Entity>(c));
-					continue;
-				}
-			}
 			c.remove(employee);
-			macro.addLast(new UpdateCommand<Entity>(c, memento));
+			if (!c.teacherLeft()) {
+				c.setMemento(memento);
+				macro.addLast(new DeleteCommand<Entity>(c));
+			} else {
+				macro.addLast(new UpdateCommand<Entity>(c, memento));
+			}
 		}
 
 		// Referenzen bei den Schulklassen auflösen, sofern der übergebene

@@ -7,17 +7,17 @@ import java.text.SimpleDateFormat;
 import java.util.List;
 
 import org.testng.annotations.Test;
-import org.woym.exceptions.DatasetException;
-import org.woym.objects.Activity;
-import org.woym.objects.CompoundLesson;
-import org.woym.objects.EmployeeTimePeriods;
-import org.woym.objects.Lesson;
-import org.woym.objects.LessonType;
-import org.woym.objects.Meeting;
-import org.woym.objects.MeetingType;
-import org.woym.objects.TimePeriod;
-import org.woym.objects.Weekday;
-import org.woym.objects.spec.IActivityObject;
+import org.woym.common.exceptions.DatasetException;
+import org.woym.common.objects.Activity;
+import org.woym.common.objects.CompoundLesson;
+import org.woym.common.objects.EmployeeTimePeriods;
+import org.woym.common.objects.Lesson;
+import org.woym.common.objects.LessonType;
+import org.woym.common.objects.Meeting;
+import org.woym.common.objects.MeetingType;
+import org.woym.common.objects.TimePeriod;
+import org.woym.common.objects.Weekday;
+import org.woym.common.objects.spec.IActivityObject;
 
 @Test(groups = { "DataAccessObjectsIT2", "integration" }, dependsOnGroups = "DataAccessObjectsIT")
 public class DataAccessObjectsIT2 {

@@ -27,8 +27,8 @@
 
 				<p:outputPanel style="float:right">
 					<p:commandButton value="Hinzufügen" icon="ui-icon-plusthick"
-						actionListener="#{lessonTypeController.addLessonTypeDialog}"
-						process="@this" update="addLessonTypePanel">
+						onclick="PF('wAddLessonTypeDialog').show();" process="@this"
+						update="addLessonTypePanel">
 					</p:commandButton>
 				</p:outputPanel>
 
@@ -86,7 +86,7 @@
 					<h:outputText
 						value="Sind Sie sicher, dass der Stundeninhalt gelöscht werden soll?" />
 					<h:outputText
-						value="Alle Aktivitäten, welche dann keinen Stundeninhalt mehr besitzen, werden auch gelöscht." />
+						value="Alle Aktivitäten, welche dann keinen Inhalt mehr besitzen, werden auch gelöscht." />
 					<p:spacer height="10" />
 					<p:outputPanel>
 						<p:selectBooleanCheckbox
@@ -126,10 +126,13 @@
 							<f:validator validatorId="org.woym.NameValidator" />
 							<f:attribute name="validateBean"
 								value="#{lessonTypeController.lessonType}" />
+							<f:validateLength maximum="255" />
 						</p:inputText>
 						<p:outputLabel for="addDuration" value="Typische Dauer (Minuten):" />
 						<p:spinner id="addDuration" min="0" max="1000"
-							value="#{lessonTypeController.lessonType.typicalDuration}" />
+							value="#{lessonTypeController.lessonType.typicalDuration}">
+							<p:ajax event="keyup" update="addDuration" />
+						</p:spinner>
 						<p:outputLabel value="Räume:" />
 						<p:outputPanel>
 							<p:selectCheckboxMenu id="addRooms"
@@ -174,11 +177,14 @@
 							<f:validator validatorId="org.woym.NameValidator" />
 							<f:attribute name="validateBean"
 								value="#{lessonTypeController.lessonType}" />
+							<f:validateLength maximum="255" />
 						</p:inputText>
 						<p:outputLabel for="editDuration"
 							value="Typische Dauer (Minuten):" />
 						<p:spinner id="editDuration" min="0" max="1000"
-							value="#{lessonTypeController.lessonType.typicalDuration}" />
+							value="#{lessonTypeController.lessonType.typicalDuration}">
+							<p:ajax event="keyup" update="editDuration" />
+						</p:spinner>
 						<p:outputLabel value="Räume:" />
 						<p:outputPanel>
 							<p:selectCheckboxMenu id="editRooms"

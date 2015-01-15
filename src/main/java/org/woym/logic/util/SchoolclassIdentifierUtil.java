@@ -4,10 +4,10 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.woym.config.Config;
-import org.woym.config.DefaultConfigEnum;
-import org.woym.exceptions.DatasetException;
-import org.woym.objects.AcademicYear;
+import org.woym.common.config.Config;
+import org.woym.common.config.DefaultConfigEnum;
+import org.woym.common.exceptions.DatasetException;
+import org.woym.common.objects.AcademicYear;
 import org.woym.persistence.DataAccess;
 
 /**

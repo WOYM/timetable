@@ -9,27 +9,25 @@ import static org.testng.AssertJUnit.assertTrue;
 import java.io.File;
 import java.math.BigDecimal;
 import java.nio.file.Paths;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.testng.annotations.AfterSuite;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
-import org.woym.exceptions.DatasetException;
-import org.woym.objects.AcademicYear;
-import org.woym.objects.ActivityType;
-import org.woym.objects.ChargeableCompensation;
-import org.woym.objects.Classteam;
-import org.woym.objects.Employee;
-import org.woym.objects.LessonType;
-import org.woym.objects.Location;
-import org.woym.objects.MeetingType;
-import org.woym.objects.PedagogicAssistant;
-import org.woym.objects.Room;
-import org.woym.objects.Schoolclass;
-import org.woym.objects.Teacher;
-import org.woym.objects.TravelTimeList;
+import org.woym.common.exceptions.DatasetException;
+import org.woym.common.objects.AcademicYear;
+import org.woym.common.objects.ActivityType;
+import org.woym.common.objects.ChargeableCompensation;
+import org.woym.common.objects.Classteam;
+import org.woym.common.objects.Employee;
+import org.woym.common.objects.LessonType;
+import org.woym.common.objects.Location;
+import org.woym.common.objects.MeetingType;
+import org.woym.common.objects.PedagogicAssistant;
+import org.woym.common.objects.Room;
+import org.woym.common.objects.Schoolclass;
+import org.woym.common.objects.Teacher;
+import org.woym.common.objects.TravelTimeList;
 
 @Test(groups = { "DataAccessObjectsIT", "integration" })
 public class DataAccessObjectsIT {
@@ -252,7 +250,7 @@ public class DataAccessObjectsIT {
 	// ////////////////////////////////////////////////////////////////////////////////////
 	// Integration Employee
 	// ////////////////////////////////////////////////////////////////////////////////////
-	
+
 	@Test(priority = 1, groups = "DataAccessEmployee", dependsOnGroups = "DataAccessActivityType")
 	public void getAllEmployeesForActivityTypeSuccess() throws DatasetException {
 		// Lehrerin 1
@@ -363,7 +361,7 @@ public class DataAccessObjectsIT {
 	// ////////////////////////////////////////////////////////////////////////////////////
 	// Integration AcademicYear
 	// ////////////////////////////////////////////////////////////////////////////////////
-	
+
 	@Test(priority = 1, groups = "DataAccessAcademicYear", dependsOnGroups = "DataAccessActivityType")
 	public void getAllAcademicYearsSuccess() throws DatasetException {
 		AcademicYear a = new AcademicYear();
@@ -414,7 +412,7 @@ public class DataAccessObjectsIT {
 	// ////////////////////////////////////////////////////////////////////////////////////
 	// Integration Schoolclass
 	// ////////////////////////////////////////////////////////////////////////////////////
-	
+
 	@Test(priority = 1, groups = "DataAccessSchoolclass", dependsOnGroups = "DataAccessAcademicYear")
 	public void getOneAcademicYearSchoolclassSuccess() throws DatasetException {
 		List<AcademicYear> years = dataAccess.getAllAcademicYears();
@@ -526,24 +524,22 @@ public class DataAccessObjectsIT {
 	// ////////////////////////////////////////////////////////////////////////////////////
 	// Integration Classteam
 	// ////////////////////////////////////////////////////////////////////////////////////
-	
+
 	@Test(priority = 1, groups = "DataAccessClassteam", dependsOnGroups = "DataAccessSchoolclass")
 	public void getAllClassteamsSuccess() throws DatasetException {
 		Teacher t = (Teacher) dataAccess.getOneEmployee("MEY");
 
 		// Zunächst Klassenteams erstellen
 		Classteam c = new Classteam();
-		c.setTeacher(t);
+		c.addEmployee(t);
 		List<Schoolclass> schoolclasses = new ArrayList<Schoolclass>();
 		schoolclasses.add(dataAccess.getOneSchoolclass(1, 'a'));
 		c.setSchoolclasses(schoolclasses);
 		dataAccess.persist(c);
 
 		Classteam c1 = new Classteam();
-		c1.setTeacher(t);
-		List<Employee> employees = new ArrayList<Employee>();
-		employees.addAll(dataAccess.getAllPAs());
-		c1.setEmployees(employees);
+		c1.addEmployee(t);
+		c1.addEmployee(dataAccess.getAllPAs().get(0));
 		schoolclasses = new ArrayList<Schoolclass>();
 		schoolclasses.add(dataAccess.getOneSchoolclass(2, 'a'));
 		c1.setSchoolclasses(schoolclasses);
@@ -577,15 +573,16 @@ public class DataAccessObjectsIT {
 		Schoolclass s = dataAccess.getOneSchoolclass(1, 'a');
 		Classteam c = dataAccess.getOneClassteam(s);
 		assertNotNull(c);
-		assertTrue(c.getEmployees().isEmpty());
-		assertEquals(dataAccess.getOneEmployee("MEY"), c.getTeacher());
+		assertEquals(1, c.getEmployees().size());
+		assertEquals(dataAccess.getOneEmployee("MEY"), c.getEmployees().get(0));
 		assertEquals(s, c.getSchoolclasses().get(0));
 
 		s = dataAccess.getOneSchoolclass(2, 'a');
 		c = dataAccess.getOneClassteam(s);
 		assertNotNull(c);
-		assertEquals(1, c.getEmployees().size());
-		assertEquals(dataAccess.getOneEmployee("MUS"), c.getEmployees().get(0));
+		assertEquals(2, c.getEmployees().size());
+		assertTrue(c.getEmployees().contains(dataAccess.getOneEmployee("MUS")));
+		assertTrue(c.getEmployees().contains(dataAccess.getOneEmployee("MEY")));
 		assertEquals(s, c.getSchoolclasses().get(0));
 	}
 
@@ -600,7 +597,7 @@ public class DataAccessObjectsIT {
 	// ////////////////////////////////////////////////////////////////////////////////////
 	// Integration TravelTimeList
 	// ////////////////////////////////////////////////////////////////////////////////////
-	
+
 	@Test(priority = 2, groups = "DataAccessTravelTimeList")
 	public void getTravelTimeListNull() throws DatasetException {
 		TravelTimeList list = dataAccess.getTravelTimeList();
@@ -628,12 +625,12 @@ public class DataAccessObjectsIT {
 				.contains(dataAccess.getOneLocation("Zweigstelle")));
 	}
 
-	@AfterSuite
-	public void afterSuite() throws SQLException {
-		DataBase.getInstance().shutDown();
-		deleteFolder(new File(DataBase.DB_BACKUP_LOCATION));
-		System.out.println("Cleaned up database directory.");
-	}
+	// @AfterSuite
+	// public void afterSuite() throws SQLException {
+	// DataBase.getInstance().shutDown();
+	// deleteFolder(new File(DataBase.DB_BACKUP_LOCATION));
+	// System.out.println("Cleaned up database directory.");
+	// }
 
 	private void deleteFolder(File folder) {
 		if (folder.exists()) {

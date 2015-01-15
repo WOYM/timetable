@@ -18,7 +18,7 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
 	<!-- Name -->
 	<display-name>WOYM - Timetable</display-name>
 	<listener>
-		<listener-class>org.woym.config.ConfigServletListener</listener-class>
+		<listener-class>org.woym.common.config.ConfigServletListener</listener-class>
 	</listener>
 	<listener>
 		<listener-class>org.woym.persistence.DataBaseServletListener</listener-class>

@@ -2,7 +2,6 @@ package org.woym.controller.manage;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
@@ -14,9 +13,15 @@ import javax.faces.context.FacesContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.primefaces.context.RequestContext;
-import org.woym.config.Config;
-import org.woym.config.DefaultConfigEnum;
-import org.woym.exceptions.DatasetException;
+import org.woym.common.config.Config;
+import org.woym.common.config.DefaultConfigEnum;
+import org.woym.common.exceptions.DatasetException;
+import org.woym.common.messages.GenericErrorMessage;
+import org.woym.common.messages.MessageHelper;
+import org.woym.common.objects.LessonType;
+import org.woym.common.objects.Location;
+import org.woym.common.objects.Room;
+import org.woym.common.objects.spec.IMemento;
 import org.woym.logic.CommandHandler;
 import org.woym.logic.SuccessStatus;
 import org.woym.logic.command.AddCommand;
@@ -24,12 +29,6 @@ import org.woym.logic.command.CommandCreator;
 import org.woym.logic.command.MacroCommand;
 import org.woym.logic.command.UpdateCommand;
 import org.woym.logic.spec.IStatus;
-import org.woym.messages.GenericErrorMessage;
-import org.woym.messages.MessageHelper;
-import org.woym.objects.LessonType;
-import org.woym.objects.Location;
-import org.woym.objects.Room;
-import org.woym.objects.spec.IMemento;
 import org.woym.persistence.DataAccess;
 
 /**
@@ -47,7 +46,7 @@ public class LessonTypeController implements Serializable {
 	private static final long serialVersionUID = -3486820231036039086L;
 
 	private static Logger LOGGER = LogManager
-			.getLogger(LessonTypeController.class);
+			.getLogger(LessonTypeController.class.getName());
 
 	private LessonType lessonType;
 
@@ -62,9 +61,6 @@ public class LessonTypeController implements Serializable {
 	private boolean hideDeletionDialog;
 	private boolean hide;
 
-	private ColorEnum color;
-	private List<ColorEnum> colors = Arrays.asList(ColorEnum.values());
-
 	@PostConstruct
 	public void init() {
 		lessonType = new LessonType();
@@ -72,7 +68,6 @@ public class LessonTypeController implements Serializable {
 		hideDeletionDialog = Config
 				.getBooleanValue(DefaultConfigEnum.HIDE_ACTIVITYTYPE_DELETION_DIALOG);
 		hide = hideDeletionDialog;
-		color = ColorEnum.YELLOW;
 	}
 
 	/**
@@ -114,18 +109,6 @@ public class LessonTypeController implements Serializable {
 
 			return new ArrayList<Room>();
 		}
-	}
-
-	/**
-	 * Setzt die Werte zum Bearbeiten eines neuen Unterrichtstypen.
-	 */
-	public void addLessonTypeDialog() {
-
-		lessonType = new LessonType();
-		lessonType.setTypicalDuration(getTypicalDuration());
-		RequestContext context = RequestContext.getCurrentInstance();
-		context.execute("PF('wAddLessonTypeDialog').show();");
-
 	}
 
 	/**
@@ -218,22 +201,6 @@ public class LessonTypeController implements Serializable {
 
 	public void setHideDeletionDialog(boolean hideDeletionDialog) {
 		this.hideDeletionDialog = hideDeletionDialog;
-	}
-
-	public ColorEnum getColor() {
-		return color;
-	}
-
-	public void setColor(ColorEnum color) {
-		this.color = color;
-	}
-
-	public List<ColorEnum> getColors() {
-		return colors;
-	}
-
-	public void setColors(List<ColorEnum> colors) {
-		this.colors = colors;
 	}
 
 	private int getTypicalDuration() {

@@ -15,9 +15,14 @@ import org.apache.logging.log4j.Logger;
 import org.primefaces.context.RequestContext;
 import org.primefaces.event.TransferEvent;
 import org.primefaces.model.DualListModel;
-import org.woym.config.Config;
-import org.woym.config.DefaultConfigEnum;
-import org.woym.exceptions.DatasetException;
+import org.woym.common.config.Config;
+import org.woym.common.config.DefaultConfigEnum;
+import org.woym.common.exceptions.DatasetException;
+import org.woym.common.messages.GenericErrorMessage;
+import org.woym.common.messages.MessageHelper;
+import org.woym.common.objects.ActivityType;
+import org.woym.common.objects.Teacher;
+import org.woym.common.objects.spec.IMemento;
 import org.woym.logic.CommandHandler;
 import org.woym.logic.SuccessStatus;
 import org.woym.logic.command.AddCommand;
@@ -25,11 +30,6 @@ import org.woym.logic.command.CommandCreator;
 import org.woym.logic.command.MacroCommand;
 import org.woym.logic.command.UpdateCommand;
 import org.woym.logic.spec.IStatus;
-import org.woym.messages.GenericErrorMessage;
-import org.woym.messages.MessageHelper;
-import org.woym.objects.ActivityType;
-import org.woym.objects.Teacher;
-import org.woym.objects.spec.IMemento;
 import org.woym.persistence.DataAccess;
 
 /**
@@ -47,7 +47,7 @@ public class TeacherController implements Serializable {
 	private static final long serialVersionUID = -8212155094392549715L;
 
 	private static Logger LOGGER = LogManager
-			.getLogger(TeacherController.class);
+			.getLogger(TeacherController.class.getName());
 
 	private DataAccess dataAccess = DataAccess.getInstance();
 
@@ -63,12 +63,16 @@ public class TeacherController implements Serializable {
 	private boolean hideDeletionDialog;
 	private boolean hide;
 
+	private int hourlySettlement;
+
 	@PostConstruct
 	public void init() {
 		teacher = new Teacher();
 		hideDeletionDialog = Config
 				.getBooleanValue(DefaultConfigEnum.HIDE_TEACHER_DELETION_DIALOG);
 		hide = hideDeletionDialog;
+		hourlySettlement = Config
+				.getSingleIntValue(DefaultConfigEnum.TEACHER_HOURLY_SETTLEMENT);
 	}
 
 	/**
@@ -87,7 +91,7 @@ public class TeacherController implements Serializable {
 			allActivityTypes = new ArrayList<>();
 			possibleActivityTypes = teacher.getPossibleActivityTypes();
 
-			for (ActivityType activityType : dataAccess.getAllActivityTypes()) {
+			for (ActivityType activityType : dataAccess.getAllLessonTypes()) {
 				if (!possibleActivityTypes.contains(activityType)) {
 					allActivityTypes.add(activityType);
 				}
@@ -217,6 +221,10 @@ public class TeacherController implements Serializable {
 
 	public void setHideDeletionDialog(boolean hideDeletionDialog) {
 		this.hideDeletionDialog = hideDeletionDialog;
+	}
+
+	public int getHourlySettlement() {
+		return hourlySettlement;
 	}
 
 }

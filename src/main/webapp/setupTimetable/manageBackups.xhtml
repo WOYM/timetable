@@ -51,6 +51,7 @@
 									<p:outputPanel id="namePanel" style="margin-bottom:10px;"
 										rendered="#{not backupController.hasName}">
 										<p:inputText value="#{backupController.backupName}">
+											<f:validateLength maximum="255" />
 											<p:ajax event="keyup" update="backupButtonsPanel" />
 										</p:inputText>
 									</p:outputPanel>

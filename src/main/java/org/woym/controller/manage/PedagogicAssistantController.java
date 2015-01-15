@@ -15,9 +15,14 @@ import org.apache.logging.log4j.Logger;
 import org.primefaces.context.RequestContext;
 import org.primefaces.event.TransferEvent;
 import org.primefaces.model.DualListModel;
-import org.woym.config.Config;
-import org.woym.config.DefaultConfigEnum;
-import org.woym.exceptions.DatasetException;
+import org.woym.common.config.Config;
+import org.woym.common.config.DefaultConfigEnum;
+import org.woym.common.exceptions.DatasetException;
+import org.woym.common.messages.GenericErrorMessage;
+import org.woym.common.messages.MessageHelper;
+import org.woym.common.objects.ActivityType;
+import org.woym.common.objects.PedagogicAssistant;
+import org.woym.common.objects.spec.IMemento;
 import org.woym.logic.CommandHandler;
 import org.woym.logic.SuccessStatus;
 import org.woym.logic.command.AddCommand;
@@ -25,11 +30,6 @@ import org.woym.logic.command.CommandCreator;
 import org.woym.logic.command.MacroCommand;
 import org.woym.logic.command.UpdateCommand;
 import org.woym.logic.spec.IStatus;
-import org.woym.messages.GenericErrorMessage;
-import org.woym.messages.MessageHelper;
-import org.woym.objects.ActivityType;
-import org.woym.objects.PedagogicAssistant;
-import org.woym.objects.spec.IMemento;
 import org.woym.persistence.DataAccess;
 
 /**
@@ -47,7 +47,7 @@ public class PedagogicAssistantController implements Serializable {
 	private static final long serialVersionUID = 9002430508451329221L;
 
 	private static Logger LOGGER = LogManager
-			.getLogger(PedagogicAssistantController.class);
+			.getLogger(PedagogicAssistantController.class.getName());
 
 	private DataAccess dataAccess = DataAccess.getInstance();
 
@@ -62,12 +62,16 @@ public class PedagogicAssistantController implements Serializable {
 	private boolean hideDeletionDialog;
 	private boolean hide;
 
+	private int hourlySettlement;
+
 	@PostConstruct
 	public void init() {
 		pedagogicAssistant = new PedagogicAssistant();
 		hideDeletionDialog = Config
 				.getBooleanValue(DefaultConfigEnum.HIDE_PA_DELETION_DIALOG);
 		hide = hideDeletionDialog;
+		hourlySettlement = Config
+				.getSingleIntValue(DefaultConfigEnum.PEDAGOGIC_ASSISTANT_HOURLY_SETTLEMENT);
 	}
 
 	/**
@@ -217,6 +221,10 @@ public class PedagogicAssistantController implements Serializable {
 
 	public void setHideDeletionDialog(boolean hideDeletionDialog) {
 		this.hideDeletionDialog = hideDeletionDialog;
+	}
+
+	public int getHourlySettlement() {
+		return hourlySettlement;
 	}
 
 }
