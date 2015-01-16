@@ -2,6 +2,7 @@ package org.woym.controller.manage;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
@@ -13,6 +14,7 @@ import javax.faces.context.FacesContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.primefaces.context.RequestContext;
+import org.woym.common.ColorEnum;
 import org.woym.common.config.Config;
 import org.woym.common.config.DefaultConfigEnum;
 import org.woym.common.exceptions.DatasetException;
@@ -57,6 +59,9 @@ public class LessonTypeController implements Serializable {
 	private IMemento lessonTypeMemento;
 
 	private List<Room> rooms;
+
+	private ColorEnum color = ColorEnum.DEFAULT;
+	private List<ColorEnum> colors = Arrays.asList(ColorEnum.values());
 
 	private boolean hideDeletionDialog;
 	private boolean hide;
@@ -193,6 +198,22 @@ public class LessonTypeController implements Serializable {
 
 	public List<Room> getRooms() {
 		return rooms;
+	}
+
+	public ColorEnum getColor() {
+		return color;
+	}
+
+	public void setColor(ColorEnum color) {
+		this.color = color;
+	}
+
+	public List<ColorEnum> getColors() {
+		return colors;
+	}
+
+	public void setColors(List<ColorEnum> colors) {
+		this.colors = colors;
 	}
 
 	public boolean isHideDeletionDialog() {
