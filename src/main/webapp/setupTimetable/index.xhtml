@@ -13,6 +13,12 @@
 
 <h:body>
 	<h:form>
+		<!-- Hotkeys -->
+		<p:hotkey bind="ctrl+z" update="@form"
+			actionListener="#{GUIController.undo}" />
+		<p:hotkey bind="ctrl+y" update="@form"
+			actionListener="#{GUIController.redo}" />
+
 		<p:growl id="commandGrowl" showDetail="true" />
 		<p:toolbar id="setupToolbar">
 			<f:facet name="left">
@@ -72,6 +78,12 @@
 								action="manageSystemSettings" update="@all" process="@this" />
 							<p:menuitem value="Backups" icon="ui-icon-arrowthickstop-1-s"
 								action="manageBackups" update="@all" process="@this" />
+						</p:submenu>
+					</p:menu>
+					<p:menu style="width:300px; top:10px; position:relative">
+						<p:submenu label="Informationen">
+							<p:menuitem value="Tastaturshortcuts" icon="ui-icon-gear"
+								action="shortcuts" update="@all" process="@this" />
 						</p:submenu>
 					</p:menu>
 				</p:outputPanel>

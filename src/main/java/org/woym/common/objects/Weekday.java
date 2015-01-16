@@ -52,4 +52,25 @@ public enum Weekday {
 	public String getName() {
 		return name;
 	}
+
+	/**
+	 * Diese Methode findet den korrekten Wochentag anhand eines übergebenen
+	 * Ordinals.
+	 * <p>
+	 * Wenn kein entsprechender Wochentag gefunden wurde, wird {@code null}
+	 * zurückgegeben.
+	 * 
+	 * @param ordinal
+	 *            Das Ordinal des Wochentages
+	 * @return Der Wochentag oder {@code null}, wenn kein Wochentag dieses
+	 *         Ordinal hat
+	 */
+	public static Weekday getByOrdinal(int ordinal) {
+		for (Weekday weekday : Weekday.values()) {
+			if (ordinal == weekday.getOrdinal()) {
+				return weekday;
+			}
+		}
+		return null;
+	}
 }
