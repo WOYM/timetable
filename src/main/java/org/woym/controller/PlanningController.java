@@ -17,8 +17,8 @@ import org.apache.logging.log4j.Logger;
 import org.primefaces.event.ScheduleEntryMoveEvent;
 import org.primefaces.event.ScheduleEntryResizeEvent;
 import org.primefaces.event.SelectEvent;
+import org.primefaces.model.DefaultScheduleEvent;
 import org.primefaces.model.DefaultScheduleModel;
-import org.primefaces.model.ScheduleEvent;
 import org.primefaces.model.ScheduleModel;
 import org.woym.common.config.Config;
 import org.woym.common.config.DefaultConfigEnum;
@@ -38,9 +38,10 @@ import org.woym.common.objects.Room;
 import org.woym.common.objects.Schoolclass;
 import org.woym.common.objects.Teacher;
 import org.woym.common.objects.TimePeriod;
+import org.woym.common.objects.Weekday;
 import org.woym.common.objects.spec.IMemento;
 import org.woym.logic.CommandHandler;
-import org.woym.logic.FailureStatus;
+import org.woym.logic.SuccessStatus;
 import org.woym.logic.command.UpdateCommand;
 import org.woym.logic.spec.IStatus;
 import org.woym.logic.util.ActivityParser;
@@ -108,6 +109,24 @@ public class PlanningController implements Serializable {
 	public int getSlotMinutes() {
 		return Config.getSingleIntValue(DefaultConfigEnum.TIMETABLE_GRID);
 	}
+	
+	/**
+	 * Liefert die Startzeit der Anzeige zurück.
+	 * 
+	 * @return Startzeit
+	 */
+	public String getMinTime() {
+		return Config.getSingleStringValue(DefaultConfigEnum.WEEKDAY_STARTTIME);
+	}
+	
+	/**
+	 * Liefert die Endzeit der Anzeige zurück.
+	 * 
+	 * @return Startzeit
+	 */
+	public String getMaxTime() {
+		return Config.getSingleStringValue(DefaultConfigEnum.WEEKDAY_ENDTIME);
+	}
 
 	/**
 	 * Setzt das initiale Darstellungsdatum des Kalenders auf den ersten Montag
@@ -135,7 +154,8 @@ public class PlanningController implements Serializable {
 	 *            Das Event
 	 */
 	public void onEventSelect(SelectEvent selectEvent) {
-		ScheduleEvent event = (ScheduleEvent) selectEvent.getObject();
+		DefaultScheduleEvent event = (DefaultScheduleEvent) selectEvent
+				.getObject();
 
 		setActivity((Activity) event.getData());
 	}
@@ -146,7 +166,13 @@ public class PlanningController implements Serializable {
 	 * <p>
 	 * Die {@link Activity} im Event wird dabei so angepasst, dass ihre
 	 * Anfangszeit entsprechend des Event-Deltas gesetzt wird, wobei auch die
-	 * Endzeit entsprechend angepasst wird.
+	 * Endzeit entsprechend angepasst wird. Hierbei wird die Standarddauer der
+	 * Aktivität nicht beachtet, um Veränderungen an der Aktivität durch
+	 * Resizing nicht zu verfälschen.
+	 * <p>
+	 * Sollte es der Fall sein, dass die Aktivität sich in Überschneidung mit
+	 * anderen Aktivitäten befindet, so wird auf der GUI eine entsprechende
+	 * Nachricht dargestellt und keine Aktualisierung der Aktivität vorgenommen.
 	 * 
 	 * @param event
 	 *            Das Event
@@ -156,7 +182,8 @@ public class PlanningController implements Serializable {
 		FacesMessage msg;
 
 		Activity activity = (Activity) event.getScheduleEvent().getData();
-
+		TimePeriod oldTime = activity.getTime();
+		
 		IMemento activityMemento = activity.createMemento();
 
 		Date startTime = changeDateByDelta(activity.getTime().getStartTime(),
@@ -164,15 +191,90 @@ public class PlanningController implements Serializable {
 		Date endTime = changeDateByDelta(activity.getTime().getEndTime(),
 				event.getDayDelta(), event.getMinuteDelta());
 
+		int localDayDelta = activity.getTime().getDay().getOrdinal()
+				+ event.getDayDelta();
+
+		if (Weekday.getByOrdinal(localDayDelta) == null) {
+			msg = MessageHelper.generateMessage(
+					GenericErrorMessage.INVALID_WEEKDAY_IN_DISPLAY,
+					FacesMessage.SEVERITY_ERROR);
+		} else {
+
+			TimePeriod time = new TimePeriod();
+			time.setStartTime(startTime);
+			time.setEndTime(endTime);
+			time.setDay(Weekday.getByOrdinal(localDayDelta));
+
+			activity.setTime(time);
+
+			IStatus status = activityValidator.validateActivity(activity);
+
+			if (status instanceof SuccessStatus) {
+
+				UpdateCommand<Activity> command = new UpdateCommand<Activity>(
+						activity, activityMemento);
+
+				status = commandHandler.execute(command);
+
+				msg = status.report();
+
+				// Update event
+				DefaultScheduleEvent defaultScheduleEvent = (DefaultScheduleEvent) event
+						.getScheduleEvent();
+				defaultScheduleEvent.setData(activity);
+				scheduleModel.updateEvent(defaultScheduleEvent);
+				FacesContext.getCurrentInstance().addMessage(null, msg);
+				return;
+			} else {
+				msg = status.report();
+			}
+		}
+
+		// Fallback
+		DefaultScheduleEvent defaultScheduleEvent = (DefaultScheduleEvent) event
+				.getScheduleEvent();
+		defaultScheduleEvent.setStartDate(oldTime.getStartTime());
+		defaultScheduleEvent.setEndDate(oldTime.getEndTime());
+		scheduleModel.updateEvent(defaultScheduleEvent);
+		
+		FacesContext.getCurrentInstance().addMessage(null, msg);
+	}
+
+	/**
+	 * Diese Methode wird aufgerufen, wenn die Größe einer Aktivität in der
+	 * Stundenplandarstellung der GUI verändert wird.
+	 * <p>
+	 * Durch den Aufbau der {@code Schedule}-Komponente kann ein Event nur in
+	 * seiner Endzeit verändert werden.
+	 * <p>
+	 * Da in der Darstellung die Wochenansicht erzwungen wird, wird der
+	 * Wochentag nicht überschrieben. Dieses passiert beim Bewegen von
+	 * Aktivitäten.
+	 * 
+	 * @param event
+	 *            Das Event
+	 */
+	public void onEventResize(ScheduleEntryResizeEvent event) {
+
+		FacesMessage msg;
+
+		Activity activity = (Activity) event.getScheduleEvent().getData();
+
+		IMemento activityMemento = activity.createMemento();
+
+		Date endTime = changeDateByDelta(activity.getTime().getEndTime(),
+				event.getDayDelta(), event.getMinuteDelta());
+
 		TimePeriod time = new TimePeriod();
-		time.setStartTime(startTime);
+		time.setStartTime(activity.getTime().getStartTime());
 		time.setEndTime(endTime);
+		time.setDay(activity.getTime().getDay());
 
 		activity.setTime(time);
 
 		IStatus status = activityValidator.validateActivity(activity);
 
-		if (!(status instanceof FailureStatus)) {
+		if (status instanceof SuccessStatus) {
 
 			UpdateCommand<Activity> command = new UpdateCommand<Activity>(
 					activity, activityMemento);
@@ -181,6 +283,8 @@ public class PlanningController implements Serializable {
 
 			msg = status.report();
 
+			// Update event
+			scheduleModel.updateEvent(event.getScheduleEvent());
 		} else {
 			msg = status.report();
 		}
@@ -188,10 +292,21 @@ public class PlanningController implements Serializable {
 		FacesContext.getCurrentInstance().addMessage(null, msg);
 	}
 
-	public void onEventResize(ScheduleEntryResizeEvent event) {
-		// TODO
-	}
-
+	/**
+	 * Diese Methode passt ein übergebenes {@link Date} um ein übergebenes
+	 * Tages- und Minutendelta an.
+	 * <p>
+	 * Wir ein Wert für Minuten angegeben, der den Umfang eines Tages
+	 * überschreitet, so wird dies entsprechend umgerechnet.
+	 * 
+	 * @param date
+	 *            Das {@link Date}, das um die Delta verändert werden soll
+	 * @param dayDelta
+	 *            Das Tagesdelta
+	 * @param minuteDelta
+	 *            Das Minutendelta
+	 * @return Das angepasste {@link Date}
+	 */
 	private Date changeDateByDelta(Date date, int dayDelta, int minuteDelta) {
 		Calendar calendar = Calendar.getInstance();
 		calendar.setTime(date);
@@ -471,10 +586,24 @@ public class PlanningController implements Serializable {
 		return title;
 	}
 
+	/**
+	 * Liefert die Startzeit der lokalen {@link Activity} in einem lesbaren
+	 * Format zurück.
+	 * 
+	 * @return Die lesbare Zeit
+	 */
 	public String getActivityDescriptionStartTime() {
 		return getActivityDescriptionStartTime(activity);
 	}
 
+	/**
+	 * Liefert die Startzeit einer {@link Activity} in einem lesbaren Format
+	 * zurück.
+	 * 
+	 * @param activity
+	 *            Die {@link Activity}
+	 * @return Die lesbare Zeit
+	 */
 	public String getActivityDescriptionStartTime(Activity activity) {
 		if (activity == null) {
 			return "";
@@ -483,10 +612,24 @@ public class PlanningController implements Serializable {
 				activity);
 	}
 
+	/**
+	 * Liefert die Endzeit der lokalen {@link Activity} in einem lesbaren Format
+	 * zurück.
+	 * 
+	 * @return Die lesbare Zeit
+	 */
 	public String getActivityDescriptionEndTime() {
 		return getActivityDescriptionEndTime(activity);
 	}
 
+	/**
+	 * Liefert die Endzeit einer {@link Activity} in einem lesbaren Format
+	 * zurück.
+	 * 
+	 * @param activity
+	 *            Die {@link Activity}
+	 * @return Die lesbare Zeit
+	 */
 	public String getActivityDescriptionEndTime(Activity activity) {
 		if (activity == null) {
 			return "";
@@ -495,14 +638,30 @@ public class PlanningController implements Serializable {
 				activity);
 	}
 
+	/**
+	 * Liefert die Uhrzeit der {@link Activity} in einem lesbaren Format zurück.
+	 * 
+	 * @param date
+	 *            Das {@link Date}, dessen Zeit dargestellt werden soll
+	 * @param activity
+	 *            Die {@link Activity}, um deren Datum es geht {@link Weekday}
+	 * @return Eine lesbare Zeit
+	 */
 	public String getActivityDescriptionTime(Date date, Activity activity) {
 
 		Calendar calendar = Calendar.getInstance();
 		calendar.setTime(date);
 
+		String readableMinutes;
+
+		if (calendar.get(Calendar.MINUTE) > 0) {
+			readableMinutes = String.valueOf(calendar.get(Calendar.MINUTE));
+		} else {
+			readableMinutes = "00";
+		}
+
 		String readableTime = activity.getTime().getDay().toString() + ", "
-				+ calendar.get(Calendar.HOUR) + ":"
-				+ calendar.get(Calendar.MINUTE);
+				+ calendar.get(Calendar.HOUR) + ":" + readableMinutes;
 
 		return readableTime;
 	}

@@ -87,8 +87,19 @@ public enum GenericErrorMessage {
 	 */
 	INVALID_FILE("Ungültige Datei", "Die ausgewählte Datei ist ungültig."),
 
+	/**
+	 * Diese Statusnachricht wird gewählt, wenn keine Aktivität gelöscht werden
+	 * könnte.
+	 */
 	NO_ACTIVITIES_TO_DELETE("Keine Aktivitäten zu löschen.",
-			"Es sind keine zu löschenden Aktivitäten vorhanden.");
+			"Es sind keine zu löschenden Aktivitäten vorhanden."),
+
+	/**
+	 * Diese Statusnachricht wird gewählt, wenn ein unvorhergesehener Fehler
+	 * beim Drag&Drop von Aktivitäten auftritt.
+	 */
+	INVALID_WEEKDAY_IN_DISPLAY("Es wurde ein ungültiger Tag übergeben.",
+			"Die Aktivität kann nicht aktualisiert werden.");
 
 	/**
 	 * Zusammenfassung der Nachricht.
