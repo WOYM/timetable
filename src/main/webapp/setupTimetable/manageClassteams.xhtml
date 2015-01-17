@@ -102,15 +102,15 @@
 
 			<!-- Add-Dialog -->
 			<p:dialog header="Hinzufügen von Klassenteams"
-				id="addClassteamDialog" widgetVar="wAddClassteamDialog" width="500"
+				id="addClassteamDialog" widgetVar="wAddClassteamDialog" width="550"
 				modal="true" draggable="true" resizable="false" appendToBody="true"
 				dynamic="true" showEffect="fade" hideEffect="fade">
 				<p:ajax event="close" update="@form" />
 				<p:outputPanel id="addClassteamPanel">
 					<b><h:outputText value="Neues Klassenteam" /></b>
-					<h:panelGrid columns="2">
-						<p:outputLabel for="addEmployees"
-							value="Mitarbeiter (min. eine Lehrkraft)" />
+					<h:panelGrid columns="2" column-classes="half-column">
+						<p:outputLabel
+							value="Mitarbeiter (min. eine Lehrkraft):" />
 						<p:selectCheckboxMenu id="addEmployees"
 							value="#{classteamController.selectedEmployees}" filter="true"
 							filterMatchMode="contains" converter="EmployeeNameConverter"
@@ -126,7 +126,7 @@
 								var="pedagogicAssistant"
 								itemLabel="#{pedagogicAssistant.symbol}, #{pedagogicAssistant.name}" />
 						</p:selectCheckboxMenu>
-						<p:outputLabel for="addSchoolclasses" value="Schulklassen:" />
+						<p:outputLabel value="Schulklassen:" />
 						<p:outputPanel>
 							<p:selectCheckboxMenu id="addSchoolclasses"
 								value="#{classteamController.selectedSchoolclasses}"
