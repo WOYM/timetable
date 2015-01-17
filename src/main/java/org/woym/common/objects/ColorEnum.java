@@ -1,4 +1,4 @@
-package org.woym.common;
+package org.woym.common.objects;
 
 public enum ColorEnum {
 

@@ -28,8 +28,8 @@ import org.woym.common.objects.spec.IMementoObject;
 @Inheritance
 @Entity
 @DiscriminatorColumn(name = "TYPE", discriminatorType = DiscriminatorType.STRING, length = 20)
-public abstract class ActivityType extends org.woym.common.objects.Entity implements
-		IActivityObject, IMementoObject {
+public abstract class ActivityType extends org.woym.common.objects.Entity
+		implements IActivityObject, IMementoObject {
 
 	/**
 	 * 
@@ -65,7 +65,7 @@ public abstract class ActivityType extends org.woym.common.objects.Entity implem
 	/**
 	 * Die Farbe dieses Aktivitätstyps als Hexadezimal-String.
 	 */
-	private String hexColor;
+	private ColorEnum color;
 
 	public ActivityType() {
 	}
@@ -102,12 +102,12 @@ public abstract class ActivityType extends org.woym.common.objects.Entity implem
 		this.rooms = rooms;
 	}
 
-	public String getHexColor() {
-		return hexColor;
+	public ColorEnum getColor() {
+		return color;
 	}
 
-	public void setHexColor(String hexColor) {
-		this.hexColor = hexColor;
+	public void setColor(ColorEnum color) {
+		this.color = color;
 	}
 
 	@Override
@@ -262,7 +262,7 @@ public abstract class ActivityType extends org.woym.common.objects.Entity implem
 			name = actualMemento.name;
 			typicalDuration = actualMemento.typicalDuration;
 			rooms = new ArrayList<Room>(actualMemento.rooms);
-			hexColor = actualMemento.hexColor;
+			color = actualMemento.color;
 		} else {
 			throw new IllegalArgumentException("Only " + Memento.class
 					+ " as parameter allowed.");
@@ -286,7 +286,7 @@ public abstract class ActivityType extends org.woym.common.objects.Entity implem
 
 		private final List<Room> rooms;
 
-		private final String hexColor;
+		private final ColorEnum color;
 
 		Memento(ActivityType originator) {
 			if (originator == null) {
@@ -296,7 +296,7 @@ public abstract class ActivityType extends org.woym.common.objects.Entity implem
 			name = originator.name;
 			typicalDuration = originator.typicalDuration;
 			rooms = new ArrayList<Room>(originator.rooms);
-			hexColor = originator.hexColor;
+			color = originator.color;
 		}
 
 	}

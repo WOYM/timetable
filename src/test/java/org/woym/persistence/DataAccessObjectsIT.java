@@ -9,9 +9,11 @@ import static org.testng.AssertJUnit.assertTrue;
 import java.io.File;
 import java.math.BigDecimal;
 import java.nio.file.Paths;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.testng.annotations.AfterSuite;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 import org.woym.common.exceptions.DatasetException;
@@ -593,6 +595,22 @@ public class DataAccessObjectsIT {
 		Classteam c = dataAccess.getOneClassteam(s);
 		assertNull(c);
 	}
+	
+	@Test(priority=2, groups="DataAccessClassteam", dependsOnGroups="DataAccessSchoolclass")
+	public void getAllSchoolclassesWithoutClassteamSuccess() throws Exception{
+		Schoolclass s = new Schoolclass();
+		s.setIdentifier('b');
+		AcademicYear year = dataAccess.getOneAcademicYear(1);
+		year.add(s);
+		year.update();
+		List<Schoolclass> list = dataAccess.getAllSchoolclassesWithoutClassteam();
+		assertEquals(1, list.size());
+		assertEquals('b', list.get(0).getIdentifier());
+		s = dataAccess.getOneSchoolclass(1, 'b');
+		year.remove(s);
+		year.update();
+		s.delete();
+	}
 
 	// ////////////////////////////////////////////////////////////////////////////////////
 	// Integration TravelTimeList
@@ -625,12 +643,12 @@ public class DataAccessObjectsIT {
 				.contains(dataAccess.getOneLocation("Zweigstelle")));
 	}
 
-	// @AfterSuite
-	// public void afterSuite() throws SQLException {
-	// DataBase.getInstance().shutDown();
-	// deleteFolder(new File(DataBase.DB_BACKUP_LOCATION));
-	// System.out.println("Cleaned up database directory.");
-	// }
+	 @AfterSuite
+	 public void afterSuite() throws SQLException {
+	 DataBase.getInstance().shutDown();
+	 deleteFolder(new File(DataBase.DB_BACKUP_LOCATION));
+	 System.out.println("Cleaned up database directory.");
+	 }
 
 	private void deleteFolder(File folder) {
 		if (folder.exists()) {
