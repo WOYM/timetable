@@ -56,8 +56,8 @@ public class CommandCreator {
 	 * wird eine {@linkplain IllegalArgumentException} geworfen. <br>
 	 * Der Methode bekannte Parameter sind Objekte vom Typ {@linkplain Activity}
 	 * , {@linkplain Room}, {@linkplain Schoolclass}, {@linkplain Employee},
-	 * {@linkplain ActivityType}, {@linkplain AcademicYear} und
-	 * {@linkplain Location}. Wird ein Objekt anderen Typs übergeben, wird eine
+	 * {@linkplain ActivityType}, {@linkplain AcademicYear},
+	 * {@linkplain Location} und {@linkplain Classteam}. Wird ein Objekt anderen Typs übergeben, wird eine
 	 * {@linkplain UnsupportedOperationException} geworfen.<br>
 	 * Für bekannte Objekte werden zunächst alle Referenzen bei anderen Objekten
 	 * aufgelöst und entsprechende Commands dem {@linkplain MacroCommand}

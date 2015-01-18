@@ -3,7 +3,6 @@ package org.woym.controller.manage;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
@@ -11,11 +10,9 @@ import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
-import javax.faces.model.SelectItemGroup;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.eclipse.persistence.sessions.coordination.CommandConverter;
 import org.woym.common.config.Config;
 import org.woym.common.config.DefaultConfigEnum;
 import org.woym.common.exceptions.DatasetException;
@@ -31,7 +28,6 @@ import org.woym.logic.CommandHandler;
 import org.woym.logic.SuccessStatus;
 import org.woym.logic.command.AddCommand;
 import org.woym.logic.command.CommandCreator;
-import org.woym.logic.command.DeleteCommand;
 import org.woym.logic.command.MacroCommand;
 import org.woym.logic.command.UpdateCommand;
 import org.woym.logic.spec.IStatus;
@@ -93,8 +89,8 @@ public class ClassteamController implements Serializable {
 			return;
 		}
 		Classteam classteam = new Classteam();
-		classteam.setEmployees(selectedEmployees);
-		classteam.setSchoolclasses(selectedSchoolclasses);
+		classteam.setEmployees(new ArrayList<Employee>(selectedEmployees));
+		classteam.setSchoolclasses(new ArrayList<Schoolclass>(selectedSchoolclasses));
 		IStatus status = CommandHandler.getInstance().execute(
 				new AddCommand<Classteam>(classteam));
 

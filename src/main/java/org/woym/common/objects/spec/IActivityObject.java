@@ -1,13 +1,14 @@
 package org.woym.common.objects.spec;
 
-import org.woym.common.exceptions.DatasetException;
+import org.woym.common.objects.Activity;
 
+/**
+ * Dieses Interface dient der Vereinheitlichung von Entity-Objekten, welche Teil von
+ * {@linkplain Activity} sein können.
+ * 
+ * @author Adrian
+ *
+ */
 public interface IActivityObject {
-	
-	public void persist() throws DatasetException;
-	
-	public void update() throws DatasetException;
-	
-	public void delete() throws DatasetException;
 
 }

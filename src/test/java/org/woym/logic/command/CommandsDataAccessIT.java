@@ -11,6 +11,7 @@ import org.testng.annotations.Test;
 import org.woym.common.exceptions.DatasetException;
 import org.woym.common.objects.AcademicYear;
 import org.woym.common.objects.ActivityType;
+import org.woym.common.objects.Classteam;
 import org.woym.common.objects.Lesson;
 import org.woym.common.objects.LessonType;
 import org.woym.common.objects.Location;
@@ -292,6 +293,23 @@ public class CommandsDataAccessIT {
 		assertTrue(macro.redo() instanceof SuccessStatus);
 		assertEquals(1, dataAccess.getAllActivities().size());
 
+		macro.undo();
+	}
+	
+	@Test(groups="CommandCreator", dependsOnMethods ="commandCreatorDeleteLocationSuccess")
+	public void commandCreatorDeleteClassteamSuccess() throws Exception{
+		Classteam classteam = dataAccess.getOneClassteam(dataAccess.getOneSchoolclass(1, 'a'));
+		
+		MacroCommand macro = CommandCreator.getInstance().createDeleteCommand(classteam);
+		assertTrue(macro.execute() instanceof SuccessStatus);
+		assertNull(dataAccess.getOneClassteam(dataAccess.getOneSchoolclass(1, 'a')));
+		
+		assertTrue(macro.undo() instanceof SuccessStatus);
+		assertEquals(classteam, dataAccess.getOneClassteam(dataAccess.getOneSchoolclass(1, 'a')));
+		
+		assertTrue(macro.redo() instanceof SuccessStatus);
+		assertNull(dataAccess.getOneClassteam(dataAccess.getOneSchoolclass(1, 'a')));
+		
 		macro.undo();
 	}
 
