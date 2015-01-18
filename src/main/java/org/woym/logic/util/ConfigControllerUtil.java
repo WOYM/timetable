@@ -21,7 +21,6 @@ import org.woym.controller.manage.ConfigController;
 import org.woym.logic.BackupRestoreHandler;
 import org.woym.logic.CommandHandler;
 import org.woym.logic.FailureStatus;
-import org.woym.logic.SuccessStatus;
 import org.woym.logic.command.CommandCreator;
 import org.woym.logic.command.MacroCommand;
 import org.woym.logic.spec.IStatus;
@@ -50,9 +49,7 @@ public abstract class ConfigControllerUtil {
 			List<Activity> activities = DataAccess.getInstance()
 					.getAllActivities();
 			if (activities.isEmpty()) {
-				return new SuccessStatus("Keine Aktivitäten zu löschen.",
-						"Es sind keine zu löschenden Aktivitäten vorhanden.",
-						FacesMessage.SEVERITY_INFO);
+				return new FailureStatus(GenericErrorMessage.NO_ACTIVITIES_TO_DELETE, FacesMessage.SEVERITY_INFO);
 			}
 			MacroCommand macro = new MacroCommand();
 			for (Activity a : activities) {

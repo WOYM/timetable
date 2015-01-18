@@ -291,10 +291,7 @@ public class BackupRestoreHandler implements ServletContextListener {
 			return new SuccessStatus(GenericSuccessMessage.RESTORE_SUCCESS);
 		} catch (IOException e) {
 			LOGGER.error(e);
-			return new FailureStatus(
-					"System nicht vollständig wiederhergestellt",
-					"Die Systemeinstellungen konnten nicht erfolgreich wiederhergestellt werden. "
-							+ "Kopieren Sie sie manuell aus dem gezippten Backup in das Arbeitsverzeichnis.",
+			return new FailureStatus(GenericErrorMessage.NOT_FULLY_RESTORED,
 					FacesMessage.SEVERITY_ERROR);
 		}
 	}

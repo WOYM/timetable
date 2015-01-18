@@ -82,6 +82,15 @@ public enum GenericErrorMessage {
 			"Die Wiederherstellung des Backups ist fehlgeschlagen."),
 
 	/**
+	 * Diese Statusnachricht wird gewählt, wenn beim Wiederherstellen eines
+	 * Backups das Wiederherstellen der Systemeinstellungen fehlgeschlagen ist.
+	 */
+	NOT_FULLY_RESTORED(
+			"System nicht vollständig wiederhergestellt",
+			"Die Systemeinstellungen konnten nicht erfolgreich wiederhergestellt werden. "
+					+ "Kopieren Sie sie manuell aus dem gezippten Backup in das Arbeitsverzeichnis."),
+
+	/**
 	 * Diese Statusnachricht wird gewählt, wenn an einer Stelle eine ungültige
 	 * Datei gewählt wurde.
 	 */

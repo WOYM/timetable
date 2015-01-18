@@ -4,6 +4,7 @@ import static org.testng.AssertJUnit.assertEquals;
 import static org.testng.AssertJUnit.assertTrue;
 
 import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 import org.testng.annotations.Test;
@@ -43,6 +44,18 @@ public class DataAccessObjectsIT2 {
 		assertTrue(list.contains(m));
 	}
 
+	@Test(priority = 1, groups = "DataAccessActivity", dependsOnMethods = "getAllActivitiesSuccess")
+	public void getAllActivitiesWeekdaySuccess() throws Exception {
+		List<Activity> list = dataAccess.getAllActivities(Weekday.MONDAY);
+		assertEquals(2, list.size());
+		assertTrue(list.contains(l));
+		assertTrue(list.contains(m));
+
+		list = dataAccess.getAllActivities(Weekday.TUESDAY);
+		assertEquals(1, list.size());
+		assertTrue(list.contains(c));
+	}
+
 	@Test(priority = 1, groups = "DataAcessActivity", dependsOnMethods = "getAllActivitiesSuccess")
 	public void getAllActivitiesEmployeeSuccess() throws Exception {
 
@@ -57,6 +70,29 @@ public class DataAccessObjectsIT2 {
 		assertEquals(2, list.size());
 		assertTrue(list.contains(m));
 		assertTrue(list.contains(c));
+	}
+
+	@Test(priority = 2, groups = "DataAccessActivity")
+	public void getAllActivitiesNotBetweenSuccess() throws Exception{
+		 Date startTime = sdf.parse("10:00");
+		 Date endTime = sdf.parse("11:30");
+		 List<Activity> list = dataAccess.getAllActivitiesNotBetween(startTime, endTime);
+		 assertTrue(list.isEmpty());
+		 
+		 startTime = sdf.parse("10:00");
+		 endTime = sdf.parse("11:00");
+		 list = dataAccess.getAllActivitiesNotBetween(startTime, endTime);
+		 assertEquals(2, list.size());
+		 assertTrue(list.contains(m));
+		 assertTrue(list.contains(c));
+		 
+		 startTime = sdf.parse("11:30");
+		 endTime = sdf.parse("14:00");
+		 list = dataAccess.getAllActivitiesNotBetween(startTime, endTime);
+		 assertEquals(3, list.size());
+		 assertTrue(list.contains(l));
+		 assertTrue(list.contains(m));
+		 assertTrue(list.contains(c));
 	}
 
 	@Test(priority = 2, groups = "DataAccessActivity")
