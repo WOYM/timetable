@@ -15,6 +15,7 @@ import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 import org.woym.common.exceptions.DatasetException;
 import org.woym.common.objects.Activity;
+import org.woym.common.objects.ColorEnum;
 import org.woym.common.objects.CompoundLesson;
 import org.woym.common.objects.Lesson;
 import org.woym.common.objects.LessonType;
@@ -54,6 +55,9 @@ public class ActivityParserTest extends PowerMockTestCase {
 		
 		LessonType lessonType = new LessonType();
 		MeetingType meetingType = new MeetingType();
+		
+		lessonType.setColor(ColorEnum.ORANGE);
+		meetingType.setColor(ColorEnum.BLUE_DARK);
 		
 		Lesson activity1 = new Lesson();
 		activity1.setTime(time);

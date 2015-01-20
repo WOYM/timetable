@@ -21,6 +21,7 @@ import org.woym.common.objects.AcademicYear;
 import org.woym.common.objects.ActivityType;
 import org.woym.common.objects.ChargeableCompensation;
 import org.woym.common.objects.Classteam;
+import org.woym.common.objects.ColorEnum;
 import org.woym.common.objects.Employee;
 import org.woym.common.objects.LessonType;
 import org.woym.common.objects.Location;
@@ -182,16 +183,19 @@ public class DataAccessObjectsIT {
 	public void getAllActivityTypesSuccess() throws DatasetException {
 		LessonType l = new LessonType();
 		l.setName("Mathe");
+	    l.setColor(ColorEnum.GREEN_LIGHT);
 		l.setRooms(dataAccess.getAllRooms("Standardraum"));
 		dataAccess.persist(l);
 
 		LessonType l1 = new LessonType();
 		l1.setName("Musik");
 		l1.setRooms(dataAccess.getAllRooms("Musikzimmer"));
+		l1.setColor(ColorEnum.RED_DARK);
 		dataAccess.persist(l1);
 
 		MeetingType m = new MeetingType();
 		m.setName("Teamsitzung");
+		m.setColor(ColorEnum.YELLOW);
 		dataAccess.persist(m);
 
 		List<ActivityType> result = dataAccess.getAllActivityTypes();
