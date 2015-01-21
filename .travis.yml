@@ -3,6 +3,6 @@ jdk:
 - oraclejdk7
 - oraclejdk8
 - openjdk7
-script: mvn deploy
+script: mvn install
 notifications:
   slack: woym:VmCYmnsJRUvnaupIiciSFqXO
