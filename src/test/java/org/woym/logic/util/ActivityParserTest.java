@@ -66,7 +66,11 @@ public class ActivityParserTest extends PowerMockTestCase {
 		activity2.setTime(time);
 		Meeting activity3 = new Meeting();
 		activity3.setMeetingType(meetingType);
-		activity3.setTime(time);		
+		activity3.setTime(time);
+		
+		activities.add(activity1);
+		activities.add(activity2);
+		activities.add(activity3);
 		
 	}
 	
