@@ -28,6 +28,7 @@
 			<class name="org.woym.ui.converters.RoomNameConverterTest" />
 			<class name="org.woym.ui.converters.LocationNameConverterTest" />
 			<class name="org.woym.common.config.ConfigTest" />
+			<class name="org.woym.logic.util.ActivityValidatorTest" />
 		</classes>
 	</test>
 </suite>
