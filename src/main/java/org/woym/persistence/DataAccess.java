@@ -191,7 +191,7 @@ public class DataAccess implements IDataAccess, Observer {
 	public AcademicYear getOneAcademicYear(Schoolclass schoolclass)
 			throws DatasetException {
 		if (schoolclass == null) {
-			throw new IllegalArgumentException();
+			throw new IllegalArgumentException("Parameter was null");
 		}
 		try {
 			final Query query = em
@@ -233,7 +233,7 @@ public class DataAccess implements IDataAccess, Observer {
 	public List<Schoolclass> getAllSchoolclasses(Teacher teacher)
 			throws DatasetException {
 		if (teacher == null) {
-			throw new IllegalArgumentException();
+			throw new IllegalArgumentException("Parameter was null");
 		}
 		try {
 			final Query query = em
@@ -247,6 +247,32 @@ public class DataAccess implements IDataAccess, Observer {
 			throw new DatasetException(
 					"Error while getting all schoolclasses for teacher "
 							+ teacher + ": " + e.getMessage());
+		}
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Schoolclass> getAllSchoolclasses(Employee employee)
+			throws DatasetException {
+		if (employee == null) {
+			throw new IllegalArgumentException("Parameter was null.");
+		}
+		try {
+			final Query query = em
+					.createQuery("SELECT DISTINCT a.schoolclasses FROM Activity a INNER JOIN a.employeeTimePeriods e"
+							+ " WHERE e.employee = ?1 AND a.schoolclasses <> null");
+			query.setParameter(1, employee);
+			return query.getResultList();
+		} catch (Exception e) {
+			LOGGER.error(
+					"Exception while getting all schoolclasses for employee "
+							+ employee, e);
+			throw new DatasetException(
+					"Error while getting all schoolclasses for employee "
+							+ employee + " :" + e.getMessage());
 		}
 	}
 
@@ -308,7 +334,7 @@ public class DataAccess implements IDataAccess, Observer {
 	@Override
 	public Schoolclass getOneSchoolclass(Room room) throws DatasetException {
 		if (room == null) {
-			throw new IllegalArgumentException();
+			throw new IllegalArgumentException("Parameter was null");
 		}
 		try {
 			final Query query = em
@@ -340,7 +366,7 @@ public class DataAccess implements IDataAccess, Observer {
 	public List<Employee> getAllEmployees(ActivityType activityType)
 			throws DatasetException {
 		if (activityType == null) {
-			throw new IllegalArgumentException();
+			throw new IllegalArgumentException("Parameter was null");
 		}
 		try {
 			final Query query = em
@@ -383,7 +409,7 @@ public class DataAccess implements IDataAccess, Observer {
 	@SuppressWarnings("unchecked")
 	public Employee getOneEmployee(String symbol) throws DatasetException {
 		if (symbol == null) {
-			throw new IllegalArgumentException();
+			throw new IllegalArgumentException("Parameter was null");
 		}
 		try {
 			final Query query = em
@@ -454,7 +480,7 @@ public class DataAccess implements IDataAccess, Observer {
 	@SuppressWarnings("unchecked")
 	public Location getOneLocation(String name) throws DatasetException {
 		if (name == null) {
-			throw new IllegalArgumentException();
+			throw new IllegalArgumentException("Parameter was null");
 		}
 		try {
 			final Query query = em
@@ -481,7 +507,7 @@ public class DataAccess implements IDataAccess, Observer {
 	@Override
 	public Location getOneLocation(Room room) throws DatasetException {
 		if (room == null) {
-			throw new IllegalArgumentException();
+			throw new IllegalArgumentException("Parameter was null");
 		}
 		try {
 			final Query query = em
@@ -510,7 +536,7 @@ public class DataAccess implements IDataAccess, Observer {
 	@Override
 	public List<Room> getAllRooms(String purpose) throws DatasetException {
 		if (purpose == null) {
-			throw new IllegalArgumentException();
+			throw new IllegalArgumentException("Parameter was null");
 		}
 		try {
 			final Query query = em
@@ -535,7 +561,7 @@ public class DataAccess implements IDataAccess, Observer {
 	public Room getOneRoom(String locationName, String roomName)
 			throws DatasetException {
 		if (locationName == null || roomName == null) {
-			throw new IllegalArgumentException();
+			throw new IllegalArgumentException("Parameter was null");
 		}
 		try {
 			final String select = "SELECT r FROM Room r, Location l WHERE "
@@ -597,7 +623,7 @@ public class DataAccess implements IDataAccess, Observer {
 	public List<ActivityType> getAllActivityTypes(Room room)
 			throws DatasetException {
 		if (room == null) {
-			throw new IllegalArgumentException();
+			throw new IllegalArgumentException("Parameter was null");
 		}
 		try {
 			final Query query = em
@@ -647,7 +673,7 @@ public class DataAccess implements IDataAccess, Observer {
 	@SuppressWarnings("unchecked")
 	public ActivityType getOneActivityType(String name) throws DatasetException {
 		if (name == null) {
-			throw new IllegalArgumentException();
+			throw new IllegalArgumentException("Parameter was null");
 		}
 		try {
 			final Query query = em
@@ -688,7 +714,7 @@ public class DataAccess implements IDataAccess, Observer {
 	public List<Activity> getAllActivities(Weekday weekday)
 			throws DatasetException {
 		if (weekday == null) {
-			throw new IllegalArgumentException();
+			throw new IllegalArgumentException("Parameter was null");
 		}
 		try {
 			final Query query = em
@@ -712,7 +738,7 @@ public class DataAccess implements IDataAccess, Observer {
 	public List<Activity> getAllActivitiesNotBetween(Date startTime,
 			Date endTime) throws DatasetException {
 		if (startTime == null || endTime == null) {
-			throw new IllegalArgumentException();
+			throw new IllegalArgumentException("Parameter was null");
 		}
 		try {
 			final Query query = em
@@ -739,7 +765,7 @@ public class DataAccess implements IDataAccess, Observer {
 	public List<Activity> getAllActivities(Employee employee)
 			throws DatasetException {
 		if (employee == null) {
-			throw new IllegalArgumentException();
+			throw new IllegalArgumentException("Parameter was null");
 		}
 		try {
 			final Query query = em
@@ -777,7 +803,7 @@ public class DataAccess implements IDataAccess, Observer {
 	public List<Activity> getAllActivities(Schoolclass schoolclass)
 			throws DatasetException {
 		if (schoolclass == null) {
-			throw new IllegalArgumentException();
+			throw new IllegalArgumentException("Parameter was null");
 		}
 		try {
 			final Query query = em
@@ -803,7 +829,7 @@ public class DataAccess implements IDataAccess, Observer {
 	@Override
 	public List<Activity> getAllActivities(Room room) throws DatasetException {
 		if (room == null) {
-			throw new IllegalArgumentException();
+			throw new IllegalArgumentException("Parameter was null");
 		}
 		try {
 			final Query query = em
@@ -828,7 +854,7 @@ public class DataAccess implements IDataAccess, Observer {
 	public List<Activity> getAllActivities(Employee employee, Weekday weekday)
 			throws DatasetException {
 		if (employee == null || weekday == null) {
-			throw new IllegalArgumentException();
+			throw new IllegalArgumentException("Parameter was null");
 		}
 		try {
 			final Query query = em
@@ -854,7 +880,7 @@ public class DataAccess implements IDataAccess, Observer {
 	public List<Activity> getAllActivities(Employee employee,
 			TimePeriod timePeriod) throws DatasetException {
 		if (employee == null || timePeriod == null) {
-			throw new IllegalArgumentException();
+			throw new IllegalArgumentException("Parameter was null");
 		}
 		try {
 			final Query query = em
@@ -891,7 +917,7 @@ public class DataAccess implements IDataAccess, Observer {
 	public List<Activity> getAllActivities(Schoolclass schoolclass,
 			TimePeriod timePeriod) throws DatasetException {
 		if (schoolclass == null || timePeriod == null) {
-			throw new IllegalArgumentException();
+			throw new IllegalArgumentException("Parameter was null");
 		}
 		try {
 			final Query query = em.createQuery("SELECT a FROM Activity a WHERE"
@@ -923,7 +949,7 @@ public class DataAccess implements IDataAccess, Observer {
 	public List<Activity> getAllActivities(Room room, TimePeriod timePeriod)
 			throws DatasetException {
 		if (room == null || timePeriod == null) {
-			throw new IllegalArgumentException();
+			throw new IllegalArgumentException("Parameter was null");
 		}
 		try {
 			final Query query = em.createQuery("SELECT a FROM Activity a WHERE"
@@ -955,7 +981,7 @@ public class DataAccess implements IDataAccess, Observer {
 	public List<CompoundLesson> getAllCompoundLessons(LessonType lessonType)
 			throws DatasetException {
 		if (lessonType == null) {
-			throw new IllegalArgumentException();
+			throw new IllegalArgumentException("Parameter was null");
 		}
 		try {
 			final Query query = em
@@ -980,7 +1006,7 @@ public class DataAccess implements IDataAccess, Observer {
 	public List<Lesson> getAllLessons(LessonType lessonType)
 			throws DatasetException {
 		if (lessonType == null) {
-			throw new IllegalArgumentException();
+			throw new IllegalArgumentException("Parameter was null");
 		}
 		try {
 			final Query query = em
@@ -1004,7 +1030,7 @@ public class DataAccess implements IDataAccess, Observer {
 	public List<Meeting> getAllMeetings(MeetingType meetingType)
 			throws DatasetException {
 		if (meetingType == null) {
-			throw new IllegalArgumentException();
+			throw new IllegalArgumentException("Parameter was null");
 		}
 		try {
 			final Query query = em
@@ -1044,6 +1070,30 @@ public class DataAccess implements IDataAccess, Observer {
 		}
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
+	public Long sumLessonDuration(Employee employee, Schoolclass schoolclass,
+			LessonType lessonType) throws DatasetException {
+		if (employee == null || schoolclass == null || lessonType == null) {
+			throw new IllegalArgumentException("Parameter was null.");
+		}
+		try {
+			final Query query = em
+					.createQuery("SELECT SUM(t.duration) FROM Lesson l INNER JOIN l.employeeTimePeriods e INNER JOIN e.timePeriods t"
+							+ " WHERE l.lessonType = ?1 AND e.employee = ?2 AND ?3 MEMBER OF l.schoolclasses");
+			query.setParameter(1, lessonType);
+			query.setParameter(2, employee);
+			query.setParameter(3, schoolclass);
+			return (Long) query.getSingleResult();
+		} catch (Exception e) {
+			LOGGER.error("Exception while counting duration of lessons.", e);
+			throw new DatasetException(
+					"Error while counting duration of lessons: "
+							+ e.getMessage());
+		}
+	}
+
 	// ////////////////////////////////////////////////////////////////////////////////////
 	// IClassTeamDAO
 	// ////////////////////////////////////////////////////////////////////////////////////
@@ -1065,7 +1115,7 @@ public class DataAccess implements IDataAccess, Observer {
 	public List<Classteam> getAllClassteams(Employee employee)
 			throws DatasetException {
 		if (employee == null) {
-			throw new IllegalArgumentException();
+			throw new IllegalArgumentException("Parameter was null");
 		}
 		try {
 			final Query query = em
@@ -1089,7 +1139,7 @@ public class DataAccess implements IDataAccess, Observer {
 	public Classteam getOneClassteam(Schoolclass schoolclass)
 			throws DatasetException {
 		if (schoolclass == null) {
-			throw new IllegalArgumentException();
+			throw new IllegalArgumentException("Parameter was null");
 		}
 		try {
 			final Query query = em
@@ -1119,7 +1169,7 @@ public class DataAccess implements IDataAccess, Observer {
 	@Override
 	public <E> E getById(Class<E> clazz, Long id) throws DatasetException {
 		if (id == null) {
-			throw new IllegalArgumentException();
+			throw new IllegalArgumentException("Parameter was null");
 		}
 		try {
 			return em.find(clazz, id);
@@ -1163,7 +1213,7 @@ public class DataAccess implements IDataAccess, Observer {
 	public List<Character> getUsedChars(AcademicYear academicYear)
 			throws DatasetException {
 		if (academicYear == null) {
-			throw new IllegalArgumentException();
+			throw new IllegalArgumentException("Parameter was null");
 		}
 		try {
 			final Query query = em
@@ -1202,7 +1252,7 @@ public class DataAccess implements IDataAccess, Observer {
 			Class<? extends Serializable> clazz, String orderBy)
 			throws DatasetException {
 		if (clazz == null) {
-			throw new IllegalArgumentException();
+			throw new IllegalArgumentException("Parameter was null");
 		}
 		try {
 			String select = "SELECT x FROM " + clazz.getSimpleName() + " x";
@@ -1241,7 +1291,7 @@ public class DataAccess implements IDataAccess, Observer {
 			Class<? extends Employee> clazz, String searchSymbol)
 			throws DatasetException {
 		if (searchSymbol == null || clazz == null) {
-			throw new IllegalArgumentException();
+			throw new IllegalArgumentException("Parameter was null");
 		}
 		try {
 			final Query query = em.createQuery("SELECT x FROM "

@@ -65,7 +65,7 @@ public abstract class ActivityType extends org.woym.common.objects.Entity
 	/**
 	 * Die Farbe dieses Aktivitätstyps als Hexadezimal-String.
 	 */
-	private ColorEnum color;
+	private ColorEnum color = ColorEnum.DEFAULT;
 
 	public ActivityType() {
 	}

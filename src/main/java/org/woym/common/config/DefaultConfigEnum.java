@@ -13,7 +13,7 @@ public enum DefaultConfigEnum {
 	 * Das Backup-Intervall. Angabe des Intervalls in Minuten. Ein Wert von 0
 	 * wird für deaktivierte automatische Backups verwendet.
 	 */
-	BACKUP_INTERVAL("backup_interval", "30"),
+	BACKUP_INTERVAL("backup_interval", "0"),
 
 	/**
 	 * Die Uhrzeit, zu welcher ein Backup stattfinden soll, falls das

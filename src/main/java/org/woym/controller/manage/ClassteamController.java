@@ -2,6 +2,8 @@ package org.woym.controller.manage;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
@@ -90,7 +92,8 @@ public class ClassteamController implements Serializable {
 		}
 		Classteam classteam = new Classteam();
 		classteam.setEmployees(new ArrayList<Employee>(selectedEmployees));
-		classteam.setSchoolclasses(new ArrayList<Schoolclass>(selectedSchoolclasses));
+		classteam.setSchoolclasses(new ArrayList<Schoolclass>(
+				selectedSchoolclasses));
 		IStatus status = CommandHandler.getInstance().execute(
 				new AddCommand<Classteam>(classteam));
 
@@ -181,7 +184,7 @@ public class ClassteamController implements Serializable {
 			boolean alreadyExists = false;
 			for (Schoolclass s : selectedSchoolclasses) {
 				Classteam classteam = dataAccess.getOneClassteam(s);
-				if (classteam != null) {
+				if (classteam != null && !selectedClassteam.getSchoolclasses().contains(s)) {
 					alreadyExists = true;
 					valid = false;
 					break;
@@ -267,7 +270,19 @@ public class ClassteamController implements Serializable {
 	 */
 	public List<Schoolclass> getValidSchoolclasses() {
 		try {
-			return dataAccess.getAllSchoolclassesWithoutClassteam();
+			List<Schoolclass> list = dataAccess
+					.getAllSchoolclassesWithoutClassteam();
+			if(selectedClassteam != null){
+				list.addAll(selectedClassteam.getSchoolclasses());
+				Collections.sort(list, new Comparator<Schoolclass>() {
+					
+					@Override
+					public int compare(Schoolclass s1, Schoolclass s2){
+						return s1.toString().compareTo(s2.toString());
+					}
+				});
+			}
+			return list;
 		} catch (DatasetException e) {
 			LOGGER.error(e);
 			e.printStackTrace();
