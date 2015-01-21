@@ -14,6 +14,7 @@ import org.woym.common.objects.Activity;
 import org.woym.common.objects.Employee;
 import org.woym.common.objects.EmployeeTimePeriods;
 import org.woym.common.objects.Schoolclass;
+import org.woym.common.objects.Room;
 import org.woym.logic.FailureStatus;
 import org.woym.logic.SuccessStatus;
 import org.woym.logic.spec.IStatus;
@@ -76,23 +77,77 @@ public class ActivityValidator {
 	 *         sonst
 	 */
 	public IStatus validateActivity(Activity activity) {
-		IStatus status;
+		IStatus status = new SuccessStatus(
+				GenericSuccessMessage.VALIDATE_SUCCESS);
 
-		status = new SuccessStatus(GenericSuccessMessage.VALIDATE_SUCCESS);
+		status = validateActivityEmployees(activity);
+		if (status instanceof FailureStatus) {
+			return status;
+		}
 
-		// TODO Validierung an die Reihenfolge im Dialog anpassen, dies spart
-		// Ladezeiten
+		status = validateActivitySchoolclasses(activity);
+		if (status instanceof FailureStatus) {
+			return status;
+		}
+
+		status = validateActivityRooms(activity);
+		if (status instanceof FailureStatus) {
+			return status;
+		}
+
+		return status;
+	}
+
+	public IStatus validateActivityEmployees(Activity activity) {
+		IStatus status = new SuccessStatus(
+				GenericSuccessMessage.VALIDATE_SUCCESS);
+
 		try {
-
-			status = validateEmployees(activity);
-			if (status instanceof FailureStatus) {
-				return status;
+			if (!validateEmployees(activity)) {
+				return new FailureStatus(
+						SpecificErrorMessage.VALIDATE_ACTIVITY_EXCEPTION,
+						Employee.class, FacesMessage.SEVERITY_ERROR);
 			}
-			status = validateSchoolclasses(activity);
-			if (status instanceof FailureStatus) {
-				return status;
-			}
+		} catch (DatasetException e) {
+			LOGGER.error(e);
+			status = new FailureStatus(
+					GenericErrorMessage.DATABASE_COMMUNICATION_ERROR,
+					FacesMessage.SEVERITY_ERROR);
+		}
 
+		return status;
+	}
+
+	public IStatus validateActivitySchoolclasses(Activity activity) {
+		IStatus status = new SuccessStatus(
+				GenericSuccessMessage.VALIDATE_SUCCESS);
+
+		try {
+			if (!validateSchoolclasses(activity)) {
+				return new FailureStatus(
+						SpecificErrorMessage.VALIDATE_ACTIVITY_EXCEPTION,
+						Schoolclass.class, FacesMessage.SEVERITY_ERROR);
+			}
+		} catch (DatasetException e) {
+			LOGGER.error(e);
+			status = new FailureStatus(
+					GenericErrorMessage.DATABASE_COMMUNICATION_ERROR,
+					FacesMessage.SEVERITY_ERROR);
+		}
+
+		return status;
+	}
+
+	public IStatus validateActivityRooms(Activity activity) {
+		IStatus status = new SuccessStatus(
+				GenericSuccessMessage.VALIDATE_SUCCESS);
+
+		try {
+			if (!validateRooms(activity)) {
+				return new FailureStatus(
+						SpecificErrorMessage.VALIDATE_ACTIVITY_EXCEPTION,
+						Employee.class, FacesMessage.SEVERITY_ERROR);
+			}
 		} catch (DatasetException e) {
 			LOGGER.error(e);
 			status = new FailureStatus(
@@ -110,12 +165,11 @@ public class ActivityValidator {
 	 * 
 	 * @param activity
 	 *            Die Aktivität, die überprüft werden soll
-	 * @return {@link FailureStatus} bei Überschneidung, {@link SuccessStatus}
-	 *         sonst
+	 * @return Warheitswert, ob eine Überschneidung auftritt
 	 * @throws DatasetException
 	 *             Bei Datenbankzugriffsfehler
 	 */
-	private IStatus validateEmployees(Activity activity)
+	private Boolean validateEmployees(Activity activity)
 			throws DatasetException {
 		for (EmployeeTimePeriods employeeTimePeriods : activity
 				.getEmployeeTimePeriods()) {
@@ -123,21 +177,11 @@ public class ActivityValidator {
 			List<Activity> activities = dataAccess.getAllActivities(
 					employeeTimePeriods.getEmployee(), activity.getTime());
 
-			if (activities.size() > 0) {
-				for (Activity localActivity : activities) {
-					if (!activity.equals(localActivity)) {
-						return new FailureStatus(
-								SpecificErrorMessage.VALIDATE_ACTIVITY_EXCEPTION,
-								employeeTimePeriods.getEmployee().getClass(),
-								FacesMessage.SEVERITY_ERROR);
-					}
-				}
-
+			if (!validateActivities(activity, activities)) {
+				return false;
 			}
-
 		}
-
-		return new SuccessStatus(GenericSuccessMessage.VALIDATE_SUCCESS);
+		return true;
 	}
 
 	/**
@@ -147,30 +191,73 @@ public class ActivityValidator {
 	 * 
 	 * @param activity
 	 *            Die Aktivität, die überprüft werden soll
-	 * @return {@link FailureStatus} bei Überschneidung, {@link SuccessStatus}
-	 *         sonst
+	 * @return Warheitswert, ob eine Überschneidung auftritt
 	 * @throws DatasetException
 	 *             Bei Datenbankzugriffsfehler
 	 */
-	private IStatus validateSchoolclasses(Activity activity)
+	private Boolean validateSchoolclasses(Activity activity)
 			throws DatasetException {
+
 		for (Schoolclass schoolclass : activity.getSchoolclasses()) {
 
 			List<Activity> activities = dataAccess.getAllActivities(
 					schoolclass, activity.getTime());
 
-			if (activities.size() > 0) {
-				for (Activity localActivity : activities) {
-					if (!activity.equals(localActivity)) {
-						return new FailureStatus(
-								SpecificErrorMessage.VALIDATE_ACTIVITY_EXCEPTION,
-								Schoolclass.class, FacesMessage.SEVERITY_ERROR);
-					}
+			if (!validateActivities(activity, activities)) {
+				return false;
+			}
+		}
+		return true;
+	}
+
+	/**
+	 * Diese Methode validiert, dass es für den Zeitraum der übergebenen
+	 * {@link Activity} für keinen der {@link Activity} zugeordnete {@link Room}
+	 * eine bereits existente Aktivität gibt.
+	 * 
+	 * @param activity
+	 *            Die Aktivität, die überprüft werden soll
+	 * @return Warheitswert, ob eine Überschneidung auftritt
+	 * @throws DatasetException
+	 *             Bei Datenbankzugriffsfehler
+	 */
+	private Boolean validateRooms(Activity activity) throws DatasetException {
+
+		for (Room room : activity.getRooms()) {
+
+			List<Activity> activities = dataAccess.getAllActivities(room,
+					activity.getTime());
+
+			if (!validateActivities(activity, activities)) {
+				return false;
+			}
+		}
+		return true;
+	}
+
+	/**
+	 * Diese Methode validiert eine gegebene {@link Activity} anhand einer
+	 * {@link List} von anderen {@link Activity}-Objekten. Sollte die Liste
+	 * nicht leer sein und {@link Activity}-Objekte enthalten, die nicht der
+	 * übergebenen {@link Activity} entsprechen, schlägt die Valdidierung fehl.
+	 * 
+	 * @param activity
+	 *            Die zu validierende {@link Activity}
+	 * @param activities
+	 *            Die Liste mit zu prüfenden {@link Activity}-Objekten
+	 * @return Einen Wahrheitswert, ob die {@link Activity} valide ist.
+	 */
+	private Boolean validateActivities(Activity activity,
+			List<Activity> activities) {
+
+		if (activities.size() > 0) {
+			for (Activity localActivity : activities) {
+				if (!activity.equals(localActivity)) {
+					return false;
 				}
 			}
-
 		}
 
-		return new SuccessStatus(GenericSuccessMessage.VALIDATE_SUCCESS);
+		return true;
 	}
 }
