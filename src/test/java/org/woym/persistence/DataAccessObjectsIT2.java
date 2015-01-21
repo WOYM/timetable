@@ -11,11 +11,13 @@ import org.testng.annotations.Test;
 import org.woym.common.exceptions.DatasetException;
 import org.woym.common.objects.Activity;
 import org.woym.common.objects.CompoundLesson;
+import org.woym.common.objects.Employee;
 import org.woym.common.objects.EmployeeTimePeriods;
 import org.woym.common.objects.Lesson;
 import org.woym.common.objects.LessonType;
 import org.woym.common.objects.Meeting;
 import org.woym.common.objects.MeetingType;
+import org.woym.common.objects.Schoolclass;
 import org.woym.common.objects.TimePeriod;
 import org.woym.common.objects.Weekday;
 import org.woym.common.objects.spec.IActivityObject;
@@ -42,6 +44,20 @@ public class DataAccessObjectsIT2 {
 		assertTrue(list.contains(l));
 		assertTrue(list.contains(c));
 		assertTrue(list.contains(m));
+	}
+
+	@Test(dependsOnMethods = "getAllActivitiesSuccess")
+	public void getAllSchoolclassesForEmployeeSuccess() throws Exception {
+		List<Schoolclass> list = dataAccess.getAllSchoolclasses(dataAccess
+				.getOneEmployee("MEY"));
+		assertEquals(2, list.size());
+		assertTrue(list.contains(dataAccess.getOneSchoolclass(1, 'a')));
+		assertTrue(list.contains(dataAccess.getOneSchoolclass(2, 'a')));
+
+		list = dataAccess.getAllSchoolclasses(dataAccess.getOneEmployee("MUS"));
+		assertEquals(2, list.size());
+		assertTrue(list.contains(dataAccess.getOneSchoolclass(1, 'a')));
+		assertTrue(list.contains(dataAccess.getOneSchoolclass(2, 'a')));
 	}
 
 	@Test(priority = 1, groups = "DataAccessActivity", dependsOnMethods = "getAllActivitiesSuccess")
@@ -73,26 +89,27 @@ public class DataAccessObjectsIT2 {
 	}
 
 	@Test(priority = 2, groups = "DataAccessActivity")
-	public void getAllActivitiesNotBetweenSuccess() throws Exception{
-		 Date startTime = sdf.parse("10:00");
-		 Date endTime = sdf.parse("11:30");
-		 List<Activity> list = dataAccess.getAllActivitiesNotBetween(startTime, endTime);
-		 assertTrue(list.isEmpty());
-		 
-		 startTime = sdf.parse("10:00");
-		 endTime = sdf.parse("11:00");
-		 list = dataAccess.getAllActivitiesNotBetween(startTime, endTime);
-		 assertEquals(2, list.size());
-		 assertTrue(list.contains(m));
-		 assertTrue(list.contains(c));
-		 
-		 startTime = sdf.parse("11:30");
-		 endTime = sdf.parse("14:00");
-		 list = dataAccess.getAllActivitiesNotBetween(startTime, endTime);
-		 assertEquals(3, list.size());
-		 assertTrue(list.contains(l));
-		 assertTrue(list.contains(m));
-		 assertTrue(list.contains(c));
+	public void getAllActivitiesNotBetweenSuccess() throws Exception {
+		Date startTime = sdf.parse("10:00");
+		Date endTime = sdf.parse("11:30");
+		List<Activity> list = dataAccess.getAllActivitiesNotBetween(startTime,
+				endTime);
+		assertTrue(list.isEmpty());
+
+		startTime = sdf.parse("10:00");
+		endTime = sdf.parse("11:00");
+		list = dataAccess.getAllActivitiesNotBetween(startTime, endTime);
+		assertEquals(2, list.size());
+		assertTrue(list.contains(m));
+		assertTrue(list.contains(c));
+
+		startTime = sdf.parse("11:30");
+		endTime = sdf.parse("14:00");
+		list = dataAccess.getAllActivitiesNotBetween(startTime, endTime);
+		assertEquals(3, list.size());
+		assertTrue(list.contains(l));
+		assertTrue(list.contains(m));
+		assertTrue(list.contains(c));
 	}
 
 	@Test(priority = 2, groups = "DataAccessActivity")
@@ -379,6 +396,17 @@ public class DataAccessObjectsIT2 {
 		a = new LessonType();
 		list = dataAccess.getAllActivities(a);
 		assertTrue(list.isEmpty());
+	}
+
+	@Test(priority = 2, groups = "DataAccessActivity")
+	public void sumLessonDurationSuccess() throws DatasetException {
+		Employee employee = dataAccess.getOneEmployee("MEY");
+		Schoolclass schoolclass = dataAccess.getOneSchoolclass(1, 'a');
+		LessonType lessonType = (LessonType) dataAccess
+				.getOneActivityType("Mathe");
+		Long duration = dataAccess.sumLessonDuration(employee, schoolclass,
+				lessonType);
+		assertEquals(Long.valueOf(45), duration);
 	}
 
 	private Lesson createLesson() throws Exception {

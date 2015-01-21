@@ -29,6 +29,7 @@
 			<class name="org.woym.ui.converters.LocationNameConverterTest" />
 			<class name="org.woym.common.config.ConfigTest" />
 			<class name="org.woym.logic.util.ActivityValidatorTest" />
+			<class name="org.woym.logic.util.ActivityParserTest"></class>
 		</classes>
 	</test>
 </suite>

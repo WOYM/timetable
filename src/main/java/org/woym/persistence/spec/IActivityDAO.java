@@ -266,4 +266,22 @@ public interface IActivityDAO {
 	 */
 	public List<EmployeeTimePeriods> getEmployeeTimePeriods(Employee employee)
 			throws DatasetException;
+
+	/**
+	 * Summiert die Dauer aller {@linkplain Lesson}-Objekte des übergebenen
+	 * {@linkplain LessonType}, an welchen der übergebene {@linkplain Employee}
+	 * und die übergebene {@linkplain Schoolclass} teilnehmen. Tritt dabei ein
+	 * Fehler auf, wird eine {@linkplain DatasetException} geworfen.
+	 * 
+	 * @param employee
+	 *            - der Mitarbeiter
+	 * @param schoolclass
+	 *            - die Schulklasse
+	 * @param lessonType
+	 *            - der Unterrichtstyp
+	 * @return Summe der Dauer der Aktivitäten als Long - Wert
+	 * @throws DatasetException
+	 */
+	public Long sumLessonDuration(Employee employee, Schoolclass schoolclass,
+			LessonType lessonType) throws DatasetException;
 }
