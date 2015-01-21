@@ -2,6 +2,7 @@ package org.woym.controller;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -27,6 +28,8 @@ import org.woym.common.messages.GenericErrorMessage;
 import org.woym.common.messages.MessageHelper;
 import org.woym.common.objects.AcademicYear;
 import org.woym.common.objects.Activity;
+import org.woym.common.objects.ActivityType;
+import org.woym.common.objects.ActivityTypeEnum;
 import org.woym.common.objects.CompoundLesson;
 import org.woym.common.objects.Entity;
 import org.woym.common.objects.Lesson;
@@ -83,6 +86,7 @@ public class PlanningController implements Serializable {
 	private Location location;
 	private Room room;
 	private Activity activity;
+	private ActivityTypeEnum activityType;
 
 	private String searchTerm;
 
@@ -109,7 +113,7 @@ public class PlanningController implements Serializable {
 	public int getSlotMinutes() {
 		return Config.getSingleIntValue(DefaultConfigEnum.TIMETABLE_GRID);
 	}
-	
+
 	/**
 	 * Liefert die Startzeit der Anzeige zurück.
 	 * 
@@ -118,7 +122,7 @@ public class PlanningController implements Serializable {
 	public String getMinTime() {
 		return Config.getSingleStringValue(DefaultConfigEnum.WEEKDAY_STARTTIME);
 	}
-	
+
 	/**
 	 * Liefert die Endzeit der Anzeige zurück.
 	 * 
@@ -183,7 +187,7 @@ public class PlanningController implements Serializable {
 
 		Activity activity = (Activity) event.getScheduleEvent().getData();
 		TimePeriod oldTime = activity.getTime();
-		
+
 		IMemento activityMemento = activity.createMemento();
 
 		Date startTime = changeDateByDelta(activity.getTime().getStartTime(),
@@ -236,7 +240,7 @@ public class PlanningController implements Serializable {
 		defaultScheduleEvent.setStartDate(oldTime.getStartTime());
 		defaultScheduleEvent.setEndDate(oldTime.getEndTime());
 		scheduleModel.updateEvent(defaultScheduleEvent);
-		
+
 		FacesContext.getCurrentInstance().addMessage(null, msg);
 	}
 
@@ -388,6 +392,11 @@ public class PlanningController implements Serializable {
 		return location.getRooms();
 	}
 
+	public void doBeforeAdd() {
+		activity = null;
+		activityType = null;
+	}
+
 	/**
 	 * Diese Methode gibt an, ob eine Lehrkraft oder eine Klasse ausgewählt
 	 * wurde. So wird bestimmt, ob ein Stundenplan gerendert wird.
@@ -489,6 +498,19 @@ public class PlanningController implements Serializable {
 	}
 
 	/**
+	 * Diese Methode gibt alle bekannten {@link ActivityType}s zurück, die eine
+	 * {@link Activity} haben kann.
+	 * <p>
+	 * Damit sind die hartkodierten Typen (z.B. {@link Lesson}, {@link Meeting}
+	 * und {@link CompoundLesson}) gemeint.
+	 * 
+	 * @return Eine {@link ArrayList} mit {@link ActivityType}s
+	 */
+	public List<ActivityTypeEnum> getMainActivityTypes() {
+		return Arrays.asList(ActivityTypeEnum.values());
+	}
+
+	/**
 	 * Setzt das ActivityModel für eine Lehrkraft.
 	 */
 	public void setTeacherActivityModel() {
@@ -584,6 +606,16 @@ public class PlanningController implements Serializable {
 		}
 
 		return title;
+	}
+
+	/**
+	 * Diese Methode gibt an, ob es sich bei der derzeitigen {@link Activity} um
+	 * eine {@link Lesson} handelt.
+	 * 
+	 * @return Wahrheitswert, ob es sich um eine Lesson handelt
+	 */
+	public Boolean getIsCurrentActivityLesson() {
+		return activity instanceof Lesson;
 	}
 
 	/**
@@ -720,6 +752,52 @@ public class PlanningController implements Serializable {
 		}
 
 		return false;
+	}
+
+	/**
+	 * Diese Methode gibt alle bekannten {@link LessonTypes} zurück
+	 * 
+	 * @return Liste mit allen bekannten {@link LessonTypes}
+	 */
+	public List<LessonType> getAllLessonTypes() {
+		List<LessonType> lessonTypes = new ArrayList<>();
+
+		try {
+			lessonTypes = dataAccess.getAllLessonTypes();
+		} catch (DatasetException e) {
+			LOGGER.error(e);
+		}
+
+		return lessonTypes;
+	}
+
+	public void setLessonType(LessonType lessonType) {
+		if (lessonType != null || activity instanceof Lesson) {
+			((Lesson) activity).setLessonType(lessonType);
+		}
+	}
+	
+	public LessonType getLessonType() {
+		if (activity instanceof Lesson) {
+			return ((Lesson) activity).getLessonType();
+		}
+		
+		return null;
+	}
+	
+	public ActivityTypeEnum getActivityType() {
+		return activityType;
+	}
+
+	public void setActivityType(ActivityTypeEnum activityType) {	
+		this.activityType = activityType;
+		activity = null;
+
+		if (activityType.equals(ActivityTypeEnum.LESSON)) {
+			activity = new Lesson();
+			LessonType lessonType = new LessonType();
+			((Lesson) activity).setLessonType(lessonType);
+		}
 	}
 
 	// /////////////////////////////////////////////////////////////////////////

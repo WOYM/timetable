@@ -215,7 +215,10 @@
 				<p:outputPanel>
 					<p:spacer style="height:60px" />
 					<p:outputPanel style="float:right; padding:10px">
-						<p:commandButton value="Hinzufügen" />
+						<p:commandButton value="Hinzufügen" icon="ui-icon-plusthick"
+							actionListener="#{planningController.doBeforeAdd}"
+							process="@this" update="addActivityPanel"
+							oncomplete="PF('wAddActivityDialog').show();" />
 					</p:outputPanel>
 				</p:outputPanel>
 				<!-- Schedule -->
@@ -307,58 +310,35 @@
 			<p:outputPanel id="addActivityPanel">
 				<b><h:outputText value="Neue Klasse" /></b>
 				<h:panelGrid columns="2">
-					<p:outputLabel for="addName" value="Name:" />
-					<p:selectOneMenu id="addName"
-						value="#{academicYearAndClassController.schoolclass.identifier}"
-						required="true"
-						requiredMessage="Ein leerer Name ist nicht gültig.">
-						<p:ajax event="change" update="addName" />
-						<f:selectItems
-							value="#{academicYearAndClassController.validIdentifiers}"
-							var="identifier"
-							itemLabel="Klasse #{academicYearAndClassController.academicYear}#{identifier}" />
+					<p:outputLabel for="addType" value="Aktivitätstyp" />
+					<p:selectOneMenu id="addType"
+						value="#{planningController.activityType}" required="true"
+						requiredMessage="Ein leerer Aktivitätstyp ist nicht gültig.">
+						<p:ajax event="change" update="addActivityPanel" />
+						<f:selectItem itemValue="#{null}" itemLabel="Aktivitätstyp wählen" />
+						<f:selectItems value="#{planningController.mainActivityTypes}"
+							var="activityType" itemLabel="#{activityType.name}" />
 					</p:selectOneMenu>
-					<p:outputLabel for="addRoomPanel" value="Klassenraum:" />
-					<p:outputPanel id="addRoomPanel">
-						<p:selectOneMenu id="addLocation"
-							value="#{academicYearAndClassController.location}"
-							converter="LocationNameConverter">
-							<p:ajax event="change" update="addRoomPanel" />
-							<f:selectItem value="#{null}" itemLabel="Standort" />
-							<f:selectItems value="#{locationController.locations}"
-								var="location" itemLabel="#{location.name}" />
-						</p:selectOneMenu>
-						<p:outputPanel style="margin-top:5px;"
-							rendered="#{academicYearAndClassController.location != null}">
-							<p:selectOneMenu id="addRoom"
-								value="#{academicYearAndClassController.schoolclass.room}"
-								converter="RoomNameConverter">
-								<p:ajax event="change" update="addRoomPanel" />
-								<f:selectItem value="#{null}" itemLabel="Raum" />
-								<f:selectItems
-									value="#{academicYearAndClassController.location.rooms}"
-									var="room" itemLabel="#{room.name} (#{room.purpose})" />
-							</p:selectOneMenu>
-						</p:outputPanel>
-					</p:outputPanel>
-					<p:outputLabel for="addTeacher" value="Klassenlehrkraft:" />
-					<p:selectOneMenu id="addTeacher"
-						value="#{academicYearAndClassController.schoolclass.teacher}"
-						converter="EmployeeNameConverter">
-						<p:ajax event="change" process="@this" />
-						<f:selectItem value="#{null}" itemLabel="Lehrkraft" />
-						<f:selectItems value="#{teacherController.teachers}" var="teacher"
-							itemLabel="#{teacher.name} (#{teacher.symbol})" />
+					<p:outputLabel for="addLessonType"
+						rendered="#{planningController.isCurrentActivityLesson}"
+						value="Unterrichtsinhalt" />
+					<p:selectOneMenu id="addLessonType"
+						rendered="#{planningController.isCurrentActivityLesson}"
+						value="#{planningController.lessonType}" required="true"
+						requiredMessage="Ein leerer Unterrichtsinhalt ist nicht gültig."
+						converter="LessonTypeNameConverter">
+						<p:ajax event="change" update="addLessonType" />
+						<f:selectItems value="#{planningController.allLessonTypes}"
+							var="lessonType" itemLabel="#{lessonType.name}" />
 					</p:selectOneMenu>
 				</h:panelGrid>
-				<p:outputPanel id="addClassButton"
+				<p:outputPanel id="addActivityButton"
 					style="float:right;margin-top:10px;">
 					<p:commandButton value="Hinzufügen"
 						actionListener="#{academicYearAndClassController.addSchoolclass}"
-						process="addName,addLocation,addRoom,addTeacher,@this"
-						update="addSchoolclassPanel,schoolclassTable" />
+						process="@this" update="scheduleMain" />
 				</p:outputPanel>
-				<p:defaultCommand target="addClassButton" />
+				<p:defaultCommand target="addActivityButton" />
 				<p:outputPanel style="clear:right; margin-top:60px;">
 					<p:messages showDetail="true" autoUpdate="true" closable="false" />
 				</p:outputPanel>
