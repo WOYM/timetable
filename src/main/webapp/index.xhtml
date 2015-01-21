@@ -238,7 +238,8 @@
 					slotMinutes="#{planningController.slotMinutes}"
 					columnFormat="week: 'ddd'" locale="de" timeZone="GMT+1"
 					initialDate="#{planningController.initalDate}" tooltip="true"
-					timeFormat="HH:mm{ - HH:mm}" minTime="#{planningController.minTime}"
+					timeFormat="HH:mm{ - HH:mm}"
+					minTime="#{planningController.minTime}"
 					maxTime="#{planningController.maxTime}">
 					<p:ajax event="eventSelect"
 						listener="#{planningController.onEventSelect}"
@@ -295,6 +296,72 @@
                     </f:facet>
                      #{room.name} <br /> #{room.locationName}
                 </p:dataList>
+			</p:outputPanel>
+		</p:dialog>
+
+		<!-- Add-Dialog -->
+		<p:dialog header="Hinzufügen von Aktivitäten" id="addActivityDialog"
+			widgetVar="wAddActivityDialog" width="600" modal="true"
+			draggable="true" resizable="false" dynamic="true">
+			<p:ajax event="close" update="@form" />
+			<p:outputPanel id="addActivityPanel">
+				<b><h:outputText value="Neue Klasse" /></b>
+				<h:panelGrid columns="2">
+					<p:outputLabel for="addName" value="Name:" />
+					<p:selectOneMenu id="addName"
+						value="#{academicYearAndClassController.schoolclass.identifier}"
+						required="true"
+						requiredMessage="Ein leerer Name ist nicht gültig.">
+						<p:ajax event="change" update="addName" />
+						<f:selectItems
+							value="#{academicYearAndClassController.validIdentifiers}"
+							var="identifier"
+							itemLabel="Klasse #{academicYearAndClassController.academicYear}#{identifier}" />
+					</p:selectOneMenu>
+					<p:outputLabel for="addRoomPanel" value="Klassenraum:" />
+					<p:outputPanel id="addRoomPanel">
+						<p:selectOneMenu id="addLocation"
+							value="#{academicYearAndClassController.location}"
+							converter="LocationNameConverter">
+							<p:ajax event="change" update="addRoomPanel" />
+							<f:selectItem value="#{null}" itemLabel="Standort" />
+							<f:selectItems value="#{locationController.locations}"
+								var="location" itemLabel="#{location.name}" />
+						</p:selectOneMenu>
+						<p:outputPanel style="margin-top:5px;"
+							rendered="#{academicYearAndClassController.location != null}">
+							<p:selectOneMenu id="addRoom"
+								value="#{academicYearAndClassController.schoolclass.room}"
+								converter="RoomNameConverter">
+								<p:ajax event="change" update="addRoomPanel" />
+								<f:selectItem value="#{null}" itemLabel="Raum" />
+								<f:selectItems
+									value="#{academicYearAndClassController.location.rooms}"
+									var="room" itemLabel="#{room.name} (#{room.purpose})" />
+							</p:selectOneMenu>
+						</p:outputPanel>
+					</p:outputPanel>
+					<p:outputLabel for="addTeacher" value="Klassenlehrkraft:" />
+					<p:selectOneMenu id="addTeacher"
+						value="#{academicYearAndClassController.schoolclass.teacher}"
+						converter="EmployeeNameConverter">
+						<p:ajax event="change" process="@this" />
+						<f:selectItem value="#{null}" itemLabel="Lehrkraft" />
+						<f:selectItems value="#{teacherController.teachers}" var="teacher"
+							itemLabel="#{teacher.name} (#{teacher.symbol})" />
+					</p:selectOneMenu>
+				</h:panelGrid>
+				<p:outputPanel id="addClassButton"
+					style="float:right;margin-top:10px;">
+					<p:commandButton value="Hinzufügen"
+						actionListener="#{academicYearAndClassController.addSchoolclass}"
+						process="addName,addLocation,addRoom,addTeacher,@this"
+						update="addSchoolclassPanel,schoolclassTable" />
+				</p:outputPanel>
+				<p:defaultCommand target="addClassButton" />
+				<p:outputPanel style="clear:right; margin-top:60px;">
+					<p:messages showDetail="true" autoUpdate="true" closable="false" />
+				</p:outputPanel>
 			</p:outputPanel>
 		</p:dialog>
 

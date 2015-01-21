@@ -103,7 +103,7 @@ public class ActivityValidator {
 				GenericSuccessMessage.VALIDATE_SUCCESS);
 
 		try {
-			if (!validateEmployees(activity)) {
+			if ((activity.getEmployeeTimePeriods().size() > 0) && !validateEmployees(activity)) {
 				return new FailureStatus(
 						SpecificErrorMessage.VALIDATE_ACTIVITY_EXCEPTION,
 						Employee.class, FacesMessage.SEVERITY_ERROR);
@@ -123,7 +123,7 @@ public class ActivityValidator {
 				GenericSuccessMessage.VALIDATE_SUCCESS);
 
 		try {
-			if (!validateSchoolclasses(activity)) {
+			if ((activity.getSchoolclasses().size() > 0) && !validateSchoolclasses(activity)) {
 				return new FailureStatus(
 						SpecificErrorMessage.VALIDATE_ACTIVITY_EXCEPTION,
 						Schoolclass.class, FacesMessage.SEVERITY_ERROR);
@@ -143,7 +143,7 @@ public class ActivityValidator {
 				GenericSuccessMessage.VALIDATE_SUCCESS);
 
 		try {
-			if (!validateRooms(activity)) {
+			if ((activity.getRooms().size() > 0) && !validateRooms(activity)) {
 				return new FailureStatus(
 						SpecificErrorMessage.VALIDATE_ACTIVITY_EXCEPTION,
 						Employee.class, FacesMessage.SEVERITY_ERROR);
