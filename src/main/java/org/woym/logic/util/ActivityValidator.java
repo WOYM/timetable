@@ -33,7 +33,7 @@ import org.woym.persistence.DataAccess;
  * 
  * 
  * @author Tim Hansen (tihansen)
- * @version 0.0.8
+ * @version 0.0.9
  * @since 0.0.8
  * 
  * @see {@link IStatus}

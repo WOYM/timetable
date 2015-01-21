@@ -5,13 +5,13 @@
 	<!-- General -->
 	<groupId>org.woym</groupId>
 	<artifactId>timetable</artifactId>
-	<version>0.0.8</version>
+	<version>0.1.0</version>
 
 	<!-- Packaging -->
 	<packaging>war</packaging>
 
 	<!-- Description -->
-	<name>WOYM - Timetable</name>
+	<name>WOYM - Timetable - Vers. ${project.version}</name>
 	<description>Stundenplansoftware der Gruppe WOYM an der Universität Bremen</description>
 
 	<!-- Encoding -->
@@ -119,7 +119,7 @@
 
 	<!-- Build-Process -->
 	<build>
-		<finalName>timetable-${project.version}</finalName>
+		<finalName>timetable</finalName>
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
