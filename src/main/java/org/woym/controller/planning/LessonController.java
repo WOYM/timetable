@@ -2,7 +2,7 @@ package org.woym.controller.planning;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Date;
+import java.util.Calendar;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
@@ -47,12 +47,14 @@ public class LessonController implements Serializable {
 	@PostConstruct
 	public void init() {
 		lesson = new Lesson();
-		Date date = new Date();
+		Calendar calendar = Calendar.getInstance();
 		TimePeriod timePeriod = new TimePeriod();
-		timePeriod.setStartTime(date);
-		timePeriod.setEndTime(date);
-		timePeriod.setDay(Weekday.MONDAY);
+		
+		timePeriod.setStartTime(calendar.getTime());
+		timePeriod.setEndTime(calendar.getTime());
+		
 		lesson.setTime(timePeriod);
+		timePeriod.setDay(Weekday.MONDAY);
 	}
 
 	/**
@@ -140,6 +142,24 @@ public class LessonController implements Serializable {
 		}
 
 		lesson.setEmployeeTimePeriods(employeeTimePeriods);
+	}
+
+	public void setLessonLessonType(LessonType lessonType) {
+		lesson.setLessonType(lessonType);
+
+		Calendar calendar = Calendar.getInstance();
+		calendar.setTime(lesson.getTime().getEndTime());
+		calendar.set(Calendar.MINUTE,
+				(calendar.get(Calendar.MINUTE) + lessonType
+						.getTypicalDuration()));
+
+		TimePeriod timePeriod = lesson.getTime();
+		timePeriod.setEndTime(calendar.getTime());
+		lesson.setTime(timePeriod);
+	}
+
+	public LessonType getLessonLessonType() {
+		return lesson.getLessonType();
 	}
 
 }

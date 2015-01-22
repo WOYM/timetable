@@ -322,6 +322,7 @@
 					</p:selectOneMenu>
 				</h:panelGrid>
 
+                <!-- Add-Lesson -->
 				<p:outputPanel
 					rendered="#{planningController.isCurrentActivityLesson}"
 					style="width:100%;" id="addLessonPanel">
@@ -329,11 +330,12 @@
 						style="width:100%;">
 						<p:outputLabel for="addLessonType" value="Unterrichtsinhalt" />
 						<p:selectOneMenu id="addLessonType"
-							value="#{lessonController.lesson.lessonType}" required="true"
+							value="#{lessonController.lessonLessonType}" required="true"
 							requiredMessage="Ein leerer Unterrichtsinhalt ist nicht gültig."
 							converter="LessonTypeNameConverter">
 							<f:selectItems value="#{lessonController.allLessonTypes}"
 								var="lessonType" itemLabel="#{lessonType.name}" />
+							<p:ajax event="change" update="addActivityPanel" />
 						</p:selectOneMenu>
 						<p:spacer />
 						<p:spacer />
@@ -386,6 +388,13 @@
 						</p:outputPanel>
 					</h:panelGrid>
 				</p:outputPanel>
+				
+				<!-- Add-Meeting -->
+                <p:outputPanel
+                    rendered="#{planningController.isCurrentActivityMeeting}"
+                    style="width:100%;" id="addMeetingPanel">
+                    
+                </p:outputPanel>
 				<p:outputPanel style="clear:right; margin-top:60px;">
 					<p:messages id="activityMessages" showDetail="true"
 						closable="false" />
