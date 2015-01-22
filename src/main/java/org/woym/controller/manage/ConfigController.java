@@ -137,7 +137,12 @@ public class ConfigController implements Serializable {
 				DefaultConfigEnum.WEEKDAY_STARTTIME.getPropKey(),
 				sdf.format(weekdayStartTime))
 				&& works;
-
+		
+		works = Config.updateProperty(
+				DefaultConfigEnum.WEEKDAY_ENDTIME.getPropKey(),
+				sdf.format(weekdayEndTime))
+				&& works;
+		
 		works = Config.updateProperty(
 				DefaultConfigEnum.TIMETABLE_GRID.getPropKey(),
 				String.valueOf(timetableGrid))

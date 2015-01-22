@@ -246,14 +246,14 @@
 					maxTime="#{planningController.maxTime}">
 					<p:ajax event="eventSelect"
 						listener="#{planningController.onEventSelect}"
-						update="activityInfoPanel" global="false"
+						update="activityInfoPanel"
 						oncomplete="PF('wActivityInfoDialog').show();" />
 					<p:ajax event="eventMove"
 						listener="#{planningController.onEventMove}"
-						oncomplete="PF('wScheduleMain').update();" update="commandGrowl" />
+						update="commandGrowl,@this" />
 					<p:ajax event="eventResize"
 						listener="#{planningController.onEventResize}"
-						oncomplete="PF('wScheduleMain').update();" update="commandGrowl" />
+						update="commandGrowl,@this" />
 				</p:schedule>
 				<p:spacer style="height:50px;" />
 			</p:outputPanel>
@@ -306,10 +306,11 @@
 		<p:dialog header="Hinzufügen von Aktivitäten" id="addActivityDialog"
 			widgetVar="wAddActivityDialog" width="600" modal="true"
 			draggable="true" resizable="false" dynamic="true">
-			<p:ajax event="close" update="@form" />
+			<p:ajax event="close" update="commandGrowl,scheduleMain" />
 			<p:outputPanel id="addActivityPanel">
 				<b><h:outputText value="Neue Klasse" /></b>
-				<h:panelGrid columns="2">
+				<h:panelGrid columns="2" columnClasses="half-column"
+					style="width:100%;">
 					<p:outputLabel for="addType" value="Aktivitätstyp" />
 					<p:selectOneMenu id="addType"
 						value="#{planningController.activityType}" required="true"
@@ -319,28 +320,75 @@
 						<f:selectItems value="#{planningController.mainActivityTypes}"
 							var="activityType" itemLabel="#{activityType.name}" />
 					</p:selectOneMenu>
-					<p:outputLabel for="addLessonType"
-						rendered="#{planningController.isCurrentActivityLesson}"
-						value="Unterrichtsinhalt" />
-					<p:selectOneMenu id="addLessonType"
-						rendered="#{planningController.isCurrentActivityLesson}"
-						value="#{planningController.lessonType}" required="true"
-						requiredMessage="Ein leerer Unterrichtsinhalt ist nicht gültig."
-						converter="LessonTypeNameConverter">
-						<p:ajax event="change" update="addLessonType" />
-						<f:selectItems value="#{planningController.allLessonTypes}"
-							var="lessonType" itemLabel="#{lessonType.name}" />
-					</p:selectOneMenu>
 				</h:panelGrid>
-				<p:outputPanel id="addActivityButton"
-					style="float:right;margin-top:10px;">
-					<p:commandButton value="Hinzufügen"
-						actionListener="#{academicYearAndClassController.addSchoolclass}"
-						process="@this" update="scheduleMain" />
+
+				<p:outputPanel
+					rendered="#{planningController.isCurrentActivityLesson}"
+					style="width:100%;" id="addLessonPanel">
+					<h:panelGrid columns="2" columnClasses="half-column"
+						style="width:100%;">
+						<p:outputLabel for="addLessonType" value="Unterrichtsinhalt" />
+						<p:selectOneMenu id="addLessonType"
+							value="#{lessonController.lesson.lessonType}" required="true"
+							requiredMessage="Ein leerer Unterrichtsinhalt ist nicht gültig."
+							converter="LessonTypeNameConverter">
+							<f:selectItems value="#{lessonController.allLessonTypes}"
+								var="lessonType" itemLabel="#{lessonType.name}" />
+						</p:selectOneMenu>
+						<p:spacer />
+						<p:spacer />
+						<p:outputLabel value="Wochentag" for="lessonWeekday" />
+						<p:selectOneMenu id="lessonWeekday"
+							value="#{lessonController.lesson.time.day}"
+							converter="WeekdayNameConverter">
+							<f:selectItems value="#{planningController.weekdays}" />
+						</p:selectOneMenu>
+						<p:outputLabel value="Start- und Endzeit des Unterrichts"
+							for="lessonStartTime"></p:outputLabel>
+						<h:panelGrid columns="3">
+							<p:calendar id="lessonStartTime" binding="#{startTime}"
+								value="#{lessonController.lesson.time.startTime}" size="5"
+								pattern="HH:mm" locale="de" timeOnly="true" required="true"
+								requiredMessage="Angabe der Startzeit wird benötigt.">
+							</p:calendar>
+							<h:outputText value=" bis " />
+							<p:calendar id="lessonEndTime"
+								value="#{lessonController.lesson.time.endTime}" size="5"
+								pattern="HH:mm" locale="de" timeOnly="true" required="true"
+								requiredMessage="Angabe der Endzeit wird benötigt.">
+								<f:attribute name="startTime" value="#{startTime}" />
+								<f:validator validatorId="org.woym.TimeRangeValidator" />
+							</p:calendar>
+						</h:panelGrid>
+						<p:outputLabel value="Mitarbeiter (min. eine Lehrkraft):" />
+						<p:selectCheckboxMenu id="lessonTeachers"
+							value="#{lessonController.lessonEmployees}" filter="true"
+							filterMatchMode="contains" converter="EmployeeNameConverter"
+							label="Bitte auswählen" required="true"
+							requiredMessage="Wählen Sie mindestens einen Mitarbeiter aus.">
+							<f:selectItem
+								value="#{classteamController.disabledTeacherSelectItem}" />
+							<f:selectItems value="#{classteamController.teachers}"
+								var="teacher" itemLabel="#{teacher.symbol}, #{teacher.name}" />
+							<f:selectItem
+								value="#{classteamController.disabledPedagogicAssistantSelectItem}" />
+							<f:selectItems value="#{classteamController.pedagogicAssistants}"
+								var="pedagogicAssistant"
+								itemLabel="#{pedagogicAssistant.symbol}, #{pedagogicAssistant.name}" />
+						</p:selectCheckboxMenu>
+						<p:spacer />
+						<p:outputPanel id="addLessonButton"
+							style="float:right;margin-top:10px;">
+							<p:commandButton value="Hinzufügen"
+								actionListener="#{lessonController.addLesson}"
+								process="addLessonType,lessonWeekday,lessonStartTime,lessonEndTime,lessonTeachers,@this"
+								update="activityMessages,addLessonPanel,scheduleMain" />
+						</p:outputPanel>
+					</h:panelGrid>
 				</p:outputPanel>
-				<p:defaultCommand target="addActivityButton" />
 				<p:outputPanel style="clear:right; margin-top:60px;">
-					<p:messages showDetail="true" autoUpdate="true" closable="false" />
+					<p:messages id="activityMessages" showDetail="true"
+						closable="false" />
 				</p:outputPanel>
 			</p:outputPanel>
 		</p:dialog>

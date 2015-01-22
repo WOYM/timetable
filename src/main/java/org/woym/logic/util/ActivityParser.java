@@ -170,7 +170,6 @@ public class ActivityParser {
 			Date startDate = getActivityStartDate(activity);
 			Date endDate = getActivityEndDate(activity);
 
-			// TODO Style-Class?
 			DefaultScheduleEvent event = new DefaultScheduleEvent(
 					activity.toString(), startDate, endDate);
 
