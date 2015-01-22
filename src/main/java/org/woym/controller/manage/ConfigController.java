@@ -144,6 +144,10 @@ public class ConfigController implements Serializable {
 				&& works;
 		
 		works = Config.updateProperty(
+				DefaultConfigEnum.WEEKDAY_ENDTIME.getPropKey(),
+				sdf.format(weekdayEndTime)) && works;
+
+		works = Config.updateProperty(
 				DefaultConfigEnum.TIMETABLE_GRID.getPropKey(),
 				String.valueOf(timetableGrid))
 				&& works;
@@ -279,7 +283,7 @@ public class ConfigController implements Serializable {
 			FacesContext.getCurrentInstance().addMessage(null, msg);
 			return false;
 		}
-		
+
 		if (intervalType.equals(MINUTE_BACKUPS)
 				&& (backupInterval < MIN_SPINNER_VALUE || backupInterval > MAX_SPINNER_VALUE)) {
 			works = false;
