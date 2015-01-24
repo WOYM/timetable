@@ -10,6 +10,7 @@ import org.woym.common.objects.Employee;
 import org.woym.common.objects.EmployeeTimePeriods;
 import org.woym.common.objects.Lesson;
 import org.woym.common.objects.LessonType;
+import org.woym.common.objects.Location;
 import org.woym.common.objects.Meeting;
 import org.woym.common.objects.MeetingType;
 import org.woym.common.objects.Room;
@@ -284,4 +285,97 @@ public interface IActivityDAO {
 	 */
 	public Long sumLessonDuration(Employee employee, Schoolclass schoolclass,
 			LessonType lessonType) throws DatasetException;
+
+	/**
+	 * Gibt eine Aktivitität zurück, an welcher der übergebene Mitarbeiter
+	 * teilnimmt. Die Aktivität findet am selben Tag wie dem des übergebenen
+	 * {@linkplain TimePeriod}-Objektes statt und eine Endzeit der
+	 * {@linkplain EmployeeTimePeriods}-Objekte besitzt die geringste Differenz
+	 * zur Startzeit des übergebenen {@linkplain TimePeriod} -Objektes. Zudem
+	 * findet die Aktivität an einem Standort ungleich dem übergebenen
+	 * {@linkplain Location}-Objekt statt. Tritt bei der Datenbankanfrage ein
+	 * Fehler auf, wird eine {@linkplain DatasetException} geworfen.
+	 * 
+	 * @param employee
+	 *            - der Mitarbeiter
+	 * @param timePeriod
+	 *            - der Zeitraum
+	 * @param location
+	 *            - der Standort
+	 * @return gibt eine Aktivität mit oben beschriebenen Eigenschaften oder
+	 *         {@code null} zurück, falls keine solche existiert
+	 * @throws DatasetException
+	 */
+	public Activity getFirstActivityBefore(Employee employee,
+			TimePeriod timePeriod, Location location) throws DatasetException;
+
+	/**
+	 * Gibt eine Aktivitität zurück, an welcher der übergebene Mitarbeiter
+	 * teilnimmt. Die Aktivität findet am selben Tag wie dem des übergebenen
+	 * {@linkplain TimePeriod}-Objektes statt und eine Startzeit der
+	 * {@linkplain EmployeeTimePeriods}-Objekte besitzt die geringste Differenz
+	 * zur Endzeit des übergebenen {@linkplain TimePeriod} -Objektes. Zudem
+	 * findet die Aktivität an einem Standort ungleich dem übergebenen
+	 * {@linkplain Location}-Objekt statt. Tritt bei der Datenbankanfrage ein
+	 * Fehler auf, wird eine {@linkplain DatasetException} geworfen.
+	 * 
+	 * @param employee
+	 *            - der Mitarbeiter
+	 * @param timePeriod
+	 *            - der Zeitraum
+	 * @param location
+	 *            - der Standort
+	 * @return gibt eine Aktivität mit oben beschriebenen Eigenschaften oder
+	 *         {@code null} zurück, falls keine solche existiert
+	 * @throws DatasetException
+	 */
+	public Activity getFirstActivityAfter(Employee employee,
+			TimePeriod timePeriod, Location location) throws DatasetException;
+
+	/**
+	 * Gibt eine Aktivitität zurück, an welcher die übergebene Schulklasse
+	 * teilnimmt. Die Aktivität findet am selben Tag wie dem des übergebenen
+	 * {@linkplain TimePeriod}-Objektes statt und die Endzeit der Aktivität
+	 * besitzt die geringste Differenz zur Startzeit des übergebenen
+	 * {@linkplain TimePeriod} -Objektes. Zudem findet die Aktivität an einem
+	 * Standort ungleich dem übergebenen {@linkplain Location}-Objekt statt.
+	 * Tritt bei der Datenbankanfrage ein Fehler auf, wird eine
+	 * {@linkplain DatasetException} geworfen.
+	 * 
+	 * @param schoolclass
+	 *            - die Schulklasse
+	 * @param timePeriod
+	 *            - der Zeitraum
+	 * @param location
+	 *            - der Standort
+	 * @return gibt eine Aktivität mit oben beschriebenen Eigenschaften oder
+	 *         {@code null} zurück, falls keine solche existiert
+	 * @throws DatasetException
+	 */
+	public Activity getFirstActivityBefore(Schoolclass schoolclass,
+			TimePeriod timePeriod, Location location) throws DatasetException;
+
+	/**
+	 * Gibt eine Aktivitität zurück, an welcher die übergebene Schulklasse
+	 * teilnimmt. Die Aktivität findet am selben Tag wie dem des übergebenen
+	 * {@linkplain TimePeriod}-Objektes statt und die Startzeit der Aktivität
+	 * besitzt die geringste Differenz zur Endzeit des übergebenen
+	 * {@linkplain TimePeriod} -Objektes. Zudem findet die Aktivität an einem
+	 * Standort ungleich dem übergebenen {@linkplain Location}-Objekt statt.
+	 * Tritt bei der Datenbankanfrage ein Fehler auf, wird eine
+	 * {@linkplain DatasetException} geworfen.
+	 * 
+	 * @param schoolclass
+	 *            - die Schulklasse
+	 * @param timePeriod
+	 *            - der Zeitraum
+	 * @param location
+	 *            - der Standort
+	 * @return gibt eine Aktivität mit oben beschriebenen Eigenschaften oder
+	 *         {@code null} zurück, falls keine solche existiert
+	 * @throws DatasetException
+	 */
+	public Activity getFirstActivityAfter(Schoolclass schoolclass,
+			TimePeriod timePeriod, Location location) throws DatasetException;
+
 }
