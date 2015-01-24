@@ -212,9 +212,10 @@ public class PlanningController implements Serializable {
 			time.setDay(Weekday.getByOrdinal(localDayDelta));
 
 			activity.setTime(time);
-			
-			for(EmployeeTimePeriods timePeriods : activity.getEmployeeTimePeriods()) {
-				for(TimePeriod timePeriod : timePeriods.getTimePeriods()) {
+
+			for (EmployeeTimePeriods timePeriods : activity
+					.getEmployeeTimePeriods()) {
+				for (TimePeriod timePeriod : timePeriods.getTimePeriods()) {
 					// TODO Would not work with multiple-teacher-periods
 					timePeriod.setDay(time.getDay());
 					timePeriod.setStartTime(startTime);
@@ -230,6 +231,8 @@ public class PlanningController implements Serializable {
 						activity, activityMemento);
 
 				status = commandHandler.execute(command);
+			} else {
+				activity.setMemento(activityMemento);
 			}
 
 			msg = status.report();
@@ -268,9 +271,10 @@ public class PlanningController implements Serializable {
 		time.setStartTime(activity.getTime().getStartTime());
 		time.setEndTime(endTime);
 		time.setDay(activity.getTime().getDay());
-		
-		for(EmployeeTimePeriods timePeriods : activity.getEmployeeTimePeriods()) {
-			for(TimePeriod timePeriod : timePeriods.getTimePeriods()) {
+
+		for (EmployeeTimePeriods timePeriods : activity
+				.getEmployeeTimePeriods()) {
+			for (TimePeriod timePeriod : timePeriods.getTimePeriods()) {
 				// TODO Would not work with multiple-teacher-periods
 				timePeriod.setDay(time.getDay());
 				timePeriod.setStartTime(activity.getTime().getStartTime());
@@ -288,9 +292,11 @@ public class PlanningController implements Serializable {
 					activity, activityMemento);
 
 			status = commandHandler.execute(command);
-		} 
+		} else {
+			activity.setMemento(activityMemento);
+		}
 		msg = status.report();
-		
+
 		scheduleModelHolder.updateScheduleModel();
 		FacesContext.getCurrentInstance().addMessage(null, msg);
 	}
@@ -635,7 +641,6 @@ public class PlanningController implements Serializable {
 		return activity instanceof Meeting;
 	}
 
-	
 	/**
 	 * Liefert die Startzeit der lokalen {@link Activity} in einem lesbaren
 	 * Format zurück.

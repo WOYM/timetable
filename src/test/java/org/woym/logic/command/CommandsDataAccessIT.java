@@ -6,12 +6,19 @@ import static org.testng.AssertJUnit.assertNotNull;
 import static org.testng.AssertJUnit.assertNull;
 import static org.testng.AssertJUnit.assertTrue;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
+import org.woym.common.config.Config;
+import org.woym.common.config.DefaultConfigEnum;
 import org.woym.common.exceptions.DatasetException;
 import org.woym.common.objects.AcademicYear;
 import org.woym.common.objects.ActivityType;
 import org.woym.common.objects.Classteam;
+import org.woym.common.objects.CompoundLesson;
+import org.woym.common.objects.Employee;
 import org.woym.common.objects.Lesson;
 import org.woym.common.objects.LessonType;
 import org.woym.common.objects.Location;
@@ -40,6 +47,7 @@ public class CommandsDataAccessIT {
 
 	@BeforeClass
 	public void setUp() {
+		Config.init();
 		l = new LessonType();
 		l.setName("Erdkunde");
 		addCommand = new AddCommand<LessonType>(l);
@@ -124,6 +132,14 @@ public class CommandsDataAccessIT {
 		assertTrue(macro.execute() instanceof SuccessStatus);
 		assertTrue(dataAccess.getAllLessons(
 				(LessonType) dataAccess.getOneActivityType("Mathe")).isEmpty());
+		BigDecimal allocatedHoursAfterDelete = dataAccess.getOneEmployee("MEY")
+				.getAllocatedHours();
+		BigDecimal expected = new BigDecimal(0)
+				.subtract(new BigDecimal(lesson.getTime().getDuration()))
+				.divide(new BigDecimal(
+						Config.getSingleIntValue(DefaultConfigEnum.TEACHER_HOURLY_SETTLEMENT)))
+				.setScale(Employee.SCALE, RoundingMode.HALF_UP);
+		assertEquals(expected, allocatedHoursAfterDelete);
 
 		assertTrue(macro.undo() instanceof SuccessStatus);
 		assertTrue(dataAccess.getAllLessons(
@@ -132,6 +148,47 @@ public class CommandsDataAccessIT {
 
 		assertTrue(macro.redo() instanceof SuccessStatus);
 		assertTrue(dataAccess.getAllLessons(
+				(LessonType) dataAccess.getOneActivityType("Mathe")).isEmpty());
+
+		macro.undo();
+	}
+
+	@Test(groups = "CommandCreator", dependsOnGroups = "DeleteCommand")
+	public void commandCreatorDeleteCompoundLessonSuccess() throws Exception {
+		CompoundLesson compoundLesson = dataAccess.getAllCompoundLessons(
+				(LessonType) dataAccess.getOneActivityType("Mathe")).get(0);
+
+		MacroCommand macro = CommandCreator.getInstance().createDeleteCommand(
+				compoundLesson);
+		assertTrue(macro.execute() instanceof SuccessStatus);
+		assertTrue(dataAccess.getAllCompoundLessons(
+				(LessonType) dataAccess.getOneActivityType("Mathe")).isEmpty());
+		BigDecimal allocatedHoursTeacher = dataAccess.getOneEmployee("MEY")
+				.getAllocatedHours();
+		BigDecimal allocatedHoursPA = dataAccess.getOneEmployee("MUS")
+				.getAllocatedHours();
+
+		BigDecimal expected = new BigDecimal(0)
+				.subtract(new BigDecimal(30).divide(
+						new BigDecimal(
+								Config.getSingleIntValue(DefaultConfigEnum.TEACHER_HOURLY_SETTLEMENT)),
+						Employee.SCALE, RoundingMode.HALF_UP));
+		assertEquals(expected, allocatedHoursTeacher);
+
+		expected = new BigDecimal(0)
+				.subtract(new BigDecimal(45).divide(
+						new BigDecimal(
+								Config.getSingleIntValue(DefaultConfigEnum.PEDAGOGIC_ASSISTANT_HOURLY_SETTLEMENT)),
+						Employee.SCALE, RoundingMode.HALF_UP));
+		assertEquals(expected, allocatedHoursPA);
+
+		assertTrue(macro.undo() instanceof SuccessStatus);
+		assertTrue(dataAccess.getAllCompoundLessons(
+				(LessonType) dataAccess.getOneActivityType("Mathe")).contains(
+				compoundLesson));
+
+		assertTrue(macro.redo() instanceof SuccessStatus);
+		assertTrue(dataAccess.getAllCompoundLessons(
 				(LessonType) dataAccess.getOneActivityType("Mathe")).isEmpty());
 
 		macro.undo();
@@ -261,8 +318,10 @@ public class CommandsDataAccessIT {
 		assertEquals(a, dataAccess.getOneAcademicYear(1));
 		assertNotNull(dataAccess.getOneSchoolclass(1, 'a'));
 		assertEquals(3, dataAccess.getAllActivities().size());
-		assertEquals(2, dataAccess.getAllActivities(dataAccess
-				.getOneSchoolclass(1, 'a')).size());
+		assertEquals(
+				2,
+				dataAccess.getAllActivities(
+						dataAccess.getOneSchoolclass(1, 'a')).size());
 
 		assertTrue(macro.redo() instanceof SuccessStatus);
 		assertNull(dataAccess.getOneSchoolclass(1, 'a'));
@@ -295,21 +354,26 @@ public class CommandsDataAccessIT {
 
 		macro.undo();
 	}
-	
-	@Test(groups="CommandCreator", dependsOnMethods ="commandCreatorDeleteLocationSuccess")
-	public void commandCreatorDeleteClassteamSuccess() throws Exception{
-		Classteam classteam = dataAccess.getOneClassteam(dataAccess.getOneSchoolclass(1, 'a'));
-		
-		MacroCommand macro = CommandCreator.getInstance().createDeleteCommand(classteam);
+
+	@Test(groups = "CommandCreator", dependsOnMethods = "commandCreatorDeleteLocationSuccess")
+	public void commandCreatorDeleteClassteamSuccess() throws Exception {
+		Classteam classteam = dataAccess.getOneClassteam(dataAccess
+				.getOneSchoolclass(1, 'a'));
+
+		MacroCommand macro = CommandCreator.getInstance().createDeleteCommand(
+				classteam);
 		assertTrue(macro.execute() instanceof SuccessStatus);
-		assertNull(dataAccess.getOneClassteam(dataAccess.getOneSchoolclass(1, 'a')));
-		
+		assertNull(dataAccess.getOneClassteam(dataAccess.getOneSchoolclass(1,
+				'a')));
+
 		assertTrue(macro.undo() instanceof SuccessStatus);
-		assertEquals(classteam, dataAccess.getOneClassteam(dataAccess.getOneSchoolclass(1, 'a')));
-		
+		assertEquals(classteam, dataAccess.getOneClassteam(dataAccess
+				.getOneSchoolclass(1, 'a')));
+
 		assertTrue(macro.redo() instanceof SuccessStatus);
-		assertNull(dataAccess.getOneClassteam(dataAccess.getOneSchoolclass(1, 'a')));
-		
+		assertNull(dataAccess.getOneClassteam(dataAccess.getOneSchoolclass(1,
+				'a')));
+
 		macro.undo();
 	}
 

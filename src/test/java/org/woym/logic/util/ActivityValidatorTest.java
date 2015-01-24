@@ -16,6 +16,7 @@ import org.woym.common.objects.Employee;
 import org.woym.common.objects.EmployeeTimePeriods;
 import org.woym.common.objects.Room;
 import org.woym.common.objects.Schoolclass;
+import org.woym.common.objects.TimePeriod;
 import org.woym.logic.FailureStatus;
 import org.woym.logic.SuccessStatus;
 import org.woym.persistence.DataAccess;
@@ -42,15 +43,18 @@ public class ActivityValidatorTest extends PowerMockTestCase {
 		EmployeeTimePeriods period = Mockito.mock(EmployeeTimePeriods.class);
 		List<EmployeeTimePeriods> periods = new ArrayList<>();
 		periods.add(period);
+		List<TimePeriod> timePeriods = new ArrayList<TimePeriod>();
+		TimePeriod timePeriod = Mockito.mock(TimePeriod.class);
+		timePeriods.add(timePeriod);
 
 		// When
 		PowerMockito.when(activity.getEmployeeTimePeriods())
 				.thenReturn(periods);
+		PowerMockito.when(period.getTimePeriods()).thenReturn(timePeriods);
 
 		PowerMockito.when(
-				dataAccess.getAllActivities(period.getEmployee(),
-						activity.getTime())).thenThrow(
-				new DatasetException("Exception"));
+				dataAccess.getAllActivities(period.getEmployee(), timePeriod))
+				.thenThrow(new DatasetException("Exception"));
 
 		// Then
 		AssertJUnit
@@ -157,17 +161,22 @@ public class ActivityValidatorTest extends PowerMockTestCase {
 		List<EmployeeTimePeriods> periods = new ArrayList<>();
 		periods.add(period);
 
+		List<TimePeriod> timePeriods = new ArrayList<TimePeriod>();
+		TimePeriod timePeriod = Mockito.mock(TimePeriod.class);
+		timePeriods.add(timePeriod);
+
 		Activity activity2 = Mockito.mock(Activity.class);
 		List<Activity> activities = new ArrayList<>();
 		activities.add(activity2);
 
 		// When
 		PowerMockito.when(period.getEmployee()).thenReturn(employee);
+		PowerMockito.when(period.getTimePeriods()).thenReturn(timePeriods);
 		PowerMockito.when(activity.getEmployeeTimePeriods())
 				.thenReturn(periods);
 		PowerMockito.when(
-				dataAccess.getAllActivities(period.getEmployee(),
-						activity.getTime())).thenReturn(activities);
+				dataAccess.getAllActivities(period.getEmployee(), timePeriod))
+				.thenReturn(activities);
 
 		// Then
 		AssertJUnit

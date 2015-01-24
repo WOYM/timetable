@@ -183,7 +183,7 @@ public class DataAccessObjectsIT {
 	public void getAllActivityTypesSuccess() throws DatasetException {
 		LessonType l = new LessonType();
 		l.setName("Mathe");
-	    l.setColor(ColorEnum.GREEN_LIGHT);
+		l.setColor(ColorEnum.GREEN_LIGHT);
 		l.setRooms(dataAccess.getAllRooms("Standardraum"));
 		dataAccess.persist(l);
 
@@ -300,7 +300,8 @@ public class DataAccessObjectsIT {
 		PedagogicAssistant p = list.get(0);
 		assertEquals("Max Mustermann", p.getName());
 		assertEquals("MUS", p.getSymbol());
-		assertEquals(new BigDecimal(30), p.getHoursPerWeek());
+		assertEquals(new BigDecimal(30).setScale(Employee.SCALE),
+				p.getHoursPerWeek());
 		assertEquals(1, p.getPossibleActivityTypes().size());
 		assertEquals(dataAccess.getOneActivityType("Mathe"), p
 				.getPossibleActivityTypes().get(0));
@@ -313,7 +314,8 @@ public class DataAccessObjectsIT {
 		Teacher t = list.get(0);
 		assertEquals("Julia Meyer", t.getName());
 		assertEquals("MEY", t.getSymbol());
-		assertEquals(new BigDecimal(20), t.getHoursPerWeek());
+		assertEquals(new BigDecimal(20).setScale(Employee.SCALE),
+				t.getHoursPerWeek());
 		assertEquals(2, t.getPossibleActivityTypes().size());
 		assertTrue(t.getPossibleActivityTypes().contains(
 				dataAccess.getOneActivityType("Mathe")));
