@@ -2,6 +2,7 @@ package org.woym.controller;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -18,7 +19,6 @@ import org.primefaces.event.ScheduleEntryMoveEvent;
 import org.primefaces.event.ScheduleEntryResizeEvent;
 import org.primefaces.event.SelectEvent;
 import org.primefaces.model.DefaultScheduleEvent;
-import org.primefaces.model.DefaultScheduleModel;
 import org.primefaces.model.ScheduleModel;
 import org.woym.common.config.Config;
 import org.woym.common.config.DefaultConfigEnum;
@@ -27,7 +27,10 @@ import org.woym.common.messages.GenericErrorMessage;
 import org.woym.common.messages.MessageHelper;
 import org.woym.common.objects.AcademicYear;
 import org.woym.common.objects.Activity;
+import org.woym.common.objects.ActivityType;
+import org.woym.common.objects.ActivityTypeEnum;
 import org.woym.common.objects.CompoundLesson;
+import org.woym.common.objects.EmployeeTimePeriods;
 import org.woym.common.objects.Entity;
 import org.woym.common.objects.Lesson;
 import org.woym.common.objects.LessonType;
@@ -44,9 +47,9 @@ import org.woym.logic.CommandHandler;
 import org.woym.logic.SuccessStatus;
 import org.woym.logic.command.UpdateCommand;
 import org.woym.logic.spec.IStatus;
-import org.woym.logic.util.ActivityParser;
 import org.woym.logic.util.ActivityValidator;
 import org.woym.persistence.DataAccess;
+import org.woym.ui.util.ScheduleModelHolder;
 
 /**
  * <h1>PlanningController</h1>
@@ -71,7 +74,6 @@ public class PlanningController implements Serializable {
 	public static final int CALENDAR_DAY = 5;
 
 	private DataAccess dataAccess = DataAccess.getInstance();
-	private ActivityParser activityParser = ActivityParser.getInstance();
 	private ActivityValidator activityValidator = ActivityValidator
 			.getInstance();
 	private CommandHandler commandHandler = CommandHandler.getInstance();
@@ -83,10 +85,14 @@ public class PlanningController implements Serializable {
 	private Location location;
 	private Room room;
 	private Activity activity;
+	private ActivityTypeEnum activityType;
+
+	private List<Weekday> weekdays = Arrays.asList(Weekday.values());
 
 	private String searchTerm;
 
-	private ScheduleModel scheduleModel;
+	private ScheduleModelHolder scheduleModelHolder = ScheduleModelHolder
+			.getInstance();
 
 	/**
 	 * Erzwingt die Erzeugung einer neuen User-Session vor dem Rendern des
@@ -98,7 +104,8 @@ public class PlanningController implements Serializable {
 		FacesContext.getCurrentInstance().getExternalContext().getSession(true);
 
 		searchTerm = "";
-		scheduleModel = new DefaultScheduleModel();
+		scheduleModelHolder.setScheduleModel(scheduleModelHolder
+				.emptyScheduleModel());
 	}
 
 	/**
@@ -109,7 +116,7 @@ public class PlanningController implements Serializable {
 	public int getSlotMinutes() {
 		return Config.getSingleIntValue(DefaultConfigEnum.TIMETABLE_GRID);
 	}
-	
+
 	/**
 	 * Liefert die Startzeit der Anzeige zurück.
 	 * 
@@ -118,7 +125,7 @@ public class PlanningController implements Serializable {
 	public String getMinTime() {
 		return Config.getSingleStringValue(DefaultConfigEnum.WEEKDAY_STARTTIME);
 	}
-	
+
 	/**
 	 * Liefert die Endzeit der Anzeige zurück.
 	 * 
@@ -182,8 +189,7 @@ public class PlanningController implements Serializable {
 		FacesMessage msg;
 
 		Activity activity = (Activity) event.getScheduleEvent().getData();
-		TimePeriod oldTime = activity.getTime();
-		
+
 		IMemento activityMemento = activity.createMemento();
 
 		Date startTime = changeDateByDelta(activity.getTime().getStartTime(),
@@ -206,6 +212,15 @@ public class PlanningController implements Serializable {
 			time.setDay(Weekday.getByOrdinal(localDayDelta));
 
 			activity.setTime(time);
+			
+			for(EmployeeTimePeriods timePeriods : activity.getEmployeeTimePeriods()) {
+				for(TimePeriod timePeriod : timePeriods.getTimePeriods()) {
+					// TODO Would not work with multiple-teacher-periods
+					timePeriod.setDay(time.getDay());
+					timePeriod.setStartTime(startTime);
+					timePeriod.setEndTime(endTime);
+				}
+			}
 
 			IStatus status = activityValidator.validateActivity(activity);
 
@@ -215,28 +230,12 @@ public class PlanningController implements Serializable {
 						activity, activityMemento);
 
 				status = commandHandler.execute(command);
-
-				msg = status.report();
-
-				// Update event
-				DefaultScheduleEvent defaultScheduleEvent = (DefaultScheduleEvent) event
-						.getScheduleEvent();
-				defaultScheduleEvent.setData(activity);
-				scheduleModel.updateEvent(defaultScheduleEvent);
-				FacesContext.getCurrentInstance().addMessage(null, msg);
-				return;
-			} else {
-				msg = status.report();
 			}
+
+			msg = status.report();
 		}
 
-		// Fallback
-		DefaultScheduleEvent defaultScheduleEvent = (DefaultScheduleEvent) event
-				.getScheduleEvent();
-		defaultScheduleEvent.setStartDate(oldTime.getStartTime());
-		defaultScheduleEvent.setEndDate(oldTime.getEndTime());
-		scheduleModel.updateEvent(defaultScheduleEvent);
-		
+		scheduleModelHolder.updateScheduleModel();
 		FacesContext.getCurrentInstance().addMessage(null, msg);
 	}
 
@@ -269,6 +268,15 @@ public class PlanningController implements Serializable {
 		time.setStartTime(activity.getTime().getStartTime());
 		time.setEndTime(endTime);
 		time.setDay(activity.getTime().getDay());
+		
+		for(EmployeeTimePeriods timePeriods : activity.getEmployeeTimePeriods()) {
+			for(TimePeriod timePeriod : timePeriods.getTimePeriods()) {
+				// TODO Would not work with multiple-teacher-periods
+				timePeriod.setDay(time.getDay());
+				timePeriod.setStartTime(activity.getTime().getStartTime());
+				timePeriod.setEndTime(endTime);
+			}
+		}
 
 		activity.setTime(time);
 
@@ -280,15 +288,10 @@ public class PlanningController implements Serializable {
 					activity, activityMemento);
 
 			status = commandHandler.execute(command);
-
-			msg = status.report();
-
-			// Update event
-			scheduleModel.updateEvent(event.getScheduleEvent());
-		} else {
-			msg = status.report();
-		}
-
+		} 
+		msg = status.report();
+		
+		scheduleModelHolder.updateScheduleModel();
 		FacesContext.getCurrentInstance().addMessage(null, msg);
 	}
 
@@ -386,6 +389,11 @@ public class PlanningController implements Serializable {
 	 */
 	public List<Room> getRoomsForLocation() {
 		return location.getRooms();
+	}
+
+	public void doBeforeAdd() {
+		activity = null;
+		activityType = null;
 	}
 
 	/**
@@ -488,12 +496,30 @@ public class PlanningController implements Serializable {
 		return false;
 	}
 
+	public List<Weekday> getWeekdays() {
+		return weekdays;
+	}
+
+	/**
+	 * Diese Methode gibt alle bekannten {@link ActivityType}s zurück, die eine
+	 * {@link Activity} haben kann.
+	 * <p>
+	 * Damit sind die hartkodierten Typen (z.B. {@link Lesson}, {@link Meeting}
+	 * und {@link CompoundLesson}) gemeint.
+	 * 
+	 * @return Eine {@link ArrayList} mit {@link ActivityType}s
+	 */
+	public List<ActivityTypeEnum> getMainActivityTypes() {
+		return Arrays.asList(ActivityTypeEnum.values());
+	}
+
 	/**
 	 * Setzt das ActivityModel für eine Lehrkraft.
 	 */
 	public void setTeacherActivityModel() {
 		if (teacher != null) {
-			scheduleModel = activityParser.getActivityModel(teacher);
+			scheduleModelHolder.setEntity(teacher);
+			scheduleModelHolder.updateScheduleModel();
 		}
 	}
 
@@ -502,7 +528,8 @@ public class PlanningController implements Serializable {
 	 */
 	public void setPedagogicAssistantActivityModel() {
 		if (pedagogicAssistant != null) {
-			scheduleModel = activityParser.getActivityModel(pedagogicAssistant);
+			scheduleModelHolder.setEntity(pedagogicAssistant);
+			scheduleModelHolder.updateScheduleModel();
 		}
 	}
 
@@ -511,7 +538,8 @@ public class PlanningController implements Serializable {
 	 */
 	public void setSchoolclassActivityModel() {
 		if (schoolclass != null) {
-			scheduleModel = activityParser.getActivityModel(schoolclass);
+			scheduleModelHolder.setEntity(schoolclass);
+			scheduleModelHolder.updateScheduleModel();
 		}
 	}
 
@@ -520,7 +548,8 @@ public class PlanningController implements Serializable {
 	 */
 	public void setRoomActivityModel() {
 		if (room != null) {
-			scheduleModel = activityParser.getActivityModel(room);
+			scheduleModelHolder.setEntity(room);
+			scheduleModelHolder.updateScheduleModel();
 		}
 	}
 
@@ -586,6 +615,27 @@ public class PlanningController implements Serializable {
 		return title;
 	}
 
+	/**
+	 * Diese Methode gibt an, ob es sich bei der derzeitigen {@link Activity} um
+	 * eine {@link Lesson} handelt.
+	 * 
+	 * @return Wahrheitswert, ob es sich um eine Lesson handelt
+	 */
+	public Boolean getIsCurrentActivityLesson() {
+		return activity instanceof Lesson;
+	}
+
+	/**
+	 * Diese Methode gibt an, ob es sich bei der derzeitigen {@link Activity} um
+	 * ein {@link Meeting} handelt.
+	 * 
+	 * @return Wahrheitswert, ob es sich um eine Lesson handelt
+	 */
+	public Boolean getIsCurrentActivityMeeting() {
+		return activity instanceof Meeting;
+	}
+
+	
 	/**
 	 * Liefert die Startzeit der lokalen {@link Activity} in einem lesbaren
 	 * Format zurück.
@@ -722,6 +772,35 @@ public class PlanningController implements Serializable {
 		return false;
 	}
 
+	public void setLessonType(LessonType lessonType) {
+		if (lessonType != null || activity instanceof Lesson) {
+			((Lesson) activity).setLessonType(lessonType);
+		}
+	}
+
+	public LessonType getLessonType() {
+		if (activity instanceof Lesson) {
+			return ((Lesson) activity).getLessonType();
+		}
+
+		return null;
+	}
+
+	public ActivityTypeEnum getActivityType() {
+		return activityType;
+	}
+
+	public void setActivityType(ActivityTypeEnum activityType) {
+		this.activityType = activityType;
+		activity = null;
+
+		if (activityType.equals(ActivityTypeEnum.LESSON)) {
+			activity = new Lesson();
+			LessonType lessonType = new LessonType();
+			((Lesson) activity).setLessonType(lessonType);
+		}
+	}
+
 	// /////////////////////////////////////////////////////////////////////////
 	// Getters & Setters
 	// /////////////////////////////////////////////////////////////////////////
@@ -763,11 +842,11 @@ public class PlanningController implements Serializable {
 	}
 
 	public ScheduleModel getScheduleModel() {
-		return scheduleModel;
+		return scheduleModelHolder.getScheduleModel();
 	}
 
 	public void setScheduleModel(ScheduleModel scheduleModel) {
-		this.scheduleModel = scheduleModel;
+		this.scheduleModelHolder.setScheduleModel(scheduleModel);
 	}
 
 	public PedagogicAssistant getPedagogicAssistant() {
