@@ -218,7 +218,6 @@ public class DataAccessObjectsIT2 {
 		t.setDay(Weekday.MONDAY);
 		t.setStartTime(sdf.parse("10:00"));
 		t.setEndTime(sdf.parse("10:30"));
-		t.setDuration(30);
 
 		List<Activity> list = dataAccess.getAllActivities(
 				dataAccess.getOneEmployee("MEY"), t);
@@ -262,7 +261,6 @@ public class DataAccessObjectsIT2 {
 		t.setDay(Weekday.MONDAY);
 		t.setStartTime(sdf.parse("09:00"));
 		t.setEndTime(sdf.parse("10:00"));
-		t.setDuration(30);
 
 		List<Activity> list = dataAccess.getAllActivities(
 				dataAccess.getOneEmployee("MEY"), t);
@@ -286,7 +284,6 @@ public class DataAccessObjectsIT2 {
 		t.setDay(Weekday.MONDAY);
 		t.setStartTime(sdf.parse("10:00"));
 		t.setEndTime(sdf.parse("10:30"));
-		t.setDuration(30);
 
 		List<Activity> list = dataAccess.getAllActivities(
 				dataAccess.getOneRoom("Hauptstandort", "Raum 100"), t);
@@ -308,7 +305,6 @@ public class DataAccessObjectsIT2 {
 		t.setDay(Weekday.MONDAY);
 		t.setStartTime(sdf.parse("11:30"));
 		t.setEndTime(sdf.parse("12:15"));
-		t.setDuration(30);
 
 		List<Activity> list = dataAccess.getAllActivities(
 				dataAccess.getOneRoom("Hauptstandort", "Raum 100"), t);
@@ -327,7 +323,6 @@ public class DataAccessObjectsIT2 {
 		t.setDay(Weekday.TUESDAY);
 		t.setStartTime(sdf.parse("10:45"));
 		t.setEndTime(sdf.parse("11:00"));
-		t.setDuration(15);
 
 		List<Activity> list = dataAccess.getAllActivities(
 				dataAccess.getOneSchoolclass(1, 'a'), t);
@@ -356,7 +351,6 @@ public class DataAccessObjectsIT2 {
 		t.setDay(Weekday.TUESDAY);
 		t.setStartTime(sdf.parse("11:30"));
 		t.setEndTime(sdf.parse("12:00"));
-		t.setDuration(30);
 
 		List<Activity> list = dataAccess.getAllActivities(
 				dataAccess.getOneSchoolclass(1, 'a'), t);
@@ -417,7 +411,6 @@ public class DataAccessObjectsIT2 {
 		t.setDay(Weekday.MONDAY);
 		t.setStartTime(sdf.parse("10:00"));
 		t.setEndTime(sdf.parse("10:45"));
-		t.setDuration(45);
 		l.setTime(t);
 
 		EmployeeTimePeriods e = new EmployeeTimePeriods();
@@ -440,7 +433,6 @@ public class DataAccessObjectsIT2 {
 		t.setDay(Weekday.MONDAY);
 		t.setStartTime(sdf.parse("10:45"));
 		t.setEndTime(sdf.parse("11:30"));
-		t.setDuration(45);
 
 		m.setTime(t);
 
@@ -470,7 +462,6 @@ public class DataAccessObjectsIT2 {
 		t.setDay(Weekday.TUESDAY);
 		t.setStartTime(sdf.parse("10:45"));
 		t.setEndTime(sdf.parse("11:30"));
-		t.setDuration(45);
 
 		c.setTime(t);
 		c.add((LessonType) dataAccess.getOneActivityType("Musik"));
@@ -488,14 +479,12 @@ public class DataAccessObjectsIT2 {
 		t.setDay(Weekday.TUESDAY);
 		t.setStartTime(sdf.parse("10:45"));
 		t.setEndTime(sdf.parse("11:00"));
-		t.setDuration(15);
 		e.add(t);
 
 		t = new TimePeriod();
 		t.setDay(Weekday.TUESDAY);
 		t.setStartTime(sdf.parse("11:15"));
 		t.setEndTime(sdf.parse("11:30"));
-		t.setDuration(15);
 		e.add(t);
 
 		c.add(e);

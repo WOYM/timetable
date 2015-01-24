@@ -2,6 +2,7 @@ package org.woym.common.objects;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.concurrent.TimeUnit;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
@@ -55,24 +56,40 @@ public class TimePeriod implements Serializable {
 		return startTime;
 	}
 
+	/**
+	 * Setzt die Startzeit. Ist die Endzeit nicht {@code null}, wird auch die
+	 * Dauer gesetzt.
+	 * 
+	 * @param startTime
+	 *            - die Startzeit
+	 */
 	public void setStartTime(Date startTime) {
 		this.startTime = startTime;
+		if (endTime != null) {
+			duration = (int) computeDuration();
+		}
 	}
 
 	public Date getEndTime() {
 		return endTime;
 	}
 
+	/**
+	 * Setzt die Endzeit. Ist die Startzeit nicht {@code null}, wird auch die
+	 * Dauer gesetzt.
+	 * 
+	 * @param endTime
+	 *            - Endzeit
+	 */
 	public void setEndTime(Date endTime) {
 		this.endTime = endTime;
+		if (startTime != null) {
+			duration = (int) computeDuration();
+		}
 	}
 
 	public int getDuration() {
 		return duration;
-	}
-
-	public void setDuration(int duration) {
-		this.duration = duration;
 	}
 
 	public Weekday getDay() {
@@ -86,5 +103,15 @@ public class TimePeriod implements Serializable {
 	@Override
 	public String toString() {
 		return day + ", " + startTime + "-" + endTime;
+	}
+
+	/**
+	 * Berechnet die Dauer dieses Zeitraums in Minuten und gibt sie zurück.
+	 * 
+	 * @return die Dauer dieses Zeitraums in Minuten als long
+	 */
+	private long computeDuration() {
+		return TimeUnit.MILLISECONDS.toMinutes(Math.abs(startTime.getTime()
+				- endTime.getTime()));
 	}
 }

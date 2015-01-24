@@ -6,7 +6,6 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
@@ -210,7 +209,6 @@ public class PlanningController implements Serializable {
 			TimePeriod time = new TimePeriod();
 			time.setStartTime(startTime);
 			time.setEndTime(endTime);
-			time.setDuration(activity.getTime().getDuration());
 			time.setDay(Weekday.getByOrdinal(localDayDelta));
 
 			activity.setTime(time);
@@ -222,7 +220,6 @@ public class PlanningController implements Serializable {
 					timePeriod.setDay(time.getDay());
 					timePeriod.setStartTime(startTime);
 					timePeriod.setEndTime(endTime);
-					timePeriod.setDuration(timePeriod.getDuration());
 				}
 			}
 
@@ -270,13 +267,9 @@ public class PlanningController implements Serializable {
 		Date endTime = changeDateByDelta(activity.getTime().getEndTime(),
 				event.getDayDelta(), event.getMinuteDelta());
 
-		long duration = TimeUnit.MILLISECONDS.toMinutes(Math.abs(activity.getTime()
-				.getStartTime().getTime()
-				- endTime.getTime()));
 		TimePeriod time = new TimePeriod();
 		time.setStartTime(activity.getTime().getStartTime());
 		time.setEndTime(endTime);
-		time.setDuration((int) duration);
 		time.setDay(activity.getTime().getDay());
 
 		for (EmployeeTimePeriods timePeriods : activity
@@ -286,7 +279,6 @@ public class PlanningController implements Serializable {
 				timePeriod.setDay(time.getDay());
 				timePeriod.setStartTime(activity.getTime().getStartTime());
 				timePeriod.setEndTime(endTime);
-				timePeriod.setDuration((int) duration);
 			}
 		}
 
