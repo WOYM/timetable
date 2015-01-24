@@ -170,7 +170,6 @@ public class ActivityParser {
 			Date startDate = getActivityStartDate(activity);
 			Date endDate = getActivityEndDate(activity);
 
-			// TODO Style-Class?
 			DefaultScheduleEvent event = new DefaultScheduleEvent(
 					activity.toString(), startDate, endDate);
 
@@ -237,12 +236,14 @@ public class ActivityParser {
 	private DefaultScheduleEvent getLessonEvent(DefaultScheduleEvent event,
 			Lesson lesson) {
 		event.setTitle(lesson.getLessonType().getName());
+		event.setStyleClass(lesson.getLessonType().getColor().getStyleClass());
 		return event;
 	}
 
 	private DefaultScheduleEvent getMeetingEvent(DefaultScheduleEvent event,
 			Meeting meeting) {
 		event.setTitle(meeting.getMeetingType().getName());
+		event.setStyleClass(meeting.getMeetingType().getColor().getStyleClass());
 		return event;
 	}
 	

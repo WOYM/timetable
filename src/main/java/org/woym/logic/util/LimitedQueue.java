@@ -1,12 +1,15 @@
 package org.woym.logic.util;
 
+import java.io.Serializable;
 import java.util.LinkedList;
 
 import org.woym.logic.spec.ICommand;
 import org.woym.logic.spec.ILimitedQueue;
 
-public class LimitedQueue<E extends ICommand> implements ILimitedQueue<E> {
+public class LimitedQueue<E extends ICommand> implements ILimitedQueue<E>, Serializable {
 
+	private static final long serialVersionUID = -660504902790365981L;
+	
 	private final LinkedList<E> queue = new LinkedList<>();
 
 	@Override
