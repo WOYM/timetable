@@ -12,7 +12,7 @@ public enum ActivityTypeEnum {
 	LESSON("Unterricht"), 
 	COMPOUND_LESSON("Bandunterricht"), 
 	MEETING("Teamsitzung"), 
-	PROJECT("Projekt");
+	PAUSE("Pause");
 
 	private String name;
 
