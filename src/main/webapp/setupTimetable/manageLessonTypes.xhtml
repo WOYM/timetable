@@ -131,7 +131,7 @@
 						<p:outputLabel for="addDuration" value="Typische Dauer (Minuten):" />
 						<p:spinner id="addDuration" min="0" max="1000"
 							value="#{lessonTypeController.lessonType.typicalDuration}">
-							<p:ajax event="keyup" update="addDuration" />
+							<p:ajax event="keyup" process="@this" />
 						</p:spinner>
 						<p:outputLabel value="Räume:" />
 						<p:outputPanel>
@@ -183,7 +183,7 @@
 							value="Typische Dauer (Minuten):" />
 						<p:spinner id="editDuration" min="0" max="1000"
 							value="#{lessonTypeController.lessonType.typicalDuration}">
-							<p:ajax event="keyup" update="editDuration" />
+							<p:ajax event="keyup" process="@this" />
 						</p:spinner>
 						<p:outputLabel value="Räume:" />
 						<p:outputPanel>

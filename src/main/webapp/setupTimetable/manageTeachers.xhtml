@@ -138,7 +138,7 @@
 						<p:outputPanel>
 							<p:spinner id="addWeekhours" min="0" max="100" stepFactor="0.01"
 								value="#{teacherController.teacher.hoursPerWeek}">
-								<p:ajax event="keyup" update="addWeekhours" />
+								<p:ajax event="keyup" process="@this" />
 							</p:spinner>
 							<h:outputText
 								value=" à #{teacherController.hourlySettlement} Minuten" />
@@ -206,7 +206,7 @@
 						<p:outputPanel>
 							<p:spinner id="editWeekhours" min="0" max="100" stepFactor="0.01"
 								value="#{teacherController.teacher.hoursPerWeek}">
-								<p:ajax event="keyup" update="editWeekhours" />
+								<p:ajax event="keyup" process="@this"/>
 							</p:spinner>
 							<h:outputText
 								value=" à #{teacherController.hourlySettlement} Minuten" />

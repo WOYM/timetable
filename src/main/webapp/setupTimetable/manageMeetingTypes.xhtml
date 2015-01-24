@@ -132,7 +132,7 @@
 						<p:outputLabel for="addDuration" value="Typische Dauer (Minuten):" />
 						<p:spinner id="addDuration" min="0" max="1000"
 							value="#{meetingTypeController.meetingType.typicalDuration}">
-							<p:ajax event="keyup" update="addDuration" />
+							<p:ajax event="keyup" process="@this" />
 						</p:spinner>
 						<p:outputLabel value="Räume:" />
 						<p:outputPanel>
@@ -184,7 +184,7 @@
 							value="Typische Dauer (Minuten):" />
 						<p:spinner id="editDuration" min="0" max="1000"
 							value="#{meetingTypeController.meetingType.typicalDuration}">
-							<p:ajax event="keyup" update="editDuration" />
+							<p:ajax event="keyup" process="@this" />
 						</p:spinner>
 						<p:outputLabel value="Räume:" />
 						<p:outputPanel>

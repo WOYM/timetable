@@ -322,7 +322,7 @@
 					</p:selectOneMenu>
 				</h:panelGrid>
 
-                <!-- Add-Lesson -->
+				<!-- Add-Lesson -->
 				<p:outputPanel
 					rendered="#{planningController.isCurrentActivityLesson}"
 					style="width:100%;" id="addLessonPanel">
@@ -341,7 +341,8 @@
 						<p:spacer />
 						<p:outputLabel value="Wochentag" for="lessonWeekday" />
 						<p:selectOneMenu id="lessonWeekday"
-							value="#{lessonController.lesson.time.day}"
+							value="#{lessonController.lesson.time.day}" required="true"
+							requiredMessage="Ein leerer Wochentag ist nicht gültig."
 							converter="WeekdayNameConverter">
 							<f:selectItems value="#{planningController.weekdays}" />
 						</p:selectOneMenu>
@@ -388,13 +389,13 @@
 						</p:outputPanel>
 					</h:panelGrid>
 				</p:outputPanel>
-				
+
 				<!-- Add-Meeting -->
-                <p:outputPanel
-                    rendered="#{planningController.isCurrentActivityMeeting}"
-                    style="width:100%;" id="addMeetingPanel">
-                    
-                </p:outputPanel>
+				<p:outputPanel
+					rendered="#{planningController.isCurrentActivityMeeting}"
+					style="width:100%;" id="addMeetingPanel">
+
+				</p:outputPanel>
 				<p:outputPanel style="clear:right; margin-top:60px;">
 					<p:messages id="activityMessages" showDetail="true"
 						closable="false" />
