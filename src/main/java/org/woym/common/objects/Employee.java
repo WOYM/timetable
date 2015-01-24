@@ -1,6 +1,7 @@
 package org.woym.common.objects;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -38,6 +39,8 @@ public abstract class Employee extends org.woym.common.objects.Entity implements
 	 */
 	private static final long serialVersionUID = 9008279410416213060L;
 
+	public static final int SCALE = 2;
+
 	/**
 	 * Die automatisch generierte ID ist der Primärschlüssel für die Datenbank.
 	 */
@@ -58,7 +61,8 @@ public abstract class Employee extends org.woym.common.objects.Entity implements
 	private String symbol;
 
 	/**
-	 * Anzahl der Wochenstunden. Darf nicht null sein.
+	 * Anzahl der Wochenstunden. Darf nicht null sein. Intern immer in
+	 * Zeistunden.
 	 */
 	@Column(nullable = false)
 	private BigDecimal hoursPerWeek = new BigDecimal("0");
@@ -126,7 +130,7 @@ public abstract class Employee extends org.woym.common.objects.Entity implements
 	}
 
 	public void setHoursPerWeek(BigDecimal hoursPerWeek) {
-		this.hoursPerWeek = hoursPerWeek;
+		this.hoursPerWeek = hoursPerWeek.setScale(SCALE, RoundingMode.HALF_UP);
 	}
 
 	public BigDecimal getAllocatedHours() {
@@ -134,7 +138,8 @@ public abstract class Employee extends org.woym.common.objects.Entity implements
 	}
 
 	public void setAllocatedHours(BigDecimal allocatedHours) {
-		this.allocatedHours = allocatedHours;
+		this.allocatedHours = allocatedHours.setScale(SCALE,
+				RoundingMode.HALF_UP);
 	}
 
 	public List<ChargeableCompensation> getCompensations() {

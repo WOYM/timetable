@@ -96,7 +96,7 @@
 								requiredMessage="Angabe des Zeitrasters wird benötigt."
 								max="#{configController.maxSpinnerValue}"
 								min="#{configController.minSpinnerValue}">
-								<p:ajax event="keyup" update="timetableGrid" />
+								<p:ajax event="keyup" process="@this" />
 							</p:spinner>
 							<h:outputText value=" Minuten" />
 						</p:outputPanel>
@@ -115,7 +115,7 @@
 								requiredMessage="Angabe der Zeitabrechnung einer Lehrkraft wird benötigt."
 								max="#{configController.maxSpinnerValue}"
 								min="#{configController.minSpinnerValue}">
-								<p:ajax event="keyup" update="teacherSettlement" />
+								<p:ajax event="keyup" process="@this" />
 							</p:spinner>
 							<h:outputText value=" Minuten" />
 						</p:outputPanel>
@@ -133,7 +133,7 @@
 								requiredMessage="Angabe der Zeitabrechnung eines päd. Mitarbeiters wird benötigt."
 								max="#{configController.maxSpinnerValue}"
 								min="#{configController.minSpinnerValue}">
-								<p:ajax event="keyup" update="paSettlement" />
+								<p:ajax event="keyup" process="@this" />
 							</p:spinner>
 							<h:outputText value=" Minuten" />
 						</p:outputPanel>
@@ -170,7 +170,7 @@
 								value="#{configController.typicalActivityDuration}"
 								max="#{configController.maxSpinnerValue}"
 								min="#{configController.minSpinnerValue}">
-								<p:ajax event="keyup" update="typicalActivityDuration" />
+								<p:ajax event="keyup" process="@this" />
 							</p:spinner>
 							<h:outputText value=" Minuten" />
 						</p:outputPanel>
@@ -226,7 +226,7 @@
 									<p:spinner id="minuteInterval"
 										value="#{configController.backupInterval}" max="1439"
 										min="#{configController.minSpinnerValue}">
-										<p:ajax event="keyup" update="minuteInterval" />
+										<p:ajax event="keyup" process="@this" />
 									</p:spinner>
 									<h:outputText value=" Minuten" />
 								</p:outputPanel>
@@ -237,7 +237,7 @@
 									<p:spinner id="dayInterval"
 										value="#{configController.selectedDayValue}" min="1"
 										max="#{configController.maxDayValue}">
-										<p:ajax event="keyup" update="dayInterval" />
+										<p:ajax event="keyup" process="@this" />
 									</p:spinner>
 									<h:outputText value=" Tage um " />
 									<p:calendar value="#{configController.backupStartTime}"

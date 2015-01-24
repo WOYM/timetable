@@ -119,7 +119,7 @@
 					<p:spinner id="generateAmount"
 						max="#{academicYearAndClassController.maxGeneratorSize}" min="1"
 						value="#{academicYearAndClassController.generatorSize}">
-						<p:ajax event="keyup" update="generateAmount" />
+						<p:ajax event="keyup" process="@this" />
 					</p:spinner>
 				</h:panelGrid>
 				<p:outputPanel id="generateAcademicYearsButton"

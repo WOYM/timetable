@@ -1,8 +1,12 @@
 package org.woym.logic.command;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.woym.common.config.Config;
+import org.woym.common.config.DefaultConfigEnum;
 import org.woym.common.exceptions.DatasetException;
 import org.woym.common.objects.AcademicYear;
 import org.woym.common.objects.Activity;
@@ -18,6 +22,7 @@ import org.woym.common.objects.Location;
 import org.woym.common.objects.Room;
 import org.woym.common.objects.Schoolclass;
 import org.woym.common.objects.Teacher;
+import org.woym.common.objects.TimePeriod;
 import org.woym.common.objects.TravelTimeList;
 import org.woym.common.objects.TravelTimeList.Edge;
 import org.woym.common.objects.spec.IActivityObject;
@@ -57,8 +62,9 @@ public class CommandCreator {
 	 * Der Methode bekannte Parameter sind Objekte vom Typ {@linkplain Activity}
 	 * , {@linkplain Room}, {@linkplain Schoolclass}, {@linkplain Employee},
 	 * {@linkplain ActivityType}, {@linkplain AcademicYear},
-	 * {@linkplain Location} und {@linkplain Classteam}. Wird ein Objekt anderen Typs übergeben, wird eine
-	 * {@linkplain UnsupportedOperationException} geworfen.<br>
+	 * {@linkplain Location} und {@linkplain Classteam}. Wird ein Objekt anderen
+	 * Typs übergeben, wird eine {@linkplain UnsupportedOperationException}
+	 * geworfen.<br>
 	 * Für bekannte Objekte werden zunächst alle Referenzen bei anderen Objekten
 	 * aufgelöst und entsprechende Commands dem {@linkplain MacroCommand}
 	 * hinzugefügt. Als letztes wird dem {@linkplain MacroCommand} das
@@ -82,8 +88,35 @@ public class CommandCreator {
 
 		MacroCommand macro = new MacroCommand();
 
-		// Eine Aktivität kann direkt gelöscht werden
 		if (entity instanceof Activity) {
+			// Beim Löschen einer Aktivität müssen die verteilten Stunden der
+			// beteiligten Lehrer aktualisiert werden
+			for (EmployeeTimePeriods employeeTimePeriods : ((Activity) entity)
+					.getEmployeeTimePeriods()) {
+				Employee employee = employeeTimePeriods.getEmployee();
+				int hourlySettlement;
+				if (employee instanceof Teacher) {
+					hourlySettlement = Config
+							.getSingleIntValue(DefaultConfigEnum.TEACHER_HOURLY_SETTLEMENT);
+				} else {
+					hourlySettlement = Config
+							.getSingleIntValue(DefaultConfigEnum.PEDAGOGIC_ASSISTANT_HOURLY_SETTLEMENT);
+				}
+				int totalDuration = 0;
+				for (TimePeriod timePeriod : employeeTimePeriods
+						.getTimePeriods()) {
+					totalDuration += timePeriod.getDuration();
+				}
+
+				IMemento memento = employee.createMemento();
+				BigDecimal newAllocatedHours = employee.getAllocatedHours()
+						.subtract(
+								new BigDecimal(totalDuration).divide(
+										new BigDecimal(hourlySettlement),
+										Employee.SCALE, RoundingMode.HALF_UP));
+				employee.setAllocatedHours(newAllocatedHours);
+				macro.add(new UpdateCommand<Entity>(employee, memento));
+			}
 			macro.add(new DeleteCommand<Entity>(entity));
 		} else {
 			// Liste der Commands, welche dem MacroCommand hinzugefügt werden

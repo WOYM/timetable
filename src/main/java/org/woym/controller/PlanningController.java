@@ -6,6 +6,7 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
@@ -209,16 +210,19 @@ public class PlanningController implements Serializable {
 			TimePeriod time = new TimePeriod();
 			time.setStartTime(startTime);
 			time.setEndTime(endTime);
+			time.setDuration(activity.getTime().getDuration());
 			time.setDay(Weekday.getByOrdinal(localDayDelta));
 
 			activity.setTime(time);
-			
-			for(EmployeeTimePeriods timePeriods : activity.getEmployeeTimePeriods()) {
-				for(TimePeriod timePeriod : timePeriods.getTimePeriods()) {
+
+			for (EmployeeTimePeriods timePeriods : activity
+					.getEmployeeTimePeriods()) {
+				for (TimePeriod timePeriod : timePeriods.getTimePeriods()) {
 					// TODO Would not work with multiple-teacher-periods
 					timePeriod.setDay(time.getDay());
 					timePeriod.setStartTime(startTime);
 					timePeriod.setEndTime(endTime);
+					timePeriod.setDuration(timePeriod.getDuration());
 				}
 			}
 
@@ -230,6 +234,8 @@ public class PlanningController implements Serializable {
 						activity, activityMemento);
 
 				status = commandHandler.execute(command);
+			} else {
+				activity.setMemento(activityMemento);
 			}
 
 			msg = status.report();
@@ -264,17 +270,23 @@ public class PlanningController implements Serializable {
 		Date endTime = changeDateByDelta(activity.getTime().getEndTime(),
 				event.getDayDelta(), event.getMinuteDelta());
 
+		long duration = TimeUnit.MILLISECONDS.toMinutes(Math.abs(activity.getTime()
+				.getStartTime().getTime()
+				- endTime.getTime()));
 		TimePeriod time = new TimePeriod();
 		time.setStartTime(activity.getTime().getStartTime());
 		time.setEndTime(endTime);
+		time.setDuration((int) duration);
 		time.setDay(activity.getTime().getDay());
-		
-		for(EmployeeTimePeriods timePeriods : activity.getEmployeeTimePeriods()) {
-			for(TimePeriod timePeriod : timePeriods.getTimePeriods()) {
+
+		for (EmployeeTimePeriods timePeriods : activity
+				.getEmployeeTimePeriods()) {
+			for (TimePeriod timePeriod : timePeriods.getTimePeriods()) {
 				// TODO Would not work with multiple-teacher-periods
 				timePeriod.setDay(time.getDay());
 				timePeriod.setStartTime(activity.getTime().getStartTime());
 				timePeriod.setEndTime(endTime);
+				timePeriod.setDuration((int) duration);
 			}
 		}
 
@@ -288,9 +300,11 @@ public class PlanningController implements Serializable {
 					activity, activityMemento);
 
 			status = commandHandler.execute(command);
-		} 
+		} else {
+			activity.setMemento(activityMemento);
+		}
 		msg = status.report();
-		
+
 		scheduleModelHolder.updateScheduleModel();
 		FacesContext.getCurrentInstance().addMessage(null, msg);
 	}
@@ -635,7 +649,6 @@ public class PlanningController implements Serializable {
 		return activity instanceof Meeting;
 	}
 
-	
 	/**
 	 * Liefert die Startzeit der lokalen {@link Activity} in einem lesbaren
 	 * Format zurück.

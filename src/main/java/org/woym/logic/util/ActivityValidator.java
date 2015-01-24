@@ -15,6 +15,7 @@ import org.woym.common.objects.Employee;
 import org.woym.common.objects.EmployeeTimePeriods;
 import org.woym.common.objects.Schoolclass;
 import org.woym.common.objects.Room;
+import org.woym.common.objects.TimePeriod;
 import org.woym.logic.FailureStatus;
 import org.woym.logic.SuccessStatus;
 import org.woym.logic.spec.IStatus;
@@ -103,7 +104,8 @@ public class ActivityValidator {
 				GenericSuccessMessage.VALIDATE_SUCCESS);
 
 		try {
-			if ((activity.getEmployeeTimePeriods().size() > 0) && !validateEmployees(activity)) {
+			if ((activity.getEmployeeTimePeriods().size() > 0)
+					&& !validateEmployees(activity)) {
 				return new FailureStatus(
 						SpecificErrorMessage.VALIDATE_ACTIVITY_EXCEPTION,
 						Employee.class, FacesMessage.SEVERITY_ERROR);
@@ -123,7 +125,8 @@ public class ActivityValidator {
 				GenericSuccessMessage.VALIDATE_SUCCESS);
 
 		try {
-			if ((activity.getSchoolclasses().size() > 0) && !validateSchoolclasses(activity)) {
+			if ((activity.getSchoolclasses().size() > 0)
+					&& !validateSchoolclasses(activity)) {
 				return new FailureStatus(
 						SpecificErrorMessage.VALIDATE_ACTIVITY_EXCEPTION,
 						Schoolclass.class, FacesMessage.SEVERITY_ERROR);
@@ -174,11 +177,14 @@ public class ActivityValidator {
 		for (EmployeeTimePeriods employeeTimePeriods : activity
 				.getEmployeeTimePeriods()) {
 
-			List<Activity> activities = dataAccess.getAllActivities(
-					employeeTimePeriods.getEmployee(), activity.getTime());
+			for (TimePeriod timePeriod : employeeTimePeriods.getTimePeriods()) {
+				List<Activity> activities = dataAccess.getAllActivities(
+						employeeTimePeriods.getEmployee(),
+						timePeriod);
 
-			if (!validateActivities(activity, activities)) {
-				return false;
+				if (!validateActivities(activity, activities)) {
+					return false;
+				}
 			}
 		}
 		return true;
