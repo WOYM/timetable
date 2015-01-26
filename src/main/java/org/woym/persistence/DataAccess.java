@@ -1126,7 +1126,7 @@ public class DataAccess implements IDataAccess, Observer {
 			final Query query = em
 					.createQuery("SELECT DISTINCT a FROM Activity a INNER JOIN a.employeeTimePeriods e INNER JOIN e.timePeriods t INNER JOIN a.rooms r"
 							+ " WHERE e.employee = ?1"
-							+ " AND t.day = ?2"
+							+ " AND a.time.day = ?2"
 							+ " AND t.startTime >= ?3"
 							+ " AND NOT EXISTS (SELECT activity FROM Activity activity INNER JOIN activity.employeeTimePeriods ae INNER JOIN ae.timePeriods tp"
 							+ " WHERE tp.startTime < t.startTime AND tp.startTime >= ?3)"

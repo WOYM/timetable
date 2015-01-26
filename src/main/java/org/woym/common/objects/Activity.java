@@ -9,6 +9,7 @@ import javax.persistence.DiscriminatorColumn;
 import javax.persistence.DiscriminatorType;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -17,6 +18,7 @@ import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
 
+import org.eclipse.persistence.annotations.PrivateOwned;
 import org.woym.common.objects.spec.IActivityObject;
 import org.woym.common.objects.spec.IMemento;
 import org.woym.common.objects.spec.IMementoObject;
@@ -70,7 +72,8 @@ public abstract class Activity extends org.woym.common.objects.Entity implements
 	 * Die an der Aktivität teilnehmenden Lehrer über
 	 * {@linkplain EmployeeTimePeriods} Zeiträumen zugeordnet.
 	 */
-	@OneToMany(cascade = CascadeType.ALL)
+	@OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+	@PrivateOwned
 	private List<EmployeeTimePeriods> employeeTimePeriods = new ArrayList<EmployeeTimePeriods>();
 
 	public Activity() {
