@@ -333,6 +333,40 @@ public interface IActivityDAO {
 			TimePeriod timePeriod, Location location) throws DatasetException;
 
 	/**
+	 * Gibt alle Aktivitäten des übergebenen Mitarbeiters zurück, die (am selben
+	 * Tag) vor dem übergebenen {@linkplain TimePeriod}-Objekt. Die Aktivitäten
+	 * werden nach Endzeit sortiert. Tritt dabei ein Fehler auf, wird eine
+	 * {@linkplain DatasetException} geworfen.
+	 * 
+	 * @param employee
+	 *            - der Mitarbeiter, für welchen die Aktivitäten gesucht werden
+	 * @param timePeriod
+	 *            - der Zeitraum, vor welchem die Aktivitäten liegen sollen
+	 * @return Liste aller vor dem übergebenen Zeitraum liegenden Aktivitäten,
+	 *         an denen der übergebene Mitarbeiter teilnimmt
+	 * @throws DatasetException
+	 */
+	public List<Activity> getAllActivitiesBefore(Employee employee,
+			TimePeriod timePeriod) throws DatasetException;
+
+	/**
+	 * Gibt alle Aktivitäten des übergebenen Mitarbeiters zurück, die (am selben
+	 * Tag) nach dem übergebenen {@linkplain TimePeriod}-Objekt. Die Aktivitäten
+	 * werden nach Startzeit sortiert. Tritt dabei ein Fehler auf, wird eine
+	 * {@linkplain DatasetException} geworfen.
+	 * 
+	 * @param employee
+	 *            - der Mitarbeiter, für welchen die Aktivitäten gesucht werden
+	 * @param timePeriod
+	 *            - der Zeitraum, nach welchem die Aktivitäten liegen sollen
+	 * @return Liste aller nach dem übergebenen Zeitraum liegenden Aktivitäten,
+	 *         an denen der übergebene Mitarbeiter teilnimmt
+	 * @throws DatasetException
+	 */
+	public List<Activity> getAllActivitiesAfter(Employee employee,
+			TimePeriod timePeriod) throws DatasetException;
+
+	/**
 	 * Gibt eine Aktivitität zurück, an welcher die übergebene Schulklasse
 	 * teilnimmt. Die Aktivität findet am selben Tag wie dem des übergebenen
 	 * {@linkplain TimePeriod}-Objektes statt und die Endzeit der Aktivität
