@@ -10,22 +10,25 @@ import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
+import javax.faces.event.ComponentSystemEvent;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.woym.common.exceptions.DatasetException;
+import org.woym.common.objects.ActivityTO;
 import org.woym.common.objects.Employee;
 import org.woym.common.objects.EmployeeTimePeriods;
 import org.woym.common.objects.Lesson;
 import org.woym.common.objects.LessonType;
 import org.woym.common.objects.TimePeriod;
-import org.woym.common.objects.Weekday;
 import org.woym.logic.CommandHandler;
 import org.woym.logic.SuccessStatus;
 import org.woym.logic.command.AddCommand;
 import org.woym.logic.spec.IStatus;
 import org.woym.logic.util.ActivityValidator;
 import org.woym.persistence.DataAccess;
+import org.woym.ui.util.ActivityTOHolder;
+import org.woym.ui.util.EntityHelper;
 import org.woym.ui.util.ScheduleModelHolder;
 
 @ViewScoped
@@ -41,20 +44,42 @@ public class LessonController implements Serializable {
 			.getInstance();
 	private ScheduleModelHolder scheduleModelHolder = ScheduleModelHolder
 			.getInstance();
+	private ActivityTOHolder activityTOHolder = ActivityTOHolder.getInstance();
+	private EntityHelper entityHelper = EntityHelper.getInstance();
 
 	private Lesson lesson;
 
 	@PostConstruct
 	public void init() {
 		lesson = new Lesson();
-		Calendar calendar = Calendar.getInstance();
-		TimePeriod timePeriod = new TimePeriod();
-		
-		timePeriod.setStartTime(calendar.getTime());
-		timePeriod.setEndTime(calendar.getTime());
-		
-		lesson.setTime(timePeriod);
-		timePeriod.setDay(Weekday.MONDAY);
+
+		ActivityTO activityTO = activityTOHolder.getActivityTO();
+		lesson.setTime(activityTO.getTimePeriod());
+		setLessonLessonType(getAllLessonTypes().get(0));
+
+		if (entityHelper.getTeacher() != null
+				|| entityHelper.getPedagogicAssistant() != null) {
+			List<Employee> employees = new ArrayList<>();
+			if (entityHelper.getTeacher() != null) {
+				employees.add(entityHelper.getTeacher());
+			}
+			
+			if(entityHelper.getPedagogicAssistant() != null) {
+				employees.add(entityHelper.getPedagogicAssistant());
+			}
+			
+			setLessonEmployees(employees);
+		}
+	}
+
+	/**
+	 * Diese Methode erzwingt eine Initialisierung der Bean bei jedem Rendern.
+	 * 
+	 * @param event
+	 *            Das Event
+	 */
+	public void doPreRender(ComponentSystemEvent event) {
+		init();
 	}
 
 	/**
@@ -90,14 +115,6 @@ public class LessonController implements Serializable {
 
 		FacesMessage message = status.report();
 		FacesContext.getCurrentInstance().addMessage(null, message);
-	}
-
-	public Lesson getLesson() {
-		return lesson;
-	}
-
-	public void setLesson(Lesson lesson) {
-		this.lesson = lesson;
 	}
 
 	/**
@@ -148,7 +165,7 @@ public class LessonController implements Serializable {
 		lesson.setLessonType(lessonType);
 
 		Calendar calendar = Calendar.getInstance();
-		calendar.setTime(lesson.getTime().getEndTime());
+		calendar.setTime(lesson.getTime().getStartTime());
 		calendar.set(Calendar.MINUTE,
 				(calendar.get(Calendar.MINUTE) + lessonType
 						.getTypicalDuration()));
@@ -160,6 +177,14 @@ public class LessonController implements Serializable {
 
 	public LessonType getLessonLessonType() {
 		return lesson.getLessonType();
+	}
+
+	public Lesson getLesson() {
+		return lesson;
+	}
+
+	public void setLesson(Lesson lesson) {
+		this.lesson = lesson;
 	}
 
 }

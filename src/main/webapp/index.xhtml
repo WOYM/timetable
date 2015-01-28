@@ -244,6 +244,10 @@
 					timeFormat="HH:mm{ - HH:mm}"
 					minTime="#{planningController.minTime}"
 					maxTime="#{planningController.maxTime}">
+					<p:ajax event="dateSelect"
+						listener="#{planningController.onDateSelect}"
+						update="addActivityPanel"
+						oncomplete="PF('wAddActivityDialog').show();" />
 					<p:ajax event="eventSelect"
 						listener="#{planningController.onEventSelect}"
 						update="activityInfoPanel"
@@ -326,68 +330,78 @@
 				<p:outputPanel
 					rendered="#{planningController.isCurrentActivityLesson}"
 					style="width:100%;" id="addLessonPanel">
-					<h:panelGrid columns="2" columnClasses="half-column"
-						style="width:100%;">
-						<p:outputLabel for="addLessonType" value="Unterrichtsinhalt" />
-						<p:selectOneMenu id="addLessonType"
-							value="#{lessonController.lessonLessonType}" required="true"
-							requiredMessage="Ein leerer Unterrichtsinhalt ist nicht gültig."
-							converter="LessonTypeNameConverter">
-							<f:selectItems value="#{lessonController.allLessonTypes}"
-								var="lessonType" itemLabel="#{lessonType.name}" />
-							<p:ajax event="change" update="addActivityPanel" />
-						</p:selectOneMenu>
-						<p:spacer />
-						<p:spacer />
-						<p:outputLabel value="Wochentag" for="lessonWeekday" />
-						<p:selectOneMenu id="lessonWeekday"
-							value="#{lessonController.lesson.time.day}" required="true"
-							requiredMessage="Ein leerer Wochentag ist nicht gültig."
-							converter="WeekdayNameConverter">
-							<f:selectItems value="#{planningController.weekdays}" />
-						</p:selectOneMenu>
-						<p:outputLabel value="Start- und Endzeit des Unterrichts"
-							for="lessonStartTime"></p:outputLabel>
-						<h:panelGrid columns="3">
-							<p:calendar id="lessonStartTime" binding="#{startTime}"
-								value="#{lessonController.lesson.time.startTime}" size="5"
-								pattern="HH:mm" locale="de" timeOnly="true" required="true"
-								requiredMessage="Angabe der Startzeit wird benötigt.">
-							</p:calendar>
-							<h:outputText value=" bis " />
-							<p:calendar id="lessonEndTime"
-								value="#{lessonController.lesson.time.endTime}" size="5"
-								pattern="HH:mm" locale="de" timeOnly="true" required="true"
-								requiredMessage="Angabe der Endzeit wird benötigt.">
-								<f:attribute name="startTime" value="#{startTime}" />
-								<f:validator validatorId="org.woym.TimeRangeValidator" />
-							</p:calendar>
+
+					<f:event listener="#{lessonController.doPreRender}"
+						type="preRenderView" />
+
+					<p:outputPanel id="innerAddLessonPanel">
+
+						<h:panelGrid columns="2" columnClasses="half-column"
+							style="width:100%;">
+							<p:outputLabel for="addLessonType" value="Unterrichtsinhalt" />
+							<p:selectOneMenu id="addLessonType"
+								value="#{lessonController.lessonLessonType}" required="true"
+								requiredMessage="Ein leerer Unterrichtsinhalt ist nicht gültig."
+								converter="LessonTypeNameConverter">
+								<f:selectItems value="#{lessonController.allLessonTypes}"
+									var="lessonType" itemLabel="#{lessonType.name}" />
+								<p:ajax event="change" update="lessonEndTime" />
+							</p:selectOneMenu>
+							<p:spacer />
+							<p:spacer />
+							<p:outputLabel value="Wochentag" for="lessonWeekday" />
+							<p:selectOneMenu id="lessonWeekday"
+								value="#{lessonController.lesson.time.day}" required="true"
+								requiredMessage="Ein leerer Wochentag ist nicht gültig."
+								converter="WeekdayNameConverter">
+								<f:selectItems value="#{planningController.weekdays}" />
+							</p:selectOneMenu>
+							<p:outputLabel value="Start- und Endzeit des Unterrichts"
+								for="lessonStartTime"></p:outputLabel>
+							<h:panelGrid columns="3">
+								<p:calendar id="lessonStartTime" binding="#{startTime}"
+									value="#{lessonController.lesson.time.startTime}" size="5"
+									pattern="HH:mm" locale="de" timeOnly="true" required="true"
+									requiredMessage="Angabe der Startzeit wird benötigt.">
+									<p:ajax event="change" process="@this" />
+								</p:calendar>
+								<h:outputText value=" bis " />
+								<p:calendar id="lessonEndTime"
+									value="#{lessonController.lesson.time.endTime}" size="5"
+									pattern="HH:mm" locale="de" timeOnly="true" required="true"
+									requiredMessage="Angabe der Endzeit wird benötigt.">
+									<f:attribute name="startTime" value="#{startTime}" />
+									<f:validator validatorId="org.woym.TimeRangeValidator" />
+									<p:ajax event="change" process="@this" />
+								</p:calendar>
+							</h:panelGrid>
+							<p:outputLabel value="Mitarbeiter (min. eine Lehrkraft):" />
+							<p:selectCheckboxMenu id="lessonTeachers"
+								value="#{lessonController.lessonEmployees}" filter="true"
+								filterMatchMode="contains" converter="EmployeeNameConverter"
+								label="Bitte auswählen" required="true"
+								requiredMessage="Wählen Sie mindestens einen Mitarbeiter aus.">
+								<f:selectItem
+									value="#{classteamController.disabledTeacherSelectItem}" />
+								<f:selectItems value="#{classteamController.teachers}"
+									var="teacher" itemLabel="#{teacher.symbol}, #{teacher.name}" />
+								<f:selectItem
+									value="#{classteamController.disabledPedagogicAssistantSelectItem}" />
+								<f:selectItems
+									value="#{classteamController.pedagogicAssistants}"
+									var="pedagogicAssistant"
+									itemLabel="#{pedagogicAssistant.symbol}, #{pedagogicAssistant.name}" />
+							</p:selectCheckboxMenu>
+							<p:spacer />
+							<p:outputPanel id="addLessonButton"
+								style="float:right;margin-top:10px;">
+								<p:commandButton value="Hinzufügen"
+									actionListener="#{lessonController.addLesson}"
+									process="addLessonType,lessonWeekday,lessonStartTime,lessonEndTime,lessonTeachers,@this"
+									update="activityMessages,addLessonPanel,scheduleMain" />
+							</p:outputPanel>
 						</h:panelGrid>
-						<p:outputLabel value="Mitarbeiter (min. eine Lehrkraft):" />
-						<p:selectCheckboxMenu id="lessonTeachers"
-							value="#{lessonController.lessonEmployees}" filter="true"
-							filterMatchMode="contains" converter="EmployeeNameConverter"
-							label="Bitte auswählen" required="true"
-							requiredMessage="Wählen Sie mindestens einen Mitarbeiter aus.">
-							<f:selectItem
-								value="#{classteamController.disabledTeacherSelectItem}" />
-							<f:selectItems value="#{classteamController.teachers}"
-								var="teacher" itemLabel="#{teacher.symbol}, #{teacher.name}" />
-							<f:selectItem
-								value="#{classteamController.disabledPedagogicAssistantSelectItem}" />
-							<f:selectItems value="#{classteamController.pedagogicAssistants}"
-								var="pedagogicAssistant"
-								itemLabel="#{pedagogicAssistant.symbol}, #{pedagogicAssistant.name}" />
-						</p:selectCheckboxMenu>
-						<p:spacer />
-						<p:outputPanel id="addLessonButton"
-							style="float:right;margin-top:10px;">
-							<p:commandButton value="Hinzufügen"
-								actionListener="#{lessonController.addLesson}"
-								process="addLessonType,lessonWeekday,lessonStartTime,lessonEndTime,lessonTeachers,@this"
-								update="activityMessages,addLessonPanel,scheduleMain" />
-						</p:outputPanel>
-					</h:panelGrid>
+					</p:outputPanel>
 				</p:outputPanel>
 
 				<!-- Add-Meeting -->
