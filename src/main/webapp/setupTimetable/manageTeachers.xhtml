@@ -39,8 +39,11 @@
 						oncomplete="PF('wEditTeacherDialog').show();"
 						icon="ui-icon-pencil" />
 					<p:menuitem value="Löschen" update="@form" icon="ui-icon-close"
-						oncomplete="PF('wConfirmTeacherDelete').show();">
-					</p:menuitem>
+						rendered="#{not teacherController.hideDeletionDialog}"
+						oncomplete="PF('wConfirmTeacherDelete').show();" />
+					<p:menuitem value="Löschen" update="@form" icon="ui-icon-close"
+						rendered="#{teacherController.hideDeletionDialog}"
+						action="#{teacherController.deleteTeacher}" />
 				</p:contextMenu>
 				<p:dataTable emptyMessage="Keine Lehrer vorhanden" id="teacherTable"
 					var="teacher" selection="#{teacherController.teacher}"
@@ -55,6 +58,9 @@
 					<p:column headerText="Wochenstunden">
 						<h:outputText value="#{teacher.hoursPerWeek} Stunden" />
 					</p:column>
+					<p:column headerText="Verteilte Stunden">
+						<h:outputText value="#{teacher.allocatedHours} Stunden" />
+					</p:column>
 				</p:dataTable>
 
 				<p:fieldset legend="Information"
@@ -62,7 +68,7 @@
 					<h:panelGrid columns="2">
 						<h:outputText style="font-weight:bold;" value="Zeit:" />
 						<h:outputText
-							value="Stunden in Zeitstunden, eine Stunde entspricht sechzig Minuten." />
+							value="Eine Wochenstunde einer Lehrkraft entspricht #{teacherController.hourlySettlement} Minuten." />
 						<h:outputText style="font-weight:bold;" value="Kürzel:" />
 						<h:outputText
 							value="Die Kürzel von Lehrern und pädagogischen Mitarbeitern müssen im gesamten System eindeutig sein." />
@@ -72,13 +78,23 @@
 
 			<!-- Confirm-Dialog -->
 			<p:dialog header="Bestätigen" modal="true" draggable="true"
-				resizable="false" appendToBody="true" dynamic="true"
+				width="40%" resizable="false" appendToBody="true" dynamic="true"
 				id="confirmTeacherDelete" widgetVar="wConfirmTeacherDelete"
 				showEffect="fade" hideEffect="fade">
 				<p:ajax event="close" update="@form" />
-				<h:panelGrid columns="1">
+				<h:panelGrid id="confirmTeacherDeleteBody" columns="1">
 					<h:outputText
 						value="Sind Sie sicher, dass die Lehrkraft gelöscht werden soll?" />
+					<h:outputText
+						value="Es werden auch alle Aktivitäten und Klassenteams gelöscht, 
+						denen dann keine Person des Personals mehr zugeordnet ist." />
+					<p:spacer height="10" />
+					<p:outputPanel>
+						<p:selectBooleanCheckbox
+							value="#{teacherController.hideDeletionDialog}" />
+						<h:outputText
+							value=" Diesen Dialog zukünftig nicht mehr anzeigen." />
+					</p:outputPanel>
 					<p:separator />
 					<p:outputPanel>
 						<p:commandButton value="Bestätigen"
@@ -107,6 +123,7 @@
 						<p:inputText id="addName"
 							value="#{teacherController.teacher.name}" required="true"
 							requiredMessage="Ein leerer Name ist nicht gültig.">
+							<f:validateLength maximum="255" />
 						</p:inputText>
 						<p:outputLabel for="addSymbol" value="Kürzel:" />
 						<p:inputText id="addSymbol"
@@ -115,10 +132,17 @@
 							<f:validator validatorId="org.woym.NameValidator" />
 							<f:attribute name="validateBean"
 								value="#{teacherController.teacher}" />
+							<f:validateLength maximum="255" />
 						</p:inputText>
 						<p:outputLabel for="addWeekhours" value="Wochenstunden:" />
-						<p:spinner id="addWeekhours" min="0" max="100" stepFactor="0.01"
-							value="#{teacherController.teacher.hoursPerWeek}" />
+						<p:outputPanel>
+							<p:spinner id="addWeekhours" min="0" max="100" stepFactor="0.01"
+								value="#{teacherController.teacher.hoursPerWeek}">
+								<p:ajax event="keyup" process="@this" />
+							</p:spinner>
+							<h:outputText
+								value=" à #{teacherController.hourlySettlement} Minuten" />
+						</p:outputPanel>
 					</h:panelGrid>
 					<p:fieldset legend="Schulfächer" toggleable="true"
 						toggleSpeed="500" collapsed="true">
@@ -139,7 +163,6 @@
 							</p:column>
 						</p:pickList>
 					</p:fieldset>
-
 					<p:outputPanel id="addTeacherButton"
 						style="float:right; margin-top:10px;">
 						<p:commandButton value="Hinzufügen"
@@ -168,6 +191,7 @@
 						<p:inputText id="editName"
 							value="#{teacherController.teacher.name}" required="true"
 							requiredMessage="Ein leerer Name ist nicht gültig.">
+							<f:validateLength maximum="255" />
 						</p:inputText>
 						<p:outputLabel for="editSymbol" value="Kürzel:" />
 						<p:inputText id="editSymbol"
@@ -176,10 +200,17 @@
 							<f:validator validatorId="org.woym.NameValidator" />
 							<f:attribute name="validateBean"
 								value="#{teacherController.teacher}" />
+							<f:validateLength maximum="255" />
 						</p:inputText>
 						<p:outputLabel for="editWeekhours" value="Wochenstunden:" />
-						<p:spinner id="editWeekhours" min="0" max="100" stepFactor="0.01"
-							value="#{teacherController.teacher.hoursPerWeek}" />
+						<p:outputPanel>
+							<p:spinner id="editWeekhours" min="0" max="100" stepFactor="0.01"
+								value="#{teacherController.teacher.hoursPerWeek}">
+								<p:ajax event="keyup" process="@this"/>
+							</p:spinner>
+							<h:outputText
+								value=" à #{teacherController.hourlySettlement} Minuten" />
+						</p:outputPanel>
 					</h:panelGrid>
 					<p:fieldset legend="Schulfächer" toggleable="true"
 						toggleSpeed="500" collapsed="true">

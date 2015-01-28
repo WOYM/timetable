@@ -1,21 +1,19 @@
 package org.woym.persistence;
 
-import static org.junit.Assert.assertTrue;
-
 import java.io.File;
 import java.io.IOException;
 import java.sql.SQLException;
 
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.powermock.modules.junit4.PowerMockRunner;
-import org.woym.exceptions.DatasetException;
-import org.woym.exceptions.InvalidFileException;
+import org.powermock.modules.testng.PowerMockTestCase;
+import org.testng.AssertJUnit;
+import org.testng.annotations.AfterClass;
+import org.testng.annotations.BeforeClass;
+import org.testng.annotations.Test;
+import org.woym.common.exceptions.DatasetException;
+import org.woym.common.exceptions.InvalidFileException;
 
-@RunWith(PowerMockRunner.class)
-public class DataBaseTest {
+@Test(groups = "UnitTest")
+public class DataBaseTest extends PowerMockTestCase {
 
 	@BeforeClass
 	public static void init() {
@@ -23,26 +21,21 @@ public class DataBaseTest {
 	}
 
 	@Test
-	public void testAll() throws DatasetException, SQLException, IOException,
-			InvalidFileException {
-		String path = backupSuccess();
-		restoreSuccess(path);
-	}
-
-	public String backupSuccess() throws DatasetException, SQLException {
+	public void backupSuccess() throws DatasetException, SQLException {
 		String backupPath = DataBase.getInstance().backup("test");
 		File file = new File(backupPath);
-		assertTrue(file.exists());
-		assertTrue(file.isFile());
-		return backupPath;
+		AssertJUnit.assertTrue(file.exists());
+		AssertJUnit.assertTrue(file.isFile());
 	}
 
-	public void restoreSuccess(String path) throws IOException,
-			InvalidFileException, DatasetException, SQLException {
-		DataBase.getInstance().restore(path);
+	@Test(dependsOnMethods = "backupSuccess")
+	public void restoreSuccess() throws IOException, InvalidFileException,
+			DatasetException, SQLException {
+		DataBase.getInstance()
+				.restore(DataBase.DB_BACKUP_LOCATION + "test.zip");
 	}
 
-	@Test(expected = InvalidFileException.class)
+	@Test(expectedExceptions = InvalidFileException.class)
 	public void restoreInvalidFilePath() throws IOException,
 			InvalidFileException, DatasetException, SQLException {
 		DataBase.getInstance().restore(DataBase.DB_BACKUP_LOCATION);

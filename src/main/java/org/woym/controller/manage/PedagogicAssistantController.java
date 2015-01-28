@@ -15,18 +15,21 @@ import org.apache.logging.log4j.Logger;
 import org.primefaces.context.RequestContext;
 import org.primefaces.event.TransferEvent;
 import org.primefaces.model.DualListModel;
-import org.woym.exceptions.DatasetException;
+import org.woym.common.config.Config;
+import org.woym.common.config.DefaultConfigEnum;
+import org.woym.common.exceptions.DatasetException;
+import org.woym.common.messages.GenericErrorMessage;
+import org.woym.common.messages.MessageHelper;
+import org.woym.common.objects.ActivityType;
+import org.woym.common.objects.PedagogicAssistant;
+import org.woym.common.objects.spec.IMemento;
 import org.woym.logic.CommandHandler;
 import org.woym.logic.SuccessStatus;
 import org.woym.logic.command.AddCommand;
-import org.woym.logic.command.DeleteCommand;
+import org.woym.logic.command.CommandCreator;
+import org.woym.logic.command.MacroCommand;
 import org.woym.logic.command.UpdateCommand;
 import org.woym.logic.spec.IStatus;
-import org.woym.messages.GenericErrorMessage;
-import org.woym.messages.MessageHelper;
-import org.woym.objects.ActivityType;
-import org.woym.objects.PedagogicAssistant;
-import org.woym.objects.spec.IMemento;
 import org.woym.persistence.DataAccess;
 
 /**
@@ -41,23 +44,34 @@ import org.woym.persistence.DataAccess;
 @ManagedBean(name = "pedagogicAssistantController")
 public class PedagogicAssistantController implements Serializable {
 
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 9002430508451329221L;
 
 	private static Logger LOGGER = LogManager
-			.getLogger(PedagogicAssistantController.class);
+			.getLogger(PedagogicAssistantController.class.getName());
 
 	private DataAccess dataAccess = DataAccess.getInstance();
 
 	private CommandHandler commandHandler = CommandHandler.getInstance();
+	private CommandCreator commandCreator = CommandCreator.getInstance();
 
 	private PedagogicAssistant pedagogicAssistant;
 	private IMemento pedagogicAssistantMemento;
 
 	private DualListModel<ActivityType> activityTypes;
 
+	private boolean hideDeletionDialog;
+	private boolean hide;
+
+	private int hourlySettlement;
+
 	@PostConstruct
 	public void init() {
 		pedagogicAssistant = new PedagogicAssistant();
+		hideDeletionDialog = Config
+				.getBooleanValue(DefaultConfigEnum.HIDE_PA_DELETION_DIALOG);
+		hide = hideDeletionDialog;
+		hourlySettlement = Config
+				.getSingleIntValue(DefaultConfigEnum.PEDAGOGIC_ASSISTANT_HOURLY_SETTLEMENT);
 	}
 
 	/**
@@ -155,7 +169,7 @@ public class PedagogicAssistantController implements Serializable {
 			RequestContext context = RequestContext.getCurrentInstance();
 			context.execute("PF('wEditPedagogicAssistantDialog').hide();");
 		}
-		
+
 		FacesContext.getCurrentInstance().addMessage(null, msg);
 	}
 
@@ -163,9 +177,14 @@ public class PedagogicAssistantController implements Serializable {
 	 * Löscht den selektierten Mitarbeiter.
 	 */
 	public void deletePedagogicAssistant() {
-		DeleteCommand<PedagogicAssistant> command = new DeleteCommand<>(
-				pedagogicAssistant);
-		IStatus status = commandHandler.execute(command);
+		if (hide != hideDeletionDialog) {
+			Config.updateProperty(
+					DefaultConfigEnum.HIDE_PA_DELETION_DIALOG.getPropKey(),
+					String.valueOf(hideDeletionDialog));
+		}
+		MacroCommand macroCommand = commandCreator
+				.createDeleteCommand(pedagogicAssistant);
+		IStatus status = commandHandler.execute(macroCommand);
 		FacesMessage msg = status.report();
 
 		FacesContext.getCurrentInstance().addMessage(null, msg);
@@ -194,6 +213,18 @@ public class PedagogicAssistantController implements Serializable {
 
 	public void setPedagogicAssistant(PedagogicAssistant pedagogicAssistant) {
 		this.pedagogicAssistant = pedagogicAssistant;
+	}
+
+	public boolean isHideDeletionDialog() {
+		return hideDeletionDialog;
+	}
+
+	public void setHideDeletionDialog(boolean hideDeletionDialog) {
+		this.hideDeletionDialog = hideDeletionDialog;
+	}
+
+	public int getHourlySettlement() {
+		return hourlySettlement;
 	}
 
 }

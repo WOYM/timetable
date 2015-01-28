@@ -27,7 +27,8 @@
 					<p:selectOneMenu id="selectLocation"
 						value="#{roomController.location}"
 						converter="LocationNameConverter">
-						<p:ajax event="change" update="addNewRoomButton,roomTablePanel,roomTable" />
+						<p:ajax event="change"
+							update="addNewRoomButton,roomTablePanel,roomTable" />
 						<f:selectItem value="#{null}" itemLabel="Bitte auswählen" />
 						<f:selectItems value="#{locationController.locations}"
 							var="location" itemLabel="#{location.name}" />
@@ -35,7 +36,8 @@
 					<p:outputPanel style="float:right;">
 						<p:commandButton id="addNewRoomButton" value="Hinzufügen"
 							icon="ui-icon-plusthick"
-							actionListener="#{roomController.addRoomDialog}" process="@this"
+							oncomplete="PF('wAddRoomDialog').show();"
+							actionListener="#{roomController.doBeforeAdd}" process="@this"
 							update="addRoomPanel"
 							disabled="#{roomController.location == null}">
 						</p:commandButton>
@@ -48,18 +50,22 @@
 						actionListener="#{roomController.generateRoomMemento}"
 						oncomplete="PF('wEditRoomDialog').show();" icon="ui-icon-pencil" />
 					<p:menuitem value="Löschen" update="@form" icon="ui-icon-close"
-						oncomplete="PF('wConfirmRoomDelete').show();">
-					</p:menuitem>
+						rendered="#{not roomController.hideDeletionDialog}"
+						oncomplete="PF('wConfirmRoomDelete').show();" />
+					<p:menuitem value="Löschen" update="@form" icon="ui-icon-close"
+						rendered="#{roomController.hideDeletionDialog}"
+						action="#{roomController.deleteRoom}" />
 				</p:contextMenu>
 				<p:outputPanel id="roomTablePanel">
-				    <p:outputPanel rendered="#{roomController.location == null}">
-				        <p:separator />
-				        <h:outputText value="Bitte zunächst einen Standort wählen." />
-				    </p:outputPanel>
+					<p:outputPanel rendered="#{roomController.location == null}">
+						<p:separator />
+						<h:outputText value="Bitte zunächst einen Standort wählen." />
+					</p:outputPanel>
 					<p:dataTable emptyMessage="Keine Räume vorhanden" id="roomTable"
 						var="room" selection="#{roomController.room}"
 						value="#{roomController.rooms}" selectionMode="single"
-						rowKey="#{room.name}" scrollable="true" scrollHeight="500" rendered="#{roomController.location != null}">
+						rowKey="#{room.name}" scrollable="true" scrollHeight="500"
+						rendered="#{roomController.location != null}">
 						<p:column headerText="Name">
 							<h:outputText value="#{room.name}" />
 						</p:column>
@@ -75,13 +81,22 @@
 
 			<!-- Confirm-Dialog -->
 			<p:dialog header="Bestätigen" modal="true" draggable="true"
-				resizable="false" appendToBody="true" dynamic="true"
+				width="40%" resizable="false" appendToBody="true" dynamic="true"
 				id="confirmRoomDelete" widgetVar="wConfirmRoomDelete"
 				showEffect="fade" hideEffect="fade">
 				<p:ajax event="close" update="@form" />
 				<h:panelGrid columns="1">
 					<h:outputText
 						value="Sind Sie sicher, dass der Raum gelöscht werden soll?" />
+					<h:outputText
+						value="Es werden auch alle Aktivitäten gelöscht, die dann keinen Raum mehr besitzen." />
+					<p:spacer height="10" />
+					<p:outputPanel>
+						<p:selectBooleanCheckbox
+							value="#{roomController.hideDeletionDialog}" />
+						<h:outputText
+							value=" Diesen Dialog zukünftig nicht mehr anzeigen." />
+					</p:outputPanel>
 					<p:separator />
 					<p:outputPanel>
 						<p:commandButton value="Bestätigen"
@@ -113,13 +128,18 @@
 							<f:validator validatorId="org.woym.NameValidator" />
 							<f:attribute name="validateBean" value="#{roomController.room}" />
 							<f:attribute name="parentBean" value="#{roomController.location}" />
+							<f:validateLength maximum="255" />
 						</p:inputText>
 						<p:outputLabel for="addPurpose" value="Verwendung:" />
 						<p:inputText id="addPurpose"
-							value="#{roomController.room.purpose}" />
+							value="#{roomController.room.purpose}">
+							<f:validateLength maximum="255" />
+						</p:inputText>
 						<p:outputLabel for="addAdditional" value="Zusätz. Information:" />
 						<p:inputTextarea id="addAdditional"
-							value="#{roomController.room.additionalInformation}" />
+							value="#{roomController.room.additionalInformation}">
+							<f:validateLength maximum="255" />
+						</p:inputTextarea>
 					</h:panelGrid>
 					<p:outputPanel id="addRoomButton"
 						style="float:right; margin-top:10px;">
@@ -152,13 +172,18 @@
 							<f:validator validatorId="org.woym.NameValidator" />
 							<f:attribute name="validateBean" value="#{roomController.room}" />
 							<f:attribute name="parentBean" value="#{roomController.location}" />
+							<f:validateLength maximum="255" />
 						</p:inputText>
 						<p:outputLabel for="editPurpose" value="Verwendung:" />
 						<p:inputText id="editPurpose"
-							value="#{roomController.room.purpose}" />
+							value="#{roomController.room.purpose}">
+							<f:validateLength maximum="255" />
+						</p:inputText>
 						<p:outputLabel for="editAdditional" value="Zusätz. Information:" />
 						<p:inputTextarea id="editAdditional"
-							value="#{roomController.room.additionalInformation}" />
+							value="#{roomController.room.additionalInformation}">
+							<f:validateLength maximum="255" />
+						</p:inputTextarea>
 					</h:panelGrid>
 					<p:outputPanel id="editRoomButton"
 						style="float:right; margin-top:10px;">

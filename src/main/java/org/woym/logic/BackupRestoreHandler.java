@@ -11,38 +11,185 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Comparator;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 import javax.faces.application.FacesMessage;
+import javax.servlet.ServletContextEvent;
+import javax.servlet.ServletContextListener;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.woym.config.Config;
-import org.woym.exceptions.DatasetException;
-import org.woym.exceptions.InvalidFileException;
+import org.woym.common.config.Config;
+import org.woym.common.config.DefaultConfigEnum;
+import org.woym.common.exceptions.DatasetException;
+import org.woym.common.exceptions.InvalidFileException;
+import org.woym.common.messages.GenericErrorMessage;
+import org.woym.common.messages.GenericSuccessMessage;
 import org.woym.logic.spec.IStatus;
-import org.woym.messages.GenericErrorMessage;
-import org.woym.messages.GenericSuccessMessage;
 import org.woym.persistence.DataBase;
 
 /**
- * Diese abstrakte Klasse stellt Methoden bereit, die ein Backup des Systems
- * erzeugen und wiederherstellen können.
+ * Diese Klasse stellt Methoden bereit, die ein Backup des Systems erzeugen und
+ * wiederherstellen können. Die Klasse ist nicht abstrakt, die sie sonst nicht
+ * als Listener genutzt werden kann.
  * 
  * @author Adrian
  *
  */
-public abstract class BackupRestoreHandler {
+public class BackupRestoreHandler implements ServletContextListener {
 
 	/**
 	 * Der Logger.
 	 */
 	private static final Logger LOGGER = LogManager
-			.getLogger(BackupRestoreHandler.class);
+			.getLogger(BackupRestoreHandler.class.getName());
+
+	/**
+	 * Der ScheduledExecutorService, welcher die automatischen Backups umsetzt.
+	 */
+	private static ScheduledExecutorService scheduler;
+
+	@Override
+	public void contextInitialized(ServletContextEvent event) {
+		startScheduler(false);
+	}
+
+	@Override
+	public void contextDestroyed(ServletContextEvent event) {
+		stopScheduler();
+	}
+
+	/**
+	 * Stoppt den Dienst für die automatischen Backups und startet ihn neu.
+	 */
+	public static void restartScheduler() {
+		stopScheduler();
+		startScheduler(false);
+	}
+
+	/**
+	 * Startet den Dienst für die automatischen Backups.
+	 * 
+	 * @param afterRestore
+	 *            {@code true}, wenn das Starten nach einer Wiederherstellung
+	 *            geschieht, ansonsten {@code false}
+	 */
+	private static void startScheduler(boolean afterRestore) {
+		scheduler = Executors.newSingleThreadScheduledExecutor();
+		int backupInterval = Integer.valueOf(DefaultConfigEnum.BACKUP_INTERVAL
+				.getPropValue());
+		try {
+			backupInterval = Config
+					.getSingleIntValue(DefaultConfigEnum.BACKUP_INTERVAL);
+		} catch (Exception e) {
+			LOGGER.error(e);
+		}
+
+		if (backupInterval <= 0) {
+			LOGGER.debug("Disabled backups.");
+			return;
+		} else if (backupInterval < 1440) {
+			scheduler.scheduleAtFixedRate(new Runnable() {
+
+				@Override
+				public void run() {
+					BackupRestoreHandler.backup(null);
+				}
+			}, backupInterval, backupInterval, TimeUnit.MINUTES);
+			LOGGER.debug("Started automatic backup scheduler. Backup every "
+					+ backupInterval + " minutes.");
+
+		} else if (backupInterval >= 1440) {
+			try {
+				final SimpleDateFormat sdf = new SimpleDateFormat(
+						"dd.MM.yyyy-HH:mm");
+				final SimpleDateFormat day = new SimpleDateFormat("dd.MM.yyyy");
+				String date = Config
+						.getSingleStringValue(DefaultConfigEnum.BACKUP_NEXTDATE);
+				String time = Config
+						.getSingleStringValue(DefaultConfigEnum.BACKUP_TIME);
+
+				Date currentDate = Calendar.getInstance().getTime();
+				Date nextDate = sdf.parse(date + "-" + time);
+
+				// Falls das nächste Backup-Datum vor dem aktuellen liegt
+				if (nextDate.before(currentDate)) {
+					// Wenn kein Restore, Backup im Nachhinein anfertigen
+					if (!afterRestore) {
+						BackupRestoreHandler.backup(null);
+					} else {
+						// Nach Restore das Backup-Intervall ab der aktuellen
+						// Zeit beginnen
+						nextDate = sdf.parse(day.format(currentDate) + "-"
+								+ time);
+					}
+
+					currentDate = Calendar.getInstance().getTime();
+
+					// So lange das nächste Backup-Datum nicht nach dem
+					// aktuellen liegt, das Datum um das Backup-Intervall
+					// erhöhen
+					while (nextDate.before(currentDate)) {
+						nextDate.setTime(nextDate.getTime()
+								+ TimeUnit.MINUTES.toMillis(backupInterval));
+						currentDate = Calendar.getInstance().getTime();
+					}
+					Config.updateProperty(
+							DefaultConfigEnum.BACKUP_NEXTDATE.getPropKey(),
+							day.format(nextDate));
+				}
+
+				// Absolute Differenz zwischen aktuellem Datum und nächstem
+				// Backup-Datum
+				final long initialDelay = Math.abs(Calendar.getInstance()
+						.getTimeInMillis() - nextDate.getTime());
+				// ScheduledExecutorService starten
+
+				final int interval = backupInterval;
+				scheduler.scheduleAtFixedRate(new Runnable() {
+
+					@Override
+					public void run() {
+						BackupRestoreHandler.backup(null);
+
+						// Nächstes Backup-Datum in der Properties-Datei
+						// aktualisieren
+						Date nextBackupDate = Calendar.getInstance().getTime();
+						nextBackupDate.setTime(nextBackupDate.getTime()
+								+ TimeUnit.MINUTES.toMillis(interval));
+						Config.updateProperty(
+								DefaultConfigEnum.BACKUP_NEXTDATE.getPropKey(),
+								day.format(nextBackupDate));
+					}
+				}, initialDelay, backupInterval, TimeUnit.MINUTES);
+				LOGGER.debug("Started automatic backup scheduler. Next backup in "
+						+ initialDelay
+						+ "ms, then every "
+						+ (backupInterval / 1440) + " days.");
+			} catch (Exception e) {
+				LOGGER.error(e);
+			}
+		}
+	}
+
+	/**
+	 * Stoppt den Dienst für die automatischen Backups.
+	 */
+	private static void stopScheduler() {
+		scheduler.shutdownNow();
+		LOGGER.debug("Shut down automatic backup scheduler.");
+	}
 
 	/**
 	 * Diese statische Methode erzeugt ein Backup mit dem übergebenen Namen
@@ -118,8 +265,10 @@ public abstract class BackupRestoreHandler {
 	 *         {@linkplain FailureStatus}
 	 */
 	public static IStatus restore(String filePath) {
+		stopScheduler();
 		try {
 			DataBase.getInstance().restore(filePath);
+			CommandHandler.getInstance().emptyQueues();
 		} catch (DatasetException | IOException e) {
 			return new FailureStatus(GenericErrorMessage.RESTORE_FAILURE,
 					FacesMessage.SEVERITY_ERROR);
@@ -131,14 +280,18 @@ public abstract class BackupRestoreHandler {
 			return new FailureStatus(GenericErrorMessage.INVALID_FILE,
 					FacesMessage.SEVERITY_ERROR);
 		}
+
 		try (FileSystem fs = createFileSystem(filePath)) {
 			Path properties = Paths.get(Config.PROPERTIES_FILE_PATH);
 			Path zippath = fs.getPath(Config.PROPERTIES_FILE_NAME);
 			Files.copy(zippath, properties, StandardCopyOption.REPLACE_EXISTING);
+			// Neue Properties-Datei laden
+			Config.init();
+			startScheduler(true);
 			return new SuccessStatus(GenericSuccessMessage.RESTORE_SUCCESS);
 		} catch (IOException e) {
 			LOGGER.error(e);
-			return new FailureStatus(GenericErrorMessage.BACKUP_FAILURE,
+			return new FailureStatus(GenericErrorMessage.NOT_FULLY_RESTORED,
 					FacesMessage.SEVERITY_ERROR);
 		}
 	}
@@ -146,8 +299,9 @@ public abstract class BackupRestoreHandler {
 	/**
 	 * Gibt ein eine Liste von {@linkplain File}-Objekten von Dateien zurück,
 	 * die sich im Pfad {@linkplain DataBase#DB_BACKUP_LOCATION} befinden und
-	 * mit ".zip" enden. Gibt es keine solchen Dateien oder existiert der Ordner
-	 * gar nicht, wird eine leere Liste zurückgegeben.
+	 * mit ".zip" enden. Diese sind absteigend nach Erstellungsdatum sortiert.
+	 * Gibt es keine solchen Dateien oder existiert der Ordner gar nicht, wird
+	 * eine leere Liste zurückgegeben.
 	 * 
 	 * @return {@linkplain File}-Liste mit allen zip-Dateien aus dem Ordner
 	 *         {@linkplain DataBase#DB_BACKUP_LOCATION} oder eine leere
@@ -163,6 +317,23 @@ public abstract class BackupRestoreHandler {
 				public boolean accept(File dir, String name) {
 					return name.toLowerCase().endsWith(".zip");
 				}
+			});
+
+			Arrays.sort(files, new Comparator<File>() {
+
+				@Override
+				public int compare(File file1, File file2) {
+					if (file1.lastModified() > file2.lastModified()) {
+						return -1;
+					}
+
+					if (file1.lastModified() < file2.lastModified()) {
+						return 1;
+					}
+
+					return 0;
+				}
+
 			});
 			return Arrays.asList(files);
 		}

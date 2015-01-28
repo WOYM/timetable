@@ -27,8 +27,8 @@
 
 				<p:outputPanel style="float:right">
 					<p:commandButton value="Hinzufügen" icon="ui-icon-plusthick"
-						actionListener="#{lessonTypeController.addLessonTypeDialog}"
-						process="@this" update="addLessonTypePanel">
+						onclick="PF('wAddLessonTypeDialog').show();" process="@this"
+						update="addLessonTypePanel">
 					</p:commandButton>
 				</p:outputPanel>
 
@@ -38,9 +38,12 @@
 						actionListener="#{lessonTypeController.doBeforeEdit}"
 						oncomplete="PF('wEditLessonTypeDialog').show();"
 						icon="ui-icon-pencil" />
-					<p:menuitem value="Löschen" icon="ui-icon-close"
-						oncomplete="PF('wConfirmLessonTypeDelete').show();">
-					</p:menuitem>
+					<p:menuitem value="Löschen" icon="ui-icon-close" update="@form"
+						rendered="#{not lessonTypeController.hideDeletionDialog}"
+						oncomplete="PF('wConfirmLessonTypeDelete').show();" />
+					<p:menuitem value="Löschen" icon="ui-icon-close" update="@form"
+						rendered="#{lessonTypeController.hideDeletionDialog}"
+						action="#{lessonTypeController.deleteLessonType}" />
 				</p:contextMenu>
 				<p:dataTable emptyMessage="Keine Unterrichtsinhalte vorhanden"
 					id="lessonTypeTable" var="lessonType"
@@ -75,13 +78,22 @@
 
 			<!-- Confirm-Dialog -->
 			<p:dialog header="Bestätigen" modal="true" draggable="true"
-				resizable="false" appendToBody="true" dynamic="true"
+				resizable="false" appendToBody="true" dynamic="true" width="40%"
 				id="confirmLessonTypeDelete" widgetVar="wConfirmLessonTypeDelete"
 				showEffect="fade" hideEffect="fade">
 				<p:ajax event="close" update="@form" />
 				<h:panelGrid columns="1">
 					<h:outputText
 						value="Sind Sie sicher, dass der Stundeninhalt gelöscht werden soll?" />
+					<h:outputText
+						value="Alle Aktivitäten, welche dann keinen Inhalt mehr besitzen, werden auch gelöscht." />
+					<p:spacer height="10" />
+					<p:outputPanel>
+						<p:selectBooleanCheckbox
+							value="#{lessonTypeController.hideDeletionDialog}" />
+						<h:outputText
+							value=" Diesen Dialog zukünftig nicht mehr anzeigen." />
+					</p:outputPanel>
 					<p:separator />
 					<p:outputPanel>
 						<p:commandButton value="Bestätigen"
@@ -114,10 +126,13 @@
 							<f:validator validatorId="org.woym.NameValidator" />
 							<f:attribute name="validateBean"
 								value="#{lessonTypeController.lessonType}" />
+							<f:validateLength maximum="255" />
 						</p:inputText>
 						<p:outputLabel for="addDuration" value="Typische Dauer (Minuten):" />
 						<p:spinner id="addDuration" min="0" max="1000"
-							value="#{lessonTypeController.lessonType.typicalDuration}" />
+							value="#{lessonTypeController.lessonType.typicalDuration}">
+							<p:ajax event="keyup" process="@this" />
+						</p:spinner>
 						<p:outputLabel value="Räume:" />
 						<p:outputPanel>
 							<p:selectCheckboxMenu id="addRooms"
@@ -162,11 +177,14 @@
 							<f:validator validatorId="org.woym.NameValidator" />
 							<f:attribute name="validateBean"
 								value="#{lessonTypeController.lessonType}" />
+							<f:validateLength maximum="255" />
 						</p:inputText>
 						<p:outputLabel for="editDuration"
 							value="Typische Dauer (Minuten):" />
 						<p:spinner id="editDuration" min="0" max="1000"
-							value="#{lessonTypeController.lessonType.typicalDuration}" />
+							value="#{lessonTypeController.lessonType.typicalDuration}">
+							<p:ajax event="keyup" process="@this" />
+						</p:spinner>
 						<p:outputLabel value="Räume:" />
 						<p:outputPanel>
 							<p:selectCheckboxMenu id="editRooms"

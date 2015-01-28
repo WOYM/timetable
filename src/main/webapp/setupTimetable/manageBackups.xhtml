@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+<h:head>
+
+</h:head>
+
+<h:body>
+	<ui:composition template="index.xhtml">
+
+		<ui:define name="setupContent">
+			<p:outputPanel>
+				<p:outputPanel>
+					<h1>
+						<h:outputText value="Backupverwaltung" />
+					</h1>
+					<h:outputText
+						value="In dieser Ansicht werden Backups verwaltet. Backups speichern den kompletten
+					Systemzustand und können per Klick auf das entsprechende Backup in der Backup-Liste wiederhergestellt werden." />
+				</p:outputPanel>
+
+				<p:separator style="margin-top:10px;" />
+
+				<p:panel header="Datensicherung" style="min-height:300px;">
+					<p:outputPanel id="backupBlockPanel">
+						<h:panelGrid columns="2" style="width:100%;"
+							columnClasses="half-column" styleClass="topAlignedPanelGrid">
+							<p:outputPanel id="createBackupPanel">
+								<b><h:outputText value="Erzeugen eines neuen Backups" /></b>
+								<p:separator />
+								<h:panelGrid columns="1">
+									<p:commandButton id="showBackupLocationButton"
+										icon="ui-icon-newwin" value="Backup-Speicherort öffnen"
+										actionListener="#{backupController.openBackupLocation}"
+										update="commandGrowl" />
+								</h:panelGrid>
+								<p:spacer height="20" />
+								<h:panelGrid columns="1">
+									<p:outputPanel style="margin-bottom:10px;">
+										<h:outputText value="Automatisch generierter Name:" />
+										<p:selectBooleanCheckbox style="margin-left:10px;"
+											value="#{backupController.hasName}">
+											<p:ajax update="createBackupPanel" />
+										</p:selectBooleanCheckbox>
+									</p:outputPanel>
+									<p:outputPanel id="namePanel" style="margin-bottom:10px;"
+										rendered="#{not backupController.hasName}">
+										<p:inputText value="#{backupController.backupName}">
+											<f:validateLength maximum="255" />
+											<p:ajax event="keyup" update="backupButtonsPanel" />
+										</p:inputText>
+									</p:outputPanel>
+
+									<p:outputPanel id="backupButtonsPanel">
+										<p:commandButton id="createBackupButton"
+											value="Backup erzeugen" process="createBackupPanel"
+											rendered="#{not backupController.fileExists}"
+											actionListener="#{backupController.doBackup}"
+											update="commandGrowl,backupList" />
+										<p:commandButton id="createBackupConfirmDialogButton"
+											value="Backup erzeugen" process="createBackupPanel,@this"
+											rendered="#{backupController.fileExists}"
+											onclick="PF('wConfirmBackup').show();" />
+									</p:outputPanel>
+								</h:panelGrid>
+								<p:blockUI trigger="createBackupButton" block="backupBlockPanel" />
+							</p:outputPanel>
+							<h:panelGrid columns="1">
+								<p:dataList id="backupList"
+									value="#{backupController.allBackups}" var="backup"
+									itemType="none" paginator="true" rows="10"
+									styleClass="paginated">
+									<f:facet name="header"> 
+							     Backups
+							</f:facet>
+									<p:commandLink update="backupList"
+										styleClass="ui-icon ui-icon-folder-collapsed"
+										style="float:left;margin-right:10px"
+										oncomplete="PF('wConfimRestore').show();">
+										<f:setPropertyActionListener value="#{backup}"
+											target="#{backupController.backup}" />
+										<h:outputText value="#{backup.name}" />
+									</p:commandLink>
+									<p:commandLink update="backupList"
+										style="text-decoration:none;"
+										oncomplete="PF('wConfimRestore').show();">
+										<f:setPropertyActionListener value="#{backup}"
+											target="#{backupController.backup}" />
+										<h:outputText value="#{backup.name}" />
+									</p:commandLink>
+								</p:dataList>
+								<h:outputText value="Zum Wiederherstellen Backup anlicken" />
+							</h:panelGrid>
+						</h:panelGrid>
+					</p:outputPanel>
+				</p:panel>
+			</p:outputPanel>
+
+
+			<!-- Backup-Dialog -->
+			<p:dialog header="Wiederherstellen" modal="true" draggable="true"
+				resizable="false" appendToBody="true" dynamic="true"
+				id="confimRestore" widgetVar="wConfimRestore" showEffect="fade"
+				hideEffect="fade">
+				<h:panelGrid columns="1" id="confirmRestoreBody">
+					<h:outputText
+						value="Sind Sie sicher, dass das Backup wiederhergestellt werden soll?" />
+					<p:separator />
+					<p:outputPanel>
+						<p:commandButton id="confirmRestoreButton" value="Bestätigen"
+							actionListener="#{backupController.doRestore}"
+							oncomplete="PF('wConfimRestore').hide();" update="commandGrowl"
+							styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+						<p:commandButton value="Abbrechen"
+							oncomplete="PF('wConfimRestore').hide();"
+							styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+					</p:outputPanel>
+					<p:outputPanel>
+						<h:outputText value="Sie können die Aktion " />
+						<b><h:outputText value="nicht " /></b>
+						<h:outputText value="nachträglich rückgängig machen." />
+					</p:outputPanel>
+				</h:panelGrid>
+				<p:blockUI trigger="confirmRestoreButton" block="confirmRestoreBody" />
+			</p:dialog>
+
+			<!-- Confirm-Backup-Override-Dialog -->
+			<p:dialog header="Bestätigen" modal="true" draggable="true"
+				resizable="false" appendToBody="true" dynamic="true"
+				id="confirmBackup" widgetVar="wConfirmBackup" showEffect="fade"
+				hideEffect="fade">
+				<h:panelGrid columns="1" id="confirmBackupBody">
+					<h:outputText
+						value="Ein Backup mit diesem Namen existiert schon. Wollen Sie es überschreiben?" />
+					<p:separator />
+					<p:outputPanel>
+						<p:commandButton id="confirmBackupButton" value="Ja"
+							actionListener="#{backupController.doBackup}"
+							oncomplete="PF('wConfirmBackup').hide();" update="commandGrowl"
+							styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+						<p:commandButton value="Nein"
+							oncomplete="PF('wConfirmBackup').hide();"
+							styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+					</p:outputPanel>
+					<p:outputPanel>
+						<h:outputText value="Sie können die Aktion " />
+						<b><h:outputText value="nicht " /></b>
+						<h:outputText value="nachträglich rückgängig machen." />
+					</p:outputPanel>
+				</h:panelGrid>
+				<p:blockUI trigger="confirmBackupButton" block="confirmBackupBody" />
+			</p:dialog>
+		</ui:define>
+	</ui:composition>
+</h:body>
+</html>

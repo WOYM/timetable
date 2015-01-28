@@ -17,6 +17,18 @@
    		<validator-id>NameValidator</validator-id>
    		<validator-class>org.woym.ui.validators.NameValidator</validator-class>
 	</validator>
+	<validator>
+   		<validator-id>TimeRangeValidator</validator-id>
+   		<validator-class>org.woym.ui.validators.TimeRangeValidator</validator-class>
+	</validator>
+	<validator>
+		<validator-id>TwoLocationsValidator</validator-id>
+		<validator-class>org.woym.ui.validators.TwoLocationsValidator</validator-class>
+	</validator>
+	<validator>
+		<validator-id>RegexNumberValidator</validator-id>
+		<validator-class>org.woym.ui.validators.RegexNumberValidator</validator-class>
+	</validator>
 	<!-- Converters -->
 	<converter>
    		<converter-id>LessonTypeNameConverter</converter-id>
@@ -30,8 +42,20 @@
         <converter-id>RoomNameConverter</converter-id>
         <converter-class>org.woym.ui.converters.RoomNameConverter</converter-class>
     </converter>
-        <converter>
-        <converter-id>TeacherNameConverter</converter-id>
-        <converter-class>org.woym.ui.converters.TeacherNameConverter</converter-class>
+    <converter>
+        <converter-id>EmployeeNameConverter</converter-id>
+        <converter-class>org.woym.ui.converters.EmployeeNameConverter</converter-class>
     </converter>
-</faces-config>
+    <converter>
+        <converter-id>AcademicYearNameConverter</converter-id>
+        <converter-class>org.woym.ui.converters.AcademicYearNameConverter</converter-class>
+    </converter>
+    <converter>
+        <converter-id>SchoolclassNameConverter</converter-id>
+        <converter-class>org.woym.ui.converters.SchoolclassNameConverter</converter-class>
+    </converter>
+    <converter>
+        <converter-id>WeekdayNameConverter</converter-id>
+        <converter-class>org.woym.ui.converters.WeekdayNameConverter</converter-class>
+    </converter>
+    </faces-config>

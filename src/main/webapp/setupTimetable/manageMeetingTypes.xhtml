@@ -1,0 +1,216 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+<h:head>
+
+</h:head>
+
+<h:body>
+	<ui:composition template="index.xhtml">
+
+		<ui:define name="setupContent">
+
+			<p:outputPanel>
+				<p:outputPanel>
+					<h1>
+						<h:outputText value="Personalssitzungsverwaltung" />
+					</h1>
+					<h:outputText
+						value="In dieser Ansicht werden die verschiedenen Sitzungen des Personals angelegt und verwaltet.)" />
+				</p:outputPanel>
+
+				<p:spacer style="height:50px;" />
+
+				<p:outputPanel style="float:right">
+					<p:commandButton value="Hinzufügen" icon="ui-icon-plusthick"
+						onclick="PF('wAddMeetingTypeDialog').show();" process="@this"
+						update="addMeetingTypePanel">
+					</p:commandButton>
+				</p:outputPanel>
+
+				<!-- Existierende Personalsitzungen -->
+				<p:contextMenu for="meetingTypeTable">
+					<p:menuitem value="Bearbeiten"
+						actionListener="#{meetingTypeController.doBeforeEdit}"
+						oncomplete="PF('wEditMeetingTypeDialog').show();"
+						icon="ui-icon-pencil" />
+					<p:menuitem value="Löschen" icon="ui-icon-close" update="@form"
+						rendered="#{not meetingTypeController.hideDeletionDialog}"
+						oncomplete="PF('wConfirmMeetingTypeDelete').show();" />
+					<p:menuitem value="Löschen" icon="ui-icon-close" update="@form"
+						rendered="#{meetingTypeController.hideDeletionDialog}"
+						action="#{meetingTypeController.deleteMeetingType}" />
+				</p:contextMenu>
+				<p:dataTable emptyMessage="Keine Personalsitzungen vorhanden"
+					id="meetingTypeTable" var="meetingType"
+					selection="#{meetingTypeController.meetingType}"
+					value="#{meetingTypeController.meetingTypes}" selectionMode="single"
+					rowKey="#{meetingType.name}" scrollable="true" scrollHeight="500">
+					<p:column width="300" headerText="Name">
+						<h:outputText value="#{meetingType.name}" />
+					</p:column>
+					<p:column width="200" headerText="Standarddauer">
+						<h:outputText value="#{meetingType.readableDuration}" />
+					</p:column>
+					<p:column headerText="Standardräume">
+						<ui:repeat var="room" value="#{meetingType.rooms}">
+							<h:outputText
+								value="#{room.locationName} - #{room.name} (#{room.purpose})" />
+							<br />
+						</ui:repeat>
+					</p:column>
+				</p:dataTable>
+
+				<p:fieldset legend="Information"
+					style="margin-bottom:20px; margin-top:20px;">
+					<h:panelGrid columns="2">
+						<h:outputText style="font-weight:bold;" value="Zeit:" />
+						<h:outputText
+							value="Stunden in Zeitstunden, eine Stunde entspricht sechzig Minuten." />
+					</h:panelGrid>
+				</p:fieldset>
+
+			</p:outputPanel>
+
+			<!-- Confirm-Dialog -->
+			<p:dialog header="Bestätigen" modal="true" draggable="true"
+				resizable="false" appendToBody="true" dynamic="true" width="40%"
+				id="confirmMeetingTypeDelete" widgetVar="wConfirmMeetingTypeDelete"
+				showEffect="fade" hideEffect="fade">
+				<p:ajax event="close" update="@form" />
+				<h:panelGrid columns="1">
+					<h:outputText
+						value="Sind Sie sicher, dass die Personalsitzung gelöscht werden soll?" />
+					<h:outputText
+						value="Alle Aktivitäten, welche dann keinen Inhalt mehr besitzen, werden auch gelöscht." />
+					<p:spacer height="10" />
+					<p:outputPanel>
+						<p:selectBooleanCheckbox
+							value="#{meetingTypeController.hideDeletionDialog}" />
+						<h:outputText
+							value=" Diesen Dialog zukünftig nicht mehr anzeigen." />
+					</p:outputPanel>
+					<p:separator />
+					<p:outputPanel>
+						<p:commandButton value="Bestätigen"
+							actionListener="#{meetingTypeController.deleteMeetingType}"
+							oncomplete="PF('wConfirmMeetingTypeDelete').hide();"
+							styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+						<p:commandButton value="Abbrechen"
+							oncomplete="PF('wConfirmMeetingTypeDelete').hide();"
+							styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+					</p:outputPanel>
+					<h:outputText
+						value="Sie können die Aktion nachträglich rückgängig machen." />
+				</h:panelGrid>
+			</p:dialog>
+
+			<!-- Add-Dialog -->
+			<p:dialog header="Hinzufügen von Personalsitzungen"
+				id="addMeetingTypeDialog" widgetVar="wAddMeetingTypeDialog"
+				width="500" modal="true" draggable="true" resizable="false"
+				appendToBody="true" dynamic="true" showEffect="fade"
+				hideEffect="fade">
+				<p:ajax event="close" update="@form" />
+				<p:outputPanel id="addMeetingTypePanel">
+					<b><h:outputText value="Neue Personalsitzung" /></b>
+					<h:panelGrid columns="2">
+						<p:outputLabel for="addName" value="Name:" />
+						<p:inputText id="addName"
+							value="#{meetingTypeController.meetingType.name}" required="true"
+							requiredMessage="Ein leerer Name ist nicht gültig.">
+							<f:validator validatorId="org.woym.NameValidator" />
+							<f:attribute name="validateBean"
+								value="#{meetingTypeController.meetingType}" />
+							<f:validateLength maximum="255" />
+						</p:inputText>
+						<p:outputLabel for="addDuration" value="Typische Dauer (Minuten):" />
+						<p:spinner id="addDuration" min="0" max="1000"
+							value="#{meetingTypeController.meetingType.typicalDuration}">
+							<p:ajax event="keyup" process="@this" />
+						</p:spinner>
+						<p:outputLabel value="Räume:" />
+						<p:outputPanel>
+							<p:selectCheckboxMenu id="addRooms"
+								value="#{meetingTypeController.rooms}" label="Bitte auswählen"
+								filter="true" filterMatchMode="contains"
+								converter="RoomNameConverter" panelStyle="width:500px;">
+								<f:selectItems value="#{meetingTypeController.allRooms}"
+									var="room"
+									itemLabel="#{room.locationName} - #{room.name} (#{room.purpose})" />
+							</p:selectCheckboxMenu>
+						</p:outputPanel>
+					</h:panelGrid>
+					<p:outputPanel id="addMeetingTypeButton"
+						style="float:right;margin-top:10px;">
+						<p:commandButton value="Hinzufügen"
+							actionListener="#{meetingTypeController.addMeetingType}"
+							process="addName,addDuration,addRooms,@this"
+							update="addMeetingTypePanel,meetingTypeTable" />
+					</p:outputPanel>
+					<p:defaultCommand target="addMeetingTypeButton" />
+					<p:outputPanel style="clear:right; margin-top:60px;">
+						<p:messages showDetail="true" autoUpdate="true" closable="false" />
+					</p:outputPanel>
+				</p:outputPanel>
+			</p:dialog>
+
+			<!-- Edit-Dialog -->
+			<p:dialog header="Bearbeiten einer Personalsitzung"
+				id="editMeetingTypeDialog" widgetVar="wEditMeetingTypeDialog"
+				width="500" modal="true" draggable="true" resizable="false"
+				appendToBody="true" dynamic="true" showEffect="fade"
+				hideEffect="fade">
+				<p:ajax event="close" update="@form" />
+				<p:outputPanel id="editMeetingTypePanel">
+					<b><h:outputText
+							value="Bearbeiten von #{meetingTypeController.meetingType.name}" /></b>
+					<h:panelGrid columns="2">
+						<p:outputLabel for="editName" value="Name:" />
+						<p:inputText id="editName"
+							value="#{meetingTypeController.meetingType.name}" required="true"
+							requiredMessage="Ein leerer Name ist nicht gültig.">
+							<f:validator validatorId="org.woym.NameValidator" />
+							<f:attribute name="validateBean"
+								value="#{meetingTypeController.meetingType}" />
+							<f:validateLength maximum="255" />
+						</p:inputText>
+						<p:outputLabel for="editDuration"
+							value="Typische Dauer (Minuten):" />
+						<p:spinner id="editDuration" min="0" max="1000"
+							value="#{meetingTypeController.meetingType.typicalDuration}">
+							<p:ajax event="keyup" process="@this" />
+						</p:spinner>
+						<p:outputLabel value="Räume:" />
+						<p:outputPanel>
+							<p:selectCheckboxMenu id="editRooms"
+								value="#{meetingTypeController.rooms}" label="Bitte auswählen"
+								filter="true" filterMatchMode="contains"
+								converter="RoomNameConverter" panelStyle="width:500px;">
+								<f:selectItems value="#{meetingTypeController.allRooms}"
+									var="room"
+									itemLabel="#{room.locationName} - #{room.name} (#{room.purpose})" />
+							</p:selectCheckboxMenu>
+						</p:outputPanel>
+					</h:panelGrid>
+					<p:outputPanel style="margin-top:10px; float:right">
+						<p:commandButton id="editMeetingTypeButton" value="Aktualisieren"
+							actionListener="#{meetingTypeController.editMeetingType}"
+							process="editName,editDuration,editRooms,@this"
+							update="editMeetingTypePanel,meetingTypeTable" />
+					</p:outputPanel>
+					<p:defaultCommand target="editMeetingTypeButton" />
+					<p:outputPanel style="clear:right; margin-top:60px;">
+						<p:messages showDetail="true" />
+					</p:outputPanel>
+				</p:outputPanel>
+			</p:dialog>
+		</ui:define>
+	</ui:composition>
+</h:body>
+</html>

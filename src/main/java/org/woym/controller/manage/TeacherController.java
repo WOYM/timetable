@@ -12,22 +12,24 @@ import javax.faces.context.FacesContext;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.h2.util.StringUtils;
 import org.primefaces.context.RequestContext;
 import org.primefaces.event.TransferEvent;
 import org.primefaces.model.DualListModel;
-import org.woym.exceptions.DatasetException;
+import org.woym.common.config.Config;
+import org.woym.common.config.DefaultConfigEnum;
+import org.woym.common.exceptions.DatasetException;
+import org.woym.common.messages.GenericErrorMessage;
+import org.woym.common.messages.MessageHelper;
+import org.woym.common.objects.ActivityType;
+import org.woym.common.objects.Teacher;
+import org.woym.common.objects.spec.IMemento;
 import org.woym.logic.CommandHandler;
 import org.woym.logic.SuccessStatus;
 import org.woym.logic.command.AddCommand;
-import org.woym.logic.command.DeleteCommand;
+import org.woym.logic.command.CommandCreator;
+import org.woym.logic.command.MacroCommand;
 import org.woym.logic.command.UpdateCommand;
 import org.woym.logic.spec.IStatus;
-import org.woym.messages.GenericErrorMessage;
-import org.woym.messages.MessageHelper;
-import org.woym.objects.ActivityType;
-import org.woym.objects.Teacher;
-import org.woym.objects.spec.IMemento;
 import org.woym.persistence.DataAccess;
 
 /**
@@ -42,28 +44,35 @@ import org.woym.persistence.DataAccess;
 @ManagedBean(name = "teacherController")
 public class TeacherController implements Serializable {
 
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = -8212155094392549715L;
 
 	private static Logger LOGGER = LogManager
-			.getLogger(TeacherController.class);
+			.getLogger(TeacherController.class.getName());
 
 	private DataAccess dataAccess = DataAccess.getInstance();
 
 	private CommandHandler commandHandler = CommandHandler.getInstance();
+	private CommandCreator commandCreator = CommandCreator.getInstance();
 
 	private Teacher teacher;
 
 	private IMemento teacherMemento;
 
-	// TODO Move to planningController
-	private Teacher selectedTeacherForSearch;
-	private String searchSymbol;
-
 	private DualListModel<ActivityType> activityTypes;
+
+	private boolean hideDeletionDialog;
+	private boolean hide;
+
+	private int hourlySettlement;
 
 	@PostConstruct
 	public void init() {
 		teacher = new Teacher();
+		hideDeletionDialog = Config
+				.getBooleanValue(DefaultConfigEnum.HIDE_TEACHER_DELETION_DIALOG);
+		hide = hideDeletionDialog;
+		hourlySettlement = Config
+				.getSingleIntValue(DefaultConfigEnum.TEACHER_HOURLY_SETTLEMENT);
 	}
 
 	/**
@@ -82,7 +91,7 @@ public class TeacherController implements Serializable {
 			allActivityTypes = new ArrayList<>();
 			possibleActivityTypes = teacher.getPossibleActivityTypes();
 
-			for (ActivityType activityType : dataAccess.getAllActivityTypes()) {
+			for (ActivityType activityType : dataAccess.getAllLessonTypes()) {
 				if (!possibleActivityTypes.contains(activityType)) {
 					allActivityTypes.add(activityType);
 				}
@@ -160,7 +169,7 @@ public class TeacherController implements Serializable {
 			RequestContext context = RequestContext.getCurrentInstance();
 			context.execute("PF('wEditTeacherDialog').hide();");
 		}
-		
+
 		FacesContext.getCurrentInstance().addMessage(null, msg);
 	}
 
@@ -168,50 +177,16 @@ public class TeacherController implements Serializable {
 	 * Löscht den selektierten Lehrer.
 	 */
 	public void deleteTeacher() {
-		DeleteCommand<Teacher> command = new DeleteCommand<>(teacher);
-		IStatus status = commandHandler.execute(command);
+		if (hide != hideDeletionDialog) {
+			Config.updateProperty(
+					DefaultConfigEnum.HIDE_TEACHER_DELETION_DIALOG.getPropKey(),
+					String.valueOf(hideDeletionDialog));
+		}
+		MacroCommand macroCommand = commandCreator.createDeleteCommand(teacher);
+		IStatus status = commandHandler.execute(macroCommand);
 		FacesMessage msg = status.report();
 
 		FacesContext.getCurrentInstance().addMessage(null, msg);
-	}
-
-	/**
-	 * Returns a list of teachers that match the given search-symbol. If no
-	 * search-symbol is set the first 5 teachers will be returned.
-	 * 
-	 * TODO: Move to planningController (Maybe)
-	 * 
-	 * @return
-	 */
-	public ArrayList<Teacher> getTeachersForSearch() {
-
-		ArrayList<Teacher> tempList = new ArrayList<>();
-		if (StringUtils.isNullOrEmpty(searchSymbol)) {
-			for (Teacher teacher : getTeachers()) {
-				tempList.add(teacher);
-
-				if (tempList.size() >= 5) {
-					return tempList;
-				}
-
-			}
-
-			return tempList;
-		}
-
-		for (Teacher teacher : getTeachers()) {
-
-			if (teacher.getSymbol().contains(searchSymbol)) {
-
-				tempList.add(teacher);
-
-				if (tempList.size() >= 5) {
-					return tempList;
-				}
-			}
-		}
-
-		return tempList;
 	}
 
 	/**
@@ -240,19 +215,16 @@ public class TeacherController implements Serializable {
 		}
 	}
 
-	public String getSearchSymbol() {
-		return searchSymbol;
+	public boolean isHideDeletionDialog() {
+		return hideDeletionDialog;
 	}
 
-	public void setSearchSymbol(String searchSymbol) {
-		this.searchSymbol = searchSymbol;
+	public void setHideDeletionDialog(boolean hideDeletionDialog) {
+		this.hideDeletionDialog = hideDeletionDialog;
 	}
 
-	public Teacher getSelectedTeacherForSearch() {
-		return selectedTeacherForSearch;
+	public int getHourlySettlement() {
+		return hourlySettlement;
 	}
 
-	public void setSelectedTeacherForSearch(Teacher selectedTeacherForSearch) {
-		this.selectedTeacherForSearch = selectedTeacherForSearch;
-	}
 }

@@ -1,26 +1,25 @@
 package org.woym.ui.converters;
 
-import static org.junit.Assert.assertEquals;
+import static org.testng.AssertJUnit.assertEquals;
 
 import java.util.ArrayList;
 
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.powermock.api.mockito.PowerMockito;
-import org.powermock.modules.junit4.PowerMockRunner;
-import org.woym.exceptions.DatasetException;
-import org.woym.objects.Location;
-import org.woym.objects.Room;
+import org.powermock.modules.testng.PowerMockTestCase;
+import org.testng.annotations.Test;
+import org.woym.common.exceptions.DatasetException;
+import org.woym.common.objects.Location;
+import org.woym.common.objects.Room;
 import org.woym.persistence.DataAccess;
 
-@RunWith(PowerMockRunner.class)
-public class RoomNameConverterTest {
+@Test(groups = "unit")
+public class RoomNameConverterTest extends PowerMockTestCase {
 
 	@Mock
 	private DataAccess dataAccess;
@@ -63,39 +62,41 @@ public class RoomNameConverterTest {
 		Room r = PowerMockito.mock(Room.class);
 		ArrayList<Room> rooms = new ArrayList<Room>();
 		rooms.add(r);
-		
+
 		Location l = PowerMockito.mock(Location.class);
 		Location l1 = PowerMockito.mock(Location.class);
 		ArrayList<Location> locations = new ArrayList<Location>();
 		locations.add(l);
 		locations.add(l1);
-		
+
 		PowerMockito.when(l1.getRooms()).thenReturn(rooms);
 		PowerMockito.when(dataAccess.getAllLocations()).thenReturn(locations);
 		assertEquals(r.getId().toString(),
 				roomNameConverter.getAsString(facesContext, uiComponent, r));
 	}
-	
+
 	@Test
 	public void getAsStringDatasetException() throws DatasetException {
 		Room r = PowerMockito.mock(Room.class);
-		Mockito.doThrow(DatasetException.class).when(dataAccess).getAllLocations();
-		assertEquals("", roomNameConverter.getAsString(facesContext, uiComponent, r));
+		Mockito.doThrow(DatasetException.class).when(dataAccess)
+				.getAllLocations();
+		assertEquals("",
+				roomNameConverter.getAsString(facesContext, uiComponent, r));
 	}
-	
+
 	@Test
 	public void getAsStringRoomNotMatching() throws DatasetException {
 		Room r = PowerMockito.mock(Room.class);
 		Room r1 = PowerMockito.mock(Room.class);
 		ArrayList<Room> rooms = new ArrayList<Room>();
 		rooms.add(r);
-		
+
 		Location l = PowerMockito.mock(Location.class);
 		Location l1 = PowerMockito.mock(Location.class);
 		ArrayList<Location> locations = new ArrayList<Location>();
 		locations.add(l);
 		locations.add(l1);
-		
+
 		PowerMockito.when(l1.getRooms()).thenReturn(rooms);
 		PowerMockito.when(dataAccess.getAllLocations()).thenReturn(locations);
 		assertEquals("",

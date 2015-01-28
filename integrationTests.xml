@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
+<suite name="Integration Test Suite">
+	<test name="Integration Tests">
+		<classes>
+			<class name="org.woym.persistence.DataAccessObjectsIT" />
+			<class name="org.woym.persistence.DataAccessObjectsIT2" />
+			<class name="org.woym.logic.command.CommandsDataAccessIT" />
+		</classes>
+	</test>
+</suite>

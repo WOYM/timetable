@@ -2,8 +2,12 @@ package org.woym.persistence;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.Serializable;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -22,8 +26,8 @@ import javax.persistence.PersistenceException;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.woym.exceptions.DatasetException;
-import org.woym.exceptions.InvalidFileException;
+import org.woym.common.exceptions.DatasetException;
+import org.woym.common.exceptions.InvalidFileException;
 
 /**
  * Diese Singleton-Klasse initialisiert den EntityManager, welcher für alle
@@ -193,11 +197,14 @@ public class DataBase extends Observable implements Serializable {
 			InvalidFileException, DatasetException, SQLException {
 		Statement stm = null;
 		Connection conn = null;
+		File tempDirectory = new File(DB_LOCATION_PATH + ".tmp");
+		File dbDirectory = new File(DB_LOCATION_PATH);
 		try {
 			if (!filePath.endsWith(".zip") || !checkZip(filePath)) {
 				LOGGER.error("Invalid file path.");
 				throw new InvalidFileException();
 			}
+
 			entityManager.close();
 			conn = DriverManager.getConnection(DB_URL, USER, PASSWORD);
 			stm = conn.createStatement();
@@ -206,8 +213,11 @@ public class DataBase extends Observable implements Serializable {
 			conn.close();
 			LOGGER.info("Shut down database for backup restoration.");
 
-			File dbLocation = new File(DB_LOCATION_PATH);
-			deleteFolder(dbLocation);
+			// Sicherungskopie erstellen
+			copyDirectory(dbDirectory, tempDirectory);
+
+			// Datenbankverzeichnis löschen
+			deleteFolder(dbDirectory);
 
 			conn = DriverManager.getConnection(DB_URL, USER, PASSWORD);
 			stm = conn.createStatement();
@@ -215,12 +225,16 @@ public class DataBase extends Observable implements Serializable {
 			LOGGER.info("Backup " + filePath + " restored.");
 			entityManager = null;
 			setUp();
+			deleteFolder(tempDirectory);
 		} catch (IOException e) {
 			LOGGER.error("Error while checking backup file: ", e);
 			throw new IOException();
 		} catch (InvalidFileException e) {
 			throw new InvalidFileException();
 		} catch (Exception e) {
+			// Sicherungskopie wiederherstellen
+			copyDirectory(tempDirectory, dbDirectory);
+			setUp();
 			LOGGER.error("Exception while restoring database from backup: ", e);
 			throw new DatasetException(
 					"Error while restoring database from backup: "
@@ -266,6 +280,7 @@ public class DataBase extends Observable implements Serializable {
 		Statement stm = null;
 		try {
 			entityManager.close();
+			entityManager = null;
 			conn = DriverManager.getConnection(DB_URL, USER, PASSWORD);
 			stm = conn.createStatement();
 			stm.execute("SHUTDOWN");
@@ -281,13 +296,13 @@ public class DataBase extends Observable implements Serializable {
 
 	/**
 	 * Erzeugt ein Backup, das das aktuelle Datum plus Uhrzeit im Format
-	 * "yyyy-mm-dd_HH.mm.ss" als Namen trägt.
+	 * "dd-MM-yyyy_HH.mm.ss" als Namen trägt.
 	 * 
 	 * @throws DatasetException
 	 * @throws SQLException
 	 */
 	private String backup() throws DatasetException, SQLException {
-		DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd_HH.mm.ss");
+		DateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy_HH.mm.ss");
 		Calendar cal = Calendar.getInstance();
 		String time = dateFormat.format(cal.getTime());
 		return backup(time);
@@ -342,6 +357,51 @@ public class DataBase extends Observable implements Serializable {
 					}
 				}
 				folder.delete();
+			}
+		}
+	}
+
+	/**
+	 * Kopiert das übergebene src-Directory an die Position des
+	 * dest-Directories. Existiert das src-Directory nicht oder ist kein
+	 * Directory, wird eine {@linkplain IllegalArgumentException} geworfen.
+	 * Ansonsten wird das Verzeichnis rekursiv kopiert.
+	 * 
+	 * @param src
+	 *            - das Verzeichnis, welches kopiert werden soll
+	 * @param dest
+	 *            - das Zielverzeichnis
+	 * @throws IOException
+	 */
+	private void copyDirectory(File src, File dest) throws IOException {
+		if (!src.exists() || !src.isDirectory()) {
+			throw new IllegalArgumentException();
+		}
+
+		if (dest.exists()) {
+			dest.delete();
+		}
+		if (!dest.exists()) {
+			dest.mkdirs();
+		}
+
+		File[] files = src.listFiles(new FilenameFilter() {
+
+			@Override
+			public boolean accept(File dir, String name) {
+				return !name.toLowerCase().endsWith(".lock.db");
+			}
+		});
+		for (File f : files) {
+			if (f.isDirectory()) {
+				copyDirectory(f, new File(dest.getAbsolutePath()
+						+ File.separator + f.getName()));
+			} else {
+				File tempFile = new File(dest.getAbsolutePath()
+						+ File.separator + f.getName());
+				Files.copy(Paths.get(f.getAbsolutePath()),
+						Paths.get(tempFile.getAbsolutePath()),
+						StandardCopyOption.REPLACE_EXISTING);
 			}
 		}
 	}

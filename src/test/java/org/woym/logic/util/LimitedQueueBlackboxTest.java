@@ -1,18 +1,15 @@
 package org.woym.logic.util;
 
-import static org.junit.Assert.*;
-
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.powermock.modules.junit4.PowerMockRunner;
+import org.powermock.modules.testng.PowerMockTestCase;
+import org.testng.AssertJUnit;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
 import org.woym.logic.spec.ICommand;
-import org.woym.logic.util.LimitedQueue;
 
-@RunWith(PowerMockRunner.class)
-public class LimitedQueueBlackboxTest {
+@Test(groups = "unit")
+public class LimitedQueueBlackboxTest extends PowerMockTestCase {
 
 	@Mock
 	ICommand command1;
@@ -23,16 +20,16 @@ public class LimitedQueueBlackboxTest {
 	@InjectMocks
 	LimitedQueue<ICommand> queue;
 
-	@Before
+	@BeforeMethod
 	public void setUpBeforeClass() {
 		queue = new LimitedQueue<>();
 	}
 
 	@Test
 	public void testAddElemToEmptyQueue() {
-		assertEquals((Integer) 0, queue.size());
+		AssertJUnit.assertEquals((Integer) 0, queue.size());
 		queue.add(command1);
-		assertEquals((Integer) 1, queue.size());
+		AssertJUnit.assertEquals((Integer) 1, queue.size());
 	}
 
 	@Test
@@ -47,9 +44,9 @@ public class LimitedQueueBlackboxTest {
 		queue.add(command2);
 		queue.add(command1);
 		queue.add(command2);
-		assertEquals((Integer) 10, queue.size());
+		AssertJUnit.assertEquals((Integer) 10, queue.size());
 		queue.add(command1);
-		assertEquals((Integer) 10, queue.size());
+		AssertJUnit.assertEquals((Integer) 10, queue.size());
 	}
 
 	@Test
@@ -58,8 +55,8 @@ public class LimitedQueueBlackboxTest {
 		queue.add(command2);
 		queue.add(command2);
 		queue.add(command2);
-		assertEquals(command1, queue.getFirst());
-		assertEquals((Integer) 3, queue.size());
+		AssertJUnit.assertEquals(command1, queue.getFirst());
+		AssertJUnit.assertEquals((Integer) 3, queue.size());
 	}
 
 	@Test
@@ -68,17 +65,17 @@ public class LimitedQueueBlackboxTest {
 		queue.add(command1);
 		queue.add(command1);
 		queue.add(command2);
-		assertEquals(command2, queue.getLast());
-		assertEquals((Integer) 3, queue.size());
+		AssertJUnit.assertEquals(command2, queue.getLast());
+		AssertJUnit.assertEquals((Integer) 3, queue.size());
 	}
 
 	@Test
 	public void testGetElemOfEmptyQueue() {
-		assertEquals((Integer) 0, queue.size());
-		assertNull(queue.getFirst());
-		assertEquals((Integer) 0, queue.size());
-		assertNull(queue.getLast());
-		assertEquals((Integer) 0, queue.size());
+		AssertJUnit.assertEquals((Integer) 0, queue.size());
+		AssertJUnit.assertNull(queue.getFirst());
+		AssertJUnit.assertEquals((Integer) 0, queue.size());
+		AssertJUnit.assertNull(queue.getLast());
+		AssertJUnit.assertEquals((Integer) 0, queue.size());
 	}
 
 	@Test
@@ -88,9 +85,9 @@ public class LimitedQueueBlackboxTest {
 		queue.add(command1);
 		queue.add(command1);
 		queue.add(command1);
-		assertEquals((Integer) 5, queue.size());
+		AssertJUnit.assertEquals((Integer) 5, queue.size());
 		queue.clear();
-		assertEquals((Integer) 0, queue.size());
+		AssertJUnit.assertEquals((Integer) 0, queue.size());
 	}
 
 }

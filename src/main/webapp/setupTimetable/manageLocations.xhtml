@@ -22,22 +22,32 @@
 				</p:outputPanel>
 
 				<p:outputPanel style="float:right">
+					<p:commandButton value="Wegzeiten" icon="ui-icon-clock"
+						disabled="#{(locationController.locations.size()) lt 2}"
+						onclick="PF('wTravelTimeDialog').show();" process="@this" />
 					<p:commandButton value="Hinzufügen" icon="ui-icon-plusthick"
-						actionListener="#{locationController.addLocationDialog}"
-						process="@this" update="addLocationPanel">
+						onclick="PF('wAddLocationDialog').show();" process="@this"
+						update="addLocationPanel">
 					</p:commandButton>
 				</p:outputPanel>
 
 				<p:spacer style="height:50px;" />
 
 				<!-- Existierende Standorte -->
-				<p:contextMenu for="locationTable">
+				<p:contextMenu id="locationContext" for="locationTable">
 					<p:menuitem value="Bearbeiten"
 						actionListener="#{locationController.generateLocationMemento}"
 						oncomplete="PF('wEditLocationDialog').show();"
-						icon="ui-icon-pencil" />
-					<p:menuitem value="Löschen" update="@form" icon="ui-icon-close"
+						process="locationTable,@this" icon="ui-icon-pencil" />
+					<p:menuitem value="Löschen"
+						rendered="#{not locationController.hideDeletionDialog}"
+						update="@form" icon="ui-icon-close" process="locationTable,@this"
 						oncomplete="PF('wConfirmLocationDelete').show();">
+					</p:menuitem>
+					<p:menuitem value="Löschen"
+						rendered="#{locationController.hideDeletionDialog}" update="@form"
+						process="locationTable,@this" icon="ui-icon-close"
+						action="#{locationController.deleteLocation}">
 					</p:menuitem>
 				</p:contextMenu>
 				<p:dataTable emptyMessage="Keine Standorte vorhanden"
@@ -53,18 +63,27 @@
 
 			<!-- Confirm-Dialog -->
 			<p:dialog header="Bestätigen" modal="true" draggable="true"
-				resizable="false" appendToBody="true" dynamic="true"
+				width="40%" resizable="false" appendToBody="true" dynamic="true"
 				id="confirmLocationDelete" widgetVar="wConfirmLocationDelete"
 				showEffect="fade" hideEffect="fade">
 				<p:ajax event="close" update="@form" />
-				<h:panelGrid columns="1">
+				<h:panelGrid id="confirmDialogPanel" columns="1">
 					<h:outputText
 						value="Sind Sie sicher, dass der Standort gelöscht werden soll?" />
 					<h:outputText
-						value="Beim Löschen eines Standortes werden auch seine Räume gelöscht." />
+						value="Beim Löschen eines Standortes werden auch seine Räume gelöscht, 
+						so wie alle Aktivitäten, die dann keinen Raum mehr besitzen." />
+					<p:spacer height="10" />
+					<p:outputPanel>
+						<p:selectBooleanCheckbox
+							value="#{locationController.hideDeletionDialog}" />
+						<h:outputText
+							value=" Diesen Dialog zukünftig nicht mehr anzeigen." />
+					</p:outputPanel>
 					<p:separator />
 					<p:outputPanel>
 						<p:commandButton value="Bestätigen"
+							process="confirmDialogPanel, @this"
 							actionListener="#{locationController.deleteLocation}"
 							oncomplete="PF('wConfirmLocationDelete').hide();"
 							styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
@@ -93,6 +112,7 @@
 							<f:validator validatorId="org.woym.NameValidator" />
 							<f:attribute name="validateBean"
 								value="#{locationController.location}" />
+							<f:validateLength maximum="255" />
 						</p:inputText>
 					</h:panelGrid>
 					<p:outputPanel id="addLocationButton"
@@ -125,6 +145,7 @@
 							<f:validator validatorId="org.woym.NameValidator" />
 							<f:attribute name="validateBean"
 								value="#{locationController.location}" />
+							<f:validateLength maximum="255" />
 						</p:inputText>
 					</h:panelGrid>
 					<p:outputPanel id="editLocationButton"
@@ -134,6 +155,77 @@
 							process="editName,@this" update="editLocationPanel,locationTable" />
 					</p:outputPanel>
 					<p:defaultCommand target="editLocationButton" />
+					<p:outputPanel style="clear:right; margin-top:60px;">
+						<p:messages showDetail="true" autoUpdate="true" closable="false" />
+					</p:outputPanel>
+				</p:outputPanel>
+			</p:dialog>
+
+			<!-- Wegzeiten Dialog -->
+			<p:dialog header="Wegzeiten" id="travelTimeDialog"
+				widgetVar="wTravelTimeDialog" width="750" maxHeight="80%"
+				modal="true" draggable="true" resizable="false" appendToBody="true"
+				dynamic="true" showEffect="fade" hideEffect="fade">
+				<p:outputPanel id="travelTimePanel">
+					<b><h:outputText value="Hinzufügen und Löschen von Wegzeiten" /></b>
+					<p:separator />
+					<h:panelGrid columns="4">
+						<p:selectOneMenu id="locationA"
+							value="#{locationController.firstLocation}"
+							binding="#{locationA}" required="true"
+							requiredMessage="Sie müssen einen Standort A auswählen."
+							converter="LocationNameConverter">
+							<f:selectItem itemLabel="Standort A wählen" value="#{null}" />
+							<f:selectItems value="#{locationController.locations}" />
+						</p:selectOneMenu>
+						<p:selectOneMenu id="locationB"
+							value="#{locationController.secondLocation}" required="true"
+							requiredMessage="Sie müssen einen Standort B auswählen."
+							converter="LocationNameConverter">
+							<f:selectItem itemLabel="Standort B wählen" value="#{null}" />
+							<f:selectItems value="#{locationController.locations}" />
+							<f:attribute name="locationA" value="#{locationA}" />
+							<f:validator validatorId="org.woym.TwoLocationsValidator" />
+						</p:selectOneMenu>
+						<h:inputText id="travelTime"
+							value="#{locationController.travelTimeValue}" required="true"
+							requiredMessage="Sie müssen eine Wegzeit angeben.">
+							<f:validateLength minimum="1" maximum="4" />
+							<f:validator validatorId="org.woym.RegexNumberValidator" />
+						</h:inputText>
+						<p:commandButton id="addTravelTimeButton" value="Hinzufügen"
+							actionListener="#{locationController.addTravelTime}"
+							process="travelTimePanel,@this"
+							update="travelTimePanel,travelTimeTable" />
+					</h:panelGrid>
+					<p:watermark for="travelTime" value="Wegzeit in Minuten" />
+
+					<p:contextMenu id="travelTimeContext" for="travelTimeTable">
+						<p:menuitem value="Löschen" update="travelTimeTable"
+							icon="ui-icon-close" process="travelTimeTable,@this"
+							action="#{locationController.deleteTravelTime}">
+						</p:menuitem>
+					</p:contextMenu>
+
+					<h:panelGrid columns="1">
+						<p:dataTable emptyMessage="Keine Wegzeiten vorhanden"
+							id="travelTimeTable" var="travelTime"
+							selection="#{locationController.selectedTravelTimeEdge}"
+							value="#{locationController.travelTimeEdges}"
+							selectionMode="single" rowKey="#{travelTime.hashCode()}"
+							scrollable="true" scrollHeight="250">
+							<p:column headerText="Standort A">
+								<h:outputText value="#{travelTime.location1.name}" />
+							</p:column>
+							<p:column headerText="Standort B">
+								<h:outputText value="#{travelTime.location2.name}" />
+							</p:column>
+							<p:column headerText="Wegzeit in Minuten">
+								<h:outputText value="#{travelTime.distance}" />
+							</p:column>
+						</p:dataTable>
+					</h:panelGrid>
+					<p:defaultCommand target="addTravelTimeButton" />
 					<p:outputPanel style="clear:right; margin-top:60px;">
 						<p:messages showDetail="true" autoUpdate="true" closable="false" />
 					</p:outputPanel>

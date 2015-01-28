@@ -2,11 +2,11 @@ package org.woym.logic;
 
 import javax.faces.application.FacesMessage;
 
+import org.woym.common.messages.GenericSuccessMessage;
+import org.woym.common.messages.MessageHelper;
+import org.woym.common.messages.SpecificSuccessMessage;
+import org.woym.common.objects.Entity;
 import org.woym.logic.spec.IStatus;
-import org.woym.messages.GenericSuccessMessage;
-import org.woym.messages.MessageHelper;
-import org.woym.messages.SpecificSuccessMessage;
-import org.woym.objects.Entity;
 
 /**
  * Representation eines erfolgreichen {@link IStatus}
@@ -51,6 +51,25 @@ public class SuccessStatus implements IStatus {
 			throw new IllegalArgumentException();
 		}
 		facesMessage = MessageHelper.generateMessage(message);
+	}
+
+	/**
+	 * Erzeugt ein neues {@linkplain SuccesStatus}-Objekt, dass eine
+	 * {@linkplain FacesMessage} mit den übergebenen Parametern enthält.
+	 * 
+	 * @param summary
+	 *            - Zusammenfassung der Nachricht
+	 * @param message
+	 *            - Detaillierte Nachricht
+	 * @param severity
+	 *            - Schweregrad der Nachricht
+	 */
+	public SuccessStatus(String summary, String message,
+			FacesMessage.Severity severity) {
+		if (summary == null || message == null || severity == null) {
+			throw new IllegalArgumentException();
+		}
+		facesMessage = new FacesMessage(severity, summary, message);
 	}
 
 	/**

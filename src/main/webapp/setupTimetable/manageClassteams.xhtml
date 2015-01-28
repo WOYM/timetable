@@ -1,0 +1,212 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+<h:head>
+
+</h:head>
+
+<h:body>
+	<ui:composition template="index.xhtml">
+
+		<ui:define name="setupContent">
+
+			<p:outputPanel>
+				<p:outputPanel>
+					<h1>
+						<h:outputText value="Klassenteam-Verwaltung" />
+					</h1>
+					<h:outputText
+						value="In dieser Ansicht werden die Klassenteams verwaltet." />
+				</p:outputPanel>
+
+				<p:spacer style="height:50px;" />
+
+				<p:outputPanel style="float:right">
+					<p:commandButton value="Hinzufügen" icon="ui-icon-plusthick"
+						onclick="PF('wAddClassteamDialog').show();" process="@this"
+						update="addClassteamPanel">
+					</p:commandButton>
+				</p:outputPanel>
+
+				<!-- Existierende Unterrichtsinhalte -->
+				<p:contextMenu for="classteamTable">
+					<p:menuitem value="Bearbeiten" process="classteamTable,@this"
+						actionListener="#{classteamController.doBeforeEdit}"
+						oncomplete="PF('wEditClassteamDialog').show();"
+						icon="ui-icon-pencil" />
+					<p:menuitem value="Löschen" icon="ui-icon-close" update="@form"
+						rendered="#{not classteamController.hideDeletionDialog}"
+						oncomplete="PF('wConfirmClassteamDelete').show();"
+						process="classteamTable,@this" />
+					<p:menuitem value="Löschen" icon="ui-icon-close" update="@form"
+						rendered="#{classteamController.hideDeletionDialog}"
+						action="#{classteamController.deleteClassteam}"
+						process="classteamTable,@this" />
+				</p:contextMenu>
+				<p:dataTable emptyMessage="Keine Klassenteams vorhanden"
+					id="classteamTable" var="classteam"
+					selection="#{classteamController.selectedClassteam}"
+					value="#{classteamController.classteams}" selectionMode="single"
+					rowKey="#{classteam.id}" scrollable="true" scrollHeight="500">
+					<p:column headerText="Lehrkräft und päd. Mitarbeiter">
+						<ui:repeat var="employee" value="#{classteam.employees}">
+							<h:outputText value="#{employee.symbol}, #{employee.name}" />
+							<br />
+						</ui:repeat>
+					</p:column>
+					<p:column headerText="Schulklassen">
+						<ui:repeat var="schoolclass" value="#{classteam.schoolclasses}">
+							<h:outputText value="Klasse #{schoolclass.name}" />
+							<br />
+						</ui:repeat>
+					</p:column>
+				</p:dataTable>
+			</p:outputPanel>
+
+			<!-- Confirm-Dialog -->
+			<p:dialog header="Bestätigen" modal="true" draggable="true"
+				resizable="false" appendToBody="true" dynamic="true" width="40%"
+				id="confirmClassteamDelete" widgetVar="wConfirmClassteamDelete"
+				showEffect="fade" hideEffect="fade">
+				<p:ajax event="close" update="@form" />
+				<h:panelGrid id="confirmClassteamDeleteBody" columns="1">
+					<h:outputText
+						value="Sind Sie sicher, dass das Klassenteam gelöscht werden soll?" />
+					<p:spacer height="10" />
+					<p:outputPanel>
+						<p:selectBooleanCheckbox
+							value="#{classteamController.hideDeletionDialog}" />
+						<h:outputText
+							value=" Diesen Dialog zukünftig nicht mehr anzeigen." />
+					</p:outputPanel>
+					<p:separator />
+					<p:outputPanel>
+						<p:commandButton value="Bestätigen"
+							actionListener="#{classteamController.deleteClassteam}"
+							oncomplete="PF('wConfirmClassteamDelete').hide();"
+							styleClass="ui-confirmdialog-yes" icon="ui-icon-check"
+							process="confirmClassteamDeleteBody,@this" />
+						<p:commandButton value="Abbrechen"
+							oncomplete="PF('wConfirmClassteamDelete').hide();"
+							styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+					</p:outputPanel>
+					<h:outputText
+						value="Sie können die Aktion nachträglich rückgängig machen." />
+				</h:panelGrid>
+			</p:dialog>
+
+			<!-- Add-Dialog -->
+			<p:dialog header="Hinzufügen von Klassenteams"
+				id="addClassteamDialog" widgetVar="wAddClassteamDialog" width="550"
+				modal="true" draggable="true" resizable="false" appendToBody="true"
+				dynamic="true" showEffect="fade" hideEffect="fade">
+				<p:ajax event="close" update="@form" />
+				<p:outputPanel id="addClassteamPanel">
+					<b><h:outputText value="Neues Klassenteam" /></b>
+					<h:panelGrid columns="2" column-classes="half-column">
+						<p:outputLabel
+							value="Mitarbeiter (min. eine Lehrkraft):" />
+						<p:selectCheckboxMenu id="addEmployees"
+							value="#{classteamController.selectedEmployees}" filter="true"
+							filterMatchMode="contains" converter="EmployeeNameConverter"
+							label="Bitte auswählen" required="true"
+							requiredMessage="Wählen Sie mindestens einen Mitarbeiter aus.">
+							<f:selectItem
+								value="#{classteamController.disabledTeacherSelectItem}" />
+							<f:selectItems value="#{classteamController.teachers}"
+								var="teacher" itemLabel="#{teacher.symbol}, #{teacher.name}" />
+							<f:selectItem
+								value="#{classteamController.disabledPedagogicAssistantSelectItem}" />
+							<f:selectItems value="#{classteamController.pedagogicAssistants}"
+								var="pedagogicAssistant"
+								itemLabel="#{pedagogicAssistant.symbol}, #{pedagogicAssistant.name}" />
+						</p:selectCheckboxMenu>
+						<p:outputLabel value="Schulklassen:" />
+						<p:outputPanel>
+							<p:selectCheckboxMenu id="addSchoolclasses"
+								value="#{classteamController.selectedSchoolclasses}"
+								label="Bitte auswählen" filter="true" filterMatchMode="contains"
+								converter="SchoolclassNameConverter" panelStyle="width:500px;"
+								required="true"
+								requiredMessage="Wählen Sie mindestens eine Schulklasse aus.">
+								<f:selectItems value="#{classteamController.validSchoolclasses}"
+									var="schoolclass" itemLabel="Klasse #{schoolclass.name}" />
+							</p:selectCheckboxMenu>
+						</p:outputPanel>
+					</h:panelGrid>
+					<p:outputPanel id="addClassteamButton"
+						style="float:right;margin-top:10px;">
+						<p:commandButton value="Hinzufügen"
+							actionListener="#{classteamController.addClassteam}"
+							process="addClassteamPanel,@this"
+							update="addClassteamPanel,classteamTable" />
+					</p:outputPanel>
+					<p:defaultCommand target="addClassteamButton" />
+					<p:outputPanel style="clear:right; margin-top:60px;">
+						<p:messages showDetail="true" autoUpdate="true" closable="false" />
+					</p:outputPanel>
+				</p:outputPanel>
+			</p:dialog>
+
+			<!-- Edit-Dialog -->
+			<p:dialog header="Bearbeiten eines Klassenteams"
+				id="editClassteamDialog" widgetVar="wEditClassteamDialog"
+				width="500" modal="true" draggable="true" resizable="false"
+				appendToBody="true" dynamic="true" showEffect="fade"
+				hideEffect="fade">
+				<p:ajax event="close" update="@form" />
+				<p:outputPanel id="editClassteamPanel">
+					<b><h:outputText value="Klassenteam bearbeiten" /></b>
+					<h:panelGrid columns="2">
+						<p:outputLabel for="editEmployees"
+							value="Mitarbeiter (min. eine Lehrkraft)" />
+						<p:selectCheckboxMenu id="editEmployees"
+							value="#{classteamController.selectedEmployees}" filter="true"
+							filterMatchMode="contains" converter="EmployeeNameConverter"
+							label="Bitte auswählen" required="true"
+							requiredMessage="Wählen Sie mindestens einen Mitarbeiter aus.">
+							<f:selectItem
+								value="#{classteamController.disabledTeacherSelectItem}" />
+							<f:selectItems value="#{classteamController.teachers}"
+								var="teacher" itemLabel="#{teacher.symbol}, #{teacher.name}" />
+							<f:selectItem
+								value="#{classteamController.disabledPedagogicAssistantSelectItem}" />
+							<f:selectItems value="#{classteamController.pedagogicAssistants}"
+								var="pedagogicAssistant"
+								itemLabel="#{pedagogicAssistant.symbol}, #{pedagogicAssistant.name}" />
+						</p:selectCheckboxMenu>
+						<p:outputLabel for="editSchoolclasses" value="Schulklassen:" />
+						<p:outputPanel>
+							<p:selectCheckboxMenu id="editSchoolclasses"
+								value="#{classteamController.selectedSchoolclasses}"
+								label="Bitte auswählen" filter="true" filterMatchMode="contains"
+								converter="SchoolclassNameConverter" panelStyle="width:500px;">
+								<f:selectItems value="#{classteamController.validSchoolclasses}"
+									var="schoolclass" itemLabel="Klasse #{schoolclass.name}" />
+							</p:selectCheckboxMenu>
+						</p:outputPanel>
+					</h:panelGrid>
+					<p:outputPanel id="editClassteamButton"
+						style="float:right;margin-top:10px;">
+						<p:commandButton value="Aktualisieren"
+							actionListener="#{classteamController.editClassteam}"
+							process="editClassteamPanel,@this"
+							update="editClassteamPanel,classteamTable" />
+					</p:outputPanel>
+					<p:defaultCommand target="editClassteamButton" />
+					<p:outputPanel style="clear:right; margin-top:60px;">
+						<p:messages showDetail="true" autoUpdate="true" closable="false" />
+					</p:outputPanel>
+				</p:outputPanel>
+			</p:dialog>
+
+
+		</ui:define>
+	</ui:composition>
+</h:body>
+</html>

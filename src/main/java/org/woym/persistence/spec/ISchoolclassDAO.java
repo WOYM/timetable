@@ -2,10 +2,11 @@ package org.woym.persistence.spec;
 
 import java.util.List;
 
-import org.woym.exceptions.DatasetException;
-import org.woym.objects.Room;
-import org.woym.objects.Schoolclass;
-import org.woym.objects.Teacher;
+import org.woym.common.exceptions.DatasetException;
+import org.woym.common.objects.Employee;
+import org.woym.common.objects.Room;
+import org.woym.common.objects.Schoolclass;
+import org.woym.common.objects.Teacher;
 
 /**
  * Dieses Interface beschreibt Methoden, die von einem {@linkplain Schoolclass}
@@ -40,6 +41,32 @@ public interface ISchoolclassDAO {
 	 * @throws DatasetException
 	 */
 	public List<Schoolclass> getAllSchoolclasses(Teacher teacher)
+			throws DatasetException;
+
+	/**
+	 * Gibt eine Liste aller Schulklassen zurück, mit welchen der übergebene
+	 * Mitarbeiter gemeinsame Aktivitäten besitzt. Tritt dabei ein Fehler auf,
+	 * wird eine {@linkplain DatasetException} geworfen.
+	 * 
+	 * @param employee
+	 *            - Mitarbeiter, für den alle Schulklassen gesucht werden
+	 *            sollen, mit welchen er gemeinsame Aktivitäten besitzt
+	 * @return Liste aller Schulklassen, mit welchen der übergebene Mitarbeiter
+	 *         gemeinsame Aktivitäten besitzt. Kann auch leer sein
+	 * @throws DatasetException
+	 */
+	public List<Schoolclass> getAllSchoolclasses(Employee employee)
+			throws DatasetException;
+
+	/**
+	 * Gibt eine Liste aller Schulklassen zurück, die nicht Teil eines
+	 * Klassenteams sind. Tritt dabei ein Fehler auf, wird eine
+	 * {@linkplain DatasetException} geworfen.
+	 * 
+	 * @return Liste aller Schulklassen, die nicht Teil eines Klassenteams sind
+	 * @throws DatasetException
+	 */
+	public List<Schoolclass> getAllSchoolclassesWithoutClassteam()
 			throws DatasetException;
 
 	/**

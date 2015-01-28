@@ -1,24 +1,8 @@
 package org.woym.controller.manage;
 
-import org.woym.config.Config;
-import org.woym.config.DefaultConfigEnum;
-import org.woym.exceptions.DatasetException;
-import org.woym.logic.CommandHandler;
-import org.woym.logic.SuccessStatus;
-import org.woym.logic.command.AddCommand;
-import org.woym.logic.command.DeleteCommand;
-import org.woym.logic.command.UpdateCommand;
-import org.woym.logic.spec.IStatus;
-import org.woym.messages.GenericErrorMessage;
-import org.woym.messages.MessageHelper;
-import org.woym.objects.LessonType;
-import org.woym.objects.Location;
-import org.woym.objects.Room;
-import org.woym.objects.spec.IMemento;
-import org.woym.persistence.DataAccess;
-
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
@@ -30,6 +14,24 @@ import javax.faces.context.FacesContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.primefaces.context.RequestContext;
+import org.woym.common.config.Config;
+import org.woym.common.config.DefaultConfigEnum;
+import org.woym.common.exceptions.DatasetException;
+import org.woym.common.messages.GenericErrorMessage;
+import org.woym.common.messages.MessageHelper;
+import org.woym.common.objects.ColorEnum;
+import org.woym.common.objects.LessonType;
+import org.woym.common.objects.Location;
+import org.woym.common.objects.Room;
+import org.woym.common.objects.spec.IMemento;
+import org.woym.logic.CommandHandler;
+import org.woym.logic.SuccessStatus;
+import org.woym.logic.command.AddCommand;
+import org.woym.logic.command.CommandCreator;
+import org.woym.logic.command.MacroCommand;
+import org.woym.logic.command.UpdateCommand;
+import org.woym.logic.spec.IStatus;
+import org.woym.persistence.DataAccess;
 
 /**
  * <h1>LessonTypeController</h1>
@@ -43,25 +45,34 @@ import org.primefaces.context.RequestContext;
 @ManagedBean(name = "lessonTypeController")
 public class LessonTypeController implements Serializable {
 
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = -3486820231036039086L;
 
 	private static Logger LOGGER = LogManager
-			.getLogger(LessonTypeController.class);
+			.getLogger(LessonTypeController.class.getName());
 
 	private LessonType lessonType;
 
 	private DataAccess dataAccess = DataAccess.getInstance();
 
 	private CommandHandler commandHandler = CommandHandler.getInstance();
+	private CommandCreator commandCreator = CommandCreator.getInstance();
+	private IMemento lessonTypeMemento;
 
 	private List<Room> rooms;
 
-	private IMemento lessonTypeMemento;
+	private ColorEnum color = ColorEnum.DEFAULT;
+	private List<ColorEnum> colors = Arrays.asList(ColorEnum.values());
+
+	private boolean hideDeletionDialog;
+	private boolean hide;
 
 	@PostConstruct
 	public void init() {
 		lessonType = new LessonType();
 		lessonType.setTypicalDuration(getTypicalDuration());
+		hideDeletionDialog = Config
+				.getBooleanValue(DefaultConfigEnum.HIDE_ACTIVITYTYPE_DELETION_DIALOG);
+		hide = hideDeletionDialog;
 	}
 
 	/**
@@ -106,23 +117,17 @@ public class LessonTypeController implements Serializable {
 	}
 
 	/**
-	 * Setzt die Werte zum Bearbeiten eines neuen Unterrichtstypen.
-	 */
-	public void addLessonTypeDialog() {
-
-		lessonType = new LessonType();
-		lessonType.setTypicalDuration(getTypicalDuration());
-		RequestContext context = RequestContext.getCurrentInstance();
-		context.execute("PF('wAddLessonTypeDialog').show();");
-
-	}
-
-	/**
 	 * Löscht den selektierten Unterrichtsinhalt.
 	 */
 	public void deleteLessonType() {
-		DeleteCommand<LessonType> command = new DeleteCommand<>(lessonType);
-		IStatus status = commandHandler.execute(command);
+		if (hide != hideDeletionDialog) {
+			Config.updateProperty(
+					DefaultConfigEnum.HIDE_ACTIVITYTYPE_DELETION_DIALOG
+							.getPropKey(), String.valueOf(hideDeletionDialog));
+		}
+		MacroCommand macroCommand = commandCreator
+				.createDeleteCommand(lessonType);
+		IStatus status = commandHandler.execute(macroCommand);
 		FacesMessage msg = status.report();
 
 		FacesContext.getCurrentInstance().addMessage(null, msg);
@@ -148,11 +153,11 @@ public class LessonTypeController implements Serializable {
 				lessonTypeMemento);
 		IStatus status = commandHandler.execute(command);
 		FacesMessage msg = status.report();
-		
+
 		if (status instanceof SuccessStatus) {
 			// Reset stuff
 			rooms = new ArrayList<Room>();
-			
+
 			RequestContext context = RequestContext.getCurrentInstance();
 			context.execute("PF('wEditLessonTypeDialog').hide();");
 		}
@@ -193,6 +198,30 @@ public class LessonTypeController implements Serializable {
 
 	public List<Room> getRooms() {
 		return rooms;
+	}
+
+	public ColorEnum getColor() {
+		return color;
+	}
+
+	public void setColor(ColorEnum color) {
+		this.color = color;
+	}
+
+	public List<ColorEnum> getColors() {
+		return colors;
+	}
+
+	public void setColors(List<ColorEnum> colors) {
+		this.colors = colors;
+	}
+
+	public boolean isHideDeletionDialog() {
+		return hideDeletionDialog;
+	}
+
+	public void setHideDeletionDialog(boolean hideDeletionDialog) {
+		this.hideDeletionDialog = hideDeletionDialog;
 	}
 
 	private int getTypicalDuration() {

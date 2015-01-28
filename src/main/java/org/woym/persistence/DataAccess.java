@@ -2,6 +2,7 @@ package org.woym.persistence;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
@@ -11,29 +12,31 @@ import javax.persistence.Query;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.woym.exceptions.DatasetException;
-import org.woym.objects.AcademicYear;
-import org.woym.objects.Activity;
-import org.woym.objects.ActivityType;
-import org.woym.objects.Classteam;
-import org.woym.objects.CompoundLesson;
-import org.woym.objects.Employee;
-import org.woym.objects.Entity;
-import org.woym.objects.Lesson;
-import org.woym.objects.LessonType;
-import org.woym.objects.Location;
-import org.woym.objects.Meeting;
-import org.woym.objects.MeetingType;
-import org.woym.objects.PedagogicAssistant;
-import org.woym.objects.ProjectType;
-import org.woym.objects.Room;
-import org.woym.objects.Schoolclass;
-import org.woym.objects.Teacher;
-import org.woym.objects.TimePeriod;
-import org.woym.objects.TravelTimeList;
-import org.woym.objects.Weekday;
-import org.woym.objects.spec.IActivityObject;
+import org.woym.common.exceptions.DatasetException;
+import org.woym.common.objects.AcademicYear;
+import org.woym.common.objects.Activity;
+import org.woym.common.objects.ActivityType;
+import org.woym.common.objects.Classteam;
+import org.woym.common.objects.CompoundLesson;
+import org.woym.common.objects.Employee;
+import org.woym.common.objects.EmployeeTimePeriods;
+import org.woym.common.objects.Entity;
+import org.woym.common.objects.Lesson;
+import org.woym.common.objects.LessonType;
+import org.woym.common.objects.Location;
+import org.woym.common.objects.Meeting;
+import org.woym.common.objects.MeetingType;
+import org.woym.common.objects.PedagogicAssistant;
+import org.woym.common.objects.ProjectType;
+import org.woym.common.objects.Room;
+import org.woym.common.objects.Schoolclass;
+import org.woym.common.objects.Teacher;
+import org.woym.common.objects.TimePeriod;
+import org.woym.common.objects.TravelTimeList;
+import org.woym.common.objects.Weekday;
+import org.woym.common.objects.spec.IActivityObject;
 import org.woym.persistence.spec.IDataAccess;
+import org.woym.persistence.spec.IEmployeeDAO;
 
 /**
  * Diese Singleton-Klasse bietet mit ihren Methoden Zugriff auf
@@ -148,6 +151,10 @@ public class DataAccess implements IDataAccess, Observer {
 		}
 	}
 
+	// ////////////////////////////////////////////////////////////////////////////////////
+	// IAcademicYearDAO
+	// ////////////////////////////////////////////////////////////////////////////////////
+
 	/**
 	 * {@inheritDoc}
 	 */
@@ -168,10 +175,7 @@ public class DataAccess implements IDataAccess, Observer {
 					.createQuery("SELECT a FROM AcademicYear a WHERE a.academicYear = ?1");
 			query.setParameter(1, year);
 			List<AcademicYear> result = query.getResultList();
-			if (result.isEmpty()) {
-				return null;
-			}
-			return result.get(0);
+			return result.isEmpty() ? null : result.get(0);
 		} catch (Exception e) {
 			LOGGER.error("Exception while getting academic year " + year, e);
 			throw new DatasetException("Error while getting academic year "
@@ -184,17 +188,14 @@ public class DataAccess implements IDataAccess, Observer {
 	public AcademicYear getOneAcademicYear(Schoolclass schoolclass)
 			throws DatasetException {
 		if (schoolclass == null) {
-			throw new IllegalArgumentException();
+			throw new IllegalArgumentException("Parameter was null");
 		}
 		try {
 			final Query query = em
 					.createQuery("SELECT a FROM AcademicYear a WHERE ?1 MEMBER OF a.schoolclasses");
 			query.setParameter(1, schoolclass);
 			List<AcademicYear> result = query.getResultList();
-			if (result.isEmpty()) {
-				return null;
-			}
-			return result.get(0);
+			return result.isEmpty() ? null : result.get(0);
 		} catch (Exception e) {
 			LOGGER.error(
 					"Exception while getting academic year which contains schoolclass"
@@ -204,6 +205,10 @@ public class DataAccess implements IDataAccess, Observer {
 							+ schoolclass + " " + e.getMessage());
 		}
 	}
+
+	// ////////////////////////////////////////////////////////////////////////////////////
+	// ISchoolclassDAO
+	// ////////////////////////////////////////////////////////////////////////////////////
 
 	/**
 	 * {@inheritDoc}
@@ -222,7 +227,7 @@ public class DataAccess implements IDataAccess, Observer {
 	public List<Schoolclass> getAllSchoolclasses(Teacher teacher)
 			throws DatasetException {
 		if (teacher == null) {
-			throw new IllegalArgumentException();
+			throw new IllegalArgumentException("Parameter was null");
 		}
 		try {
 			final Query query = em
@@ -242,6 +247,55 @@ public class DataAccess implements IDataAccess, Observer {
 	/**
 	 * {@inheritDoc}
 	 */
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Schoolclass> getAllSchoolclasses(Employee employee)
+			throws DatasetException {
+		if (employee == null) {
+			throw new IllegalArgumentException("Parameter was null.");
+		}
+		try {
+			final Query query = em
+					.createQuery("SELECT DISTINCT a.schoolclasses FROM Activity a INNER JOIN a.employeeTimePeriods e"
+							+ " WHERE e.employee = ?1 AND a.schoolclasses <> null");
+			query.setParameter(1, employee);
+			return query.getResultList();
+		} catch (Exception e) {
+			LOGGER.error(
+					"Exception while getting all schoolclasses for employee "
+							+ employee, e);
+			throw new DatasetException(
+					"Error while getting all schoolclasses for employee "
+							+ employee + " :" + e.getMessage());
+		}
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Schoolclass> getAllSchoolclassesWithoutClassteam()
+			throws DatasetException {
+		try {
+			final Query query = em
+					.createQuery("SELECT s FROM Schoolclass s WHERE s"
+							+ " NOT IN (SELECT DISTINCT s FROM Schoolclass s"
+							+ " INNER JOIN Classteam c WHERE s MEMBER OF c.schoolclasses)");
+			return query.getResultList();
+		} catch (Exception e) {
+			LOGGER.error(
+					"Exception while getting all schoolclasses without classteam.",
+					e);
+			throw new DatasetException(
+					"Error while getting all schoolclasses without classteam: "
+							+ e.getMessage());
+		}
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	@SuppressWarnings("unchecked")
 	public Schoolclass getOneSchoolclass(int academicYear, char identifier)
@@ -253,10 +307,7 @@ public class DataAccess implements IDataAccess, Observer {
 			query.setParameter(1, academicYear);
 			query.setParameter(2, identifier);
 			List<Schoolclass> result = query.getResultList();
-			if (result.isEmpty()) {
-				return null;
-			}
-			return result.get(0);
+			return result.isEmpty() ? null : result.get(0);
 		} catch (Exception e) {
 			LOGGER.error("Exception while getting schoolclass with identifier "
 					+ identifier + " from academic year " + academicYear, e);
@@ -274,17 +325,14 @@ public class DataAccess implements IDataAccess, Observer {
 	@Override
 	public Schoolclass getOneSchoolclass(Room room) throws DatasetException {
 		if (room == null) {
-			throw new IllegalArgumentException();
+			throw new IllegalArgumentException("Parameter was null");
 		}
 		try {
 			final Query query = em
 					.createQuery("SELECT s FROM Schoolclass s WHERE s.room = ?1");
 			query.setParameter(1, room);
 			List<Schoolclass> result = query.getResultList();
-			if (result.isEmpty()) {
-				return null;
-			}
-			return result.get(0);
+			return result.isEmpty() ? null : result.get(0);
 		} catch (Exception e) {
 			LOGGER.error(
 					"Exception while getting schoolclass for room " + room, e);
@@ -294,6 +342,10 @@ public class DataAccess implements IDataAccess, Observer {
 		}
 	}
 
+	// ////////////////////////////////////////////////////////////////////////////////////
+	// IEmployeeDAO
+	// ////////////////////////////////////////////////////////////////////////////////////
+
 	/**
 	 * {@inheritDoc}
 	 */
@@ -302,7 +354,7 @@ public class DataAccess implements IDataAccess, Observer {
 	public List<Employee> getAllEmployees(ActivityType activityType)
 			throws DatasetException {
 		if (activityType == null) {
-			throw new IllegalArgumentException();
+			throw new IllegalArgumentException("Parameter was null");
 		}
 		try {
 			final Query query = em
@@ -345,17 +397,14 @@ public class DataAccess implements IDataAccess, Observer {
 	@SuppressWarnings("unchecked")
 	public Employee getOneEmployee(String symbol) throws DatasetException {
 		if (symbol == null) {
-			throw new IllegalArgumentException();
+			throw new IllegalArgumentException("Parameter was null");
 		}
 		try {
 			final Query query = em
 					.createQuery("SELECT e FROM Employee e WHERE UPPER(e.symbol) = ?1");
 			query.setParameter(1, symbol.toUpperCase());
 			List<Employee> result = query.getResultList();
-			if (result.isEmpty()) {
-				return null;
-			}
-			return result.get(0);
+			return result.isEmpty() ? null : result.get(0);
 		} catch (Exception e) {
 			LOGGER.error("Exception while getting employee with symbol "
 					+ symbol, e);
@@ -396,6 +445,10 @@ public class DataAccess implements IDataAccess, Observer {
 				PedagogicAssistant.class, searchSymbol);
 	}
 
+	// ////////////////////////////////////////////////////////////////////////////////////
+	// ILocationDAO
+	// ////////////////////////////////////////////////////////////////////////////////////
+
 	/**
 	 * {@inheritDoc}
 	 */
@@ -412,17 +465,14 @@ public class DataAccess implements IDataAccess, Observer {
 	@SuppressWarnings("unchecked")
 	public Location getOneLocation(String name) throws DatasetException {
 		if (name == null) {
-			throw new IllegalArgumentException();
+			throw new IllegalArgumentException("Parameter was null");
 		}
 		try {
 			final Query query = em
 					.createQuery("SELECT l FROM Location l WHERE UPPER(l.name) = ?1");
 			query.setParameter(1, name.toUpperCase());
 			List<Location> result = query.getResultList();
-			if (result.isEmpty()) {
-				return null;
-			}
-			return result.get(0);
+			return result.isEmpty() ? null : result.get(0);
 		} catch (Exception e) {
 			LOGGER.error("Exception while getting location with name " + name,
 					e);
@@ -439,23 +489,24 @@ public class DataAccess implements IDataAccess, Observer {
 	@Override
 	public Location getOneLocation(Room room) throws DatasetException {
 		if (room == null) {
-			throw new IllegalArgumentException();
+			throw new IllegalArgumentException("Parameter was null");
 		}
 		try {
 			final Query query = em
 					.createQuery("SELECT l FROM Location l WHERE ?1 MEMBER OF l.rooms");
 			query.setParameter(1, room);
 			List<Location> result = query.getResultList();
-			if (result.isEmpty()) {
-				return null;
-			}
-			return result.get(0);
+			return result.isEmpty() ? null : result.get(0);
 		} catch (Exception e) {
 			LOGGER.error("Exception while getting location for room " + room, e);
 			throw new DatasetException("Error while getting location for room "
 					+ room + ": " + e.getMessage());
 		}
 	}
+
+	// ////////////////////////////////////////////////////////////////////////////////////
+	// IRoomDAO
+	// ////////////////////////////////////////////////////////////////////////////////////
 
 	/**
 	 * {@inheritDoc}
@@ -464,7 +515,7 @@ public class DataAccess implements IDataAccess, Observer {
 	@Override
 	public List<Room> getAllRooms(String purpose) throws DatasetException {
 		if (purpose == null) {
-			throw new IllegalArgumentException();
+			throw new IllegalArgumentException("Parameter was null");
 		}
 		try {
 			final Query query = em
@@ -489,7 +540,7 @@ public class DataAccess implements IDataAccess, Observer {
 	public Room getOneRoom(String locationName, String roomName)
 			throws DatasetException {
 		if (locationName == null || roomName == null) {
-			throw new IllegalArgumentException();
+			throw new IllegalArgumentException("Parameter was null");
 		}
 		try {
 			final String select = "SELECT r FROM Room r, Location l WHERE "
@@ -498,10 +549,7 @@ public class DataAccess implements IDataAccess, Observer {
 			query.setParameter(1, roomName.toUpperCase());
 			query.setParameter(2, locationName.toUpperCase());
 			List<Room> result = (List<Room>) query.getResultList();
-			if (result.isEmpty()) {
-				return null;
-			}
-			return result.get(0);
+			return result.isEmpty() ? null : result.get(0);
 		} catch (Exception e) {
 			LOGGER.error("Exception while checking if room with name "
 					+ roomName + " exists in location " + locationName, e);
@@ -530,6 +578,10 @@ public class DataAccess implements IDataAccess, Observer {
 		}
 	}
 
+	// ////////////////////////////////////////////////////////////////////////////////////
+	// IActivityTypeDAO
+	// ////////////////////////////////////////////////////////////////////////////////////
+
 	/**
 	 * {@inheritDoc}
 	 */
@@ -547,7 +599,7 @@ public class DataAccess implements IDataAccess, Observer {
 	public List<ActivityType> getAllActivityTypes(Room room)
 			throws DatasetException {
 		if (room == null) {
-			throw new IllegalArgumentException();
+			throw new IllegalArgumentException("Parameter was null");
 		}
 		try {
 			final Query query = em
@@ -597,22 +649,83 @@ public class DataAccess implements IDataAccess, Observer {
 	@SuppressWarnings("unchecked")
 	public ActivityType getOneActivityType(String name) throws DatasetException {
 		if (name == null) {
-			throw new IllegalArgumentException();
+			throw new IllegalArgumentException("Parameter was null");
 		}
 		try {
 			final Query query = em
 					.createQuery("SELECT a from ActivityType a WHERE UPPER(a.name) = ?1");
 			query.setParameter(1, name.toUpperCase());
 			List<ActivityType> result = query.getResultList();
-			if (result.isEmpty()) {
-				return null;
-			}
-			return result.get(0);
+			return result.isEmpty() ? null : result.get(0);
 		} catch (Exception e) {
 			LOGGER.error("Exception while getting ActivityType with name "
 					+ name, e);
 			throw new DatasetException(
 					"Error while getting ActivityType with name " + name + " "
+							+ e.getMessage());
+		}
+	}
+
+	// ////////////////////////////////////////////////////////////////////////////////////
+	// IActivityDAO
+	// ////////////////////////////////////////////////////////////////////////////////////
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Activity> getAllActivities() throws DatasetException {
+		return (List<Activity>) getAll(Activity.class, null);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Activity> getAllActivities(Weekday weekday)
+			throws DatasetException {
+		if (weekday == null) {
+			throw new IllegalArgumentException("Parameter was null");
+		}
+		try {
+			final Query query = em
+					.createQuery("SELECT a FROM Activity a WHERE a.time.day = ?1");
+			query.setParameter(1, weekday);
+			return query.getResultList();
+		} catch (Exception e) {
+			LOGGER.error("Exception while getting all activities for day "
+					+ weekday, e);
+			throw new DatasetException(
+					"Error while getting all activities for day " + weekday
+							+ ": " + e.getMessage());
+		}
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Activity> getAllActivitiesNotBetween(Date startTime,
+			Date endTime) throws DatasetException {
+		if (startTime == null || endTime == null) {
+			throw new IllegalArgumentException("Parameter was null");
+		}
+		try {
+			final Query query = em
+					.createQuery("SELECT a FROM Activity a WHERE NOT a.time.startTime BETWEEN ?1 AND ?2"
+							+ " OR NOT a.time.endTime BETWEEN ?1 AND ?2 ");
+			query.setParameter(1, startTime);
+			query.setParameter(2, endTime);
+			return query.getResultList();
+		} catch (Exception e) {
+			LOGGER.error(
+					"Exception while getting all activities between given start and endtime.",
+					e);
+			throw new DatasetException(
+					"Error while getting all activities between given start and endtime: "
 							+ e.getMessage());
 		}
 	}
@@ -625,7 +738,7 @@ public class DataAccess implements IDataAccess, Observer {
 	public List<Activity> getAllActivities(Employee employee)
 			throws DatasetException {
 		if (employee == null) {
-			throw new IllegalArgumentException();
+			throw new IllegalArgumentException("Parameter was null");
 		}
 		try {
 			final Query query = em
@@ -663,7 +776,7 @@ public class DataAccess implements IDataAccess, Observer {
 	public List<Activity> getAllActivities(Schoolclass schoolclass)
 			throws DatasetException {
 		if (schoolclass == null) {
-			throw new IllegalArgumentException();
+			throw new IllegalArgumentException("Parameter was null");
 		}
 		try {
 			final Query query = em
@@ -689,7 +802,7 @@ public class DataAccess implements IDataAccess, Observer {
 	@Override
 	public List<Activity> getAllActivities(Room room) throws DatasetException {
 		if (room == null) {
-			throw new IllegalArgumentException();
+			throw new IllegalArgumentException("Parameter was null");
 		}
 		try {
 			final Query query = em
@@ -714,7 +827,7 @@ public class DataAccess implements IDataAccess, Observer {
 	public List<Activity> getAllActivities(Employee employee, Weekday weekday)
 			throws DatasetException {
 		if (employee == null || weekday == null) {
-			throw new IllegalArgumentException();
+			throw new IllegalArgumentException("Parameter was null");
 		}
 		try {
 			final Query query = em
@@ -734,35 +847,43 @@ public class DataAccess implements IDataAccess, Observer {
 
 	/**
 	 * {@inheritDoc}
+	 * 
+	 * @deprecated Inkonsistentes Verhalten. Liefert nicht immer dasselbe
+	 *             Ergebnis zurück. In diesem Zustand nicht verwenden.
 	 */
+	@Deprecated
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<Activity> getAllActivities(Employee employee,
 			TimePeriod timePeriod) throws DatasetException {
 		if (employee == null || timePeriod == null) {
-			throw new IllegalArgumentException();
+			throw new IllegalArgumentException("Parameter was null");
 		}
 		try {
 			final Query query = em
-					.createQuery("SELECT DISTINCT a from Activity a INNER JOIN a.employeeTimePeriods e WHERE ("
-							+ "(a.time.startTime BETWEEN ?1 AND ?2 AND a.time.startTime <> ?2)"
-							+ "OR (a.time.endTime BETWEEN ?1 AND ?2 AND a.time.endTime <> ?1) "
-							+ "OR (?1 BETWEEN a.time.startTime AND a.time.endTime AND ?1 <> a.time.endTime)"
-							+ "OR (?2 BETWEEN a.time.startTime AND a.time.endTime AND ?2 <> a.time.startTime)"
-							+ ") AND e.employee.id = ?3 ORDER BY a.time.startTime");
-			query.setParameter(1, timePeriod.getStartTime());
-			query.setParameter(2, timePeriod.getEndTime());
-			query.setParameter(3, employee.getId());
-			return query.getResultList();
+					.createQuery("SELECT DISTINCT a from Activity a INNER JOIN a.employeeTimePeriods e"
+							+ " INNER JOIN e.timePeriods t WHERE "
+							+ " e.employee = ?1"
+							+ " AND a.time.day = ?2"
+							+ " AND ?3 < t.endTime"
+							+ " AND ?4 > t.startTime"
+							+ " ORDER BY a.time.startTime");
+			query.setParameter(1, employee);
+			query.setParameter(2, timePeriod.getDay());
+			query.setParameter(3, timePeriod.getStartTime());
+			query.setParameter(4, timePeriod.getEndTime());
+			List<Activity> result = query.getResultList();
+			return result;
 		} catch (Exception e) {
 			LOGGER.error(String.format(
 					"Exception while getting all activities of employee %s, "
-							+ "which are colliding with time period %s.",
-					employee, timePeriod), e);
-			throw new DatasetException(String.format(
-					"Error while getting all activities of employee %s, "
-							+ "which are colliding with time period %s: "
-							+ e.getMessage(), employee, timePeriod));
+							+ "which overlap time period %s.", employee,
+					timePeriod), e);
+			throw new DatasetException(
+					String.format(
+							"Error while getting all activities of employee %s, "
+									+ "which overlap time period %s: "
+									+ e.getMessage(), employee, timePeriod));
 		}
 	}
 
@@ -774,19 +895,17 @@ public class DataAccess implements IDataAccess, Observer {
 	public List<Activity> getAllActivities(Schoolclass schoolclass,
 			TimePeriod timePeriod) throws DatasetException {
 		if (schoolclass == null || timePeriod == null) {
-			throw new IllegalArgumentException();
+			throw new IllegalArgumentException("Parameter was null");
 		}
 		try {
-			final Query query = em
-					.createQuery("SELECT a FROM Activity a WHERE ("
-							+ "(a.time.startTime BETWEEN ?1 AND ?2 AND a.time.startTime <> ?2)"
-							+ "OR (a.time.endTime BETWEEN ?1 AND ?2 AND a.time.endTime <> ?1) "
-							+ "OR (?1 BETWEEN a.time.startTime AND a.time.endTime AND ?1 <> a.time.endTime)"
-							+ "OR (?2 BETWEEN a.time.startTime AND a.time.endTime AND ?2 <> a.time.startTime)"
-							+ ") AND ?3 MEMBER OF a.schoolclasses ORDER BY a.time.startTime");
-			query.setParameter(1, timePeriod.getStartTime());
-			query.setParameter(2, timePeriod.getEndTime());
-			query.setParameter(3, schoolclass);
+			final Query query = em.createQuery("SELECT a FROM Activity a WHERE"
+					+ " ?1 MEMBER OF a.schoolclasses AND a.time.day = ?2"
+					+ " AND ?3 < a.time.endTime AND ?4 > a.time.startTime"
+					+ " ORDER BY a.time.startTime");
+			query.setParameter(1, schoolclass);
+			query.setParameter(2, timePeriod.getDay());
+			query.setParameter(3, timePeriod.getStartTime());
+			query.setParameter(4, timePeriod.getEndTime());
 			return query.getResultList();
 		} catch (Exception e) {
 			LOGGER.error(String.format(
@@ -808,19 +927,17 @@ public class DataAccess implements IDataAccess, Observer {
 	public List<Activity> getAllActivities(Room room, TimePeriod timePeriod)
 			throws DatasetException {
 		if (room == null || timePeriod == null) {
-			throw new IllegalArgumentException();
+			throw new IllegalArgumentException("Parameter was null");
 		}
 		try {
-			final Query query = em
-					.createQuery("SELECT a FROM Activity a WHERE ("
-							+ "(a.time.startTime BETWEEN ?1 AND ?2 AND a.time.startTime <> ?2)"
-							+ "OR (a.time.endTime BETWEEN ?1 AND ?2 AND a.time.endTime <> ?1) "
-							+ "OR (?1 BETWEEN a.time.startTime AND a.time.endTime AND ?1 <> a.time.endTime)"
-							+ "OR (?2 BETWEEN a.time.startTime AND a.time.endTime AND ?2 <> a.time.startTime)"
-							+ ") AND ?3 MEMBER OF a.rooms ORDER BY a.time.startTime");
-			query.setParameter(1, timePeriod.getStartTime());
-			query.setParameter(2, timePeriod.getEndTime());
-			query.setParameter(3, room);
+			final Query query = em.createQuery("SELECT a FROM Activity a WHERE"
+					+ " ?1 MEMBER OF a.rooms AND a.time.day = ?2"
+					+ " AND ?3 < a.time.endTime AND ?4 > a.time.startTime"
+					+ " ORDER BY a.time.startTime");
+			query.setParameter(1, room);
+			query.setParameter(2, timePeriod.getDay());
+			query.setParameter(3, timePeriod.getStartTime());
+			query.setParameter(4, timePeriod.getEndTime());
 			return query.getResultList();
 		} catch (Exception e) {
 			LOGGER.error(String.format(
@@ -842,7 +959,7 @@ public class DataAccess implements IDataAccess, Observer {
 	public List<CompoundLesson> getAllCompoundLessons(LessonType lessonType)
 			throws DatasetException {
 		if (lessonType == null) {
-			throw new IllegalArgumentException();
+			throw new IllegalArgumentException("Parameter was null");
 		}
 		try {
 			final Query query = em
@@ -867,7 +984,7 @@ public class DataAccess implements IDataAccess, Observer {
 	public List<Lesson> getAllLessons(LessonType lessonType)
 			throws DatasetException {
 		if (lessonType == null) {
-			throw new IllegalArgumentException();
+			throw new IllegalArgumentException("Parameter was null");
 		}
 		try {
 			final Query query = em
@@ -891,7 +1008,7 @@ public class DataAccess implements IDataAccess, Observer {
 	public List<Meeting> getAllMeetings(MeetingType meetingType)
 			throws DatasetException {
 		if (meetingType == null) {
-			throw new IllegalArgumentException();
+			throw new IllegalArgumentException("Parameter was null");
 		}
 		try {
 			final Query query = em
@@ -911,10 +1028,328 @@ public class DataAccess implements IDataAccess, Observer {
 	/**
 	 * {@inheritDoc}
 	 */
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<EmployeeTimePeriods> getEmployeeTimePeriods(Employee employee)
+			throws DatasetException {
+		try {
+			final Query query = em
+					.createQuery("SELECT DISTINCT e FROM Activity a INNER JOIN a.employeeTimePeriods e "
+							+ "WHERE ?1 = e.employee AND SIZE(a.employeeTimePeriods) > 1");
+			query.setParameter(1, employee);
+			return query.getResultList();
+		} catch (Exception e) {
+			LOGGER.error(
+					"Exception while getting all EmployeeTimePeriods for given employee "
+							+ employee, e);
+			throw new DatasetException(
+					"Error while getting all EmployeeTimePeriods for given employee "
+							+ employee + ": " + e.getMessage());
+		}
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public Long sumLessonDuration(Employee employee, Schoolclass schoolclass,
+			LessonType lessonType) throws DatasetException {
+		if (employee == null || schoolclass == null || lessonType == null) {
+			throw new IllegalArgumentException("Parameter was null.");
+		}
+		try {
+			final Query query = em
+					.createQuery("SELECT SUM(t.duration) FROM Lesson l INNER JOIN l.employeeTimePeriods e INNER JOIN e.timePeriods t"
+							+ " WHERE l.lessonType = ?1 AND e.employee = ?2 AND ?3 MEMBER OF l.schoolclasses");
+			query.setParameter(1, lessonType);
+			query.setParameter(2, employee);
+			query.setParameter(3, schoolclass);
+			return (Long) query.getSingleResult();
+		} catch (Exception e) {
+			LOGGER.error("Exception while counting duration of lessons.", e);
+			throw new DatasetException(
+					"Error while counting duration of lessons: "
+							+ e.getMessage());
+		}
+	}
+
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @deprecated Inkonsistentes Verhalten. Liefert nicht immer dasselbe
+	 *             Ergebnis zurück. In diesem Zustand nicht verwenden.
+	 */
+	@Deprecated
+	@SuppressWarnings("unchecked")
+	@Override
+	public Activity getFirstActivityBefore(Employee employee,
+			TimePeriod timePeriod, Location location) throws DatasetException {
+		if (employee == null || timePeriod == null || location == null) {
+			throw new IllegalArgumentException("Parameter was null.");
+		}
+		try {
+			final Query query = em
+					.createQuery("SELECT DISTINCT a FROM Activity a INNER JOIN a.employeeTimePeriods e INNER JOIN e.timePeriods t INNER JOIN a.rooms r"
+							+ " WHERE e.employee = ?1"
+							+ " AND t.day = ?2"
+							+ " AND t.endTime <= ?3"
+							+ " AND NOT EXISTS (SELECT activity FROM Activity activity INNER JOIN activity.employeeTimePeriods ae INNER JOIN ae.timePeriods tp"
+							+ " WHERE tp.endTime > t.endTime AND tp.endTime <= ?3)"
+							+ " AND r NOT IN ?4");
+			query.setParameter(1, employee);
+			query.setParameter(2, timePeriod.getDay());
+			query.setParameter(3, timePeriod.getStartTime());
+			query.setParameter(4, location.getRooms());
+			List<Activity> result = query.getResultList();
+			return result.isEmpty() ? null : result.get(0);
+		} catch (Exception e) {
+			LOGGER.error(
+					"Exception while executing getFirstActivityBefore for employee",
+					e);
+			throw new DatasetException(
+					"Error while executing getFirstActivityBefore for employee: "
+							+ e.getMessage());
+		}
+	}
+
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @deprecated Inkonsistentes Verhalten. Liefert nicht immer dasselbe
+	 *             Ergebnis zurück. In diesem Zustand nicht verwenden.
+	 */
+	@Deprecated
+	@SuppressWarnings("unchecked")
+	@Override
+	public Activity getFirstActivityAfter(Employee employee,
+			TimePeriod timePeriod, Location location) throws DatasetException {
+		if (employee == null || timePeriod == null || location == null) {
+			throw new IllegalArgumentException("Parameter was null.");
+		}
+		try {
+			final Query query = em
+					.createQuery("SELECT DISTINCT a FROM Activity a INNER JOIN a.employeeTimePeriods e INNER JOIN e.timePeriods t INNER JOIN a.rooms r"
+							+ " WHERE e.employee = ?1"
+							+ " AND a.time.day = ?2"
+							+ " AND t.startTime >= ?3"
+							+ " AND NOT EXISTS (SELECT activity FROM Activity activity INNER JOIN activity.employeeTimePeriods ae INNER JOIN ae.timePeriods tp"
+							+ " WHERE tp.startTime < t.startTime AND tp.startTime >= ?3)"
+							+ " AND r NOT IN ?4");
+			query.setParameter(1, employee);
+			query.setParameter(2, timePeriod.getDay());
+			query.setParameter(3, timePeriod.getEndTime());
+			query.setParameter(4, location.getRooms());
+			List<Activity> result = query.getResultList();
+			return result.isEmpty() ? null : result.get(0);
+		} catch (Exception e) {
+			LOGGER.error(
+					"Exception while executing getFirstActivityAfter for employee",
+					e);
+			throw new DatasetException(
+					"Error while executing getFirstActivityAfter for employee: "
+							+ e.getMessage());
+		}
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Activity> getAllActivitiesBefore(Employee employee,
+			TimePeriod timePeriod) throws DatasetException {
+		if (employee == null || timePeriod == null) {
+			throw new IllegalArgumentException("Parameter was null.");
+		}
+		try {
+			final Query query = em
+					.createQuery("SELECT a FROM Activity a INNER JOIN a.employeeTimePeriods e"
+							+ " WHERE e.employee = ?1 AND a.time.endTime <= ?2 AND a.time.day = ?3 ORDER BY a.time.endTime");
+			query.setParameter(1, employee);
+			query.setParameter(2, timePeriod.getStartTime());
+			query.setParameter(3, timePeriod.getDay());
+			return query.getResultList();
+		} catch (Exception e) {
+			LOGGER.error(
+					"Exception while getting all activities before the given timeperiod for employee "
+							+ employee, e);
+			throw new DatasetException(
+					"Error while getting all activities before the given timeperiod for employee "
+							+ employee + ": " + e.getMessage());
+		}
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Activity> getAllActivitiesAfter(Employee employee,
+			TimePeriod timePeriod) throws DatasetException {
+		if (employee == null || timePeriod == null) {
+			throw new IllegalArgumentException("Parameter was null.");
+		}
+		try {
+			final Query query = em
+					.createQuery("SELECT a FROM Activity a INNER JOIN a.employeeTimePeriods e"
+							+ " WHERE e.employee = ?1 AND a.time.startTime >= ?2 AND a.time.day = ?3 ORDER BY a.time.startTime");
+			query.setParameter(1, employee);
+			query.setParameter(2, timePeriod.getEndTime());
+			query.setParameter(3, timePeriod.getDay());
+			return query.getResultList();
+		} catch (Exception e) {
+			LOGGER.error(
+					"Exception while getting all activities after the given timeperiod for employee "
+							+ employee, e);
+			throw new DatasetException(
+					"Error while getting all activities after the given timeperiod for employee "
+							+ employee + ": " + e.getMessage());
+		}
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@SuppressWarnings("unchecked")
+	@Override
+	public Activity getFirstActivityBefore(Schoolclass schoolclass,
+			TimePeriod timePeriod, Location location) throws DatasetException {
+		if (schoolclass == null || timePeriod == null || location == null) {
+			throw new IllegalArgumentException("Parameter was null.");
+		}
+		try {
+			final Query query = em
+					.createQuery("SELECT a FROM Activity a INNER JOIN a.rooms r WHERE"
+							+ " ?1 MEMBER OF a.schoolclasses"
+							+ " AND a.time.day = ?2"
+							+ " AND a.time.endTime <= ?3"
+							+ " AND NOT EXISTS (SELECT activity FROM Activity activity WHERE activity.time.endTime > a.time.endTime AND activity.time.endTime <= ?3)"
+							+ " AND r NOT IN ?4");
+			query.setParameter(1, schoolclass);
+			query.setParameter(2, timePeriod.getDay());
+			query.setParameter(3, timePeriod.getStartTime());
+			query.setParameter(4, location.getRooms());
+			List<Activity> result = query.getResultList();
+			return result.isEmpty() ? null : result.get(0);
+		} catch (Exception e) {
+			LOGGER.error(
+					"Exception while executing getFirstActivityBefore for schoolclass",
+					e);
+			throw new DatasetException(
+					"Error while executing getFirstActivityBefore for schoolclass: "
+							+ e.getMessage());
+		}
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@SuppressWarnings("unchecked")
+	@Override
+	public Activity getFirstActivityAfter(Schoolclass schoolclass,
+			TimePeriod timePeriod, Location location) throws DatasetException {
+		if (schoolclass == null || timePeriod == null || location == null) {
+			throw new IllegalArgumentException("Parameter was null.");
+		}
+		try {
+			final Query query = em
+					.createQuery("SELECT a FROM Activity a INNER JOIN a.rooms r WHERE"
+							+ " ?1 MEMBER OF a.schoolclasses"
+							+ " AND a.time.day = ?2"
+							+ " AND a.time.startTime >= ?3"
+							+ " AND NOT EXISTS (SELECT activity FROM Activity activity WHERE activity.time.startTime < a.time.startTime AND activity.time.startTime >= ?3)"
+							+ " AND r NOT IN ?4");
+			query.setParameter(1, schoolclass);
+			query.setParameter(2, timePeriod.getDay());
+			query.setParameter(3, timePeriod.getEndTime());
+			query.setParameter(4, location.getRooms());
+			List<Activity> result = query.getResultList();
+			return result.isEmpty() ? null : result.get(0);
+		} catch (Exception e) {
+			LOGGER.error(
+					"Exception while executing getFirstActivityAfter for schoolclass",
+					e);
+			throw new DatasetException(
+					"Error while executing getFirstActivityAfter for schoolclass: "
+							+ e.getMessage());
+		}
+	}
+
+	// ////////////////////////////////////////////////////////////////////////////////////
+	// IClassTeamDAO
+	// ////////////////////////////////////////////////////////////////////////////////////
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Classteam> getAllClassteams() throws DatasetException {
+		return (List<Classteam>) getAll(Classteam.class, null);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Classteam> getAllClassteams(Employee employee)
+			throws DatasetException {
+		if (employee == null) {
+			throw new IllegalArgumentException("Parameter was null");
+		}
+		try {
+			final Query query = em
+					.createQuery("SELECT c FROM Classteam c WHERE ?1 MEMBER OF c.employees");
+			query.setParameter(1, employee);
+			return query.getResultList();
+		} catch (Exception e) {
+			LOGGER.error("Exception while getting all classteams for employee "
+					+ employee, e);
+			throw new DatasetException(
+					"Error while getting all classteams for employee "
+							+ employee + ": " + e.getMessage());
+		}
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@SuppressWarnings("unchecked")
+	@Override
+	public Classteam getOneClassteam(Schoolclass schoolclass)
+			throws DatasetException {
+		if (schoolclass == null) {
+			throw new IllegalArgumentException("Parameter was null");
+		}
+		try {
+			final Query query = em
+					.createQuery("SELECT c FROM Classteam c WHERE ?1 MEMBER OF c.schoolclasses");
+			query.setParameter(1, schoolclass);
+			List<Classteam> result = query.getResultList();
+			if (result.isEmpty()) {
+				return null;
+			}
+			return result.get(0);
+		} catch (Exception e) {
+			LOGGER.error("Exception while getting classteam for schoolclass "
+					+ schoolclass, e);
+			throw new DatasetException(
+					"Exception while getting classteam for schoolclass "
+							+ schoolclass + ": " + e.getMessage());
+		}
+	}
+
+	// ////////////////////////////////////////////////////////////////////////////////////
+	// IDataAccess
+	// ////////////////////////////////////////////////////////////////////////////////////
+
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public <E> E getById(Class<E> clazz, Long id) throws DatasetException {
 		if (id == null) {
-			throw new IllegalArgumentException();
+			throw new IllegalArgumentException("Parameter was null");
 		}
 		try {
 			return em.find(clazz, id);
@@ -955,61 +1390,30 @@ public class DataAccess implements IDataAccess, Observer {
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<Classteam> getAllClassteams() throws DatasetException {
-		return (List<Classteam>) getAll(Classteam.class, null);
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@SuppressWarnings("unchecked")
-	@Override
-	public List<Classteam> getAllClassteams(Employee employee)
+	public List<Character> getUsedChars(AcademicYear academicYear)
 			throws DatasetException {
-		if (employee == null) {
-			throw new IllegalArgumentException();
+		if (academicYear == null) {
+			throw new IllegalArgumentException("Parameter was null");
 		}
 		try {
 			final Query query = em
-					.createQuery("SELECT c FROM Classteam c WHERE ?1 = c.teacher OR ?1 MEMBER OF c.employees");
-			query.setParameter(1, employee);
+					.createQuery("SELECT s.identifier FROM AcademicYear a "
+							+ "INNER JOIN a.schoolclasses s WHERE a = ?1");
+			query.setParameter(1, academicYear);
 			return query.getResultList();
 		} catch (Exception e) {
-			LOGGER.error("Exception while getting all classteams for employee "
-					+ employee, e);
+			LOGGER.error(
+					"Exception while getting used characters for academic year "
+							+ academicYear, e);
 			throw new DatasetException(
-					"Error while getting all classteams for employee "
-							+ employee + ": " + e.getMessage());
+					"Error while getting used characters for academic year "
+							+ academicYear + ": " + e.getMessage());
 		}
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@SuppressWarnings("unchecked")
-	@Override
-	public Classteam getOneClassteam(Schoolclass schoolclass)
-			throws DatasetException {
-		if (schoolclass == null) {
-			throw new IllegalArgumentException();
-		}
-		try {
-			final Query query = em
-					.createQuery("SELECT c FROM Classteam c WHERE ?1 MEMBER OF c.schoolclasses");
-			query.setParameter(1, schoolclass);
-			List<Classteam> result = query.getResultList();
-			if (result.isEmpty()) {
-				return null;
-			}
-			return result.get(0);
-		} catch (Exception e) {
-			LOGGER.error("Exception while getting classteam for schoolclass "
-					+ schoolclass, e);
-			throw new DatasetException(
-					"Exception while getting classteam for schoolclass "
-							+ schoolclass + ": " + e.getMessage());
-		}
-	}
+	// ////////////////////////////////////////////////////////////////////////////////////
+	// Private Methoden
+	// ////////////////////////////////////////////////////////////////////////////////////
 
 	/**
 	 * Allgemeine Implementierung einer Methode die alle Objekte der übergebenen
@@ -1028,7 +1432,7 @@ public class DataAccess implements IDataAccess, Observer {
 			Class<? extends Serializable> clazz, String orderBy)
 			throws DatasetException {
 		if (clazz == null) {
-			throw new IllegalArgumentException();
+			throw new IllegalArgumentException("Parameter was null");
 		}
 		try {
 			String select = "SELECT x FROM " + clazz.getSimpleName() + " x";
@@ -1048,12 +1452,26 @@ public class DataAccess implements IDataAccess, Observer {
 		}
 	}
 
+	/**
+	 * Generische Implementierung für
+	 * {@linkplain IEmployeeDAO#searchEmployees(String)},
+	 * {@linkplain IEmployeeDAO#searchTeachers(String)} und
+	 * {@linkplain IEmployeeDAO#searchPAs(String)}.
+	 * 
+	 * @param clazz
+	 *            - {@linkplain Employee} erweiternde Klasse, deren Objekte
+	 *            gesucht werden sollen
+	 * @param searchSymbol
+	 *            - String, anhand dessen gesucht werden soll
+	 * @return Liste der gefunden Objekte
+	 * @throws DatasetException
+	 */
 	@SuppressWarnings("unchecked")
 	private List<? extends Serializable> searchEmployees(
 			Class<? extends Employee> clazz, String searchSymbol)
 			throws DatasetException {
 		if (searchSymbol == null || clazz == null) {
-			throw new IllegalArgumentException();
+			throw new IllegalArgumentException("Parameter was null");
 		}
 		try {
 			final Query query = em.createQuery("SELECT x FROM "
