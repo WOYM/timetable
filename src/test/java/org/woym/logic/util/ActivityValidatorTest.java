@@ -165,9 +165,50 @@ public class ActivityValidatorTest extends PowerMockTestCase {
 						activityValidator.validateActivityEmployees(activity) instanceof SuccessStatus);
 
 	}
-
+	
 	@Test
 	public void invalidActivityEmployeeTest() throws DatasetException {
+		// Given
+		Activity activity = Mockito.mock(Activity.class);
+		Activity anotherActivity = Mockito.mock(Activity.class);
+		Activity beforeActivity = Mockito.mock(Activity.class);
+		Activity afterActivity = Mockito.mock(Activity.class);
+
+		EmployeeTimePeriods period = Mockito.mock(EmployeeTimePeriods.class);
+		List<EmployeeTimePeriods> periods = new ArrayList<>();
+		periods.add(period);
+
+		TimePeriod timePeriod = Mockito.mock(TimePeriod.class);
+		List<TimePeriod> timePeriods = Arrays.asList(timePeriod);
+
+		List<Activity> beforeList = Arrays.asList(beforeActivity);
+		List<Activity> afterList = Arrays.asList(afterActivity);
+		List<Activity> fullList = Arrays.asList(beforeActivity, anotherActivity,
+				afterActivity);
+
+		// When
+		PowerMockito.when(activity.getEmployeeTimePeriods())
+				.thenReturn(periods);
+		PowerMockito.when(period.getTimePeriods()).thenReturn(timePeriods);
+		PowerMockito.when(
+				dataAccess.getAllActivitiesBefore(Mockito.any(Employee.class),
+						Mockito.any(TimePeriod.class))).thenReturn(beforeList);
+		PowerMockito.when(
+				dataAccess.getAllActivitiesAfter(Mockito.any(Employee.class),
+						Mockito.any(TimePeriod.class))).thenReturn(afterList);
+		PowerMockito.when(
+				dataAccess.getAllActivities(Mockito.any(Weekday.class)))
+				.thenReturn(fullList);
+
+		// Then
+		AssertJUnit
+				.assertTrue(
+						"A FailureStatus is expected if the database returnes a bigger count of activities as before and after",
+						activityValidator.validateActivityEmployees(activity) instanceof FailureStatus);
+	}
+
+	@Test
+	public void validActivityEmployeeTestWithSameActivity() throws DatasetException {
 		// Given
 		Activity activity = Mockito.mock(Activity.class);
 		Activity beforeActivity = Mockito.mock(Activity.class);
@@ -203,7 +244,7 @@ public class ActivityValidatorTest extends PowerMockTestCase {
 		AssertJUnit
 				.assertTrue(
 						"A FailureStatus is expected if the database returnes a bigger count of activities as before and after",
-						activityValidator.validateActivityEmployees(activity) instanceof FailureStatus);
+						activityValidator.validateActivityEmployees(activity) instanceof SuccessStatus);
 	}
 
 	@Test

@@ -179,15 +179,17 @@ public class ActivityValidator {
 				.getEmployeeTimePeriods()) {
 
 			for (TimePeriod timePeriod : employeeTimePeriods.getTimePeriods()) {
-				List<Activity> activities = new ArrayList<>();
-				activities.addAll(dataAccess.getAllActivitiesBefore(
-						employeeTimePeriods.getEmployee(), timePeriod));
-				activities.addAll(dataAccess.getAllActivitiesAfter(
-						employeeTimePeriods.getEmployee(), timePeriod));
-				List<Activity> activitiesForWeekday = dataAccess
-						.getAllActivities(timePeriod.getDay());
+				List<Activity> activitiesForWeekday = new ArrayList<>(
+						dataAccess.getAllActivities(timePeriod.getDay()));
 
-				if (activities.size() < activitiesForWeekday.size()) {
+				activitiesForWeekday.removeAll(dataAccess
+						.getAllActivitiesBefore(
+								employeeTimePeriods.getEmployee(), timePeriod));
+				activitiesForWeekday.removeAll(dataAccess
+						.getAllActivitiesAfter(
+								employeeTimePeriods.getEmployee(), timePeriod));
+
+				if (!validateActivities(activity, activitiesForWeekday)) {
 					return false;
 				}
 			}
