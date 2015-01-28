@@ -1,5 +1,6 @@
 package org.woym.logic.util;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.faces.application.FacesMessage;
@@ -178,11 +179,17 @@ public class ActivityValidator {
 				.getEmployeeTimePeriods()) {
 
 			for (TimePeriod timePeriod : employeeTimePeriods.getTimePeriods()) {
-				List<Activity> activities = dataAccess.getAllActivities(
-						employeeTimePeriods.getEmployee(),
-						timePeriod);
+				List<Activity> activitiesForWeekday = new ArrayList<>(
+                        dataAccess.getAllActivities(employeeTimePeriods.getEmployee(), timePeriod.getDay()));
 
-				if (!validateActivities(activity, activities)) {
+				activitiesForWeekday.removeAll(dataAccess
+						.getAllActivitiesBefore(
+								employeeTimePeriods.getEmployee(), timePeriod));
+				activitiesForWeekday.removeAll(dataAccess
+						.getAllActivitiesAfter(
+								employeeTimePeriods.getEmployee(), timePeriod));
+
+				if (!validateActivities(activity, activitiesForWeekday)) {
 					return false;
 				}
 			}

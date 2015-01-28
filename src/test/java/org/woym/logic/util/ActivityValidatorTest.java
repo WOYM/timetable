@@ -1,6 +1,7 @@
 package org.woym.logic.util;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.mockito.InjectMocks;
@@ -17,6 +18,7 @@ import org.woym.common.objects.EmployeeTimePeriods;
 import org.woym.common.objects.Room;
 import org.woym.common.objects.Schoolclass;
 import org.woym.common.objects.TimePeriod;
+import org.woym.common.objects.Weekday;
 import org.woym.logic.FailureStatus;
 import org.woym.logic.SuccessStatus;
 import org.woym.persistence.DataAccess;
@@ -53,8 +55,9 @@ public class ActivityValidatorTest extends PowerMockTestCase {
 		PowerMockito.when(period.getTimePeriods()).thenReturn(timePeriods);
 
 		PowerMockito.when(
-				dataAccess.getAllActivities(period.getEmployee(), timePeriod))
-				.thenThrow(new DatasetException("Exception"));
+				dataAccess.getAllActivitiesBefore(period.getEmployee(),
+						timePeriod)).thenThrow(
+				new DatasetException("Exception"));
 
 		// Then
 		AssertJUnit
@@ -125,27 +128,40 @@ public class ActivityValidatorTest extends PowerMockTestCase {
 	public void validActivityEmployeeTest() throws DatasetException {
 		// Given
 		Activity activity = Mockito.mock(Activity.class);
+		Activity beforeActivity = Mockito.mock(Activity.class);
+		Activity afterActivity = Mockito.mock(Activity.class);
 
 		EmployeeTimePeriods period = Mockito.mock(EmployeeTimePeriods.class);
 		List<EmployeeTimePeriods> periods = new ArrayList<>();
 		periods.add(period);
 
+		TimePeriod timePeriod = Mockito.mock(TimePeriod.class);
+		List<TimePeriod> timePeriods = Arrays.asList(timePeriod);
+
+		List<Activity> beforeList = Arrays.asList(beforeActivity);
+		List<Activity> afterList = Arrays.asList(afterActivity);
+		List<Activity> fullList = new ArrayList<>();
+		fullList.addAll(beforeList);
+		fullList.addAll(afterList);
+
 		// When
 		PowerMockito.when(activity.getEmployeeTimePeriods())
 				.thenReturn(periods);
+		PowerMockito.when(period.getTimePeriods()).thenReturn(timePeriods);
 		PowerMockito.when(
-				dataAccess.getAllActivities(period.getEmployee(),
-						activity.getTime())).thenReturn(
-				new ArrayList<Activity>());
+				dataAccess.getAllActivitiesBefore(Mockito.any(Employee.class),
+						Mockito.any(TimePeriod.class))).thenReturn(beforeList);
+		PowerMockito.when(
+				dataAccess.getAllActivitiesAfter(Mockito.any(Employee.class),
+						Mockito.any(TimePeriod.class))).thenReturn(afterList);
+		PowerMockito.when(
+				dataAccess.getAllActivities(Mockito.any(Employee.class),
+						Mockito.any(Weekday.class))).thenReturn(fullList);
 
 		// Then
 		AssertJUnit
 				.assertTrue(
-						"A SuccessStatus is expected if the database returned no matching activities",
-						activityValidator.validateActivity(activity) instanceof SuccessStatus);
-		AssertJUnit
-				.assertTrue(
-						"A SuccessStatus is expected if the database returned no matching activities",
+						"A SuccessStatus is expected if the database returnes the same count of  activities as before and after",
 						activityValidator.validateActivityEmployees(activity) instanceof SuccessStatus);
 
 	}
@@ -154,68 +170,81 @@ public class ActivityValidatorTest extends PowerMockTestCase {
 	public void invalidActivityEmployeeTest() throws DatasetException {
 		// Given
 		Activity activity = Mockito.mock(Activity.class);
-
-		Employee employee = Mockito.mock(Employee.class);
+		Activity anotherActivity = Mockito.mock(Activity.class);
+		Activity beforeActivity = Mockito.mock(Activity.class);
+		Activity afterActivity = Mockito.mock(Activity.class);
 
 		EmployeeTimePeriods period = Mockito.mock(EmployeeTimePeriods.class);
 		List<EmployeeTimePeriods> periods = new ArrayList<>();
 		periods.add(period);
 
-		List<TimePeriod> timePeriods = new ArrayList<TimePeriod>();
 		TimePeriod timePeriod = Mockito.mock(TimePeriod.class);
-		timePeriods.add(timePeriod);
+		List<TimePeriod> timePeriods = Arrays.asList(timePeriod);
 
-		Activity activity2 = Mockito.mock(Activity.class);
-		List<Activity> activities = new ArrayList<>();
-		activities.add(activity2);
+		List<Activity> beforeList = Arrays.asList(beforeActivity);
+		List<Activity> afterList = Arrays.asList(afterActivity);
+		List<Activity> fullList = Arrays.asList(beforeActivity,
+				anotherActivity, afterActivity);
 
 		// When
-		PowerMockito.when(period.getEmployee()).thenReturn(employee);
-		PowerMockito.when(period.getTimePeriods()).thenReturn(timePeriods);
 		PowerMockito.when(activity.getEmployeeTimePeriods())
 				.thenReturn(periods);
+		PowerMockito.when(period.getTimePeriods()).thenReturn(timePeriods);
 		PowerMockito.when(
-				dataAccess.getAllActivities(period.getEmployee(), timePeriod))
-				.thenReturn(activities);
+				dataAccess.getAllActivitiesBefore(Mockito.any(Employee.class),
+						Mockito.any(TimePeriod.class))).thenReturn(beforeList);
+		PowerMockito.when(
+				dataAccess.getAllActivitiesAfter(Mockito.any(Employee.class),
+						Mockito.any(TimePeriod.class))).thenReturn(afterList);
+		PowerMockito.when(
+				dataAccess.getAllActivities(Mockito.any(Employee.class),
+						Mockito.any(Weekday.class))).thenReturn(fullList);
 
 		// Then
 		AssertJUnit
 				.assertTrue(
-						"A FailureStatus is expected if the database returned matching activities",
-						activityValidator.validateActivity(activity) instanceof FailureStatus);
-		AssertJUnit
-				.assertTrue(
-						"A FailureStatus is expected if the database returned matching activities",
+						"A FailureStatus is expected if the database returnes a bigger count of activities as before and after",
 						activityValidator.validateActivityEmployees(activity) instanceof FailureStatus);
 	}
 
 	@Test
-	public void validActivityEmployeeSameActivityTest() throws DatasetException {
+	public void validActivityEmployeeTestWithSameActivity()
+			throws DatasetException {
 		// Given
 		Activity activity = Mockito.mock(Activity.class);
+		Activity beforeActivity = Mockito.mock(Activity.class);
+		Activity afterActivity = Mockito.mock(Activity.class);
 
 		EmployeeTimePeriods period = Mockito.mock(EmployeeTimePeriods.class);
 		List<EmployeeTimePeriods> periods = new ArrayList<>();
 		periods.add(period);
 
-		List<Activity> activities = new ArrayList<>();
-		activities.add(activity);
+		TimePeriod timePeriod = Mockito.mock(TimePeriod.class);
+		List<TimePeriod> timePeriods = Arrays.asList(timePeriod);
+
+		List<Activity> beforeList = Arrays.asList(beforeActivity);
+		List<Activity> afterList = Arrays.asList(afterActivity);
+		List<Activity> fullList = Arrays.asList(beforeActivity, activity,
+				afterActivity);
 
 		// When
 		PowerMockito.when(activity.getEmployeeTimePeriods())
 				.thenReturn(periods);
+		PowerMockito.when(period.getTimePeriods()).thenReturn(timePeriods);
 		PowerMockito.when(
-				dataAccess.getAllActivities(period.getEmployee(),
-						activity.getTime())).thenReturn(activities);
+				dataAccess.getAllActivitiesBefore(Mockito.any(Employee.class),
+						Mockito.any(TimePeriod.class))).thenReturn(beforeList);
+		PowerMockito.when(
+				dataAccess.getAllActivitiesAfter(Mockito.any(Employee.class),
+						Mockito.any(TimePeriod.class))).thenReturn(afterList);
+		PowerMockito.when(
+				dataAccess.getAllActivities(Mockito.any(Employee.class),
+						Mockito.any(Weekday.class))).thenReturn(fullList);
 
 		// Then
 		AssertJUnit
 				.assertTrue(
-						"A SuccessStatus is expected if the database returned matching activities but the only matching activity is the given activity",
-						activityValidator.validateActivity(activity) instanceof SuccessStatus);
-		AssertJUnit
-				.assertTrue(
-						"A SuccessStatus is expected if the database returned matching activities but the only matching activity is the given activity",
+						"A FailureStatus is expected if the database returnes a bigger count of activities as before and after",
 						activityValidator.validateActivityEmployees(activity) instanceof SuccessStatus);
 	}
 
