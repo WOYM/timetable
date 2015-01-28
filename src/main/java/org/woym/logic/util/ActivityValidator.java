@@ -180,7 +180,7 @@ public class ActivityValidator {
 
 			for (TimePeriod timePeriod : employeeTimePeriods.getTimePeriods()) {
 				List<Activity> activitiesForWeekday = new ArrayList<>(
-						dataAccess.getAllActivities(timePeriod.getDay()));
+                        dataAccess.getAllActivities(employeeTimePeriods.getEmployee(), timePeriod.getDay()));
 
 				activitiesForWeekday.removeAll(dataAccess
 						.getAllActivitiesBefore(

@@ -155,8 +155,8 @@ public class ActivityValidatorTest extends PowerMockTestCase {
 				dataAccess.getAllActivitiesAfter(Mockito.any(Employee.class),
 						Mockito.any(TimePeriod.class))).thenReturn(afterList);
 		PowerMockito.when(
-				dataAccess.getAllActivities(Mockito.any(Weekday.class)))
-				.thenReturn(fullList);
+				dataAccess.getAllActivities(Mockito.any(Employee.class),
+						Mockito.any(Weekday.class))).thenReturn(fullList);
 
 		// Then
 		AssertJUnit
@@ -165,7 +165,7 @@ public class ActivityValidatorTest extends PowerMockTestCase {
 						activityValidator.validateActivityEmployees(activity) instanceof SuccessStatus);
 
 	}
-	
+
 	@Test
 	public void invalidActivityEmployeeTest() throws DatasetException {
 		// Given
@@ -183,8 +183,8 @@ public class ActivityValidatorTest extends PowerMockTestCase {
 
 		List<Activity> beforeList = Arrays.asList(beforeActivity);
 		List<Activity> afterList = Arrays.asList(afterActivity);
-		List<Activity> fullList = Arrays.asList(beforeActivity, anotherActivity,
-				afterActivity);
+		List<Activity> fullList = Arrays.asList(beforeActivity,
+				anotherActivity, afterActivity);
 
 		// When
 		PowerMockito.when(activity.getEmployeeTimePeriods())
@@ -197,8 +197,8 @@ public class ActivityValidatorTest extends PowerMockTestCase {
 				dataAccess.getAllActivitiesAfter(Mockito.any(Employee.class),
 						Mockito.any(TimePeriod.class))).thenReturn(afterList);
 		PowerMockito.when(
-				dataAccess.getAllActivities(Mockito.any(Weekday.class)))
-				.thenReturn(fullList);
+				dataAccess.getAllActivities(Mockito.any(Employee.class),
+						Mockito.any(Weekday.class))).thenReturn(fullList);
 
 		// Then
 		AssertJUnit
@@ -208,7 +208,8 @@ public class ActivityValidatorTest extends PowerMockTestCase {
 	}
 
 	@Test
-	public void validActivityEmployeeTestWithSameActivity() throws DatasetException {
+	public void validActivityEmployeeTestWithSameActivity()
+			throws DatasetException {
 		// Given
 		Activity activity = Mockito.mock(Activity.class);
 		Activity beforeActivity = Mockito.mock(Activity.class);
@@ -237,8 +238,8 @@ public class ActivityValidatorTest extends PowerMockTestCase {
 				dataAccess.getAllActivitiesAfter(Mockito.any(Employee.class),
 						Mockito.any(TimePeriod.class))).thenReturn(afterList);
 		PowerMockito.when(
-				dataAccess.getAllActivities(Mockito.any(Weekday.class)))
-				.thenReturn(fullList);
+				dataAccess.getAllActivities(Mockito.any(Employee.class),
+						Mockito.any(Weekday.class))).thenReturn(fullList);
 
 		// Then
 		AssertJUnit
