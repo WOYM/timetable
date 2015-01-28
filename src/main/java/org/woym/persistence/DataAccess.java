@@ -847,8 +847,9 @@ public class DataAccess implements IDataAccess, Observer {
 
 	/**
 	 * {@inheritDoc}
-	 * @deprecated Inkonsistentes Verhalten. Liefert nicht
-	 * immer dasselbe Ergebnis zurück. In diesem Zustand nicht verwenden. 
+	 * 
+	 * @deprecated Inkonsistentes Verhalten. Liefert nicht immer dasselbe
+	 *             Ergebnis zurück. In diesem Zustand nicht verwenden.
 	 */
 	@Deprecated
 	@SuppressWarnings("unchecked")
@@ -1072,9 +1073,10 @@ public class DataAccess implements IDataAccess, Observer {
 	}
 
 	/**
-	 * {@inheritDoc} 
- 	 * @deprecated Inkonsistentes Verhalten. Liefert nicht
-	 * immer dasselbe Ergebnis zurück. In diesem Zustand nicht verwenden. 
+	 * {@inheritDoc}
+	 * 
+	 * @deprecated Inkonsistentes Verhalten. Liefert nicht immer dasselbe
+	 *             Ergebnis zurück. In diesem Zustand nicht verwenden.
 	 */
 	@Deprecated
 	@SuppressWarnings("unchecked")
@@ -1110,9 +1112,10 @@ public class DataAccess implements IDataAccess, Observer {
 	}
 
 	/**
-	 * {@inheritDoc}	 
-	 * @deprecated Inkonsistentes Verhalten. Liefert nicht
-	 * immer dasselbe Ergebnis zurück. In diesem Zustand nicht verwenden. 
+	 * {@inheritDoc}
+	 * 
+	 * @deprecated Inkonsistentes Verhalten. Liefert nicht immer dasselbe
+	 *             Ergebnis zurück. In diesem Zustand nicht verwenden.
 	 */
 	@Deprecated
 	@SuppressWarnings("unchecked")
@@ -1144,6 +1147,62 @@ public class DataAccess implements IDataAccess, Observer {
 			throw new DatasetException(
 					"Error while executing getFirstActivityAfter for employee: "
 							+ e.getMessage());
+		}
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Activity> getAllActivitiesBefore(Employee employee,
+			TimePeriod timePeriod) throws DatasetException {
+		if (employee == null || timePeriod == null) {
+			throw new IllegalArgumentException("Parameter was null.");
+		}
+		try {
+			final Query query = em
+					.createQuery("SELECT a FROM Activity a INNER JOIN a.employeeTimePeriods e"
+							+ " WHERE e.employee = ?1 AND a.time.endTime <= ?2 AND a.time.day = ?3 ORDER BY a.time.endTime");
+			query.setParameter(1, employee);
+			query.setParameter(2, timePeriod.getStartTime());
+			query.setParameter(3, timePeriod.getDay());
+			return query.getResultList();
+		} catch (Exception e) {
+			LOGGER.error(
+					"Exception while getting all activities before the given timeperiod for employee "
+							+ employee, e);
+			throw new DatasetException(
+					"Error while getting all activities before the given timeperiod for employee "
+							+ employee + ": " + e.getMessage());
+		}
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Activity> getAllActivitiesAfter(Employee employee,
+			TimePeriod timePeriod) throws DatasetException {
+		if (employee == null || timePeriod == null) {
+			throw new IllegalArgumentException("Parameter was null.");
+		}
+		try {
+			final Query query = em
+					.createQuery("SELECT a FROM Activity a INNER JOIN a.employeeTimePeriods e"
+							+ " WHERE e.employee = ?1 AND a.time.startTime >= ?2 AND a.time.day = ?3 ORDER BY a.time.startTime");
+			query.setParameter(1, employee);
+			query.setParameter(2, timePeriod.getEndTime());
+			query.setParameter(3, timePeriod.getDay());
+			return query.getResultList();
+		} catch (Exception e) {
+			LOGGER.error(
+					"Exception while getting all activities after the given timeperiod for employee "
+							+ employee, e);
+			throw new DatasetException(
+					"Error while getting all activities after the given timeperiod for employee "
+							+ employee + ": " + e.getMessage());
 		}
 	}
 
