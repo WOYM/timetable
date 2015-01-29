@@ -190,8 +190,6 @@ public class PlanningController implements Serializable {
 
 		Activity activity = (Activity) event.getScheduleEvent().getData();
 
-		IMemento activityMemento = activity.createMemento();
-
 		Date startTime = changeDateByDelta(activity.getTime().getStartTime(),
 				event.getDayDelta(), event.getMinuteDelta());
 		Date endTime = changeDateByDelta(activity.getTime().getEndTime(),
@@ -206,34 +204,35 @@ public class PlanningController implements Serializable {
 					FacesMessage.SEVERITY_ERROR);
 		} else {
 
+			//TODO Zeit Validieren
 			TimePeriod time = new TimePeriod();
 			time.setStartTime(startTime);
 			time.setEndTime(endTime);
 			time.setDay(Weekday.getByOrdinal(localDayDelta));
 
-			activity.setTime(time);
-
-			for (EmployeeTimePeriods timePeriods : activity
-					.getEmployeeTimePeriods()) {
-				for (TimePeriod timePeriod : timePeriods.getTimePeriods()) {
-					// TODO Would not work with multiple-teacher-periods
-					timePeriod.setDay(time.getDay());
-					timePeriod.setStartTime(startTime);
-					timePeriod.setEndTime(endTime);
-				}
-			}
-
-			IStatus status = activityValidator.validateActivity(activity);
+			IStatus status = activityValidator.validateActivity(activity, time);
 
 			if (status instanceof SuccessStatus) {
+				
+				activity.setTime(time);
+
+				for (EmployeeTimePeriods timePeriods : activity
+						.getEmployeeTimePeriods()) {
+					for (TimePeriod timePeriod : timePeriods.getTimePeriods()) {
+						// TODO Would not work with multiple-teacher-periods
+						timePeriod.setDay(time.getDay());
+						timePeriod.setStartTime(startTime);
+						timePeriod.setEndTime(endTime);
+					}
+				}
+				
+				IMemento activityMemento = activity.createMemento();
 
 				UpdateCommand<Activity> command = new UpdateCommand<Activity>(
 						activity, activityMemento);
 
 				status = commandHandler.execute(command);
-			} else {
-				activity.setMemento(activityMemento);
-			}
+			} 
 
 			msg = status.report();
 		}
@@ -267,26 +266,28 @@ public class PlanningController implements Serializable {
 		Date endTime = changeDateByDelta(activity.getTime().getEndTime(),
 				event.getDayDelta(), event.getMinuteDelta());
 
+		//TODO Zeit Validieren
 		TimePeriod time = new TimePeriod();
 		time.setStartTime(activity.getTime().getStartTime());
 		time.setEndTime(endTime);
 		time.setDay(activity.getTime().getDay());
 
-		for (EmployeeTimePeriods timePeriods : activity
-				.getEmployeeTimePeriods()) {
-			for (TimePeriod timePeriod : timePeriods.getTimePeriods()) {
-				// TODO Would not work with multiple-teacher-periods
-				timePeriod.setDay(time.getDay());
-				timePeriod.setStartTime(activity.getTime().getStartTime());
-				timePeriod.setEndTime(endTime);
-			}
-		}
 
-		activity.setTime(time);
-
-		IStatus status = activityValidator.validateActivity(activity);
+		IStatus status = activityValidator.validateActivity(activity, time);
 
 		if (status instanceof SuccessStatus) {
+			
+			activity.setTime(time);
+			
+			for (EmployeeTimePeriods timePeriods : activity
+					.getEmployeeTimePeriods()) {
+				for (TimePeriod timePeriod : timePeriods.getTimePeriods()) {
+					// TODO Would not work with multiple-teacher-periods
+					timePeriod.setDay(time.getDay());
+					timePeriod.setStartTime(activity.getTime().getStartTime());
+					timePeriod.setEndTime(endTime);
+				}
+			}
 
 			UpdateCommand<Activity> command = new UpdateCommand<Activity>(
 					activity, activityMemento);

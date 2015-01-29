@@ -75,7 +75,7 @@ public class LessonController implements Serializable {
 	}
 
 	public void addLesson() {
-		IStatus status = activityValidator.validateActivity(lesson);
+		IStatus status = activityValidator.validateActivity(lesson, lesson.getTime());
 
 		if (status instanceof SuccessStatus) {
 			AddCommand<Lesson> command = new AddCommand<Lesson>(lesson);
