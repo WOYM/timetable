@@ -1,5 +1,6 @@
 package org.woym.logic.util;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.faces.application.FacesMessage;
@@ -74,24 +75,27 @@ public class ActivityValidator {
 	 * 
 	 * @param activity
 	 *            Die Aktivität, die überprüft werden soll
+	 * @param timePeriod
+	 *            Der Zeitslot, der überprüft werden soll
 	 * @return {@link FailureStatus} bei Überschneidung, {@link SuccessStatus}
 	 *         sonst
 	 */
-	public IStatus validateActivity(Activity activity) {
+	public IStatus validateActivity(final Activity activity,
+			final TimePeriod timePeriod) {
 		IStatus status = new SuccessStatus(
 				GenericSuccessMessage.VALIDATE_SUCCESS);
 
-		status = validateActivityEmployees(activity);
+		status = validateActivityEmployees(activity, timePeriod);
 		if (status instanceof FailureStatus) {
 			return status;
 		}
 
-		status = validateActivitySchoolclasses(activity);
+		status = validateActivitySchoolclasses(activity, timePeriod);
 		if (status instanceof FailureStatus) {
 			return status;
 		}
 
-		status = validateActivityRooms(activity);
+		status = validateActivityRooms(activity, timePeriod);
 		if (status instanceof FailureStatus) {
 			return status;
 		}
@@ -99,13 +103,14 @@ public class ActivityValidator {
 		return status;
 	}
 
-	public IStatus validateActivityEmployees(Activity activity) {
+	public IStatus validateActivityEmployees(final Activity activity,
+			final TimePeriod timePeriod) {
 		IStatus status = new SuccessStatus(
 				GenericSuccessMessage.VALIDATE_SUCCESS);
 
 		try {
 			if ((activity.getEmployeeTimePeriods().size() > 0)
-					&& !validateEmployees(activity)) {
+					&& !validateEmployees(activity, timePeriod)) {
 				return new FailureStatus(
 						SpecificErrorMessage.VALIDATE_ACTIVITY_EXCEPTION,
 						Employee.class, FacesMessage.SEVERITY_ERROR);
@@ -120,13 +125,14 @@ public class ActivityValidator {
 		return status;
 	}
 
-	public IStatus validateActivitySchoolclasses(Activity activity) {
+	public IStatus validateActivitySchoolclasses(final Activity activity,
+			final TimePeriod timePeriod) {
 		IStatus status = new SuccessStatus(
 				GenericSuccessMessage.VALIDATE_SUCCESS);
 
 		try {
 			if ((activity.getSchoolclasses().size() > 0)
-					&& !validateSchoolclasses(activity)) {
+					&& !validateSchoolclasses(activity, timePeriod)) {
 				return new FailureStatus(
 						SpecificErrorMessage.VALIDATE_ACTIVITY_EXCEPTION,
 						Schoolclass.class, FacesMessage.SEVERITY_ERROR);
@@ -141,12 +147,14 @@ public class ActivityValidator {
 		return status;
 	}
 
-	public IStatus validateActivityRooms(Activity activity) {
+	public IStatus validateActivityRooms(final Activity activity,
+			final TimePeriod timePeriod) {
 		IStatus status = new SuccessStatus(
 				GenericSuccessMessage.VALIDATE_SUCCESS);
 
 		try {
-			if ((activity.getRooms().size() > 0) && !validateRooms(activity)) {
+			if ((activity.getRooms().size() > 0)
+					&& !validateRooms(activity, timePeriod)) {
 				return new FailureStatus(
 						SpecificErrorMessage.VALIDATE_ACTIVITY_EXCEPTION,
 						Employee.class, FacesMessage.SEVERITY_ERROR);
@@ -168,24 +176,31 @@ public class ActivityValidator {
 	 * 
 	 * @param activity
 	 *            Die Aktivität, die überprüft werden soll
+	 * @param timePeriod
+	 *            Der Zeitslot, der überprüft werden soll
 	 * @return Warheitswert, ob eine Überschneidung auftritt
 	 * @throws DatasetException
 	 *             Bei Datenbankzugriffsfehler
 	 */
-	private Boolean validateEmployees(Activity activity)
-			throws DatasetException {
+	private Boolean validateEmployees(final Activity activity,
+			final TimePeriod timePeriod) throws DatasetException {
 		for (EmployeeTimePeriods employeeTimePeriods : activity
 				.getEmployeeTimePeriods()) {
 
-			for (TimePeriod timePeriod : employeeTimePeriods.getTimePeriods()) {
-				List<Activity> activities = dataAccess.getAllActivities(
-						employeeTimePeriods.getEmployee(),
-						timePeriod);
+			List<Activity> activitiesForWeekday = new ArrayList<>(
+					dataAccess.getAllActivities(
+							employeeTimePeriods.getEmployee(),
+							timePeriod.getDay()));
 
-				if (!validateActivities(activity, activities)) {
-					return false;
-				}
+			activitiesForWeekday.removeAll(dataAccess.getAllActivitiesBefore(
+					employeeTimePeriods.getEmployee(), timePeriod));
+			activitiesForWeekday.removeAll(dataAccess.getAllActivitiesAfter(
+					employeeTimePeriods.getEmployee(), timePeriod));
+
+			if (!validateActivities(activity, activitiesForWeekday)) {
+				return false;
 			}
+
 		}
 		return true;
 	}
@@ -197,17 +212,19 @@ public class ActivityValidator {
 	 * 
 	 * @param activity
 	 *            Die Aktivität, die überprüft werden soll
+	 * @param timePeriod
+	 *            Der Zeitslot, der überprüft werden soll
 	 * @return Warheitswert, ob eine Überschneidung auftritt
 	 * @throws DatasetException
 	 *             Bei Datenbankzugriffsfehler
 	 */
-	private Boolean validateSchoolclasses(Activity activity)
-			throws DatasetException {
+	private Boolean validateSchoolclasses(final Activity activity,
+			final TimePeriod timePeriod) throws DatasetException {
 
 		for (Schoolclass schoolclass : activity.getSchoolclasses()) {
 
 			List<Activity> activities = dataAccess.getAllActivities(
-					schoolclass, activity.getTime());
+					schoolclass, timePeriod);
 
 			if (!validateActivities(activity, activities)) {
 				return false;
@@ -223,16 +240,19 @@ public class ActivityValidator {
 	 * 
 	 * @param activity
 	 *            Die Aktivität, die überprüft werden soll
+	 * @param timePeriod
+	 *            Der Zeitslot, der überprüft werden soll
 	 * @return Warheitswert, ob eine Überschneidung auftritt
 	 * @throws DatasetException
 	 *             Bei Datenbankzugriffsfehler
 	 */
-	private Boolean validateRooms(Activity activity) throws DatasetException {
+	private Boolean validateRooms(final Activity activity,
+			final TimePeriod timePeriod) throws DatasetException {
 
 		for (Room room : activity.getRooms()) {
 
 			List<Activity> activities = dataAccess.getAllActivities(room,
-					activity.getTime());
+					timePeriod);
 
 			if (!validateActivities(activity, activities)) {
 				return false;
@@ -253,7 +273,7 @@ public class ActivityValidator {
 	 *            Die Liste mit zu prüfenden {@link Activity}-Objekten
 	 * @return Einen Wahrheitswert, ob die {@link Activity} valide ist.
 	 */
-	private Boolean validateActivities(Activity activity,
+	private Boolean validateActivities(final Activity activity,
 			List<Activity> activities) {
 
 		if (activities.size() > 0) {
