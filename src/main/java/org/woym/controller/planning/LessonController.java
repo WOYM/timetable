@@ -15,11 +15,13 @@ import javax.faces.event.ComponentSystemEvent;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.woym.common.exceptions.DatasetException;
+import org.woym.common.objects.AcademicYear;
 import org.woym.common.objects.ActivityTO;
 import org.woym.common.objects.Employee;
 import org.woym.common.objects.EmployeeTimePeriods;
 import org.woym.common.objects.Lesson;
 import org.woym.common.objects.LessonType;
+import org.woym.common.objects.Schoolclass;
 import org.woym.common.objects.TimePeriod;
 import org.woym.logic.CommandHandler;
 import org.woym.logic.SuccessStatus;
@@ -49,6 +51,8 @@ public class LessonController implements Serializable {
 
 	private Lesson lesson;
 
+	private AcademicYear academicYear;
+
 	@PostConstruct
 	public void init() {
 		lesson = new Lesson();
@@ -57,19 +61,10 @@ public class LessonController implements Serializable {
 		lesson.setTime(activityTO.getTimePeriod());
 		setLessonLessonType(getAllLessonTypes().get(0));
 
-		if (entityHelper.getTeacher() != null
-				|| entityHelper.getPedagogicAssistant() != null) {
-			List<Employee> employees = new ArrayList<>();
-			if (entityHelper.getTeacher() != null) {
-				employees.add(entityHelper.getTeacher());
-			}
-			
-			if(entityHelper.getPedagogicAssistant() != null) {
-				employees.add(entityHelper.getPedagogicAssistant());
-			}
-			
-			setLessonEmployees(employees);
+		if (entityHelper.getTeacher() != null) {
+			setLessonEmployee(entityHelper.getTeacher());
 		}
+
 	}
 
 	/**
@@ -108,6 +103,7 @@ public class LessonController implements Serializable {
 
 			if (status instanceof SuccessStatus) {
 				init();
+				academicYear = null;
 			}
 		}
 
@@ -125,38 +121,29 @@ public class LessonController implements Serializable {
 	 * 
 	 * @return Liste mit {@link Employee}s
 	 */
-	public List<Employee> getLessonEmployees() {
-		List<Employee> employees = new ArrayList<>();
-
-		for (EmployeeTimePeriods period : lesson.getEmployeeTimePeriods()) {
-			if (!employees.contains(period.getEmployee())) {
-				employees.add(period.getEmployee());
-			}
-		}
-
-		return employees;
+	public Employee getLessonEmployee() {
+		return lesson.getEmployeeTimePeriods().get(0).getEmployee();
 	}
 
 	/**
-	 * Diese Methode setzt die {@link Employee}s an einer {@link Lesson}
+	 * Diese Methode setzt den {@link Employee} an einer {@link Lesson}, die in
+	 * dieser Bean verwaltet wird.
 	 * 
-	 * @param employees
-	 *            Die Liste der zu setzenden {@link Employee}s
+	 * @param employee
+	 *            Der {@link Employee}
 	 */
-	public void setLessonEmployees(List<Employee> employees) {
+	public void setLessonEmployee(Employee employee) {
 		List<EmployeeTimePeriods> employeeTimePeriods = new ArrayList<>();
 
-		for (Employee employee : employees) {
-			EmployeeTimePeriods periods = new EmployeeTimePeriods();
-			periods.setEmployee(employee);
+		EmployeeTimePeriods periods = new EmployeeTimePeriods();
+		periods.setEmployee(employee);
 
-			List<TimePeriod> timePeriods = new ArrayList<>();
-			timePeriods.add(lesson.getTime());
+		List<TimePeriod> timePeriods = new ArrayList<>();
+		timePeriods.add(lesson.getTime());
 
-			periods.setTimePeriods(timePeriods);
+		periods.setTimePeriods(timePeriods);
 
-			employeeTimePeriods.add(periods);
-		}
+		employeeTimePeriods.add(periods);
 
 		lesson.setEmployeeTimePeriods(employeeTimePeriods);
 	}
@@ -175,6 +162,26 @@ public class LessonController implements Serializable {
 		lesson.setTime(timePeriod);
 	}
 
+	public Schoolclass getLessonSchoolclass() {
+		if(lesson.getSchoolclasses().size() > 0) {
+			return lesson.getSchoolclasses().get(0);
+		}
+		return getSchoolclassesForAcademicYear().get(0);
+	}
+
+	public void setLessonSchoolclass(Schoolclass schoolclass) {
+		if (schoolclass != null) {
+			List<Schoolclass> schoolclasses = new ArrayList<>();
+			schoolclasses.add(schoolclass);
+			lesson.setSchoolclasses(schoolclasses);
+		}
+	}
+
+	public List<Schoolclass> getSchoolclassesForAcademicYear() {
+		return academicYear.getSchoolclasses();
+
+	}
+
 	public LessonType getLessonLessonType() {
 		return lesson.getLessonType();
 	}
@@ -185,6 +192,14 @@ public class LessonController implements Serializable {
 
 	public void setLesson(Lesson lesson) {
 		this.lesson = lesson;
+	}
+
+	public AcademicYear getAcademicYear() {
+		return academicYear;
+	}
+
+	public void setAcademicYear(AcademicYear academicYear) {
+		this.academicYear = academicYear;
 	}
 
 }

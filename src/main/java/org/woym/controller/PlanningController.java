@@ -80,7 +80,7 @@ public class PlanningController implements Serializable {
 			.getInstance();
 	private CommandHandler commandHandler = CommandHandler.getInstance();
 	private EntityHelper entityHelper = EntityHelper.getInstance();
-	
+
 	private Activity activity;
 
 	private List<Weekday> weekdays = Arrays.asList(Weekday.values());
@@ -131,6 +131,46 @@ public class PlanningController implements Serializable {
 	public String getMaxTime() {
 		return Config.getSingleStringValue(DefaultConfigEnum.WEEKDAY_ENDTIME);
 	}
+	
+	/**
+	 * Liefert den Minimalwert für Stunden zurück.
+	 * 
+	 * @return Der Minimalwert für Stunden als Ganzzahl
+	 */
+	public int getMinHour() {
+		int hours = 0;
+		
+		String minTime = getMinTime();
+		minTime = minTime.substring(0, 2);
+		
+		try {
+			hours = Integer.parseInt(minTime);
+		} catch (NumberFormatException e) {
+			LOGGER.warn("Illegal input for hours. This is a config-problem.");
+		}
+		
+		return hours;
+	}
+	
+	/**
+	 * Liefert den Maximalwert für Stunden zurück.
+	 * 
+	 * @return Der Maximalwert für Stunden als Ganzzahl
+	 */
+	public int getMaxHour() {
+		int hours = 24;
+		
+		String maxTime = getMaxTime();
+		maxTime = maxTime.substring(0, 2);
+		
+		try {
+			hours = Integer.parseInt(maxTime);
+		} catch (NumberFormatException e) {
+			LOGGER.warn("Illegal input for hours. This is a config-problem.");
+		}
+		
+		return hours;
+	}
 
 	/**
 	 * Setzt das initiale Darstellungsdatum des Kalenders auf den ersten Montag
@@ -148,7 +188,7 @@ public class PlanningController implements Serializable {
 
 		return calendar.getTime();
 	}
-
+	
 	/**
 	 * Wird aufgerufen, wenn in der Darstellung eine Aktivität selektiert wird.
 	 * <p>
@@ -406,11 +446,11 @@ public class PlanningController implements Serializable {
 	 */
 	public List<Schoolclass> getSchoolclassesForAcademicYear() {
 		List<Schoolclass> schoolclasses = new ArrayList<>();
-		
-		if(entityHelper.getAcademicYear() != null) {
+
+		if (entityHelper.getAcademicYear() != null) {
 			schoolclasses = entityHelper.getAcademicYear().getSchoolclasses();
 		}
-		
+
 		return schoolclasses;
 	}
 
@@ -422,14 +462,17 @@ public class PlanningController implements Serializable {
 	 */
 	public List<Room> getRoomsForLocation() {
 		List<Room> rooms = new ArrayList<>();
-		
-		if(entityHelper.getLocation() != null) {
+
+		if (entityHelper.getLocation() != null) {
 			rooms = entityHelper.getLocation().getRooms();
 		}
-		
+
 		return rooms;
 	}
 
+	/**
+	 * Diese Methode wird vor dem Hinzufügen einer Aktivität aufgerufen.
+	 */
 	public void doBeforeAdd() {
 		activityTOHolder.plainActivityTO();
 	}
@@ -587,9 +630,7 @@ public class PlanningController implements Serializable {
 	}
 
 	/**
-
-	/**
-	 * Gibt einen sinnvollen Namen für die lokale Aktivität zurück.
+	 * /** Gibt einen sinnvollen Namen für die lokale Aktivität zurück.
 	 * 
 	 * @return Ein sinnvoller Name
 	 */
@@ -637,7 +678,8 @@ public class PlanningController implements Serializable {
 	 * @return Wahrheitswert, ob es sich um eine Lesson handelt
 	 */
 	public Boolean getIsCurrentActivityMeeting() {
-		return activity instanceof Meeting;
+		return activityTOHolder.getActivityTO().getActivityTypeEnum()
+				.equals(ActivityTypeEnum.MEETING);
 	}
 
 	/**
@@ -769,25 +811,8 @@ public class PlanningController implements Serializable {
 	 * @return Wahrheitswert, ob die Aktivität eine {@link CompoundLesson} ist
 	 */
 	public Boolean getIsCurrentActivityCompoundLesson() {
-		if (activity instanceof CompoundLesson) {
-			return true;
-		}
-
-		return false;
-	}
-
-	public void setLessonType(LessonType lessonType) {
-		if (lessonType != null || activity instanceof Lesson) {
-			((Lesson) activity).setLessonType(lessonType);
-		}
-	}
-
-	public LessonType getLessonType() {
-		if (activity instanceof Lesson) {
-			return ((Lesson) activity).getLessonType();
-		}
-
-		return null;
+		return activityTOHolder.getActivityTO().getActivityTypeEnum()
+				.equals(ActivityTypeEnum.COMPOUND_LESSON);
 	}
 
 	public ActivityTypeEnum getActivityType() {
@@ -795,10 +820,7 @@ public class PlanningController implements Serializable {
 	}
 
 	public void setActivityType(ActivityTypeEnum activityType) {
-		if (activityType.equals(ActivityTypeEnum.LESSON)) {
-			
-			activityTOHolder.getActivityTO().setActivityTypeEnum(ActivityTypeEnum.LESSON);
-		}
+		activityTOHolder.getActivityTO().setActivityTypeEnum(activityType);
 	}
 
 	// /////////////////////////////////////////////////////////////////////////
