@@ -27,11 +27,11 @@ import org.woym.common.messages.GenericErrorMessage;
 import org.woym.common.messages.MessageHelper;
 import org.woym.common.objects.AcademicYear;
 import org.woym.common.objects.Activity;
+import org.woym.common.objects.ActivityTO;
 import org.woym.common.objects.ActivityType;
 import org.woym.common.objects.ActivityTypeEnum;
 import org.woym.common.objects.CompoundLesson;
 import org.woym.common.objects.EmployeeTimePeriods;
-import org.woym.common.objects.Entity;
 import org.woym.common.objects.Lesson;
 import org.woym.common.objects.LessonType;
 import org.woym.common.objects.Location;
@@ -49,6 +49,8 @@ import org.woym.logic.command.UpdateCommand;
 import org.woym.logic.spec.IStatus;
 import org.woym.logic.util.ActivityValidator;
 import org.woym.persistence.DataAccess;
+import org.woym.ui.util.ActivityTOHolder;
+import org.woym.ui.util.EntityHelper;
 import org.woym.ui.util.ScheduleModelHolder;
 
 /**
@@ -77,15 +79,9 @@ public class PlanningController implements Serializable {
 	private ActivityValidator activityValidator = ActivityValidator
 			.getInstance();
 	private CommandHandler commandHandler = CommandHandler.getInstance();
+	private EntityHelper entityHelper = EntityHelper.getInstance();
 
-	private Teacher teacher;
-	private PedagogicAssistant pedagogicAssistant;
-	private Schoolclass schoolclass;
-	private AcademicYear academicYear;
-	private Location location;
-	private Room room;
 	private Activity activity;
-	private ActivityTypeEnum activityType;
 
 	private List<Weekday> weekdays = Arrays.asList(Weekday.values());
 
@@ -93,6 +89,7 @@ public class PlanningController implements Serializable {
 
 	private ScheduleModelHolder scheduleModelHolder = ScheduleModelHolder
 			.getInstance();
+	private ActivityTOHolder activityTOHolder = ActivityTOHolder.getInstance();
 
 	/**
 	 * Erzwingt die Erzeugung einer neuen User-Session vor dem Rendern des
@@ -134,6 +131,46 @@ public class PlanningController implements Serializable {
 	public String getMaxTime() {
 		return Config.getSingleStringValue(DefaultConfigEnum.WEEKDAY_ENDTIME);
 	}
+	
+	/**
+	 * Liefert den Minimalwert für Stunden zurück.
+	 * 
+	 * @return Der Minimalwert für Stunden als Ganzzahl
+	 */
+	public int getMinHour() {
+		int hours = 0;
+		
+		String minTime = getMinTime();
+		minTime = minTime.substring(0, 2);
+		
+		try {
+			hours = Integer.parseInt(minTime);
+		} catch (NumberFormatException e) {
+			LOGGER.warn("Illegal input for hours. This is a config-problem.");
+		}
+		
+		return hours;
+	}
+	
+	/**
+	 * Liefert den Maximalwert für Stunden zurück.
+	 * 
+	 * @return Der Maximalwert für Stunden als Ganzzahl
+	 */
+	public int getMaxHour() {
+		int hours = 24;
+		
+		String maxTime = getMaxTime();
+		maxTime = maxTime.substring(0, 2);
+		
+		try {
+			hours = Integer.parseInt(maxTime);
+		} catch (NumberFormatException e) {
+			LOGGER.warn("Illegal input for hours. This is a config-problem.");
+		}
+		
+		return hours;
+	}
 
 	/**
 	 * Setzt das initiale Darstellungsdatum des Kalenders auf den ersten Montag
@@ -151,7 +188,7 @@ public class PlanningController implements Serializable {
 
 		return calendar.getTime();
 	}
-
+	
 	/**
 	 * Wird aufgerufen, wenn in der Darstellung eine Aktivität selektiert wird.
 	 * <p>
@@ -239,6 +276,30 @@ public class PlanningController implements Serializable {
 
 		scheduleModelHolder.updateScheduleModel();
 		FacesContext.getCurrentInstance().addMessage(null, msg);
+	}
+
+	/**
+	 * Wird aufgerufen, wenn in der Stundenplandarstellung auf einen leeren
+	 * Zeitslot geklickt wird.
+	 * <p>
+	 * Erzeugt ein neues leeres {@link ActivityTO} und speicher es im
+	 * {@link ActivityTOHolder}
+	 * 
+	 * @param selectEvent
+	 *            Das Selektierungsevent
+	 */
+	public void onDateSelect(SelectEvent selectEvent) {
+		Date date = (Date) selectEvent.getObject();
+
+		activityTOHolder.plainActivityTO();
+
+		TimePeriod timePeriod = activityTOHolder.getActivityTO()
+				.getTimePeriod();
+		timePeriod.setStartTime(date);
+		timePeriod.setEndTime(date);
+		timePeriod.setDay(Weekday.getByDate(date));
+
+		activityTOHolder.getActivityTO().setTimePeriod(timePeriod);
 	}
 
 	/**
@@ -385,7 +446,13 @@ public class PlanningController implements Serializable {
 	 * @return Eine Liste aller Schulklassen für einen Jahrgang
 	 */
 	public List<Schoolclass> getSchoolclassesForAcademicYear() {
-		return academicYear.getSchoolclasses();
+		List<Schoolclass> schoolclasses = new ArrayList<>();
+
+		if (entityHelper.getAcademicYear() != null) {
+			schoolclasses = entityHelper.getAcademicYear().getSchoolclasses();
+		}
+
+		return schoolclasses;
 	}
 
 	/**
@@ -395,12 +462,20 @@ public class PlanningController implements Serializable {
 	 * @return Eine Liste aller Räume für einen Standort
 	 */
 	public List<Room> getRoomsForLocation() {
-		return location.getRooms();
+		List<Room> rooms = new ArrayList<>();
+
+		if (entityHelper.getLocation() != null) {
+			rooms = entityHelper.getLocation().getRooms();
+		}
+
+		return rooms;
 	}
 
+	/**
+	 * Diese Methode wird vor dem Hinzufügen einer Aktivität aufgerufen.
+	 */
 	public void doBeforeAdd() {
-		activity = null;
-		activityType = null;
+		activityTOHolder.plainActivityTO();
 	}
 
 	/**
@@ -410,12 +485,7 @@ public class PlanningController implements Serializable {
 	 * @return Wahrheitswert, ob ein Objekt gewählt wurde
 	 */
 	public Boolean getHasChosen() {
-		if (teacher != null || pedagogicAssistant != null
-				|| schoolclass != null || room != null) {
-			return true;
-		}
-
-		return false;
+		return entityHelper.getHasEntity();
 	}
 
 	/**
@@ -524,8 +594,8 @@ public class PlanningController implements Serializable {
 	 * Setzt das ActivityModel für eine Lehrkraft.
 	 */
 	public void setTeacherActivityModel() {
-		if (teacher != null) {
-			scheduleModelHolder.setEntity(teacher);
+		if (entityHelper.getTeacher() != null) {
+			scheduleModelHolder.setEntity(entityHelper.getTeacher());
 			scheduleModelHolder.updateScheduleModel();
 		}
 	}
@@ -534,8 +604,8 @@ public class PlanningController implements Serializable {
 	 * Setzt das ActivityModel für einen pädagogischen Mitarbeiter.
 	 */
 	public void setPedagogicAssistantActivityModel() {
-		if (pedagogicAssistant != null) {
-			scheduleModelHolder.setEntity(pedagogicAssistant);
+		if (entityHelper.getPedagogicAssistant() != null) {
+			scheduleModelHolder.setEntity(entityHelper.getPedagogicAssistant());
 			scheduleModelHolder.updateScheduleModel();
 		}
 	}
@@ -544,8 +614,8 @@ public class PlanningController implements Serializable {
 	 * Setzt das ActivityModel für eine Schulklasse.
 	 */
 	public void setSchoolclassActivityModel() {
-		if (schoolclass != null) {
-			scheduleModelHolder.setEntity(schoolclass);
+		if (entityHelper.getSchoolclass() != null) {
+			scheduleModelHolder.setEntity(entityHelper.getSchoolclass());
 			scheduleModelHolder.updateScheduleModel();
 		}
 	}
@@ -554,45 +624,14 @@ public class PlanningController implements Serializable {
 	 * Setzt das ActivityModel für einen Raum.
 	 */
 	public void setRoomActivityModel() {
-		if (room != null) {
-			scheduleModelHolder.setEntity(room);
+		if (entityHelper.getRoom() != null) {
+			scheduleModelHolder.setEntity(entityHelper.getRoom());
 			scheduleModelHolder.updateScheduleModel();
 		}
 	}
 
 	/**
-	 * Setzt alle Objekte außer dem Übergebenen {@code null}.
-	 * <p>
-	 * Bei einer Klasse oder einem Raum wird das Elternobjekt, also Jahrgang
-	 * oder Standort nicht zurückgesetzt.
-	 * 
-	 * @param entity
-	 *            Die Entity, die nicht null gesetzt werden soll.
-	 */
-	private void unsetAllExcept(Entity entity) {
-		if (!(entity instanceof Teacher)) {
-			teacher = null;
-		}
-		if (!(entity instanceof PedagogicAssistant)) {
-			pedagogicAssistant = null;
-		}
-		if (!(entity instanceof AcademicYear)
-				&& !(entity instanceof Schoolclass)) {
-			academicYear = null;
-		}
-		if (!(entity instanceof Schoolclass)) {
-			schoolclass = null;
-		}
-		if (!(entity instanceof Location) && !(entity instanceof Room)) {
-			location = null;
-		}
-		if (!(entity instanceof Room)) {
-			room = null;
-		}
-	}
-
-	/**
-	 * Gibt einen sinnvollen Namen für die lokale Aktivität zurück.
+	 * /** Gibt einen sinnvollen Namen für die lokale Aktivität zurück.
 	 * 
 	 * @return Ein sinnvoller Name
 	 */
@@ -629,7 +668,8 @@ public class PlanningController implements Serializable {
 	 * @return Wahrheitswert, ob es sich um eine Lesson handelt
 	 */
 	public Boolean getIsCurrentActivityLesson() {
-		return activity instanceof Lesson;
+		return activityTOHolder.getActivityTO().getActivityTypeEnum()
+				.equals(ActivityTypeEnum.LESSON);
 	}
 
 	/**
@@ -639,7 +679,8 @@ public class PlanningController implements Serializable {
 	 * @return Wahrheitswert, ob es sich um eine Lesson handelt
 	 */
 	public Boolean getIsCurrentActivityMeeting() {
-		return activity instanceof Meeting;
+		return activityTOHolder.getActivityTO().getActivityTypeEnum()
+				.equals(ActivityTypeEnum.MEETING);
 	}
 
 	/**
@@ -771,40 +812,16 @@ public class PlanningController implements Serializable {
 	 * @return Wahrheitswert, ob die Aktivität eine {@link CompoundLesson} ist
 	 */
 	public Boolean getIsCurrentActivityCompoundLesson() {
-		if (activity instanceof CompoundLesson) {
-			return true;
-		}
-
-		return false;
-	}
-
-	public void setLessonType(LessonType lessonType) {
-		if (lessonType != null || activity instanceof Lesson) {
-			((Lesson) activity).setLessonType(lessonType);
-		}
-	}
-
-	public LessonType getLessonType() {
-		if (activity instanceof Lesson) {
-			return ((Lesson) activity).getLessonType();
-		}
-
-		return null;
+		return activityTOHolder.getActivityTO().getActivityTypeEnum()
+				.equals(ActivityTypeEnum.COMPOUND_LESSON);
 	}
 
 	public ActivityTypeEnum getActivityType() {
-		return activityType;
+		return activityTOHolder.getActivityTO().getActivityTypeEnum();
 	}
 
 	public void setActivityType(ActivityTypeEnum activityType) {
-		this.activityType = activityType;
-		activity = null;
-
-		if (activityType.equals(ActivityTypeEnum.LESSON)) {
-			activity = new Lesson();
-			LessonType lessonType = new LessonType();
-			((Lesson) activity).setLessonType(lessonType);
-		}
+		activityTOHolder.getActivityTO().setActivityTypeEnum(activityType);
 	}
 
 	// /////////////////////////////////////////////////////////////////////////
@@ -812,12 +829,11 @@ public class PlanningController implements Serializable {
 	// /////////////////////////////////////////////////////////////////////////
 
 	public Teacher getTeacher() {
-		return teacher;
+		return entityHelper.getTeacher();
 	}
 
 	public void setTeacher(Teacher teacher) {
-		this.teacher = teacher;
-		unsetAllExcept(teacher);
+		entityHelper.setTeacher(teacher);
 
 	}
 
@@ -830,21 +846,19 @@ public class PlanningController implements Serializable {
 	}
 
 	public Schoolclass getSchoolclass() {
-		return schoolclass;
+		return entityHelper.getSchoolclass();
 	}
 
 	public void setSchoolclass(Schoolclass schoolclass) {
-		this.schoolclass = schoolclass;
-		unsetAllExcept(schoolclass);
+		entityHelper.setSchoolclass(schoolclass);
 	}
 
 	public AcademicYear getAcademicYear() {
-		return academicYear;
+		return entityHelper.getAcademicYear();
 	}
 
 	public void setAcademicYear(AcademicYear academicYear) {
-		this.academicYear = academicYear;
-		unsetAllExcept(academicYear);
+		entityHelper.setAcademicYear(academicYear);
 	}
 
 	public ScheduleModel getScheduleModel() {
@@ -856,30 +870,27 @@ public class PlanningController implements Serializable {
 	}
 
 	public PedagogicAssistant getPedagogicAssistant() {
-		return pedagogicAssistant;
+		return entityHelper.getPedagogicAssistant();
 	}
 
 	public void setPedagogicAssistant(PedagogicAssistant pedagogicAssistant) {
-		this.pedagogicAssistant = pedagogicAssistant;
-		unsetAllExcept(pedagogicAssistant);
+		entityHelper.setPedagogicAssistant(pedagogicAssistant);
 	}
 
 	public Location getLocation() {
-		return location;
+		return entityHelper.getLocation();
 	}
 
 	public void setLocation(Location location) {
-		this.location = location;
-		unsetAllExcept(location);
+		entityHelper.setLocation(location);
 	}
 
 	public Room getRoom() {
-		return room;
+		return entityHelper.getRoom();
 	}
 
 	public void setRoom(Room room) {
-		this.room = room;
-		unsetAllExcept(room);
+		entityHelper.setRoom(room);
 	}
 
 	public Activity getActivity() {
