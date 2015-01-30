@@ -2,6 +2,7 @@ package org.woym.logic.util;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
 
 import javax.faces.application.FacesMessage;
@@ -147,7 +148,8 @@ public class ActivityValidator {
 				timePeriod);
 		if(!activityList.isEmpty()){
 			Activity act = activityList.get(0);
-			Location localLocation =  dataAccess.getOneLocation(act.getRooms().get(0));
+			LinkedList<Room> linkedList= new LinkedList<>(act.getRooms());
+			Location localLocation =  dataAccess.getOneLocation(linkedList.getLast());
 			Edge edge = travelTimeList.getEdge(location, localLocation);
 			if(edge != null) {
 				extendetTimePeriod.getStartTime().setMinutes(extendetTimePeriod.getStartTime().getMinutes() - edge.getDistance());
@@ -159,7 +161,8 @@ public class ActivityValidator {
 
 		if(!activityList.isEmpty()){
 			Activity act = activityList.get(0);
-			Location localLocation =  dataAccess.getOneLocation(act.getRooms().get(0));
+			LinkedList<Room> linkedList= new LinkedList<>(act.getRooms());
+			Location localLocation =  dataAccess.getOneLocation(linkedList.getFirst());
 			Edge edge = travelTimeList.getEdge(location, localLocation);
 			if(edge != null) {
 				extendetTimePeriod.getEndTime().setMinutes(extendetTimePeriod.getEndTime().getMinutes() + edge.getDistance());
