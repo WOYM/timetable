@@ -312,7 +312,7 @@
 			draggable="true" resizable="false" dynamic="true">
 			<p:ajax event="close" update="commandGrowl,scheduleMain" />
 			<p:outputPanel id="addActivityPanel">
-				<b><h:outputText value="Neue Klasse" /></b>
+				<b><h:outputText value="Neue Aktivität" /></b>
 				<h:panelGrid columns="2" columnClasses="half-column"
 					style="width:100%;">
 					<p:outputLabel for="addType" value="Aktivitätstyp" />
@@ -346,7 +346,7 @@
 									var="lessonType" itemLabel="#{lessonType.name}" />
 								<p:ajax event="change" update="lessonEndTime" />
 							</p:selectOneMenu>
-							<p:spacer />
+							<p:spacer style="height:15px;" />
 							<p:spacer />
 							<p:outputLabel value="Wochentag" for="lessonWeekday" />
 							<p:selectOneMenu id="lessonWeekday"
@@ -355,8 +355,7 @@
 								converter="WeekdayNameConverter">
 								<f:selectItems value="#{planningController.weekdays}" />
 							</p:selectOneMenu>
-							<p:outputLabel value="Start- und Endzeit des Unterrichts"
-								for="lessonStartTime"></p:outputLabel>
+							<p:outputLabel value="Start- und Endzeit des Unterrichts" for="lessonStartTime" />
 							<h:panelGrid columns="3">
 								<p:calendar id="lessonStartTime" binding="#{startTime}"
 									value="#{lessonController.lesson.time.startTime}" size="5"
@@ -380,9 +379,6 @@
 									<p:ajax event="change" process="@this" />
 								</p:calendar>
 							</h:panelGrid>
-						</h:panelGrid>
-						<h:panelGrid columns="2" columnClasses="half-column"
-							style="width:100%;" id="lessonSchoolclassPanel">
 							<p:outputLabel for="lessonTeachers" value="Lehrkraft" />
 							<p:selectOneMenu id="lessonTeachers"
 								value="#{lessonController.lessonEmployee}"
@@ -392,6 +388,9 @@
 									value="#{teacherController.teachers}"
 									itemLabel="#{teacher.name} (#{teacher.symbol})" />
 							</p:selectOneMenu>
+						</h:panelGrid>
+						<h:panelGrid columns="2" columnClasses="half-column"
+							style="width:100%;" id="lessonSchoolclassPanel">
 							<p:outputLabel for="lessonAcademicYear" value="Jahrgang: " />
 							<p:selectOneMenu id="lessonAcademicYear"
 								value="#{lessonController.academicYear}"
@@ -421,11 +420,13 @@
 									itemLabel="Klasse #{lessonController.academicYear.academicYear}#{schoolclass.identifier}" />
 							</p:selectOneMenu>
 						</h:panelGrid>
-						<h:panelGrid id="lessonRoomPanel" columns="2" columnClasses="half-column" style="width:100%;">
+						<h:panelGrid id="lessonRoomPanel" columns="2"
+							columnClasses="half-column" style="width:100%;">
 							<p:outputLabel for="lessonLocation" value="Standort: " />
 							<p:selectOneMenu id="lessonLocation"
 								value="#{lessonController.location}"
-								converter="LocationNameConverter" required="true" requiredMessage="Es muss ein Standort ausgwählt werden.">
+								converter="LocationNameConverter" required="true"
+								requiredMessage="Es muss ein Standort ausgwählt werden.">
 								<p:ajax event="change" update="lessonRoomPanel" />
 								<f:selectItem value="#{null}" itemLabel="Standort auswählen" />
 								<f:selectItems value="#{locationController.locations}"
@@ -434,18 +435,21 @@
 							<p:outputLabel for="lessonRoom" value="Raum: "
 								rendered="#{lessonController.location != null}" />
 							<p:selectOneMenu id="lessonRoom"
-								value="#{lessonController.lessonRoom}" converter="RoomNameConverter"
-								rendered="#{lessonController.location != null}" required="true" requiredMessage="Es muss ein Raum ausgewählt werden.">
+								value="#{lessonController.lessonRoom}"
+								converter="RoomNameConverter"
+								rendered="#{lessonController.location != null}" required="true"
+								requiredMessage="Es muss ein Raum ausgewählt werden.">
 								<f:selectItem value="#{null}" itemLabel="Raum auswählen" />
 								<f:selectItems value="#{lessonController.roomsForLocation}"
 									var="room" itemLabel="#{room.name}" />
 							</p:selectOneMenu>
 						</h:panelGrid>
-						<h:panelGrid columnClasses="half-column" style="width:100%;">
+						<h:panelGrid columns="2" columnClasses="half-column"
+							style="width:100%;">
 							<p:spacer />
 							<p:outputPanel id="addLessonButton"
 								style="float:right;margin-top:10px;">
-								<p:commandButton value="Hinzufügen"
+								<p:commandButton id="LessonAddButton" value="Hinzufügen"
 									actionListener="#{lessonController.addLesson}"
 									process="addLessonType,lessonWeekday,lessonStartTime,lessonEndTime,lessonTeachers,lessonSchoolclassPanel,lessonRoomPanel,@this"
 									update="activityMessages,addActivityPanel,scheduleMain" />
@@ -459,10 +463,114 @@
 					rendered="#{planningController.isCurrentActivityMeeting}"
 					style="width:100%;" id="addMeetingPanel">
 
-				</p:outputPanel>
-				<p:outputPanel style="clear:right; margin-top:60px;">
-					<p:messages id="activityMessages" showDetail="true"
-						closable="false" />
+					<p:outputPanel id="innerAddMeetingPanel">
+
+						<f:event listener="#{meetingController.doPreRender}"
+							type="preRenderView" />
+
+						<h:panelGrid columns="2" columnClasses="half-column"
+							style="width:100%;">
+							<p:outputLabel for="addMeetingType" value="Inhalt" />
+							<p:selectOneMenu id="addMeetingType"
+								value="#{meetingController.meetingMeetingType}" required="true"
+								requiredMessage="Ein leerer Unterrichtsinhalt ist nicht gültig."
+								converter="MeetingTypeNameConverter">
+								<f:selectItems value="#{meetingController.allMeetingTypes}"
+									var="meetingType" itemLabel="#{meetingType.name}" />
+								<p:ajax event="change" update="meetingEndTime" />
+							</p:selectOneMenu>
+							<p:spacer style="height:15px;" />
+							<p:spacer />
+							<p:outputLabel value="Wochentag" for="meetingWeekday" />
+							<p:selectOneMenu id="meetingWeekday"
+								value="#{meetingController.meeting.time.day}" required="true"
+								requiredMessage="Ein leerer Wochentag ist nicht gültig."
+								converter="WeekdayNameConverter">
+								<f:selectItems value="#{planningController.weekdays}" />
+							</p:selectOneMenu>
+							<p:outputLabel value="Start- und Endzeit des Treffens" for="meetingStartTime" />
+							<h:panelGrid columns="3">
+								<p:calendar id="meetingStartTime" binding="#{startTime}"
+									value="#{meetingController.meeting.time.startTime}" size="5"
+									pattern="HH:mm" locale="de" timeOnly="true" title="Startzeit"
+									required="true"
+									requiredMessage="Angabe der Startzeit wird benötigt."
+									maxHour="#{planningController.maxHour}"
+									minHour="#{planningController.minHour}">
+									<p:ajax event="change" process="@this" />
+								</p:calendar>
+								<h:outputText value=" bis " />
+								<p:calendar id="meetingEndTime"
+									value="#{meetingController.meeting.time.endTime}" size="5"
+									pattern="HH:mm" locale="de" timeOnly="true" title="Endzeit"
+									required="true"
+									requiredMessage="Angabe der Endzeit wird benötigt."
+									maxHour="#{planningController.maxHour}"
+									minHour="#{planningController.minHour}">
+									<f:attribute name="startTime" value="#{startTime}" />
+									<f:validator validatorId="org.woym.TimeRangeValidator" />
+									<p:ajax event="change" process="@this" />
+								</p:calendar>
+							</h:panelGrid>
+							<p:outputLabel for="meetingEmployees" value="Mitarbeiter" />
+							<p:selectCheckboxMenu id="meetingEmployees"
+								value="#{meetingController.meetingEmployees}" filter="true"
+								filterMatchMode="contains" converter="EmployeeNameConverter"
+								label="Bitte auswählen" required="true"
+								requiredMessage="Wählen Sie mindestens einen Mitarbeiter aus.">
+								<f:selectItem
+									value="#{classteamController.disabledTeacherSelectItem}" />
+								<f:selectItems value="#{classteamController.teachers}"
+									var="teacher" itemLabel="#{teacher.symbol}, #{teacher.name}" />
+								<f:selectItem
+									value="#{classteamController.disabledPedagogicAssistantSelectItem}" />
+								<f:selectItems
+									value="#{classteamController.pedagogicAssistants}"
+									var="pedagogicAssistant"
+									itemLabel="#{pedagogicAssistant.symbol}, #{pedagogicAssistant.name}" />
+							</p:selectCheckboxMenu>
+						</h:panelGrid>
+						<h:panelGrid id="meetingRoomPanel" columns="2"
+							columnClasses="half-column" style="width:100%;">
+							<p:outputLabel for="meetingLocation" value="Standort: " />
+							<p:selectOneMenu id="meetingLocation"
+								value="#{meetingController.location}"
+								converter="LocationNameConverter" required="true"
+								requiredMessage="Es muss ein Standort ausgwählt werden.">
+								<p:ajax event="change" update="meetingRoomPanel" />
+								<f:selectItem value="#{null}" itemLabel="Standort auswählen" />
+								<f:selectItems value="#{locationController.locations}"
+									var="location" itemLabel="#{location.name}" />
+							</p:selectOneMenu>
+							<p:outputLabel for="meetingRoom" value="Raum: "
+								rendered="#{meetingController.location != null}" />
+							<p:selectOneMenu id="meetingRoom"
+								value="#{meetingController.meetingRoom}"
+								converter="RoomNameConverter"
+								rendered="#{meetingController.location != null}" required="true"
+								requiredMessage="Es muss ein Raum ausgewählt werden.">
+								<f:selectItem value="#{null}" itemLabel="Raum auswählen" />
+								<f:selectItems value="#{meetingController.roomsForLocation}"
+									var="room" itemLabel="#{room.name}" />
+							</p:selectOneMenu>
+						</h:panelGrid>
+						<h:panelGrid columns="2" columnClasses="half-column"
+							style="width:100%;">
+							<p:spacer />
+							<p:outputPanel id="addMeetingButton"
+								style="float:right;margin-top:10px;">
+								<p:commandButton value="Hinzufügen"
+									actionListener="#{meetingController.addMeeting}"
+									process="addMeetingType,meetingWeekday,meetingStartTime,meetingEndTime,meetingEmployees,meetingRoomPanel,@this"
+									update="activityMessages,addActivityPanel,scheduleMain" />
+							</p:outputPanel>
+						</h:panelGrid>
+
+					</p:outputPanel>
+					<p:outputPanel style="clear:right; margin-top:60px;">
+						<p:messages id="activityMessages" showDetail="true"
+							closable="false" />
+					</p:outputPanel>
 				</p:outputPanel>
 			</p:outputPanel>
 		</p:dialog>

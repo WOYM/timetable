@@ -197,7 +197,12 @@ public class LessonController implements Serializable {
 		if (lesson.getRooms().size() > 0) {
 			return lesson.getRooms().get(0);
 		}
-		return getRoomsForLocation().get(0);
+		
+		if (getRoomsForLocation().size() > 0) {
+			return getRoomsForLocation().get(0);
+		}
+		 
+		return null;
 	}
 
 	public void setLessonRoom(Room room) {

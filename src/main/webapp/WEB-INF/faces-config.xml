@@ -35,6 +35,10 @@
    		<converter-class>org.woym.ui.converters.LessonTypeNameConverter</converter-class>
 	</converter>
 	<converter>
+        <converter-id>MeetingTypeNameConverter</converter-id>
+        <converter-class>org.woym.ui.converters.MeetingTypeNameConverter</converter-class>
+    </converter>
+	<converter>
         <converter-id>LocationNameConverter</converter-id>
         <converter-class>org.woym.ui.converters.LocationNameConverter</converter-class>
     </converter>
