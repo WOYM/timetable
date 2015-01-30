@@ -1,6 +1,7 @@
 package org.woym.logic.util;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.faces.application.FacesMessage;
@@ -14,9 +15,13 @@ import org.woym.common.messages.SpecificErrorMessage;
 import org.woym.common.objects.Activity;
 import org.woym.common.objects.Employee;
 import org.woym.common.objects.EmployeeTimePeriods;
+import org.woym.common.objects.Location;
+import org.woym.common.objects.Pause;
 import org.woym.common.objects.Schoolclass;
 import org.woym.common.objects.Room;
 import org.woym.common.objects.TimePeriod;
+import org.woym.common.objects.TravelTimeList;
+import org.woym.common.objects.TravelTimeList.Edge;
 import org.woym.logic.FailureStatus;
 import org.woym.logic.SuccessStatus;
 import org.woym.logic.spec.IStatus;
@@ -49,6 +54,8 @@ public class ActivityValidator {
 			.getLogger(ActivityValidator.class);
 
 	private DataAccess dataAccess = DataAccess.getInstance();
+	
+	private TravelTimeList travelTimeList = TravelTimeList.getInstance();
 
 	private ActivityValidator() {
 
@@ -85,86 +92,125 @@ public class ActivityValidator {
 		IStatus status = new SuccessStatus(
 				GenericSuccessMessage.VALIDATE_SUCCESS);
 
-		status = validateActivityEmployees(activity, timePeriod);
-		if (status instanceof FailureStatus) {
-			return status;
-		}
+		try {
+			TimePeriod extendetTimePeriod = expandTimPeriodWhithTravelTime(activity, timePeriod);
+			
+			status = validateActivityEmployees(activity, extendetTimePeriod);
+			if (status instanceof FailureStatus) {
+				return status;
+			}
 
-		status = validateActivitySchoolclasses(activity, timePeriod);
-		if (status instanceof FailureStatus) {
-			return status;
-		}
+			status = validateActivitySchoolclasses(activity, extendetTimePeriod);
+			if (status instanceof FailureStatus) {
+				return status;
+			}
 
-		status = validateActivityRooms(activity, timePeriod);
-		if (status instanceof FailureStatus) {
-			return status;
+			status = validateActivityRooms(activity, extendetTimePeriod);
+			if (status instanceof FailureStatus) {
+				return status;
+			}
+
+		} catch (DatasetException e) {
+			LOGGER.error(e);
+			status = new FailureStatus(
+					GenericErrorMessage.DATABASE_COMMUNICATION_ERROR,
+					FacesMessage.SEVERITY_ERROR);
 		}
 
 		return status;
 	}
 
+	@SuppressWarnings("deprecation")
+	public TimePeriod expandTimPeriodWhithTravelTime(final Activity activity,
+			final TimePeriod timePeriod) throws DatasetException {
+
+		List<EmployeeTimePeriods> list = activity
+				.getEmployeeTimePeriods();
+		if(list.isEmpty() || activity instanceof Pause) {
+			return timePeriod;
+		}
+		TimePeriod extendetTimePeriod = new TimePeriod();
+		extendetTimePeriod.setDay(timePeriod.getDay());
+		Date statingTime = new Date();
+		statingTime.setTime(timePeriod.getStartTime().getTime());
+		extendetTimePeriod.setStartTime(statingTime);
+		Date endingTime = new Date();
+		endingTime.setTime(timePeriod.getEndTime().getTime());
+		extendetTimePeriod.setEndTime(endingTime);
+		
+		Location location = dataAccess.getOneLocation(activity.getRooms().get(0));
+		
+		//Geordnete Zeitliche reinfolge.
+		EmployeeTimePeriods employeeTimePeriods = list.get(0);
+
+		List<Activity> activityList = dataAccess.getAllActivitiesBefore(employeeTimePeriods.getEmployee(),
+				timePeriod);
+		if(!activityList.isEmpty()){
+			Activity act = activityList.get(0);
+			Location localLocation =  dataAccess.getOneLocation(act.getRooms().get(0));
+			Edge edge = travelTimeList.getEdge(location, localLocation);
+			if(edge != null) {
+				extendetTimePeriod.getStartTime().setMinutes(extendetTimePeriod.getStartTime().getMinutes() - edge.getDistance());
+			}
+			
+		}
+		activityList = dataAccess.getAllActivitiesAfter(employeeTimePeriods.getEmployee(),
+				timePeriod);
+
+		if(!activityList.isEmpty()){
+			Activity act = activityList.get(0);
+			Location localLocation =  dataAccess.getOneLocation(act.getRooms().get(0));
+			Edge edge = travelTimeList.getEdge(location, localLocation);
+			if(edge != null) {
+				extendetTimePeriod.getEndTime().setMinutes(extendetTimePeriod.getEndTime().getMinutes() + edge.getDistance());
+			}
+			
+		}
+		return extendetTimePeriod;
+
+	}
+
 	public IStatus validateActivityEmployees(final Activity activity,
-			final TimePeriod timePeriod) {
+			final TimePeriod timePeriod) throws DatasetException {
 		IStatus status = new SuccessStatus(
 				GenericSuccessMessage.VALIDATE_SUCCESS);
 
-		try {
 			if ((activity.getEmployeeTimePeriods().size() > 0)
 					&& !validateEmployees(activity, timePeriod)) {
 				return new FailureStatus(
 						SpecificErrorMessage.VALIDATE_ACTIVITY_EXCEPTION,
 						Employee.class, FacesMessage.SEVERITY_ERROR);
 			}
-		} catch (DatasetException e) {
-			LOGGER.error(e);
-			status = new FailureStatus(
-					GenericErrorMessage.DATABASE_COMMUNICATION_ERROR,
-					FacesMessage.SEVERITY_ERROR);
-		}
 
 		return status;
 	}
 
 	public IStatus validateActivitySchoolclasses(final Activity activity,
-			final TimePeriod timePeriod) {
+			final TimePeriod timePeriod) throws DatasetException {
 		IStatus status = new SuccessStatus(
 				GenericSuccessMessage.VALIDATE_SUCCESS);
 
-		try {
 			if ((activity.getSchoolclasses().size() > 0)
 					&& !validateSchoolclasses(activity, timePeriod)) {
 				return new FailureStatus(
 						SpecificErrorMessage.VALIDATE_ACTIVITY_EXCEPTION,
 						Schoolclass.class, FacesMessage.SEVERITY_ERROR);
 			}
-		} catch (DatasetException e) {
-			LOGGER.error(e);
-			status = new FailureStatus(
-					GenericErrorMessage.DATABASE_COMMUNICATION_ERROR,
-					FacesMessage.SEVERITY_ERROR);
-		}
 
 		return status;
 	}
 
 	public IStatus validateActivityRooms(final Activity activity,
-			final TimePeriod timePeriod) {
+			final TimePeriod timePeriod) throws DatasetException {
 		IStatus status = new SuccessStatus(
 				GenericSuccessMessage.VALIDATE_SUCCESS);
 
-		try {
 			if ((activity.getRooms().size() > 0)
 					&& !validateRooms(activity, timePeriod)) {
 				return new FailureStatus(
 						SpecificErrorMessage.VALIDATE_ACTIVITY_EXCEPTION,
 						Employee.class, FacesMessage.SEVERITY_ERROR);
 			}
-		} catch (DatasetException e) {
-			LOGGER.error(e);
-			status = new FailureStatus(
-					GenericErrorMessage.DATABASE_COMMUNICATION_ERROR,
-					FacesMessage.SEVERITY_ERROR);
-		}
 
 		return status;
 	}
