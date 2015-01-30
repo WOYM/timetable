@@ -91,6 +91,8 @@ public class PlanningController implements Serializable {
 			.getInstance();
 	private ActivityTOHolder activityTOHolder = ActivityTOHolder.getInstance();
 
+	private List<Weekday> validWeekdays;
+
 	/**
 	 * Erzwingt die Erzeugung einer neuen User-Session vor dem Rendern des
 	 * Views, sofern noch keine existiert. Wichtig für die Serialisierung aller
@@ -103,6 +105,7 @@ public class PlanningController implements Serializable {
 		searchTerm = "";
 		scheduleModelHolder.setScheduleModel(scheduleModelHolder
 				.emptyScheduleModel());
+		validWeekdays = getValidWeekdays();
 	}
 
 	/**
@@ -131,7 +134,7 @@ public class PlanningController implements Serializable {
 	public String getMaxTime() {
 		return Config.getSingleStringValue(DefaultConfigEnum.WEEKDAY_ENDTIME);
 	}
-	
+
 	/**
 	 * Liefert den Minimalwert für Stunden zurück.
 	 * 
@@ -139,19 +142,19 @@ public class PlanningController implements Serializable {
 	 */
 	public int getMinHour() {
 		int hours = 0;
-		
+
 		String minTime = getMinTime();
 		minTime = minTime.substring(0, 2);
-		
+
 		try {
 			hours = Integer.parseInt(minTime);
 		} catch (NumberFormatException e) {
 			LOGGER.warn("Illegal input for hours. This is a config-problem.");
 		}
-		
+
 		return hours;
 	}
-	
+
 	/**
 	 * Liefert den Maximalwert für Stunden zurück.
 	 * 
@@ -159,16 +162,16 @@ public class PlanningController implements Serializable {
 	 */
 	public int getMaxHour() {
 		int hours = 24;
-		
+
 		String maxTime = getMaxTime();
 		maxTime = maxTime.substring(0, 2);
-		
+
 		try {
 			hours = Integer.parseInt(maxTime);
 		} catch (NumberFormatException e) {
 			LOGGER.warn("Illegal input for hours. This is a config-problem.");
 		}
-		
+
 		return hours;
 	}
 
@@ -188,7 +191,7 @@ public class PlanningController implements Serializable {
 
 		return calendar.getTime();
 	}
-	
+
 	/**
 	 * Wird aufgerufen, wenn in der Darstellung eine Aktivität selektiert wird.
 	 * <p>
@@ -239,9 +242,12 @@ public class PlanningController implements Serializable {
 			msg = MessageHelper.generateMessage(
 					GenericErrorMessage.INVALID_WEEKDAY_IN_DISPLAY,
 					FacesMessage.SEVERITY_ERROR);
+		} else if (!validWeekdays.contains(Weekday.getByOrdinal(localDayDelta))) {
+			msg = MessageHelper.generateMessage(
+					GenericErrorMessage.INVALID_WEEKDAY,
+					FacesMessage.SEVERITY_ERROR);
 		} else {
-
-			//TODO Zeit Validieren
+			// TODO Zeit Validieren
 			TimePeriod time = new TimePeriod();
 			time.setStartTime(startTime);
 			time.setEndTime(endTime);
@@ -250,7 +256,7 @@ public class PlanningController implements Serializable {
 			IStatus status = activityValidator.validateActivity(activity, time);
 
 			if (status instanceof SuccessStatus) {
-				
+
 				activity.setTime(time);
 
 				for (EmployeeTimePeriods timePeriods : activity
@@ -262,14 +268,14 @@ public class PlanningController implements Serializable {
 						timePeriod.setEndTime(endTime);
 					}
 				}
-				
+
 				IMemento activityMemento = activity.createMemento();
 
 				UpdateCommand<Activity> command = new UpdateCommand<Activity>(
 						activity, activityMemento);
 
 				status = commandHandler.execute(command);
-			} 
+			}
 
 			msg = status.report();
 		}
@@ -327,19 +333,18 @@ public class PlanningController implements Serializable {
 		Date endTime = changeDateByDelta(activity.getTime().getEndTime(),
 				event.getDayDelta(), event.getMinuteDelta());
 
-		//TODO Zeit Validieren
+		// TODO Zeit Validieren
 		TimePeriod time = new TimePeriod();
 		time.setStartTime(activity.getTime().getStartTime());
 		time.setEndTime(endTime);
 		time.setDay(activity.getTime().getDay());
 
-
 		IStatus status = activityValidator.validateActivity(activity, time);
 
 		if (status instanceof SuccessStatus) {
-			
+
 			activity.setTime(time);
-			
+
 			for (EmployeeTimePeriods timePeriods : activity
 					.getEmployeeTimePeriods()) {
 				for (TimePeriod timePeriod : timePeriods.getTimePeriods()) {
@@ -387,6 +392,46 @@ public class PlanningController implements Serializable {
 				(calendar.get(Calendar.MINUTE) + minuteDelta));
 
 		return calendar.getTime();
+	}
+
+	/**
+	 * Gibt eine Liste aller zu verplanenden Wochentage zurück.
+	 * 
+	 * @return Liste aller zu verplanenden Wochentage
+	 */
+	public List<Weekday> getValidWeekdays() {
+		if (validWeekdays == null) {
+			validWeekdays = new ArrayList<Weekday>();
+			if (Boolean.valueOf(Config
+					.getSingleStringValue(DefaultConfigEnum.WEEKDAY_MONDAY))) {
+				validWeekdays.add(Weekday.MONDAY);
+			}
+			if (Boolean.valueOf(Config
+					.getSingleStringValue(DefaultConfigEnum.WEEKDAY_TUESDAY))) {
+				validWeekdays.add(Weekday.TUESDAY);
+			}
+			if (Boolean.valueOf(Config
+					.getSingleStringValue(DefaultConfigEnum.WEEKDAY_WEDNESDAY))) {
+				validWeekdays.add(Weekday.WEDNESDAY);
+			}
+			if (Boolean.valueOf(Config
+					.getSingleStringValue(DefaultConfigEnum.WEEKDAY_THURSDAY))) {
+				validWeekdays.add(Weekday.THURSDAY);
+			}
+			if (Boolean.valueOf(Config
+					.getSingleStringValue(DefaultConfigEnum.WEEKDAY_FRIDAY))) {
+				validWeekdays.add(Weekday.FRIDAY);
+			}
+			if (Boolean.valueOf(Config
+					.getSingleStringValue(DefaultConfigEnum.WEEKDAY_SATURDAY))) {
+				validWeekdays.add(Weekday.SATURDAY);
+			}
+			if (Boolean.valueOf(Config
+					.getSingleStringValue(DefaultConfigEnum.WEEKDAY_SUNDAY))) {
+				validWeekdays.add(Weekday.SUNDAY);
+			}
+		}
+		return validWeekdays;
 	}
 
 	/**
@@ -900,4 +945,5 @@ public class PlanningController implements Serializable {
 	public void setActivity(Activity activity) {
 		this.activity = activity;
 	}
+
 }

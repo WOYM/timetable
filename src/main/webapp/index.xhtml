@@ -353,7 +353,7 @@
 								value="#{lessonController.lesson.time.day}" required="true"
 								requiredMessage="Ein leerer Wochentag ist nicht gültig."
 								converter="WeekdayNameConverter">
-								<f:selectItems value="#{planningController.weekdays}" />
+								<f:selectItems value="#{planningController.validWeekdays}" />
 							</p:selectOneMenu>
 							<p:outputLabel value="Start- und Endzeit des Unterrichts"
 								for="lessonStartTime"></p:outputLabel>
