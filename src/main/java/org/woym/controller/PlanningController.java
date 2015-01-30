@@ -402,32 +402,25 @@ public class PlanningController implements Serializable {
 	public List<Weekday> getValidWeekdays() {
 		if (validWeekdays == null) {
 			validWeekdays = new ArrayList<Weekday>();
-			if (Boolean.valueOf(Config
-					.getSingleStringValue(DefaultConfigEnum.WEEKDAY_MONDAY))) {
+			if (Config.getBooleanValue(DefaultConfigEnum.WEEKDAY_MONDAY)) {
 				validWeekdays.add(Weekday.MONDAY);
 			}
-			if (Boolean.valueOf(Config
-					.getSingleStringValue(DefaultConfigEnum.WEEKDAY_TUESDAY))) {
+			if (Config.getBooleanValue(DefaultConfigEnum.WEEKDAY_TUESDAY)) {
 				validWeekdays.add(Weekday.TUESDAY);
 			}
-			if (Boolean.valueOf(Config
-					.getSingleStringValue(DefaultConfigEnum.WEEKDAY_WEDNESDAY))) {
+			if (Config.getBooleanValue(DefaultConfigEnum.WEEKDAY_WEDNESDAY)) {
 				validWeekdays.add(Weekday.WEDNESDAY);
 			}
-			if (Boolean.valueOf(Config
-					.getSingleStringValue(DefaultConfigEnum.WEEKDAY_THURSDAY))) {
+			if (Config.getBooleanValue(DefaultConfigEnum.WEEKDAY_THURSDAY)) {
 				validWeekdays.add(Weekday.THURSDAY);
 			}
-			if (Boolean.valueOf(Config
-					.getSingleStringValue(DefaultConfigEnum.WEEKDAY_FRIDAY))) {
+			if (Config.getBooleanValue(DefaultConfigEnum.WEEKDAY_FRIDAY)) {
 				validWeekdays.add(Weekday.FRIDAY);
 			}
-			if (Boolean.valueOf(Config
-					.getSingleStringValue(DefaultConfigEnum.WEEKDAY_SATURDAY))) {
+			if (Config.getBooleanValue(DefaultConfigEnum.WEEKDAY_SATURDAY)) {
 				validWeekdays.add(Weekday.SATURDAY);
 			}
-			if (Boolean.valueOf(Config
-					.getSingleStringValue(DefaultConfigEnum.WEEKDAY_SUNDAY))) {
+			if (Config.getBooleanValue(DefaultConfigEnum.WEEKDAY_SUNDAY)) {
 				validWeekdays.add(Weekday.SUNDAY);
 			}
 		}
