@@ -24,7 +24,7 @@ import org.woym.persistence.DataAccess;
  *
  */
 @Entity
-public final class TravelTimeList extends org.woym.common.objects.Entity implements
+public class TravelTimeList extends org.woym.common.objects.Entity implements
 		IMementoObject {
 
 	/**
@@ -189,6 +189,22 @@ public final class TravelTimeList extends org.woym.common.objects.Entity impleme
 			}
 		}
 		return toReturn;
+	}
+	
+	/**
+	 * Gibt anhand einer übergebenen {@link Location} eine Kantze zurück.
+	 * @return
+	 * Gesuchte Kante, oder {@code null}
+	 */
+	public Edge getEdge(final Location firstLocation, final Location secondLocation) {
+		if(!firstLocation.equals(secondLocation)){
+		for (Edge e : edges) {
+			if (e.contains(firstLocation) && e.contains(secondLocation)) {
+				return e;
+			}
+		}
+		}
+		return null;
 	}
 
 	/**
