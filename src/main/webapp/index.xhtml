@@ -380,9 +380,9 @@
 									<p:ajax event="change" process="@this" />
 								</p:calendar>
 							</h:panelGrid>
-							</h:panelGrid>
-							<h:panelGrid columns="2" columnClasses="half-column"
-                            style="width:100%;" id="lessonSchoolclassPanel">
+						</h:panelGrid>
+						<h:panelGrid columns="2" columnClasses="half-column"
+							style="width:100%;" id="lessonSchoolclassPanel">
 							<p:outputLabel for="lessonTeachers" value="Lehrkraft" />
 							<p:selectOneMenu id="lessonTeachers"
 								value="#{lessonController.lessonEmployee}"
@@ -395,8 +395,10 @@
 							<p:outputLabel for="lessonAcademicYear" value="Jahrgang: " />
 							<p:selectOneMenu id="lessonAcademicYear"
 								value="#{lessonController.academicYear}"
-								converter="AcademicYearNameConverter" required="true" requiredMessage="Es muss ein Jahrgang ausgewählt werden.">
-								<p:ajax event="change" process="@this" update="lessonSchoolclassPanel" />
+								converter="AcademicYearNameConverter" required="true"
+								requiredMessage="Es muss ein Jahrgang ausgewählt werden.">
+								<p:ajax event="change" process="@this"
+									update="lessonSchoolclassPanel" />
 								<f:selectItem value="#{null}" itemLabel="Jahrgang auswählen" />
 								<f:selectItems
 									value="#{academicYearAndClassController.academicYears}"
@@ -408,7 +410,9 @@
 							<p:selectOneMenu id="lessonSchoolclass"
 								value="#{lessonController.lessonSchoolclass}"
 								converter="SchoolclassNameConverter"
-								rendered="#{lessonController.academicYear != null}" required="true" requiredMessage="Es muss eine Schulklasse ausgewählt werden.">
+								rendered="#{lessonController.academicYear != null}"
+								required="true"
+								requiredMessage="Es muss eine Schulklasse ausgewählt werden.">
 								<p:ajax event="change" process="@this" />
 								<f:selectItem value="#{null}" itemLabel="Klasse auswählen" />
 								<f:selectItems
@@ -416,12 +420,34 @@
 									var="schoolclass"
 									itemLabel="Klasse #{lessonController.academicYear.academicYear}#{schoolclass.identifier}" />
 							</p:selectOneMenu>
+						</h:panelGrid>
+						<h:panelGrid id="lessonRoomPanel" columns="2" columnClasses="half-column" style="width:100%;">
+							<p:outputLabel for="lessonLocation" value="Standort: " />
+							<p:selectOneMenu id="lessonLocation"
+								value="#{lessonController.location}"
+								converter="LocationNameConverter" required="true" requiredMessage="Es muss ein Standort ausgwählt werden.">
+								<p:ajax event="change" update="lessonRoomPanel" />
+								<f:selectItem value="#{null}" itemLabel="Standort auswählen" />
+								<f:selectItems value="#{locationController.locations}"
+									var="location" itemLabel="#{location.name}" />
+							</p:selectOneMenu>
+							<p:outputLabel for="lessonRoom" value="Raum: "
+								rendered="#{lessonController.location != null}" />
+							<p:selectOneMenu id="lessonRoom"
+								value="#{lessonController.lessonRoom}" converter="RoomNameConverter"
+								rendered="#{lessonController.location != null}" required="true" requiredMessage="Es muss ein Raum ausgewählt werden.">
+								<f:selectItem value="#{null}" itemLabel="Raum auswählen" />
+								<f:selectItems value="#{lessonController.roomsForLocation}"
+									var="room" itemLabel="#{room.name}" />
+							</p:selectOneMenu>
+						</h:panelGrid>
+						<h:panelGrid columnClasses="half-column" style="width:100%;">
 							<p:spacer />
 							<p:outputPanel id="addLessonButton"
 								style="float:right;margin-top:10px;">
 								<p:commandButton value="Hinzufügen"
 									actionListener="#{lessonController.addLesson}"
-									process="addLessonType,lessonWeekday,lessonStartTime,lessonEndTime,lessonTeachers,lessonSchoolclassPanel,@this"
+									process="addLessonType,lessonWeekday,lessonStartTime,lessonEndTime,lessonTeachers,lessonSchoolclassPanel,lessonRoomPanel,@this"
 									update="activityMessages,addActivityPanel,scheduleMain" />
 							</p:outputPanel>
 						</h:panelGrid>
