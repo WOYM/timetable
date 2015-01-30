@@ -1,5 +1,8 @@
 package org.woym.common.objects;
 
+import java.util.Calendar;
+import java.util.Date;
+
 public enum Weekday {
 
 	MONDAY("Montag", 0),
@@ -16,6 +19,8 @@ public enum Weekday {
 
 	SUNDAY("Sonntag", 6);
 
+	private static final int DAY_DELTA = 2;
+	
 	/**
 	 * Der Name des Wochentags.
 	 */
@@ -72,5 +77,39 @@ public enum Weekday {
 			}
 		}
 		return null;
+	}
+
+	/**
+	 * Diese Methode gibt das Ordinal eines Wochentages für ein übergebenes
+	 * {@link Date} zurück.
+	 * 
+	 * @param date
+	 *            Das {@link Date} für dessen Tag es Ordinal bestimmt werden
+	 *            soll
+	 * @return Das Ordinal
+	 * 
+	 * @throws IllegalArgumentException
+	 *             Wenn das {@link Date} {@code null} ist
+	 */
+	public static Weekday getByDate(Date date) {
+		if (date == null) {
+			throw new IllegalArgumentException("Date was null!");
+		}
+
+		Weekday weekday = MONDAY;
+
+		Calendar calendar = Calendar.getInstance();
+		calendar.setTime(date);
+
+		for (Weekday day : Weekday.values()) {
+			int myOrd = day.getOrdinal();
+			int theirOrd = (calendar.get(Calendar.DAY_OF_WEEK) - DAY_DELTA);
+			
+			if (myOrd == theirOrd) {
+				weekday = day;
+			}
+		}
+
+		return weekday;
 	}
 }

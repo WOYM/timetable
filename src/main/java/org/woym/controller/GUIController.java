@@ -13,6 +13,7 @@ import org.woym.common.objects.Location;
 import org.woym.logic.CommandHandler;
 import org.woym.logic.spec.IStatus;
 import org.woym.persistence.DataAccess;
+import org.woym.ui.util.ScheduleModelHolder;
 
 /**
  * <h1>GUIController</h1>
@@ -33,12 +34,14 @@ public class GUIController implements Serializable {
 	private static Logger LOGGER = LogManager.getLogger(GUIController.class);
 
 	private DataAccess dataAccess = DataAccess.getInstance();
+	private ScheduleModelHolder scheduleModelHolder = ScheduleModelHolder.getInstance();
 
 	/**
 	 * Diese Methode macht ein Command rückgängig.
 	 */
 	public void undo() {
 		IStatus status = commandHandler.undo();
+		scheduleModelHolder.updateScheduleModel();
 		FacesContext.getCurrentInstance().addMessage(null, status.report());
 	}
 
@@ -47,6 +50,7 @@ public class GUIController implements Serializable {
 	 */
 	public void redo() {
 		IStatus status = commandHandler.redo();
+		scheduleModelHolder.updateScheduleModel();
 		FacesContext.getCurrentInstance().addMessage(null, status.report());
 	}
 

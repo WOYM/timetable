@@ -32,7 +32,7 @@ import org.woym.common.objects.spec.IMementoObject;
 @Entity
 @Inheritance
 @DiscriminatorColumn(name = "TYPE", discriminatorType = DiscriminatorType.STRING, length = 20)
-public abstract class Activity extends org.woym.common.objects.Entity implements
+public class Activity extends org.woym.common.objects.Entity implements
 		IMementoObject {
 
 	/**
@@ -381,5 +381,10 @@ public abstract class Activity extends org.woym.common.objects.Entity implements
 				employeeTimePeriods.add(e.createMemento());
 			}
 		}
+	}
+
+	@Override
+	public IMemento createMemento() {
+		return new Memento(this);
 	}
 }
