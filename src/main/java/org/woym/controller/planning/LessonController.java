@@ -21,6 +21,8 @@ import org.woym.common.objects.Employee;
 import org.woym.common.objects.EmployeeTimePeriods;
 import org.woym.common.objects.Lesson;
 import org.woym.common.objects.LessonType;
+import org.woym.common.objects.Location;
+import org.woym.common.objects.Room;
 import org.woym.common.objects.Schoolclass;
 import org.woym.common.objects.TimePeriod;
 import org.woym.logic.CommandHandler;
@@ -52,6 +54,7 @@ public class LessonController implements Serializable {
 	private Lesson lesson;
 
 	private AcademicYear academicYear;
+	private Location location;
 
 	@PostConstruct
 	public void init() {
@@ -63,6 +66,16 @@ public class LessonController implements Serializable {
 
 		if (entityHelper.getTeacher() != null) {
 			setLessonEmployee(entityHelper.getTeacher());
+		}
+
+		if (entityHelper.getSchoolclass() != null) {
+			academicYear = entityHelper.getAcademicYear();
+			setLessonSchoolclass(entityHelper.getSchoolclass());
+		}
+
+		if (entityHelper.getRoom() != null) {
+			location = entityHelper.getLocation();
+			setLessonRoom(entityHelper.getRoom());
 		}
 
 	}
@@ -95,7 +108,8 @@ public class LessonController implements Serializable {
 	}
 
 	public void addLesson() {
-		IStatus status = activityValidator.validateActivity(lesson, lesson.getTime());
+		IStatus status = activityValidator.validateActivity(lesson,
+				lesson.getTime());
 
 		if (status instanceof SuccessStatus) {
 			AddCommand<Lesson> command = new AddCommand<Lesson>(lesson);
@@ -103,7 +117,6 @@ public class LessonController implements Serializable {
 
 			if (status instanceof SuccessStatus) {
 				init();
-				academicYear = null;
 			}
 		}
 
@@ -122,7 +135,10 @@ public class LessonController implements Serializable {
 	 * @return Liste mit {@link Employee}s
 	 */
 	public Employee getLessonEmployee() {
-		return lesson.getEmployeeTimePeriods().get(0).getEmployee();
+		if (lesson.getEmployeeTimePeriods().size() > 0) {
+			return lesson.getEmployeeTimePeriods().get(0).getEmployee();
+		}
+		return null;
 	}
 
 	/**
@@ -163,7 +179,7 @@ public class LessonController implements Serializable {
 	}
 
 	public Schoolclass getLessonSchoolclass() {
-		if(lesson.getSchoolclasses().size() > 0) {
+		if (lesson.getSchoolclasses().size() > 0) {
 			return lesson.getSchoolclasses().get(0);
 		}
 		return getSchoolclassesForAcademicYear().get(0);
@@ -177,9 +193,27 @@ public class LessonController implements Serializable {
 		}
 	}
 
+	public Room getLessonRoom() {
+		if (lesson.getRooms().size() > 0) {
+			return lesson.getRooms().get(0);
+		}
+		return getRoomsForLocation().get(0);
+	}
+
+	public void setLessonRoom(Room room) {
+		if (room != null) {
+			List<Room> rooms = new ArrayList<>();
+			rooms.add(room);
+			lesson.setRooms(rooms);
+		}
+	}
+
 	public List<Schoolclass> getSchoolclassesForAcademicYear() {
 		return academicYear.getSchoolclasses();
+	}
 
+	public List<Room> getRoomsForLocation() {
+		return location.getRooms();
 	}
 
 	public LessonType getLessonLessonType() {
@@ -200,6 +234,14 @@ public class LessonController implements Serializable {
 
 	public void setAcademicYear(AcademicYear academicYear) {
 		this.academicYear = academicYear;
+	}
+
+	public Location getLocation() {
+		return location;
+	}
+
+	public void setLocation(Location location) {
+		this.location = location;
 	}
 
 }
