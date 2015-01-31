@@ -45,6 +45,8 @@ import org.woym.common.objects.Weekday;
 import org.woym.common.objects.spec.IMemento;
 import org.woym.logic.CommandHandler;
 import org.woym.logic.SuccessStatus;
+import org.woym.logic.command.CommandCreator;
+import org.woym.logic.command.MacroCommand;
 import org.woym.logic.command.UpdateCommand;
 import org.woym.logic.spec.IStatus;
 import org.woym.logic.util.ActivityValidator;
@@ -76,6 +78,8 @@ public class PlanningController implements Serializable {
 	public static final int CALENDAR_DAY = 5;
 
 	private DataAccess dataAccess = DataAccess.getInstance();
+	private final CommandCreator commandCreator = CommandCreator.getInstance();
+
 	private ActivityValidator activityValidator = ActivityValidator
 			.getInstance();
 	private CommandHandler commandHandler = CommandHandler.getInstance();
@@ -344,7 +348,7 @@ public class PlanningController implements Serializable {
 		if (status instanceof SuccessStatus) {
 
 			activity.setTime(time);
-
+			MacroCommand macro = commandCreator.createEmployeeUpdateSubstractWorkingHours(activity);
 			for (EmployeeTimePeriods timePeriods : activity
 					.getEmployeeTimePeriods()) {
 				for (TimePeriod timePeriod : timePeriods.getTimePeriods()) {
@@ -354,11 +358,11 @@ public class PlanningController implements Serializable {
 					timePeriod.setEndTime(endTime);
 				}
 			}
+			macro.addAll(commandCreator.createEmployeeUpdateAddWorkingHours(activity));
+			macro.add(new UpdateCommand<Activity>(
+					activity, activityMemento));
 
-			UpdateCommand<Activity> command = new UpdateCommand<Activity>(
-					activity, activityMemento);
-
-			status = commandHandler.execute(command);
+			status = commandHandler.execute(macro);
 		} else {
 			activity.setMemento(activityMemento);
 		}
@@ -699,7 +703,7 @@ public class PlanningController implements Serializable {
 		return activityTOHolder.getActivityTO().getActivityTypeEnum()
 				.equals(ActivityTypeEnum.MEETING);
 	}
-	
+
 	/**
 	 * Diese Methode gibt an, ob es sich bei der derzeitigen {@link Activity} um
 	 * eine {@link Pause} handelt.

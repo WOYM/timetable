@@ -1,4 +1,4 @@
-package org.woym.controller.planning;
+﻿package org.woym.controller.planning;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -19,6 +19,7 @@ import org.woym.common.objects.Activity;
 import org.woym.common.objects.ActivityTO;
 import org.woym.common.objects.Employee;
 import org.woym.common.objects.EmployeeTimePeriods;
+import org.woym.common.objects.Lesson;
 import org.woym.common.objects.Location;
 import org.woym.common.objects.Meeting;
 import org.woym.common.objects.MeetingType;
@@ -28,6 +29,8 @@ import org.woym.controller.PlanningController;
 import org.woym.logic.CommandHandler;
 import org.woym.logic.SuccessStatus;
 import org.woym.logic.command.AddCommand;
+import org.woym.logic.command.CommandCreator;
+import org.woym.logic.command.MacroCommand;
 import org.woym.logic.spec.IStatus;
 import org.woym.logic.util.ActivityValidator;
 import org.woym.persistence.DataAccess;
@@ -62,6 +65,9 @@ public class MeetingController implements Serializable {
 			.getLogger(MeetingController.class);
 
 	private DataAccess dataAccess = DataAccess.getInstance();
+
+	private final CommandCreator commandCreator = CommandCreator.getInstance();
+
 	private ActivityValidator activityValidator = ActivityValidator
 			.getInstance();
 	private ScheduleModelHolder scheduleModelHolder = ScheduleModelHolder
@@ -118,6 +124,7 @@ public class MeetingController implements Serializable {
 		init();
 	}
 
+
 	/**
 	 * Diese Methode fügt mit Hilfe des {@link CommandHandler}s ein neues
 	 * {@link Activity}-Objekt des Types {@link Meeting} der Persistenz hinzu.
@@ -127,8 +134,10 @@ public class MeetingController implements Serializable {
 				meeting.getTime());
 
 		if (status instanceof SuccessStatus) {
-			AddCommand<Meeting> command = new AddCommand<Meeting>(meeting);
-			status = CommandHandler.getInstance().execute(command);
+			MacroCommand macro = commandCreator
+					.createEmployeeUpdateAddWorkingHours(meeting);
+			macro.add(new AddCommand<Meeting>(meeting));
+			status = CommandHandler.getInstance().execute(macro);
 
 			if (status instanceof SuccessStatus) {
 				init();
@@ -165,6 +174,7 @@ public class MeetingController implements Serializable {
 	public List<Room> getRoomsForLocation() {
 		return location.getRooms();
 	}
+
 
 	/**
 	 * Diese Methode setzt eine Liste von {@link Employee}-Objekten an dem
