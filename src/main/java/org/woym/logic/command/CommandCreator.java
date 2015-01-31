@@ -56,77 +56,90 @@ public class CommandCreator {
 	}
 
 	/**
-	 * Fügt dem Mitarbeiter in der {@link EmployeeTimePeriods} die berechnete
+	 * Fügt allen Mitarbeiter der {@link Activty} in der {@link EmployeeTimePeriods} die berechnete
 	 * dauer aller {@link TimePeriod} hinzu.
 	 * 
-	 * @param employeeTimePeriods
-	 *            EmployeeTimePeriods, welches verarbeitet wird
-	 * @return {@link UpdateCommand<Entity>} mit dem bearbeiteten Mitarbeiter.
+	 * @param activty
+	 *            Activty, welches verarbeitet wird
+	 * @return {@link MacroCommand} mit dem bearbeiteten Mitarbeitern.
 	 */
-	public UpdateCommand<Entity> createEmployeeUpdateAddWorkingHours(
-			final EmployeeTimePeriods employeeTimePeriods) {
+	public MacroCommand createEmployeeUpdateAddWorkingHours(
+			final Activity activty) {
 
-		if (employeeTimePeriods == null) {
+		if (activty == null) {
 			throw new IllegalArgumentException("EmployeeTimePeriods was null");
 		}
-		Employee employee = employeeTimePeriods.getEmployee();
-		int hourlySettlement;
-		if (employee instanceof Teacher) {
-			hourlySettlement = Config
-					.getSingleIntValue(DefaultConfigEnum.TEACHER_HOURLY_SETTLEMENT);
-		} else {
-			hourlySettlement = Config
-					.getSingleIntValue(DefaultConfigEnum.PEDAGOGIC_ASSISTANT_HOURLY_SETTLEMENT);
-		}
-		int totalDuration = 0;
-		for (TimePeriod timePeriod : employeeTimePeriods.getTimePeriods()) {
-			totalDuration += timePeriod.getDuration();
-		}
+		MacroCommand macro = new MacroCommand();
 
-		IMemento memento = employee.createMemento();
-		BigDecimal newAllocatedHours = employee.getAllocatedHours().add(
-				new BigDecimal(totalDuration)
-						.divide(new BigDecimal(hourlySettlement),
-								Employee.SCALE, RoundingMode.HALF_UP));
-		employee.setAllocatedHours(newAllocatedHours);
-		return new UpdateCommand<Entity>(employee, memento);
+		for (EmployeeTimePeriods employeeTimePeriods : activty
+				.getEmployeeTimePeriods()) {
+			Employee employee = employeeTimePeriods.getEmployee();
+			int hourlySettlement;
+			if (employee instanceof Teacher) {
+				hourlySettlement = Config
+						.getSingleIntValue(DefaultConfigEnum.TEACHER_HOURLY_SETTLEMENT);
+			} else {
+				hourlySettlement = Config
+						.getSingleIntValue(DefaultConfigEnum.PEDAGOGIC_ASSISTANT_HOURLY_SETTLEMENT);
+			}
+			int totalDuration = 0;
+			for (TimePeriod timePeriod : employeeTimePeriods.getTimePeriods()) {
+				totalDuration += timePeriod.getDuration();
+			}
+
+			IMemento memento = employee.createMemento();
+			BigDecimal newAllocatedHours = employee.getAllocatedHours().add(
+					new BigDecimal(totalDuration).divide(new BigDecimal(
+							hourlySettlement), Employee.SCALE,
+							RoundingMode.HALF_UP));
+			employee.setAllocatedHours(newAllocatedHours);
+			macro.add(new UpdateCommand<Entity>(employee, memento));
+		}
+		return macro;
 	}
 
 	/**
-	 * Zieht dem Mitarbeiter in der {@link EmployeeTimePeriods} die berechnete
+	 * Zieht allen Mitarbeiter der {@link Activty} in der {@link EmployeeTimePeriods} die berechnete
 	 * dauer aller {@link TimePeriod} ab.
 	 * 
-	 * @param employeeTimePeriods
-	 *            EmployeeTimePeriods, welches verarbeitet wird
-	 * @return {@link UpdateCommand<Entity>} mit dem bearbeiteten Mitarbeiter.
+	 * @param activty
+	 *            Activty, welches verarbeitet wird
+	 * @return {@link MacroCommand} mit dem bearbeiteten Mitarbeitern.
 	 */
-	public UpdateCommand<Entity> createEmployeeUpdateSubstractWorkingHours(
-			final EmployeeTimePeriods employeeTimePeriods) {
+	public MacroCommand createEmployeeUpdateSubstractWorkingHours(
+			final Activity activty) {
 
-		if (employeeTimePeriods == null) {
+		if (activty == null) {
 			throw new IllegalArgumentException("EmployeeTimePeriods was null");
 		}
-		Employee employee = employeeTimePeriods.getEmployee();
-		int hourlySettlement;
-		if (employee instanceof Teacher) {
-			hourlySettlement = Config
-					.getSingleIntValue(DefaultConfigEnum.TEACHER_HOURLY_SETTLEMENT);
-		} else {
-			hourlySettlement = Config
-					.getSingleIntValue(DefaultConfigEnum.PEDAGOGIC_ASSISTANT_HOURLY_SETTLEMENT);
-		}
-		int totalDuration = 0;
-		for (TimePeriod timePeriod : employeeTimePeriods.getTimePeriods()) {
-			totalDuration += timePeriod.getDuration();
-		}
+		MacroCommand macro = new MacroCommand();
 
-		IMemento memento = employee.createMemento();
-		BigDecimal newAllocatedHours = employee.getAllocatedHours().subtract(
-				new BigDecimal(totalDuration)
-						.divide(new BigDecimal(hourlySettlement),
-								Employee.SCALE, RoundingMode.HALF_UP));
-		employee.setAllocatedHours(newAllocatedHours);
-		return new UpdateCommand<Entity>(employee, memento);
+		for (EmployeeTimePeriods employeeTimePeriods : activty
+				.getEmployeeTimePeriods()) {
+			Employee employee = employeeTimePeriods.getEmployee();
+			int hourlySettlement;
+			if (employee instanceof Teacher) {
+				hourlySettlement = Config
+						.getSingleIntValue(DefaultConfigEnum.TEACHER_HOURLY_SETTLEMENT);
+			} else {
+				hourlySettlement = Config
+						.getSingleIntValue(DefaultConfigEnum.PEDAGOGIC_ASSISTANT_HOURLY_SETTLEMENT);
+			}
+			int totalDuration = 0;
+			for (TimePeriod timePeriod : employeeTimePeriods.getTimePeriods()) {
+				totalDuration += timePeriod.getDuration();
+			}
+
+			IMemento memento = employee.createMemento();
+			BigDecimal newAllocatedHours = employee.getAllocatedHours()
+					.subtract(
+							new BigDecimal(totalDuration).divide(
+									new BigDecimal(hourlySettlement),
+									Employee.SCALE, RoundingMode.HALF_UP));
+			employee.setAllocatedHours(newAllocatedHours);
+			macro.add(new UpdateCommand<Entity>(employee, memento));
+		}
+		return macro;
 	}
 
 	/**
@@ -165,10 +178,8 @@ public class CommandCreator {
 		if (entity instanceof Activity) {
 			// Beim Löschen einer Aktivität müssen die verteilten Stunden der
 			// beteiligten Lehrer aktualisiert werden
-			for (EmployeeTimePeriods employeeTimePeriods : ((Activity) entity)
-					.getEmployeeTimePeriods()) {
-				macro.add(createEmployeeUpdateSubstractWorkingHours(employeeTimePeriods));
-			}
+			macro = createEmployeeUpdateSubstractWorkingHours((Activity) entity);
+
 			macro.add(new DeleteCommand<Entity>(entity));
 		} else {
 			// Liste der Commands, welche dem MacroCommand hinzugefügt werden
