@@ -29,11 +29,19 @@
 		<validator-id>RegexNumberValidator</validator-id>
 		<validator-class>org.woym.ui.validators.RegexNumberValidator</validator-class>
 	</validator>
+	   <validator>
+        <validator-id>TeacherListValidator</validator-id>
+        <validator-class>org.woym.ui.validators.TeacherListValidator</validator-class>
+    </validator>
 	<!-- Converters -->
 	<converter>
    		<converter-id>LessonTypeNameConverter</converter-id>
    		<converter-class>org.woym.ui.converters.LessonTypeNameConverter</converter-class>
 	</converter>
+	<converter>
+        <converter-id>MeetingTypeNameConverter</converter-id>
+        <converter-class>org.woym.ui.converters.MeetingTypeNameConverter</converter-class>
+    </converter>
 	<converter>
         <converter-id>LocationNameConverter</converter-id>
         <converter-class>org.woym.ui.converters.LocationNameConverter</converter-class>

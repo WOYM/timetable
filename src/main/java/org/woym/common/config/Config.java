@@ -2,11 +2,14 @@ package org.woym.common.config;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.PropertiesConfiguration;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.woym.common.objects.Weekday;
 
 /**
  * Diese Klasse verwaltet die Konfiguration der Software.
@@ -196,6 +199,41 @@ public final class Config {
 			throw new IllegalArgumentException();
 		}
 		return propertiesConfig.getBoolean(defaultConfigEnum.getPropKey());
+	}
+
+	/**
+	 * 
+	 * Fügt die in der Properties-Datei mit {@code true} stehenden Wochentage,
+	 * der Liste von als zu verplanend gewählten (und damit validen) Wochentagen
+	 * hinzu und gibt diese Liste zurück.
+	 *
+	 * @return Liste der in der Properties-Datei mit {@code true} angegebenen
+	 *         Wochentage
+	 */
+	public static List<Weekday> getValidWeekdays() {
+		List<Weekday> validWeekdays = new ArrayList<Weekday>();
+		if (getBooleanValue(DefaultConfigEnum.WEEKDAY_MONDAY)) {
+			validWeekdays.add(Weekday.MONDAY);
+		}
+		if (getBooleanValue(DefaultConfigEnum.WEEKDAY_TUESDAY)) {
+			validWeekdays.add(Weekday.TUESDAY);
+		}
+		if (getBooleanValue(DefaultConfigEnum.WEEKDAY_WEDNESDAY)) {
+			validWeekdays.add(Weekday.WEDNESDAY);
+		}
+		if (getBooleanValue(DefaultConfigEnum.WEEKDAY_THURSDAY)) {
+			validWeekdays.add(Weekday.THURSDAY);
+		}
+		if (getBooleanValue(DefaultConfigEnum.WEEKDAY_FRIDAY)) {
+			validWeekdays.add(Weekday.FRIDAY);
+		}
+		if (getBooleanValue(DefaultConfigEnum.WEEKDAY_SATURDAY)) {
+			validWeekdays.add(Weekday.SATURDAY);
+		}
+		if (getBooleanValue(DefaultConfigEnum.WEEKDAY_SUNDAY)) {
+			validWeekdays.add(Weekday.SUNDAY);
+		}
+		return validWeekdays;
 	}
 
 	/**

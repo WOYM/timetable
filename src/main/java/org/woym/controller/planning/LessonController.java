@@ -62,7 +62,9 @@ public class LessonController implements Serializable {
 
 		ActivityTO activityTO = activityTOHolder.getActivityTO();
 		lesson.setTime(activityTO.getTimePeriod());
-		setLessonLessonType(getAllLessonTypes().get(0));
+		if (getAllLessonTypes().size() > 0) {
+			setLessonLessonType(getAllLessonTypes().get(0));
+		}
 
 		if (entityHelper.getTeacher() != null) {
 			setLessonEmployee(entityHelper.getTeacher());
@@ -165,6 +167,10 @@ public class LessonController implements Serializable {
 	}
 
 	public void setLessonLessonType(LessonType lessonType) {
+		if(lessonType == null) {
+			return;
+		}
+		
 		lesson.setLessonType(lessonType);
 
 		Calendar calendar = Calendar.getInstance();
@@ -182,7 +188,12 @@ public class LessonController implements Serializable {
 		if (lesson.getSchoolclasses().size() > 0) {
 			return lesson.getSchoolclasses().get(0);
 		}
-		return getSchoolclassesForAcademicYear().get(0);
+		
+		if (getSchoolclassesForAcademicYear().size() > 0) {
+			return getSchoolclassesForAcademicYear().get(0);
+		}
+		
+		return null;
 	}
 
 	public void setLessonSchoolclass(Schoolclass schoolclass) {
@@ -197,7 +208,12 @@ public class LessonController implements Serializable {
 		if (lesson.getRooms().size() > 0) {
 			return lesson.getRooms().get(0);
 		}
-		return getRoomsForLocation().get(0);
+
+		if (getRoomsForLocation().size() > 0) {
+			return getRoomsForLocation().get(0);
+		}
+
+		return null;
 	}
 
 	public void setLessonRoom(Room room) {
