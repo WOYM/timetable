@@ -56,22 +56,23 @@ public class CommandCreator {
 	}
 
 	/**
-	 * Fügt allen Mitarbeiter der {@link Activty} in der {@link EmployeeTimePeriods} die berechnete
-	 * dauer aller {@link TimePeriod} hinzu.
+	 * Fügt allen Mitarbeiter der {@link Activty} in der
+	 * {@link EmployeeTimePeriods} die berechnete dauer aller {@link TimePeriod}
+	 * hinzu.
 	 * 
-	 * @param activty
-	 *            Activty, welches verarbeitet wird
+	 * @param activity
+	 *            Activity, welches verarbeitet wird
 	 * @return {@link MacroCommand} mit dem bearbeiteten Mitarbeitern.
 	 */
 	public MacroCommand createEmployeeUpdateAddWorkingHours(
-			final Activity activty) {
+			final Activity activity) {
 
-		if (activty == null) {
+		if (activity == null) {
 			throw new IllegalArgumentException("EmployeeTimePeriods was null");
 		}
 		MacroCommand macro = new MacroCommand();
 
-		for (EmployeeTimePeriods employeeTimePeriods : activty
+		for (EmployeeTimePeriods employeeTimePeriods : activity
 				.getEmployeeTimePeriods()) {
 			Employee employee = employeeTimePeriods.getEmployee();
 			int hourlySettlement;
@@ -99,22 +100,23 @@ public class CommandCreator {
 	}
 
 	/**
-	 * Zieht allen Mitarbeiter der {@link Activty} in der {@link EmployeeTimePeriods} die berechnete
-	 * dauer aller {@link TimePeriod} ab.
+	 * Zieht allen Mitarbeiter der {@link Activty} in der
+	 * {@link EmployeeTimePeriods} die berechnete dauer aller {@link TimePeriod}
+	 * ab.
 	 * 
-	 * @param activty
-	 *            Activty, welches verarbeitet wird
+	 * @param activity
+	 *            Activity, welches verarbeitet wird
 	 * @return {@link MacroCommand} mit dem bearbeiteten Mitarbeitern.
 	 */
 	public MacroCommand createEmployeeUpdateSubstractWorkingHours(
-			final Activity activty) {
+			final Activity activity) {
 
-		if (activty == null) {
+		if (activity == null) {
 			throw new IllegalArgumentException("EmployeeTimePeriods was null");
 		}
 		MacroCommand macro = new MacroCommand();
 
-		for (EmployeeTimePeriods employeeTimePeriods : activty
+		for (EmployeeTimePeriods employeeTimePeriods : activity
 				.getEmployeeTimePeriods()) {
 			Employee employee = employeeTimePeriods.getEmployee();
 			int hourlySettlement;
