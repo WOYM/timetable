@@ -32,7 +32,7 @@ import org.woym.common.objects.spec.IMementoObject;
 @Entity
 @Inheritance
 @DiscriminatorColumn(name = "TYPE", discriminatorType = DiscriminatorType.STRING, length = 20)
-public class Activity extends org.woym.common.objects.Entity implements
+public abstract class Activity extends org.woym.common.objects.Entity implements
 		IMementoObject {
 
 	/**

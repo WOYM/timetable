@@ -10,11 +10,13 @@ import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
+import javax.faces.event.ComponentSystemEvent;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.woym.common.exceptions.DatasetException;
 import org.woym.common.objects.ActivityTO;
+import org.woym.common.objects.Employee;
 import org.woym.common.objects.EmployeeTimePeriods;
 import org.woym.common.objects.Location;
 import org.woym.common.objects.Meeting;
@@ -56,18 +58,35 @@ public class MeetingController implements Serializable {
 		
 		ActivityTO activityTO = activityTOHolder.getActivityTO();
 		meeting.setTime(activityTO.getTimePeriod());
-		meeting.setMeetingType(getAllMeetingTypes().get(0));
+		if(getAllMeetingTypes().size() > 0) {
+			meeting.setMeetingType(getAllMeetingTypes().get(0));
+		}
 
 		if(entityHelper.getTeacher() != null) {
-			EmployeeTimePeriods employeeTimePeriods = new EmployeeTimePeriods();
-			employeeTimePeriods.add(activityTO.getTimePeriod());
-			meeting.add(employeeTimePeriods);
+			List<TimePeriod> timePeriods = new ArrayList<>();
+			timePeriods.add(activityTO.getTimePeriod());
+			List<EmployeeTimePeriods> employeeTimePeriods = new ArrayList<>();
+			EmployeeTimePeriods employeeTimePeriod = new EmployeeTimePeriods();
+			employeeTimePeriod.setTimePeriods(timePeriods);
+			employeeTimePeriod.setEmployee(entityHelper.getTeacher());
+			employeeTimePeriods.add(employeeTimePeriod);
+			meeting.setEmployeeTimePeriods(employeeTimePeriods);
 		}
 		
 		if(entityHelper.getRoom() != null) {
 			location = entityHelper.getLocation();
 			setMeetingRoom(entityHelper.getRoom());
 		}
+	}
+	
+	/**
+	 * Diese Methode erzwingt eine Initialisierung der Bean bei jedem Rendern.
+	 * 
+	 * @param event
+	 *            Das Event
+	 */
+	public void doPreRender(ComponentSystemEvent event) {
+		init();
 	}
 	
 	public void addMeeting() {
@@ -102,11 +121,42 @@ public class MeetingController implements Serializable {
 		if (meeting.getRooms().size() > 0) {
 			return meeting.getRooms().get(0);
 		}
-		return getRoomsForLocation().get(0);
+		
+		if(getRoomsForLocation().size() > 0) {
+			return getRoomsForLocation().get(0);
+		}
+		
+		return null;
 	}
 	
 	public List<Room> getRoomsForLocation() {
 		return location.getRooms();
+	}
+	
+	public void setMeetingEmployees(List<Employee> employees) {
+		List<EmployeeTimePeriods> employeeTimePeriods = new ArrayList<>();
+		for(Employee employee : employees) {
+			List<TimePeriod> timePeriods = new ArrayList<>();
+			timePeriods.add(meeting.getTime());
+			
+			EmployeeTimePeriods periods = new EmployeeTimePeriods();
+			periods.setTimePeriods(timePeriods);
+			periods.setEmployee(employee);
+			
+			employeeTimePeriods.add(periods);
+		}
+	}
+	
+	public List<Employee> getMeetingEmployees() {
+		List<Employee> employees = new ArrayList<>();		
+		for(EmployeeTimePeriods employeeTimePeriods : meeting.getEmployeeTimePeriods()) {
+			Employee employee = employeeTimePeriods.getEmployee();
+			if(!employees.contains(employee)) {
+				employees.add(employee);
+			}
+		}
+		
+		return employees;
 	}
 	
 	public List<MeetingType> getAllMeetingTypes() {
@@ -122,6 +172,10 @@ public class MeetingController implements Serializable {
 	}
 	
 	public void setMeetingMeetingType(MeetingType meetingType) {
+		if(meetingType == null) {
+			return;
+		}
+		
 		meeting.setMeetingType(meetingType);
 
 		Calendar calendar = Calendar.getInstance();

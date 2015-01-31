@@ -11,20 +11,20 @@ import org.woym.common.exceptions.DatasetException;
 import org.woym.common.messages.GenericErrorMessage;
 import org.woym.common.messages.MessageHelper;
 import org.woym.common.objects.ActivityType;
-import org.woym.common.objects.LessonType;
+import org.woym.common.objects.MeetingType;
 import org.woym.persistence.DataAccess;
 
 /**
- * <h1>LessonTypeNameConverter</h1>
+ * <h1>MeetingTypeNameConverter</h1>
  * <p>
  * Diese Controller ist dafür zuständig, die in den Listen zur Auswahl von
- * Unterrichtsinhalten dargestellten Objekte richtig darzustellen.
+ * Treffensinhalten dargestellten Objekte richtig darzustellen.
  * 
  * 
  * @author Tim Hansen (tihansen)
  */
-@FacesConverter("org.woym.LessonTypeNameConverter")
-public class LessonTypeNameConverter implements Converter {
+@FacesConverter("org.woym.MeetingTypeNameConverter")
+public class MeetingTypeNameConverter implements Converter {
 
 	private DataAccess dataAccess = DataAccess.getInstance();
 	
@@ -32,16 +32,16 @@ public class LessonTypeNameConverter implements Converter {
 	public Object getAsObject(FacesContext context, UIComponent uiComponent,
 			String value) throws ConverterException {
 
-		ActivityType lessonType = new LessonType();
+		ActivityType meetingType = new MeetingType();
 
 		try {
-			lessonType = dataAccess.getOneActivityType(value);
+			meetingType = dataAccess.getOneActivityType(value);
 		} catch (DatasetException e) {
 			FacesMessage msg = MessageHelper.generateMessage(GenericErrorMessage.DATABASE_COMMUNICATION_ERROR, FacesMessage.SEVERITY_ERROR);
 			throw new ConverterException(msg);
 		}
 
-		return lessonType;
+		return meetingType;
 	}
 
 	@Override
@@ -51,8 +51,8 @@ public class LessonTypeNameConverter implements Converter {
 			return "";
 		}
 		
-		ActivityType lessonType = (ActivityType) value;
-		return lessonType.getName();
+		ActivityType meetingType = (ActivityType) value;
+		return meetingType.getName();
 	}
 
 }
