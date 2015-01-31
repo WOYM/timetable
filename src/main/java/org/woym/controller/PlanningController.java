@@ -401,28 +401,7 @@ public class PlanningController implements Serializable {
 	 */
 	public List<Weekday> getValidWeekdays() {
 		if (validWeekdays == null) {
-			validWeekdays = new ArrayList<Weekday>();
-			if (Config.getBooleanValue(DefaultConfigEnum.WEEKDAY_MONDAY)) {
-				validWeekdays.add(Weekday.MONDAY);
-			}
-			if (Config.getBooleanValue(DefaultConfigEnum.WEEKDAY_TUESDAY)) {
-				validWeekdays.add(Weekday.TUESDAY);
-			}
-			if (Config.getBooleanValue(DefaultConfigEnum.WEEKDAY_WEDNESDAY)) {
-				validWeekdays.add(Weekday.WEDNESDAY);
-			}
-			if (Config.getBooleanValue(DefaultConfigEnum.WEEKDAY_THURSDAY)) {
-				validWeekdays.add(Weekday.THURSDAY);
-			}
-			if (Config.getBooleanValue(DefaultConfigEnum.WEEKDAY_FRIDAY)) {
-				validWeekdays.add(Weekday.FRIDAY);
-			}
-			if (Config.getBooleanValue(DefaultConfigEnum.WEEKDAY_SATURDAY)) {
-				validWeekdays.add(Weekday.SATURDAY);
-			}
-			if (Config.getBooleanValue(DefaultConfigEnum.WEEKDAY_SUNDAY)) {
-				validWeekdays.add(Weekday.SUNDAY);
-			}
+			validWeekdays = Config.getValidWeekdays();
 		}
 		return validWeekdays;
 	}

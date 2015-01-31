@@ -1,7 +1,6 @@
 package org.woym.logic.util;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -182,40 +181,6 @@ public abstract class ConfigControllerUtil {
 			return false;
 		}
 		return works;
-	}
-
-	/**
-	 * 
-	 * Fügt die in der Properties-Datei mit {@code true} stehenden Wochentage,
-	 * der Liste von selektierten Wochentagen hinzu und gibt diese Liste zurück.
-	 *
-	 * @return Liste der in der Properties-Datei mit {@code true} angegebenen
-	 *         Wochentage
-	 */
-	public static List<Weekday> getSelectedWeekdays() {
-		List<Weekday> selectedWeekdays = new ArrayList<Weekday>();
-		if (Config.getBooleanValue(DefaultConfigEnum.WEEKDAY_MONDAY)) {
-			selectedWeekdays.add(Weekday.MONDAY);
-		}
-		if (Config.getBooleanValue(DefaultConfigEnum.WEEKDAY_TUESDAY)) {
-			selectedWeekdays.add(Weekday.TUESDAY);
-		}
-		if (Config.getBooleanValue(DefaultConfigEnum.WEEKDAY_WEDNESDAY)) {
-			selectedWeekdays.add(Weekday.WEDNESDAY);
-		}
-		if (Config.getBooleanValue(DefaultConfigEnum.WEEKDAY_THURSDAY)) {
-			selectedWeekdays.add(Weekday.THURSDAY);
-		}
-		if (Config.getBooleanValue(DefaultConfigEnum.WEEKDAY_FRIDAY)) {
-			selectedWeekdays.add(Weekday.FRIDAY);
-		}
-		if (Config.getBooleanValue(DefaultConfigEnum.WEEKDAY_SATURDAY)) {
-			selectedWeekdays.add(Weekday.SATURDAY);
-		}
-		if (Config.getBooleanValue(DefaultConfigEnum.WEEKDAY_SUNDAY)) {
-			selectedWeekdays.add(Weekday.SUNDAY);
-		}
-		return selectedWeekdays;
 	}
 
 	/**
