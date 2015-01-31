@@ -217,7 +217,8 @@
 						<p:outputLabel for="editWeekhours" value="Wochenstunden:" />
 						<p:outputPanel>
 							<p:spinner id="editWeekhours" min="0" max="100" stepFactor="0.01"
-								value="#{pedagogicAssistantController.pedagogicAssistant.hoursPerWeek}">
+								value="#{pedagogicAssistantController.pedagogicAssistant.hoursPerWeek}"
+								valueChangeListener="#{pedagogicAssistantController.checkHoursPerWeek}">
 								<p:ajax event="keyup" process="@this" />
 							</p:spinner>
 							<h:outputText

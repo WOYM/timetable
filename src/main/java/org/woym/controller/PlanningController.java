@@ -36,6 +36,7 @@ import org.woym.common.objects.Lesson;
 import org.woym.common.objects.LessonType;
 import org.woym.common.objects.Location;
 import org.woym.common.objects.Meeting;
+import org.woym.common.objects.Pause;
 import org.woym.common.objects.PedagogicAssistant;
 import org.woym.common.objects.Room;
 import org.woym.common.objects.Schoolclass;
@@ -296,8 +297,11 @@ public class PlanningController implements Serializable {
 	 */
 	public void onDateSelect(SelectEvent selectEvent) {
 		Date date = (Date) selectEvent.getObject();
-
 		activityTOHolder.plainActivityTO();
+
+		if (!validWeekdays.contains(Weekday.getByDate(date))) {
+			return;
+		}
 
 		TimePeriod timePeriod = activityTOHolder.getActivityTO()
 				.getTimePeriod();
@@ -699,7 +703,7 @@ public class PlanningController implements Serializable {
 		return activityTOHolder.getActivityTO().getActivityTypeEnum()
 				.equals(ActivityTypeEnum.MEETING);
 	}
-	
+
 	/**
 	 * Diese Methode gibt an, ob es sich bei der derzeitigen {@link Activity} um
 	 * eine {@link Pause} handelt.

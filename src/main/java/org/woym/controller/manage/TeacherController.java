@@ -1,6 +1,7 @@
 package org.woym.controller.manage;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -9,6 +10,7 @@ import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
+import javax.faces.event.ValueChangeEvent;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -46,8 +48,8 @@ public class TeacherController implements Serializable {
 
 	private static final long serialVersionUID = -8212155094392549715L;
 
-	private static Logger LOGGER = LogManager
-			.getLogger(TeacherController.class.getName());
+	private static Logger LOGGER = LogManager.getLogger(TeacherController.class
+			.getName());
 
 	private DataAccess dataAccess = DataAccess.getInstance();
 
@@ -123,6 +125,23 @@ public class TeacherController implements Serializable {
 	 */
 	public void onTransfer(TransferEvent event) {
 		teacher.setPossibleActivityTypes(activityTypes.getTarget());
+	}
+
+	/**
+	 * Prüft bei Veränderung der Wochenstunden im Dialog, ob diese kleiner als
+	 * die verteilten Stunden der Lehrkraft sind und fügt dem FacesContext in
+	 * diesem Falle eine Warn-Message hinzu.
+	 * 
+	 * @param event
+	 */
+	public void checkHoursPerWeek(ValueChangeEvent event) {
+		BigDecimal newValue = (BigDecimal) event.getNewValue();
+		if (newValue.compareTo(teacher.getAllocatedHours()) < 0) {
+			FacesMessage msg = MessageHelper.generateMessage(
+					GenericErrorMessage.HOURS_PER_WEEK_EXCEEDED,
+					FacesMessage.SEVERITY_WARN);
+			FacesContext.getCurrentInstance().addMessage(null, msg);
+		}
 	}
 
 	/**

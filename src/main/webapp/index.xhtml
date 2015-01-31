@@ -474,7 +474,7 @@
 								value="#{meetingController.meeting.time.day}" required="true"
 								requiredMessage="Ein leerer Wochentag ist nicht gültig."
 								converter="WeekdayNameConverter">
-								<f:selectItems value="#{planningController.weekdays}" />
+								<f:selectItems value="#{planningController.validWeekdays}" />
 							</p:selectOneMenu>
 							<p:outputLabel value="Start- und Endzeit" for="meetingStartTime" />
 							<h:panelGrid columns="3">
@@ -575,7 +575,7 @@
 								value="#{pauseController.pause.time.day}" required="true"
 								requiredMessage="Ein leerer Wochentag ist nicht gültig."
 								converter="WeekdayNameConverter">
-								<f:selectItems value="#{planningController.weekdays}" />
+								<f:selectItems value="#{planningController.validWeekdays}" />
 							</p:selectOneMenu>
 							<p:outputLabel value="Start- und Endzeit" for="pauseStartTime" />
 							<h:panelGrid columns="3">
@@ -643,7 +643,7 @@
 								required="true"
 								requiredMessage="Ein leerer Wochentag ist nicht gültig."
 								converter="WeekdayNameConverter">
-								<f:selectItems value="#{planningController.weekdays}" />
+								<f:selectItems value="#{planningController.validWeekdays}" />
 							</p:selectOneMenu>
 							<p:outputLabel value="Start- und Endzeit"
 								for="compoundLessonStartTime" />
