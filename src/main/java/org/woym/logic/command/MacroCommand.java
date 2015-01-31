@@ -32,6 +32,10 @@ public class MacroCommand implements ICommand {
 	public List<ICommand> getCommands() {
 		return new LinkedList<ICommand>(commands);
 	}
+	
+	public void addAll(MacroCommand macro){
+		commands.addAll(macro.getCommands());
+	}
 
 	@Override
 	public IStatus execute() {
