@@ -27,6 +27,8 @@ import org.woym.controller.PlanningController;
 import org.woym.logic.CommandHandler;
 import org.woym.logic.SuccessStatus;
 import org.woym.logic.command.AddCommand;
+import org.woym.logic.command.CommandCreator;
+import org.woym.logic.command.MacroCommand;
 import org.woym.logic.spec.IStatus;
 import org.woym.logic.util.ActivityValidator;
 import org.woym.persistence.DataAccess;
@@ -58,6 +60,8 @@ public class CompoundLessonController implements Serializable {
 	private static final long serialVersionUID = 8308234096934826569L;
 
 	private DataAccess dataAccess = DataAccess.getInstance();
+	private final CommandCreator commandCreator = CommandCreator.getInstance();
+
 	private static Logger LOGGER = LogManager
 			.getLogger(CompoundLessonController.class);
 	private ActivityValidator activityValidator = ActivityValidator
@@ -132,9 +136,10 @@ public class CompoundLessonController implements Serializable {
 				compoundLesson.getTime());
 
 		if (status instanceof SuccessStatus) {
-			AddCommand<CompoundLesson> command = new AddCommand<CompoundLesson>(
-					compoundLesson);
-			status = CommandHandler.getInstance().execute(command);
+			MacroCommand macro = commandCreator
+					.createEmployeeUpdateAddWorkingHours(compoundLesson);
+			macro.add(new AddCommand<CompoundLesson>(compoundLesson));
+			status = CommandHandler.getInstance().execute(macro);
 
 			if (status instanceof SuccessStatus) {
 				init();
