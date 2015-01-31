@@ -13,8 +13,11 @@ import javax.faces.context.FacesContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.woym.common.exceptions.DatasetException;
+import org.woym.common.objects.Activity;
+import org.woym.common.objects.ActivityTO;
 import org.woym.common.objects.Pause;
 import org.woym.common.objects.Schoolclass;
+import org.woym.controller.PlanningController;
 import org.woym.logic.CommandHandler;
 import org.woym.logic.SuccessStatus;
 import org.woym.logic.command.AddCommand;
@@ -25,6 +28,23 @@ import org.woym.ui.util.ActivityTOHolder;
 import org.woym.ui.util.EntityHelper;
 import org.woym.ui.util.ScheduleModelHolder;
 
+/**
+ * <h1>PauseController</h1>
+ * <p>
+ * Diese Controller ist dafür zuständig, {@link Activity}-Objekte des Types
+ * {@link Pause} zu konfigurieren.
+ * 
+ * @author Tim Hansen (tihansen)
+ * @version 0.2.0
+ * @since 0.1.0
+ *
+ * @see PlanningController
+ * @see ActivityValidator
+ * @see EntityHelper
+ * @see ScheduleModelHolder
+ * @see ActivityTOHolder
+ * @see ActivityTO
+ */
 @ViewScoped
 @ManagedBean(name = "pauseController")
 public class PauseController implements Serializable {
@@ -44,6 +64,13 @@ public class PauseController implements Serializable {
 
 	private Pause pause;
 
+	/**
+	 * Diese Methode initialisiert die Bean und erzeugt eine neue {@link Pause},
+	 * die danach von dieser Bean verwaltet wird.
+	 * <p>
+	 * Es wird anhand der Daten der {@link EntityHelper}-Instanz ein erster
+	 * Datensatz für das Objekt erzeugt.
+	 */
 	@PostConstruct
 	public void init() {
 		pause = new Pause();
@@ -56,6 +83,10 @@ public class PauseController implements Serializable {
 		}
 	}
 
+	/**
+	 * Diese Methode fügt mit Hilfe des {@link CommandHandler}s ein neues
+	 * {@link Activity}-Objekt des Types {@link Pause} der Persistenz hinzu.
+	 */
 	public void addPause() {
 		IStatus status = activityValidator.validateActivity(pause,
 				pause.getTime());
