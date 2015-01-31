@@ -2,7 +2,6 @@ package org.woym.controller.planning;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
@@ -17,12 +16,12 @@ import org.apache.logging.log4j.Logger;
 import org.woym.common.exceptions.DatasetException;
 import org.woym.common.objects.Activity;
 import org.woym.common.objects.ActivityTO;
+import org.woym.common.objects.CompoundLesson;
 import org.woym.common.objects.Employee;
 import org.woym.common.objects.EmployeeTimePeriods;
 import org.woym.common.objects.Location;
-import org.woym.common.objects.Meeting;
-import org.woym.common.objects.MeetingType;
 import org.woym.common.objects.Room;
+import org.woym.common.objects.Schoolclass;
 import org.woym.common.objects.TimePeriod;
 import org.woym.controller.PlanningController;
 import org.woym.logic.CommandHandler;
@@ -36,10 +35,10 @@ import org.woym.ui.util.EntityHelper;
 import org.woym.ui.util.ScheduleModelHolder;
 
 /**
- * <h1>MeetingController</h1>
+ * <h1>CompoundLessonController</h1>
  * <p>
  * Diese Controller ist dafür zuständig, {@link Activity}-Objekte des Types
- * {@link Meeting} zu konfigurieren.
+ * {@link CompoundLesson} zu konfigurieren.
  * 
  * @author Tim Hansen (tihansen)
  * @version 0.2.0
@@ -53,15 +52,14 @@ import org.woym.ui.util.ScheduleModelHolder;
  * @see ActivityTO
  */
 @ViewScoped
-@ManagedBean(name = "meetingController")
-public class MeetingController implements Serializable {
+@ManagedBean(name = "compoundLessonController")
+public class CompoundLessonController implements Serializable {
 
-	private static final long serialVersionUID = 4875106571364509043L;
-
-	private static Logger LOGGER = LogManager
-			.getLogger(MeetingController.class);
+	private static final long serialVersionUID = 8308234096934826569L;
 
 	private DataAccess dataAccess = DataAccess.getInstance();
+	private static Logger LOGGER = LogManager
+			.getLogger(CompoundLessonController.class);
 	private ActivityValidator activityValidator = ActivityValidator
 			.getInstance();
 	private ScheduleModelHolder scheduleModelHolder = ScheduleModelHolder
@@ -70,42 +68,48 @@ public class MeetingController implements Serializable {
 	private ActivityTOHolder activityTOHolder = ActivityTOHolder.getInstance();
 	private EntityHelper entityHelper = EntityHelper.getInstance();
 
-	private Meeting meeting;
+	private CompoundLesson compoundLesson;
 
 	private Location location;
 
 	/**
 	 * Diese Methode initialisiert die Bean und erzeugt eine neue
-	 * {@link Meeting}, die danach von dieser Bean verwaltet wird.
+	 * {@link CompoundLesson}, die danach von dieser Bean verwaltet wird.
 	 * <p>
 	 * Es wird anhand der Daten der {@link EntityHelper}-Instanz ein erster
 	 * Datensatz für das Objekt erzeugt.
 	 */
 	@PostConstruct
 	public void init() {
-		meeting = new Meeting();
-
-		ActivityTO activityTO = activityTOHolder.getActivityTO();
-		meeting.setTime(activityTO.getTimePeriod());
-		if (getAllMeetingTypes().size() > 0) {
-			meeting.setMeetingType(getAllMeetingTypes().get(0));
-		}
+		compoundLesson = new CompoundLesson();
+		compoundLesson
+				.setTime(activityTOHolder.getActivityTO().getTimePeriod());
 
 		if (entityHelper.getTeacher() != null) {
-			List<TimePeriod> timePeriods = new ArrayList<>();
-			timePeriods.add(activityTO.getTimePeriod());
-			List<EmployeeTimePeriods> employeeTimePeriods = new ArrayList<>();
-			EmployeeTimePeriods employeeTimePeriod = new EmployeeTimePeriods();
-			employeeTimePeriod.setTimePeriods(timePeriods);
-			employeeTimePeriod.setEmployee(entityHelper.getTeacher());
-			employeeTimePeriods.add(employeeTimePeriod);
-			meeting.setEmployeeTimePeriods(employeeTimePeriods);
+			List<Employee> employees = new ArrayList<>();
+			employees.add(entityHelper.getTeacher());
+			setCompoundLessonEmployees(employees);
+		}
+
+		if (entityHelper.getPedagogicAssistant() != null) {
+			List<Employee> employees = new ArrayList<>();
+			employees.add(entityHelper.getPedagogicAssistant());
+			setCompoundLessonEmployees(employees);
 		}
 
 		if (entityHelper.getRoom() != null) {
 			location = entityHelper.getLocation();
-			setMeetingRoom(entityHelper.getRoom());
+			List<Room> rooms = new ArrayList<>();
+			rooms.add(entityHelper.getRoom());
+			compoundLesson.setRooms(rooms);
 		}
+
+		if (entityHelper.getSchoolclass() != null) {
+			List<Schoolclass> schoolclasses = new ArrayList<>();
+			schoolclasses.add(entityHelper.getSchoolclass());
+			compoundLesson.setSchoolclasses(schoolclasses);
+		}
+
 	}
 
 	/**
@@ -120,14 +124,16 @@ public class MeetingController implements Serializable {
 
 	/**
 	 * Diese Methode fügt mit Hilfe des {@link CommandHandler}s ein neues
-	 * {@link Activity}-Objekt des Types {@link Meeting} der Persistenz hinzu.
+	 * {@link Activity}-Objekt des Types {@link CompoundLesson} der Persistenz
+	 * hinzu.
 	 */
-	public void addMeeting() {
-		IStatus status = activityValidator.validateActivity(meeting,
-				meeting.getTime());
+	public void addCompoundLesson() {
+		IStatus status = activityValidator.validateActivity(compoundLesson,
+				compoundLesson.getTime());
 
 		if (status instanceof SuccessStatus) {
-			AddCommand<Meeting> command = new AddCommand<Meeting>(meeting);
+			AddCommand<CompoundLesson> command = new AddCommand<CompoundLesson>(
+					compoundLesson);
 			status = CommandHandler.getInstance().execute(command);
 
 			if (status instanceof SuccessStatus) {
@@ -141,31 +147,6 @@ public class MeetingController implements Serializable {
 		FacesContext.getCurrentInstance().addMessage(null, message);
 	}
 
-	public void setMeetingRoom(Room room) {
-		if (room != null) {
-			List<Room> rooms = new ArrayList<>();
-			rooms.add(room);
-			meeting.setRooms(rooms);
-		}
-
-	}
-
-	public Room getMeetingRoom() {
-		if (meeting.getRooms().size() > 0) {
-			return meeting.getRooms().get(0);
-		}
-
-		if (getRoomsForLocation().size() > 0) {
-			return getRoomsForLocation().get(0);
-		}
-
-		return null;
-	}
-
-	public List<Room> getRoomsForLocation() {
-		return location.getRooms();
-	}
-
 	/**
 	 * Diese Methode setzt eine Liste von {@link Employee}-Objekten an dem
 	 * {@link Activity}-Objekt der Bean.
@@ -177,73 +158,54 @@ public class MeetingController implements Serializable {
 	 * @param employees
 	 *            Die Liste der zu setzenden {@link Employee}-Objekte
 	 */
-	public void setMeetingEmployees(List<Employee> employees) {
+	public void setCompoundLessonEmployees(List<Employee> employees) {
 		List<EmployeeTimePeriods> employeeTimePeriods = new ArrayList<>();
 		for (Employee employee : employees) {
-			List<TimePeriod> timePeriods = new ArrayList<>();
-			timePeriods.add(meeting.getTime());
+			TimePeriod timePeriod = compoundLesson.getTime();
+			List<TimePeriod> periods = new ArrayList<>();
+			periods.add(timePeriod);
 
-			EmployeeTimePeriods periods = new EmployeeTimePeriods();
-			periods.setTimePeriods(timePeriods);
-			periods.setEmployee(employee);
+			EmployeeTimePeriods employeeTimePeriod = new EmployeeTimePeriods();
+			employeeTimePeriod.setTimePeriods(periods);
+			employeeTimePeriod.setEmployee(employee);
 
-			employeeTimePeriods.add(periods);
-		}
-	}
-
-	public List<Employee> getMeetingEmployees() {
-		List<Employee> employees = new ArrayList<>();
-		for (EmployeeTimePeriods employeeTimePeriods : meeting
-				.getEmployeeTimePeriods()) {
-			Employee employee = employeeTimePeriods.getEmployee();
-			if (!employees.contains(employee)) {
-				employees.add(employee);
-			}
+			employeeTimePeriods.add(employeeTimePeriod);
 		}
 
-		return employees;
+		compoundLesson.setEmployeeTimePeriods(employeeTimePeriods);
 	}
 
-	public List<MeetingType> getAllMeetingTypes() {
-		List<MeetingType> meetingTypes = new ArrayList<>();
+	public List<Schoolclass> getAllSchoolclasses() {
+		List<Schoolclass> schoolclasses = new ArrayList<>();
 
 		try {
-			meetingTypes = dataAccess.getAllMeetingTypes();
+			schoolclasses = dataAccess.getAllSchoolclasses();
 		} catch (DatasetException e) {
 			LOGGER.error(e);
 		}
 
-		return meetingTypes;
+		return schoolclasses;
 	}
 
-	public void setMeetingMeetingType(MeetingType meetingType) {
-		if (meetingType == null) {
-			return;
+	public List<Employee> getCompoundLessonEmployees() {
+		List<Employee> employees = new ArrayList<>();
+		for (EmployeeTimePeriods employeeTimePeriods : compoundLesson
+				.getEmployeeTimePeriods()) {
+			employees.add(employeeTimePeriods.getEmployee());
 		}
-
-		meeting.setMeetingType(meetingType);
-
-		Calendar calendar = Calendar.getInstance();
-		calendar.setTime(meeting.getTime().getStartTime());
-		calendar.set(Calendar.MINUTE,
-				(calendar.get(Calendar.MINUTE) + meetingType
-						.getTypicalDuration()));
-
-		TimePeriod timePeriod = meeting.getTime();
-		timePeriod.setEndTime(calendar.getTime());
-		meeting.setTime(timePeriod);
+		return employees;
 	}
 
-	public MeetingType getMeetingMeetingType() {
-		return meeting.getMeetingType();
+	public List<Room> getRoomsForLocation() {
+		return location.getRooms();
 	}
 
-	public Meeting getMeeting() {
-		return meeting;
+	public CompoundLesson getCompoundLesson() {
+		return compoundLesson;
 	}
 
-	public void setMeeting(Meeting meeting) {
-		this.meeting = meeting;
+	public void setCompoundLesson(CompoundLesson compoundLesson) {
+		this.compoundLesson = compoundLesson;
 	}
 
 	public Location getLocation() {

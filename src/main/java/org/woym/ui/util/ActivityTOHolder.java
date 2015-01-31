@@ -1,6 +1,8 @@
 package org.woym.ui.util;
 
 
+import java.io.Serializable;
+
 import org.woym.common.objects.ActivityTO;
 import org.woym.controller.PlanningController;
 import org.woym.controller.planning.LessonController;
@@ -23,7 +25,9 @@ import org.woym.controller.planning.LessonController;
  * @version 0.1.1
  * @since 0.1.1
  */
-public class ActivityTOHolder {
+public class ActivityTOHolder implements Serializable {
+
+	private static final long serialVersionUID = 2766544452801934027L;
 
 	private static ActivityTOHolder INSTANCE = new ActivityTOHolder();
 
