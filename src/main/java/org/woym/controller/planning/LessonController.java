@@ -62,7 +62,7 @@ public class LessonController implements Serializable {
 
 		ActivityTO activityTO = activityTOHolder.getActivityTO();
 		lesson.setTime(activityTO.getTimePeriod());
-		if (!getAllLessonTypes().isEmpty()) {
+		if (getAllLessonTypes().size() > 0) {
 			setLessonLessonType(getAllLessonTypes().get(0));
 		}
 
@@ -167,6 +167,10 @@ public class LessonController implements Serializable {
 	}
 
 	public void setLessonLessonType(LessonType lessonType) {
+		if(lessonType == null) {
+			return;
+		}
+		
 		lesson.setLessonType(lessonType);
 
 		Calendar calendar = Calendar.getInstance();

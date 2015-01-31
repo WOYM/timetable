@@ -220,7 +220,7 @@
 							process="@this" update="addActivityPanel"
 							oncomplete="PF('wAddActivityDialog').show();" />
 					</p:outputPanel>
-				</p:outputPanel> 
+				</p:outputPanel>
 				<p:schedule id="scheduleMain" widgetVar="wScheduleMain"
 					showHeader="false" view="agendaWeek" allDaySlot="false"
 					axisFormat="HH:mm" value="#{planningController.scheduleModel}"
@@ -328,6 +328,7 @@
 								value="#{lessonController.lessonLessonType}" required="true"
 								requiredMessage="Ein leerer Unterrichtsinhalt ist nicht gültig."
 								converter="LessonTypeNameConverter">
+								<f:selectItem value="#{null}" itemLabel="Bitte auswählen" />
 								<f:selectItems value="#{lessonController.allLessonTypes}"
 									var="lessonType" itemLabel="#{lessonType.name}" />
 								<p:ajax event="change" update="lessonEndTime" />
@@ -341,30 +342,30 @@
 								converter="WeekdayNameConverter">
 								<f:selectItems value="#{planningController.validWeekdays}" />
 							</p:selectOneMenu>
-                            <p:outputLabel value="Start- und Endzeit des Unterrichts" for="lessonStartTime" />
-                            <h:panelGrid columns="3">
-                                <p:calendar id="lessonStartTime" binding="#{lessonStartTime}"
-                                    value="#{lessonController.lesson.time.startTime}" size="5"
-                                    pattern="HH:mm" locale="de" timeOnly="true" title="Startzeit"
-                                    required="true"
-                                    requiredMessage="Angabe der Startzeit wird benötigt."
-                                    maxHour="#{planningController.maxHour}"
-                                    minHour="#{planningController.minHour}">
-                                    <p:ajax event="change" process="@this" />
-                                </p:calendar>
-                                <h:outputText value=" bis " />
-                                <p:calendar id="lessonEndTime"
-                                    value="#{lessonController.lesson.time.endTime}" size="5"
-                                    pattern="HH:mm" locale="de" timeOnly="true" title="Endzeit"
-                                    required="true"
-                                    requiredMessage="Angabe der Endzeit wird benötigt."
-                                    maxHour="#{planningController.maxHour}"
-                                    minHour="#{planningController.minHour}">
-                                    <f:attribute name="startTime" value="#{lessonStartTime}" />
-                                    <f:validator validatorId="org.woym.TimeRangeValidator" />
-                                    <p:ajax event="change" process="@this" />
-                                </p:calendar>
-                            </h:panelGrid>
+							<p:outputLabel value="Start- und Endzeit" for="lessonStartTime" />
+							<h:panelGrid columns="3">
+								<p:calendar id="lessonStartTime" binding="#{lessonStartTime}"
+									value="#{lessonController.lesson.time.startTime}" size="5"
+									pattern="HH:mm" locale="de" timeOnly="true" title="Startzeit"
+									required="true"
+									requiredMessage="Angabe der Startzeit wird benötigt."
+									maxHour="#{planningController.maxHour}"
+									minHour="#{planningController.minHour}">
+									<p:ajax event="change" process="@this" />
+								</p:calendar>
+								<h:outputText value=" bis " />
+								<p:calendar id="lessonEndTime"
+									value="#{lessonController.lesson.time.endTime}" size="5"
+									pattern="HH:mm" locale="de" timeOnly="true" title="Endzeit"
+									required="true"
+									requiredMessage="Angabe der Endzeit wird benötigt."
+									maxHour="#{planningController.maxHour}"
+									minHour="#{planningController.minHour}">
+									<f:attribute name="startTime" value="#{lessonStartTime}" />
+									<f:validator validatorId="org.woym.TimeRangeValidator" />
+									<p:ajax event="change" process="@this" />
+								</p:calendar>
+							</h:panelGrid>
 							<p:outputLabel for="lessonTeachers" value="Lehrkraft" />
 							<p:selectOneMenu id="lessonTeachers"
 								value="#{lessonController.lessonEmployee}"
@@ -449,18 +450,19 @@
 					rendered="#{planningController.isCurrentActivityMeeting}"
 					style="width:100%;" id="addMeetingPanel">
 
-					<p:outputPanel id="innerAddMeetingPanel">
+					<f:event listener="#{meetingController.doPreRender}"
+						type="preRenderView" />
 
-						<f:event listener="#{meetingController.doPreRender}"
-							type="preRenderView" />
+					<p:outputPanel id="innerAddMeetingPanel">
 
 						<h:panelGrid columns="2" columnClasses="half-column"
 							style="width:100%;">
 							<p:outputLabel for="addMeetingType" value="Inhalt" />
 							<p:selectOneMenu id="addMeetingType"
 								value="#{meetingController.meetingMeetingType}" required="true"
-								requiredMessage="Ein leerer Unterrichtsinhalt ist nicht gültig."
+								requiredMessage="Ein leerer Inhalt ist nicht gültig."
 								converter="MeetingTypeNameConverter">
+								<f:selectItem value="#{null}" itemLabel="Bitte Inhalt auswählen" />
 								<f:selectItems value="#{meetingController.allMeetingTypes}"
 									var="meetingType" itemLabel="#{meetingType.name}" />
 								<p:ajax event="change" update="meetingEndTime" />
@@ -474,7 +476,7 @@
 								converter="WeekdayNameConverter">
 								<f:selectItems value="#{planningController.weekdays}" />
 							</p:selectOneMenu>
-							<p:outputLabel value="Start- und Endzeit des Treffens" for="meetingStartTime" />
+							<p:outputLabel value="Start- und Endzeit" for="meetingStartTime" />
 							<h:panelGrid columns="3">
 								<p:calendar id="meetingStartTime" binding="#{meetingStartTime}"
 									value="#{meetingController.meeting.time.startTime}" size="5"
@@ -551,12 +553,146 @@
 									update="activityMessages,addActivityPanel,scheduleMain" />
 							</p:outputPanel>
 						</h:panelGrid>
+					</p:outputPanel>
+				</p:outputPanel>
+
+				<!-- Add-Pause -->
+				<p:outputPanel
+					rendered="#{planningController.isCurrentActivityPause}"
+					style="width:100%;" id="addPausePanel">
+
+					<f:event listener="#{meetingController.doPreRender}"
+						type="preRenderView" />
+
+					<p:outputPanel id="innerAddPausePanel">
+
+						<h:panelGrid columns="2" columnClasses="half-column"
+							style="width:100%;">
+							<p:spacer style="height:15px;" />
+							<p:spacer />
+							<p:outputLabel value="Wochentag" for="pauseWeekday" />
+							<p:selectOneMenu id="pauseWeekday"
+								value="#{pauseController.pause.time.day}" required="true"
+								requiredMessage="Ein leerer Wochentag ist nicht gültig."
+								converter="WeekdayNameConverter">
+								<f:selectItems value="#{planningController.weekdays}" />
+							</p:selectOneMenu>
+							<p:outputLabel value="Start- und Endzeit" for="pauseStartTime" />
+							<h:panelGrid columns="3">
+								<p:calendar id="pauseStartTime" binding="#{pauseStartTime}"
+									value="#{pauseController.pause.time.startTime}" size="5"
+									pattern="HH:mm" locale="de" timeOnly="true" title="Startzeit"
+									required="true"
+									requiredMessage="Angabe der Startzeit wird benötigt."
+									maxHour="#{planningController.maxHour}"
+									minHour="#{planningController.minHour}">
+									<p:ajax event="change" process="@this" />
+								</p:calendar>
+								<h:outputText value=" bis " />
+								<p:calendar id="pauseEndTime"
+									value="#{pauseController.pause.time.endTime}" size="5"
+									pattern="HH:mm" locale="de" timeOnly="true" title="Endzeit"
+									required="true"
+									requiredMessage="Angabe der Endzeit wird benötigt."
+									maxHour="#{planningController.maxHour}"
+									minHour="#{planningController.minHour}">
+									<f:attribute name="startTime" value="#{pauseStartTime}" />
+									<f:validator validatorId="org.woym.TimeRangeValidator" />
+									<p:ajax event="change" process="@this" />
+								</p:calendar>
+							</h:panelGrid>
+							<p:outputLabel for="pauseSchoolclasses" value="Schulklassen" />
+							<p:selectCheckboxMenu id="pauseSchoolclasses"
+								value="#{pauseController.pause.schoolclasses}" filter="true"
+								filterMatchMode="contains" converter="SchoolclassNameConverter"
+								label="Bitte auswählen" required="true"
+								requiredMessage="Wählen Sie mindestens eine Schulklasse aus.">
+								<f:selectItems value="#{pauseController.allSchoolclasses}"
+									var="schoolclass" itemLabel="Klasse #{schoolclass.name}" />
+							</p:selectCheckboxMenu>
+							<p:spacer />
+							<p:outputPanel id="addPauseButton"
+								style="float:right;margin-top:10px;">
+								<p:commandButton value="Hinzufügen"
+									actionListener="#{pauseController.addPause}"
+									process="pauseWeekday,pauseStartTime,pauseEndTime,pauseSchoolclasses,@this"
+									update="activityMessages,addActivityPanel,scheduleMain" />
+							</p:outputPanel>
+						</h:panelGrid>
 
 					</p:outputPanel>
-					<p:outputPanel style="clear:right; margin-top:60px;">
-						<p:messages id="activityMessages" showDetail="true"
-							closable="false" />
-					</p:outputPanel>
+				</p:outputPanel>
+				
+				<!-- Add-CompoundLesson -->
+                <p:outputPanel
+                    rendered="#{planningController.isCurrentActivityPause}"
+                    style="width:100%;" id="addPausePanel">
+
+                    <f:event listener="#{meetingController.doPreRender}"
+                        type="preRenderView" />
+
+                    <p:outputPanel id="innerAddPausePanel">
+
+                        <h:panelGrid columns="2" columnClasses="half-column"
+                            style="width:100%;">
+                            <p:spacer style="height:15px;" />
+                            <p:spacer />
+                            <p:outputLabel value="Wochentag" for="pauseWeekday" />
+                            <p:selectOneMenu id="pauseWeekday"
+                                value="#{pauseController.pause.time.day}" required="true"
+                                requiredMessage="Ein leerer Wochentag ist nicht gültig."
+                                converter="WeekdayNameConverter">
+                                <f:selectItems value="#{planningController.weekdays}" />
+                            </p:selectOneMenu>
+                            <p:outputLabel value="Start- und Endzeit" for="pauseStartTime" />
+                            <h:panelGrid columns="3">
+                                <p:calendar id="pauseStartTime" binding="#{pauseStartTime}"
+                                    value="#{pauseController.pause.time.startTime}" size="5"
+                                    pattern="HH:mm" locale="de" timeOnly="true" title="Startzeit"
+                                    required="true"
+                                    requiredMessage="Angabe der Startzeit wird benötigt."
+                                    maxHour="#{planningController.maxHour}"
+                                    minHour="#{planningController.minHour}">
+                                    <p:ajax event="change" process="@this" />
+                                </p:calendar>
+                                <h:outputText value=" bis " />
+                                <p:calendar id="pauseEndTime"
+                                    value="#{pauseController.pause.time.endTime}" size="5"
+                                    pattern="HH:mm" locale="de" timeOnly="true" title="Endzeit"
+                                    required="true"
+                                    requiredMessage="Angabe der Endzeit wird benötigt."
+                                    maxHour="#{planningController.maxHour}"
+                                    minHour="#{planningController.minHour}">
+                                    <f:attribute name="startTime" value="#{pauseStartTime}" />
+                                    <f:validator validatorId="org.woym.TimeRangeValidator" />
+                                    <p:ajax event="change" process="@this" />
+                                </p:calendar>
+                            </h:panelGrid>
+                            <p:outputLabel for="pauseSchoolclasses" value="Schulklassen" />
+                            <p:selectCheckboxMenu id="pauseSchoolclasses"
+                                value="#{pauseController.pause.schoolclasses}" filter="true"
+                                filterMatchMode="contains" converter="SchoolclassNameConverter"
+                                label="Bitte auswählen" required="true"
+                                requiredMessage="Wählen Sie mindestens eine Schulklasse aus.">
+                                <f:selectItems value="#{pauseController.allSchoolclasses}"
+                                    var="schoolclass" itemLabel="Klasse #{schoolclass.name}" />
+                            </p:selectCheckboxMenu>
+                            <p:spacer />
+                            <p:outputPanel id="addPauseButton"
+                                style="float:right;margin-top:10px;">
+                                <p:commandButton value="Hinzufügen"
+                                    actionListener="#{pauseController.addPause}"
+                                    process="pauseWeekday,pauseStartTime,pauseEndTime,pauseSchoolclasses,@this"
+                                    update="activityMessages,addActivityPanel,scheduleMain" />
+                            </p:outputPanel>
+                        </h:panelGrid>
+
+                    </p:outputPanel>
+                </p:outputPanel>
+
+				<p:outputPanel style="clear:right; margin-top:60px;">
+					<p:messages id="activityMessages" showDetail="true"
+						closable="false" />
 				</p:outputPanel>
 			</p:outputPanel>
 		</p:dialog>

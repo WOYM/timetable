@@ -720,6 +720,17 @@ public class PlanningController implements Serializable {
 		return activityTOHolder.getActivityTO().getActivityTypeEnum()
 				.equals(ActivityTypeEnum.MEETING);
 	}
+	
+	/**
+	 * Diese Methode gibt an, ob es sich bei der derzeitigen {@link Activity} um
+	 * eine {@link Pause} handelt.
+	 * 
+	 * @return Wahrheitswert, ob es sich um eine Lesson handelt
+	 */
+	public Boolean getIsCurrentActivityPause() {
+		return activityTOHolder.getActivityTO().getActivityTypeEnum()
+				.equals(ActivityTypeEnum.PAUSE);
+	}
 
 	/**
 	 * Liefert die Startzeit der lokalen {@link Activity} in einem lesbaren

@@ -58,7 +58,9 @@ public class MeetingController implements Serializable {
 		
 		ActivityTO activityTO = activityTOHolder.getActivityTO();
 		meeting.setTime(activityTO.getTimePeriod());
-		meeting.setMeetingType(getAllMeetingTypes().get(0));
+		if(getAllMeetingTypes().size() > 0) {
+			meeting.setMeetingType(getAllMeetingTypes().get(0));
+		}
 
 		if(entityHelper.getTeacher() != null) {
 			List<TimePeriod> timePeriods = new ArrayList<>();
@@ -170,6 +172,10 @@ public class MeetingController implements Serializable {
 	}
 	
 	public void setMeetingMeetingType(MeetingType meetingType) {
+		if(meetingType == null) {
+			return;
+		}
+		
 		meeting.setMeetingType(meetingType);
 
 		Calendar calendar = Calendar.getInstance();

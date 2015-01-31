@@ -47,6 +47,10 @@ public class LessonTypeNameConverter implements Converter {
 	@Override
 	public String getAsString(FacesContext context, UIComponent uiComponent,
 			Object value) throws ConverterException {
+		if(value == null) {
+			return "";
+		}
+		
 		ActivityType lessonType = (ActivityType) value;
 		return lessonType.getName();
 	}
