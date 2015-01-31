@@ -220,21 +220,7 @@
 							process="@this" update="addActivityPanel"
 							oncomplete="PF('wAddActivityDialog').show();" />
 					</p:outputPanel>
-				</p:outputPanel>
-				<!-- Schedule -->
-				<p:contextMenu for="scheduleMain">
-					<p:menuitem value="Bearbeiten"
-						actionListener="#{academicYearAndClassController.doBeforeEdit}"
-						oncomplete="PF('wEditSchoolclassDialog').show();"
-						icon="ui-icon-pencil" process="@this" />
-					<p:menuitem value="Löschen" icon="ui-icon-close" update="@form"
-						rendered="#{not academicYearAndClassController.hideDeletionDialog}"
-						oncomplete="PF('wConfirmClassDelete').show();" process="@this" />
-					<p:menuitem value="Löschen" icon="ui-icon-close" update="@form"
-						rendered="#{academicYearAndClassController.hideDeletionDialog}"
-						action="#{academicYearAndClassController.deleteSchoolclass}"
-						process="@this" />
-				</p:contextMenu>
+				</p:outputPanel> 
 				<p:schedule id="scheduleMain" widgetVar="wScheduleMain"
 					showHeader="false" view="agendaWeek" allDaySlot="false"
 					axisFormat="HH:mm" value="#{planningController.scheduleModel}"
@@ -355,30 +341,30 @@
 								converter="WeekdayNameConverter">
 								<f:selectItems value="#{planningController.weekdays}" />
 							</p:selectOneMenu>
-							<p:outputLabel value="Start- und Endzeit des Unterrichts" for="lessonStartTime" />
-							<h:panelGrid columns="3">
-								<p:calendar id="lessonStartTime" binding="#{startTime}"
-									value="#{lessonController.lesson.time.startTime}" size="5"
-									pattern="HH:mm" locale="de" timeOnly="true" title="Startzeit"
-									required="true"
-									requiredMessage="Angabe der Startzeit wird benötigt."
-									maxHour="#{planningController.maxHour}"
-									minHour="#{planningController.minHour}">
-									<p:ajax event="change" process="@this" />
-								</p:calendar>
-								<h:outputText value=" bis " />
-								<p:calendar id="lessonEndTime"
-									value="#{lessonController.lesson.time.endTime}" size="5"
-									pattern="HH:mm" locale="de" timeOnly="true" title="Endzeit"
-									required="true"
-									requiredMessage="Angabe der Endzeit wird benötigt."
-									maxHour="#{planningController.maxHour}"
-									minHour="#{planningController.minHour}">
-									<f:attribute name="startTime" value="#{startTime}" />
-									<f:validator validatorId="org.woym.TimeRangeValidator" />
-									<p:ajax event="change" process="@this" />
-								</p:calendar>
-							</h:panelGrid>
+                            <p:outputLabel value="Start- und Endzeit des Unterrichts" for="lessonStartTime" />
+                            <h:panelGrid columns="3">
+                                <p:calendar id="lessonStartTime" binding="#{lessonStartTime}"
+                                    value="#{lessonController.lesson.time.startTime}" size="5"
+                                    pattern="HH:mm" locale="de" timeOnly="true" title="Startzeit"
+                                    required="true"
+                                    requiredMessage="Angabe der Startzeit wird benötigt."
+                                    maxHour="#{planningController.maxHour}"
+                                    minHour="#{planningController.minHour}">
+                                    <p:ajax event="change" process="@this" />
+                                </p:calendar>
+                                <h:outputText value=" bis " />
+                                <p:calendar id="lessonEndTime"
+                                    value="#{lessonController.lesson.time.endTime}" size="5"
+                                    pattern="HH:mm" locale="de" timeOnly="true" title="Endzeit"
+                                    required="true"
+                                    requiredMessage="Angabe der Endzeit wird benötigt."
+                                    maxHour="#{planningController.maxHour}"
+                                    minHour="#{planningController.minHour}">
+                                    <f:attribute name="startTime" value="#{lessonStartTime}" />
+                                    <f:validator validatorId="org.woym.TimeRangeValidator" />
+                                    <p:ajax event="change" process="@this" />
+                                </p:calendar>
+                            </h:panelGrid>
 							<p:outputLabel for="lessonTeachers" value="Lehrkraft" />
 							<p:selectOneMenu id="lessonTeachers"
 								value="#{lessonController.lessonEmployee}"
@@ -490,7 +476,7 @@
 							</p:selectOneMenu>
 							<p:outputLabel value="Start- und Endzeit des Treffens" for="meetingStartTime" />
 							<h:panelGrid columns="3">
-								<p:calendar id="meetingStartTime" binding="#{startTime}"
+								<p:calendar id="meetingStartTime" binding="#{meetingStartTime}"
 									value="#{meetingController.meeting.time.startTime}" size="5"
 									pattern="HH:mm" locale="de" timeOnly="true" title="Startzeit"
 									required="true"
@@ -507,7 +493,7 @@
 									requiredMessage="Angabe der Endzeit wird benötigt."
 									maxHour="#{planningController.maxHour}"
 									minHour="#{planningController.minHour}">
-									<f:attribute name="startTime" value="#{startTime}" />
+									<f:attribute name="startTime" value="#{meetingStartTime}" />
 									<f:validator validatorId="org.woym.TimeRangeValidator" />
 									<p:ajax event="change" process="@this" />
 								</p:calendar>

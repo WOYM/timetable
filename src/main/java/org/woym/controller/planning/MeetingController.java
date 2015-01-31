@@ -119,7 +119,12 @@ public class MeetingController implements Serializable {
 		if (meeting.getRooms().size() > 0) {
 			return meeting.getRooms().get(0);
 		}
-		return getRoomsForLocation().get(0);
+		
+		if(getRoomsForLocation().size() > 0) {
+			return getRoomsForLocation().get(0);
+		}
+		
+		return null;
 	}
 	
 	public List<Room> getRoomsForLocation() {

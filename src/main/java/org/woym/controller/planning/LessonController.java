@@ -182,7 +182,12 @@ public class LessonController implements Serializable {
 		if (lesson.getSchoolclasses().size() > 0) {
 			return lesson.getSchoolclasses().get(0);
 		}
-		return getSchoolclassesForAcademicYear().get(0);
+		
+		if (getSchoolclassesForAcademicYear().size() > 0) {
+			return getSchoolclassesForAcademicYear().get(0);
+		}
+		
+		return null;
 	}
 
 	public void setLessonSchoolclass(Schoolclass schoolclass) {
@@ -197,11 +202,11 @@ public class LessonController implements Serializable {
 		if (lesson.getRooms().size() > 0) {
 			return lesson.getRooms().get(0);
 		}
-		
+
 		if (getRoomsForLocation().size() > 0) {
 			return getRoomsForLocation().get(0);
 		}
-		 
+
 		return null;
 	}
 
