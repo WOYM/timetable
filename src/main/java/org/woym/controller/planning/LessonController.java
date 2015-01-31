@@ -62,7 +62,9 @@ public class LessonController implements Serializable {
 
 		ActivityTO activityTO = activityTOHolder.getActivityTO();
 		lesson.setTime(activityTO.getTimePeriod());
-		setLessonLessonType(getAllLessonTypes().get(0));
+		if (!getAllLessonTypes().isEmpty()) {
+			setLessonLessonType(getAllLessonTypes().get(0));
+		}
 
 		if (entityHelper.getTeacher() != null) {
 			setLessonEmployee(entityHelper.getTeacher());
