@@ -47,6 +47,10 @@ public class MeetingTypeNameConverter implements Converter {
 	@Override
 	public String getAsString(FacesContext context, UIComponent uiComponent,
 			Object value) throws ConverterException {
+		if(value == null) {
+			return "";
+		}
+		
 		ActivityType meetingType = (ActivityType) value;
 		return meetingType.getName();
 	}
