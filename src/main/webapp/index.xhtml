@@ -67,6 +67,12 @@
 						<p:column headerText="Kürzel">
 							<h:outputText value="#{teacher.symbol}" />
 						</p:column>
+						<p:column headerText="Wochenstunden">
+							<h:outputText value="#{teacher.hoursPerWeek}" />
+						</p:column>
+						<p:column headerText="Verteilte Stunden">
+							<h:outputText value="#{teacher.allocatedHours}" />
+						</p:column>
 					</p:dataTable>
 				</p:outputPanel>
 				<p:outputPanel rendered="#{not planningController.existTeachers}">
@@ -107,6 +113,12 @@
 						</p:column>
 						<p:column headerText="Kürzel">
 							<h:outputText value="#{pedagogicAssistant.symbol}" />
+						</p:column>
+						<p:column headerText="Wochenstunden">
+							<h:outputText value="#{pedagogicAssistant.hoursPerWeek}" />
+						</p:column>
+						<p:column headerText="Verteilte Stunden">
+							<h:outputText value="#{pedagogicAssistant.allocatedHours}" />
 						</p:column>
 					</p:dataTable>
 				</p:outputPanel>

@@ -25,6 +25,7 @@ import org.woym.common.messages.MessageHelper;
 import org.woym.common.objects.ActivityType;
 import org.woym.common.objects.Teacher;
 import org.woym.common.objects.spec.IMemento;
+import org.woym.controller.GUIController;
 import org.woym.logic.CommandHandler;
 import org.woym.logic.SuccessStatus;
 import org.woym.logic.command.AddCommand;
@@ -136,12 +137,22 @@ public class TeacherController implements Serializable {
 	 */
 	public void checkHoursPerWeek(ValueChangeEvent event) {
 		BigDecimal newValue = (BigDecimal) event.getNewValue();
+		if (newValue == null) {
+			return;
+		}
 		if (newValue.compareTo(teacher.getAllocatedHours()) < 0) {
 			FacesMessage msg = MessageHelper.generateMessage(
 					GenericErrorMessage.HOURS_PER_WEEK_EXCEEDED,
 					FacesMessage.SEVERITY_WARN);
 			FacesContext.getCurrentInstance().addMessage(null, msg);
 		}
+	}
+
+	/**
+	 * @see GUIController#refresh(org.woym.common.objects.Entity)
+	 */
+	public void refresh() {
+		GUIController.refresh(teacher);
 	}
 
 	/**

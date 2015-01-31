@@ -192,7 +192,8 @@
 				widgetVar="wEditPedagogicAssistantDialog" width="600" modal="true"
 				draggable="true" resizable="false" appendToBody="true"
 				dynamic="true" showEffect="fade" hideEffect="fade">
-				<p:ajax event="close" update="@form" />
+				<p:ajax event="close" update="@form"
+					listener="#{pedagogicAssistantController.refresh}" />
 				<p:outputPanel id="editPedagogicAssistantPanel">
 					<b><h:outputText
 							value="Bearbeiten von #{pedagogicAssistantController.pedagogicAssistant.name}" /></b>
@@ -219,6 +220,7 @@
 							<p:spinner id="editWeekhours" min="0" max="100" stepFactor="0.01"
 								value="#{pedagogicAssistantController.pedagogicAssistant.hoursPerWeek}"
 								valueChangeListener="#{pedagogicAssistantController.checkHoursPerWeek}">
+								<p:ajax event="change" process="@this" />
 								<p:ajax event="keyup" process="@this" />
 							</p:spinner>
 							<h:outputText

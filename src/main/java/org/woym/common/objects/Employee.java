@@ -126,7 +126,7 @@ public abstract class Employee extends org.woym.common.objects.Entity implements
 	}
 
 	public BigDecimal getHoursPerWeek() {
-		return hoursPerWeek;
+		return hoursPerWeek.setScale(SCALE);
 	}
 
 	public void setHoursPerWeek(BigDecimal hoursPerWeek) {
@@ -134,7 +134,7 @@ public abstract class Employee extends org.woym.common.objects.Entity implements
 	}
 
 	public BigDecimal getAllocatedHours() {
-		return allocatedHours;
+		return allocatedHours.setScale(SCALE);
 	}
 
 	public void setAllocatedHours(BigDecimal allocatedHours) {

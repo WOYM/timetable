@@ -182,7 +182,9 @@
 				widgetVar="wEditTeacherDialog" width="550" modal="true"
 				draggable="true" resizable="false" appendToBody="true"
 				dynamic="true" showEffect="fade" hideEffect="fade">
-				<p:ajax event="close" update="@form" />
+				<p:ajax event="close" update="@form"
+					listener="#{teacherController.refresh}">
+				</p:ajax>
 				<p:outputPanel id="editTeacherPanel">
 					<b><h:outputText
 							value="Bearbeiten von #{teacherController.teacher.name}" /></b>
@@ -207,6 +209,7 @@
 							<p:spinner id="editWeekhours" min="0" max="100" stepFactor="0.01"
 								value="#{teacherController.teacher.hoursPerWeek}"
 								valueChangeListener="#{teacherController.checkHoursPerWeek}">
+								<p:ajax event="change" process="@this" />
 								<p:ajax event="keyup" process="@this" />
 							</p:spinner>
 							<h:outputText
