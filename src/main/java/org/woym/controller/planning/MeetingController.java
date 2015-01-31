@@ -1,4 +1,4 @@
-﻿package org.woym.controller.planning;
+package org.woym.controller.planning;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -19,7 +19,6 @@ import org.woym.common.objects.Activity;
 import org.woym.common.objects.ActivityTO;
 import org.woym.common.objects.Employee;
 import org.woym.common.objects.EmployeeTimePeriods;
-import org.woym.common.objects.Lesson;
 import org.woym.common.objects.Location;
 import org.woym.common.objects.Meeting;
 import org.woym.common.objects.MeetingType;

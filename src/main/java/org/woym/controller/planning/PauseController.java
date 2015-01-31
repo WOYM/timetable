@@ -1,4 +1,4 @@
-﻿package org.woym.controller.planning;
+package org.woym.controller.planning;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -13,8 +13,6 @@ import javax.faces.context.FacesContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.woym.common.exceptions.DatasetException;
-
-import org.woym.common.objects.Meeting;
 
 import org.woym.common.objects.Activity;
 import org.woym.common.objects.ActivityTO;

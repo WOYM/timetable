@@ -19,7 +19,6 @@ import org.woym.common.objects.ActivityTO;
 import org.woym.common.objects.CompoundLesson;
 import org.woym.common.objects.Employee;
 import org.woym.common.objects.EmployeeTimePeriods;
-import org.woym.common.objects.Lesson;
 import org.woym.common.objects.Location;
 import org.woym.common.objects.Room;
 import org.woym.common.objects.Schoolclass;
