@@ -1,5 +1,7 @@
 package org.woym.common.config;
 
+import org.woym.common.objects.ColorEnum;
+
 /**
  * Dieses Enum enthält die Default-Einstellungen der Software. Mehrere Werte zu
  * einem Key müssen mittels Komma getrennt werden.
@@ -153,7 +155,40 @@ public enum DefaultConfigEnum {
 	 * lower nur für Kleinbuchstaben, upper nur für Großbuchstaben.
 	 */
 	SCHOOLCLASS_IDENTIFIER_CASE("schoolclass_identifier_case",
-			Config.IDENTIFIER_UPPER_CASE);
+			Config.IDENTIFIER_UPPER_CASE),
+
+	/**
+	 * Speichert die Farbe für eine Pause als StyleClass eines Eintrags aus dem
+	 * {@linkplain ColorEnum}.
+	 */
+	PAUSE_COLOR("pause_color", ColorEnum.ORANGE.getStyleClass()),
+
+	/**
+	 * Speichert die Farbe für einen Bandunterricht als StyleClass eines
+	 * Eintrags aus dem {@linkplain ColorEnum}.
+	 */
+	COMPOUND_LESSON_COLOR("compound_lesson_color", ColorEnum.DEFAULT
+			.getStyleClass()),
+
+	/**
+	 * Speichert die Farbe für eine Sitzung des Personals als StyleClass eines
+	 * Eintrags aus dem {@linkplain ColorEnum}.
+	 */
+	MEETING_COLOR("meeting_color", ColorEnum.YELLOW.getStyleClass()),
+
+	/**
+	 * Speichert die Farbe für einen anspannenden Unterricht als StyleClass
+	 * eines Eintrags aus dem {@linkplain ColorEnum}.
+	 */
+	LESSON_STRESSING_COLOR("lesson_stressing_color", ColorEnum.RED_DARK
+			.getStyleClass()),
+
+	/**
+	 * Speichert die Farbe für einen entspannenden Unterricht als StyleClass
+	 * eines Eintrags aus dem {@linkplain ColorEnum}.
+	 */
+	LESSON_RELAXING_COLOR("lesson_relaxing_color", ColorEnum.GREEN_DARK
+			.getStyleClass());
 
 	/**
 	 * Der Key der Property.

@@ -108,7 +108,15 @@ public enum GenericErrorMessage {
 	 * beim Drag&Drop von Aktivitäten auftritt.
 	 */
 	INVALID_WEEKDAY_IN_DISPLAY("Es wurde ein ungültiger Tag übergeben.",
-			"Die Aktivität kann nicht aktualisiert werden.");
+			"Die Aktivität kann nicht aktualisiert werden."),
+
+	/**
+	 * Diese Statusnachricht wird gewählt, wenn ein Wochentag, der als nicht zu
+	 * verplanend in den Systemeinstellungen eingetragen ist, gewählt wurde.
+	 */
+	INVALID_WEEKDAY(
+			"Der Wochentag ist ungültig.",
+			"Der gewählte Wochentage wurde in den Systemeinstellungen nicht als zu verplanend angegeben.");
 
 	/**
 	 * Zusammenfassung der Nachricht.
