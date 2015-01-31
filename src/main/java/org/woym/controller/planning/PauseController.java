@@ -13,11 +13,14 @@ import javax.faces.context.FacesContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.woym.common.exceptions.DatasetException;
+import org.woym.common.objects.Meeting;
 import org.woym.common.objects.Pause;
 import org.woym.common.objects.Schoolclass;
 import org.woym.logic.CommandHandler;
 import org.woym.logic.SuccessStatus;
 import org.woym.logic.command.AddCommand;
+import org.woym.logic.command.CommandCreator;
+import org.woym.logic.command.MacroCommand;
 import org.woym.logic.spec.IStatus;
 import org.woym.logic.util.ActivityValidator;
 import org.woym.persistence.DataAccess;
@@ -34,6 +37,8 @@ public class PauseController implements Serializable {
 	private static Logger LOGGER = LogManager.getLogger(PauseController.class);
 
 	private DataAccess dataAccess = DataAccess.getInstance();
+	private final CommandCreator commandCreator = CommandCreator.getInstance();
+
 	private ActivityValidator activityValidator = ActivityValidator
 			.getInstance();
 	private ScheduleModelHolder scheduleModelHolder = ScheduleModelHolder
@@ -61,8 +66,11 @@ public class PauseController implements Serializable {
 				pause.getTime());
 
 		if (status instanceof SuccessStatus) {
-			AddCommand<Pause> command = new AddCommand<Pause>(pause);
-			status = CommandHandler.getInstance().execute(command);
+
+			MacroCommand macro = commandCreator
+					.createEmployeeUpdateAddWorkingHours(pause);
+			macro.add(new AddCommand<Pause>(pause));
+			status = CommandHandler.getInstance().execute(macro);
 
 			if (status instanceof SuccessStatus) {
 				init();

@@ -18,6 +18,7 @@ import org.woym.common.exceptions.DatasetException;
 import org.woym.common.objects.ActivityTO;
 import org.woym.common.objects.Employee;
 import org.woym.common.objects.EmployeeTimePeriods;
+import org.woym.common.objects.Lesson;
 import org.woym.common.objects.Location;
 import org.woym.common.objects.Meeting;
 import org.woym.common.objects.MeetingType;
@@ -26,6 +27,8 @@ import org.woym.common.objects.TimePeriod;
 import org.woym.logic.CommandHandler;
 import org.woym.logic.SuccessStatus;
 import org.woym.logic.command.AddCommand;
+import org.woym.logic.command.CommandCreator;
+import org.woym.logic.command.MacroCommand;
 import org.woym.logic.spec.IStatus;
 import org.woym.logic.util.ActivityValidator;
 import org.woym.persistence.DataAccess;
@@ -38,31 +41,36 @@ import org.woym.ui.util.ScheduleModelHolder;
 public class MeetingController implements Serializable {
 
 	private static final long serialVersionUID = 4875106571364509043L;
-	
-	private static Logger LOGGER = LogManager.getLogger(MeetingController.class);
-	
+
+	private static Logger LOGGER = LogManager
+			.getLogger(MeetingController.class);
+
 	private DataAccess dataAccess = DataAccess.getInstance();
-	private ActivityValidator activityValidator = ActivityValidator.getInstance();
-	private ScheduleModelHolder scheduleModelHolder = ScheduleModelHolder.getInstance();
-	
+	private final CommandCreator commandCreator = CommandCreator.getInstance();
+
+	private ActivityValidator activityValidator = ActivityValidator
+			.getInstance();
+	private ScheduleModelHolder scheduleModelHolder = ScheduleModelHolder
+			.getInstance();
+
 	private ActivityTOHolder activityTOHolder = ActivityTOHolder.getInstance();
 	private EntityHelper entityHelper = EntityHelper.getInstance();
 
 	private Meeting meeting;
-	
+
 	private Location location;
 
 	@PostConstruct
 	public void init() {
 		meeting = new Meeting();
-		
+
 		ActivityTO activityTO = activityTOHolder.getActivityTO();
 		meeting.setTime(activityTO.getTimePeriod());
-		if(getAllMeetingTypes().size() > 0) {
+		if (getAllMeetingTypes().size() > 0) {
 			meeting.setMeetingType(getAllMeetingTypes().get(0));
 		}
 
-		if(entityHelper.getTeacher() != null) {
+		if (entityHelper.getTeacher() != null) {
 			List<TimePeriod> timePeriods = new ArrayList<>();
 			timePeriods.add(activityTO.getTimePeriod());
 			List<EmployeeTimePeriods> employeeTimePeriods = new ArrayList<>();
@@ -72,13 +80,13 @@ public class MeetingController implements Serializable {
 			employeeTimePeriods.add(employeeTimePeriod);
 			meeting.setEmployeeTimePeriods(employeeTimePeriods);
 		}
-		
-		if(entityHelper.getRoom() != null) {
+
+		if (entityHelper.getRoom() != null) {
 			location = entityHelper.getLocation();
 			setMeetingRoom(entityHelper.getRoom());
 		}
 	}
-	
+
 	/**
 	 * Diese Methode erzwingt eine Initialisierung der Bean bei jedem Rendern.
 	 * 
@@ -88,14 +96,16 @@ public class MeetingController implements Serializable {
 	public void doPreRender(ComponentSystemEvent event) {
 		init();
 	}
-	
+
 	public void addMeeting() {
 		IStatus status = activityValidator.validateActivity(meeting,
 				meeting.getTime());
 
 		if (status instanceof SuccessStatus) {
-			AddCommand<Meeting> command = new AddCommand<Meeting>(meeting);
-			status = CommandHandler.getInstance().execute(command);
+			MacroCommand macro = commandCreator
+					.createEmployeeUpdateAddWorkingHours(meeting);
+			macro.add(new AddCommand<Meeting>(meeting));
+			status = CommandHandler.getInstance().execute(macro);
 
 			if (status instanceof SuccessStatus) {
 				init();
@@ -116,66 +126,67 @@ public class MeetingController implements Serializable {
 		}
 
 	}
-	
+
 	public Room getMeetingRoom() {
 		if (meeting.getRooms().size() > 0) {
 			return meeting.getRooms().get(0);
 		}
-		
-		if(getRoomsForLocation().size() > 0) {
+
+		if (getRoomsForLocation().size() > 0) {
 			return getRoomsForLocation().get(0);
 		}
-		
+
 		return null;
 	}
-	
+
 	public List<Room> getRoomsForLocation() {
 		return location.getRooms();
 	}
-	
+
 	public void setMeetingEmployees(List<Employee> employees) {
 		List<EmployeeTimePeriods> employeeTimePeriods = new ArrayList<>();
-		for(Employee employee : employees) {
+		for (Employee employee : employees) {
 			List<TimePeriod> timePeriods = new ArrayList<>();
 			timePeriods.add(meeting.getTime());
-			
+
 			EmployeeTimePeriods periods = new EmployeeTimePeriods();
 			periods.setTimePeriods(timePeriods);
 			periods.setEmployee(employee);
-			
+
 			employeeTimePeriods.add(periods);
 		}
 	}
-	
+
 	public List<Employee> getMeetingEmployees() {
-		List<Employee> employees = new ArrayList<>();		
-		for(EmployeeTimePeriods employeeTimePeriods : meeting.getEmployeeTimePeriods()) {
+		List<Employee> employees = new ArrayList<>();
+		for (EmployeeTimePeriods employeeTimePeriods : meeting
+				.getEmployeeTimePeriods()) {
 			Employee employee = employeeTimePeriods.getEmployee();
-			if(!employees.contains(employee)) {
+			if (!employees.contains(employee)) {
 				employees.add(employee);
 			}
 		}
-		
+
 		return employees;
 	}
-	
+
 	public List<MeetingType> getAllMeetingTypes() {
 		List<MeetingType> meetingTypes = new ArrayList<>();
-		
+
 		try {
 			meetingTypes = dataAccess.getAllMeetingTypes();
 		} catch (DatasetException e) {
 			LOGGER.error(e);
 		}
-		
+
 		return meetingTypes;
 	}
-	
+
 	public void setMeetingMeetingType(MeetingType meetingType) {
-		if(meetingType == null) {
+		if (meetingType == null) {
 			return;
 		}
-		
+
 		meeting.setMeetingType(meetingType);
 
 		Calendar calendar = Calendar.getInstance();
@@ -188,11 +199,11 @@ public class MeetingController implements Serializable {
 		timePeriod.setEndTime(calendar.getTime());
 		meeting.setTime(timePeriod);
 	}
-	
+
 	public MeetingType getMeetingMeetingType() {
 		return meeting.getMeetingType();
 	}
-	
+
 	public Meeting getMeeting() {
 		return meeting;
 	}
