@@ -93,7 +93,7 @@ public class ConfigController implements Serializable {
 					.getSingleStringValue(DefaultConfigEnum.WEEKDAY_STARTTIME));
 			weekdayEndTime = sdf.parse(Config
 					.getSingleStringValue(DefaultConfigEnum.WEEKDAY_ENDTIME));
-			selectedWeekdays = ConfigControllerUtil.getSelectedWeekdays();
+			selectedWeekdays = Config.getValidWeekdays();
 			timetableGrid = Config
 					.getSingleIntValue(DefaultConfigEnum.TIMETABLE_GRID);
 
