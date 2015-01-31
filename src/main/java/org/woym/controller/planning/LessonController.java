@@ -16,6 +16,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.woym.common.exceptions.DatasetException;
 import org.woym.common.objects.AcademicYear;
+import org.woym.common.objects.Activity;
 import org.woym.common.objects.ActivityTO;
 import org.woym.common.objects.Employee;
 import org.woym.common.objects.EmployeeTimePeriods;
@@ -25,6 +26,7 @@ import org.woym.common.objects.Location;
 import org.woym.common.objects.Room;
 import org.woym.common.objects.Schoolclass;
 import org.woym.common.objects.TimePeriod;
+import org.woym.controller.PlanningController;
 import org.woym.logic.CommandHandler;
 import org.woym.logic.SuccessStatus;
 import org.woym.logic.command.AddCommand;
@@ -37,6 +39,23 @@ import org.woym.ui.util.ActivityTOHolder;
 import org.woym.ui.util.EntityHelper;
 import org.woym.ui.util.ScheduleModelHolder;
 
+/**
+ * <h1>LessonController</h1>
+ * <p>
+ * Diese Controller ist dafür zuständig, {@link Activity}-Objekte des Types
+ * {@link Lesson} zu konfigurieren.
+ * 
+ * @author Tim Hansen (tihansen)
+ * @version 0.2.0
+ * @since 0.1.0
+ *
+ * @see PlanningController
+ * @see ActivityValidator
+ * @see EntityHelper
+ * @see ScheduleModelHolder
+ * @see ActivityTOHolder
+ * @see ActivityTO
+ */
 @ViewScoped
 @ManagedBean(name = "lessonController")
 public class LessonController implements Serializable {
@@ -60,6 +79,13 @@ public class LessonController implements Serializable {
 	private AcademicYear academicYear;
 	private Location location;
 
+	/**
+	 * Diese Methode initialisiert die Bean und erzeugt eine neue {@link Lesson}
+	 * , die danach von dieser Bean verwaltet wird.
+	 * <p>
+	 * Es wird anhand der Daten der {@link EntityHelper}-Instanz ein erster
+	 * Datensatz für das Objekt erzeugt.
+	 */
 	@PostConstruct
 	public void init() {
 		lesson = new Lesson();
@@ -113,6 +139,10 @@ public class LessonController implements Serializable {
 		return lessonTypes;
 	}
 
+	/**
+	 * Diese Methode fügt mit Hilfe des {@link CommandHandler}s ein neues
+	 * {@link Activity}-Objekt des Types {@link Lesson} der Persistenz hinzu.
+	 */
 	public void addLesson() {
 		IStatus status = activityValidator.validateActivity(lesson,
 				lesson.getTime());
@@ -172,11 +202,20 @@ public class LessonController implements Serializable {
 		lesson.setEmployeeTimePeriods(employeeTimePeriods);
 	}
 
+	/**
+	 * Diese Methode setzt den {@link LessonType} der in dieser Bean verwalteten
+	 * {@link Activity}.
+	 * <p>
+	 * Dabei wird außerdem die Endzeit der {@link Activity} angepasst.
+	 * 
+	 * @param lessonType
+	 *            Der {@link LessonType}
+	 */
 	public void setLessonLessonType(LessonType lessonType) {
-		if(lessonType == null) {
+		if (lessonType == null) {
 			return;
 		}
-		
+
 		lesson.setLessonType(lessonType);
 
 		Calendar calendar = Calendar.getInstance();
@@ -194,14 +233,22 @@ public class LessonController implements Serializable {
 		if (lesson.getSchoolclasses().size() > 0) {
 			return lesson.getSchoolclasses().get(0);
 		}
-		
+
 		if (getSchoolclassesForAcademicYear().size() > 0) {
 			return getSchoolclassesForAcademicYear().get(0);
 		}
-		
+
 		return null;
 	}
 
+	/**
+	 * Diese Methode setzt eine einzelne {@link Schoolclass}.
+	 * <p>
+	 * Da eine Liste im Objekt vorgegeben ist, wird hier das Hinzufügen eines 
+	 * einzelnen Objektes erzwungen.
+	 * 
+	 * @param schoolclass
+	 */
 	public void setLessonSchoolclass(Schoolclass schoolclass) {
 		if (schoolclass != null) {
 			List<Schoolclass> schoolclasses = new ArrayList<>();

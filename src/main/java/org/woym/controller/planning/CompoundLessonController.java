@@ -14,6 +14,8 @@ import javax.faces.event.ComponentSystemEvent;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.woym.common.exceptions.DatasetException;
+import org.woym.common.objects.Activity;
+import org.woym.common.objects.ActivityTO;
 import org.woym.common.objects.CompoundLesson;
 import org.woym.common.objects.Employee;
 import org.woym.common.objects.EmployeeTimePeriods;
@@ -22,6 +24,7 @@ import org.woym.common.objects.Location;
 import org.woym.common.objects.Room;
 import org.woym.common.objects.Schoolclass;
 import org.woym.common.objects.TimePeriod;
+import org.woym.controller.PlanningController;
 import org.woym.logic.CommandHandler;
 import org.woym.logic.SuccessStatus;
 import org.woym.logic.command.AddCommand;
@@ -36,10 +39,20 @@ import org.woym.ui.util.ScheduleModelHolder;
 
 /**
  * <h1>CompoundLessonController</h1>
+ * <p>
+ * Diese Controller ist dafür zuständig, {@link Activity}-Objekte des Types
+ * {@link CompoundLesson} zu konfigurieren.
  * 
- * @author Tim Hansen
- * @version 0.1.0
+ * @author Tim Hansen (tihansen)
+ * @version 0.2.0
  * @since 0.1.0
+ *
+ * @see PlanningController
+ * @see ActivityValidator
+ * @see EntityHelper
+ * @see ScheduleModelHolder
+ * @see ActivityTOHolder
+ * @see ActivityTO
  */
 @ViewScoped
 @ManagedBean(name = "compoundLessonController")
@@ -64,6 +77,13 @@ public class CompoundLessonController implements Serializable {
 
 	private Location location;
 
+	/**
+	 * Diese Methode initialisiert die Bean und erzeugt eine neue
+	 * {@link CompoundLesson}, die danach von dieser Bean verwaltet wird.
+	 * <p>
+	 * Es wird anhand der Daten der {@link EntityHelper}-Instanz ein erster
+	 * Datensatz für das Objekt erzeugt.
+	 */
 	@PostConstruct
 	public void init() {
 		compoundLesson = new CompoundLesson();
@@ -107,6 +127,11 @@ public class CompoundLessonController implements Serializable {
 		init();
 	}
 
+	/**
+	 * Diese Methode fügt mit Hilfe des {@link CommandHandler}s ein neues
+	 * {@link Activity}-Objekt des Types {@link CompoundLesson} der Persistenz
+	 * hinzu.
+	 */
 	public void addCompoundLesson() {
 		IStatus status = activityValidator.validateActivity(compoundLesson,
 				compoundLesson.getTime());
@@ -128,6 +153,17 @@ public class CompoundLessonController implements Serializable {
 		FacesContext.getCurrentInstance().addMessage(null, message);
 	}
 
+	/**
+	 * Diese Methode setzt eine Liste von {@link Employee}-Objekten an dem
+	 * {@link Activity}-Objekt der Bean.
+	 * <p>
+	 * Da eine Liste von {@link EmployeeTimePeriods} vorgegeben ist, wird hier
+	 * eine Liste gesetzt, die jedem {@link Employee} einen Zeitslot der
+	 * Gesamtdauer der {@link Activity} zuordnet.
+	 * 
+	 * @param employees
+	 *            Die Liste der zu setzenden {@link Employee}-Objekte
+	 */
 	public void setCompoundLessonEmployees(List<Employee> employees) {
 		List<EmployeeTimePeriods> employeeTimePeriods = new ArrayList<>();
 		for (Employee employee : employees) {
