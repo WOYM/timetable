@@ -9,7 +9,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.transformers.MockTransformer;
 import org.powermock.modules.testng.PowerMockTestCase;
 import org.testng.AssertJUnit;
 import org.testng.annotations.Test;
