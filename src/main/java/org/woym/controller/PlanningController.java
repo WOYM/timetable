@@ -240,7 +240,7 @@ public class PlanningController implements Serializable {
 		if (status instanceof SuccessStatus) {
 			activity = null;
 		}
-		
+
 		scheduleModelHolder.updateScheduleModel();
 		FacesMessage msg = status.report();
 		FacesContext.getCurrentInstance().addMessage(null, msg);
@@ -385,9 +385,9 @@ public class PlanningController implements Serializable {
 
 		if (status instanceof SuccessStatus) {
 
-			activity.setTime(time);
 			MacroCommand macro = commandCreator
 					.createEmployeeUpdateSubstractWorkingHours(activity);
+			activity.setTime(time);
 			for (EmployeeTimePeriods timePeriods : activity
 					.getEmployeeTimePeriods()) {
 				for (TimePeriod timePeriod : timePeriods.getTimePeriods()) {
