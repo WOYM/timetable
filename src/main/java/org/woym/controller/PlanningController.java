@@ -198,6 +198,20 @@ public class PlanningController implements Serializable {
 	}
 
 	/**
+	 * Diese Methode liefert einen Wahrheitswert zurück, der Aussage darüber
+	 * macht, ob Samstag und Sonntag in der GUI gezeigt werden sollen.
+	 * 
+	 * @return Wahrheitswert, ob Samstag und Sonntag dargestellt werden sollen
+	 */
+	public Boolean getHasWeekend() {
+		if (getValidWeekdays().contains(Weekday.SATURDAY)
+				&& getValidWeekdays().contains(Weekday.SUNDAY)) {
+			return true;
+		}
+		return false;
+	}
+
+	/**
 	 * Wird aufgerufen, wenn in der Darstellung eine Aktivität selektiert wird.
 	 * <p>
 	 * Setzt die lokale Aktivität entsprechend der Angeklickten.

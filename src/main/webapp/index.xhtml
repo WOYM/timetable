@@ -239,7 +239,7 @@
 					slotMinutes="#{planningController.slotMinutes}"
 					columnFormat="week: 'ddd'" locale="de" timeZone="GMT+1"
 					initialDate="#{planningController.initalDate}" tooltip="true"
-					timeFormat="HH:mm{ - HH:mm}"
+					timeFormat="HH:mm{ - HH:mm}" showWeekends="#{planningController.hasWeekend}"
 					minTime="#{planningController.minTime}"
 					maxTime="#{planningController.maxTime}">
 					<p:ajax event="dateSelect"
