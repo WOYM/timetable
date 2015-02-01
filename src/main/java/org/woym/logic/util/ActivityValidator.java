@@ -55,7 +55,7 @@ public class ActivityValidator {
 			.getLogger(ActivityValidator.class);
 
 	private DataAccess dataAccess = DataAccess.getInstance();
-	
+
 	private TravelTimeList travelTimeList = TravelTimeList.getInstance();
 
 	private ActivityValidator() {
@@ -94,8 +94,9 @@ public class ActivityValidator {
 				GenericSuccessMessage.VALIDATE_SUCCESS);
 
 		try {
-			TimePeriod extendetTimePeriod = expandTimPeriodWhithTravelTime(activity, timePeriod);
-			
+			TimePeriod extendetTimePeriod = expandTimPeriodWhithTravelTime(
+					activity, timePeriod);
+
 			status = validateActivityEmployees(activity, extendetTimePeriod);
 			if (status instanceof FailureStatus) {
 				return status;
@@ -106,7 +107,7 @@ public class ActivityValidator {
 				return status;
 			}
 
-			status = validateActivityRooms(activity, extendetTimePeriod);
+			status = validateActivityRooms(activity, timePeriod);
 			if (status instanceof FailureStatus) {
 				return status;
 			}
@@ -125,9 +126,8 @@ public class ActivityValidator {
 	public TimePeriod expandTimPeriodWhithTravelTime(final Activity activity,
 			final TimePeriod timePeriod) throws DatasetException {
 
-		List<EmployeeTimePeriods> list = activity
-				.getEmployeeTimePeriods();
-		if(list.isEmpty() || activity instanceof Pause) {
+		List<EmployeeTimePeriods> list = activity.getEmployeeTimePeriods();
+		if (list.isEmpty() || activity instanceof Pause) {
 			return timePeriod;
 		}
 		TimePeriod extendetTimePeriod = new TimePeriod();
@@ -138,36 +138,43 @@ public class ActivityValidator {
 		Date endingTime = new Date();
 		endingTime.setTime(timePeriod.getEndTime().getTime());
 		extendetTimePeriod.setEndTime(endingTime);
-		
-		Location location = dataAccess.getOneLocation(activity.getRooms().get(0));
-		
-		//Geordnete Zeitliche reinfolge.
+
+		Location location = dataAccess.getOneLocation(activity.getRooms()
+				.get(0));
+
+		// Geordnete Zeitliche reinfolge.
 		EmployeeTimePeriods employeeTimePeriods = list.get(0);
 
-		List<Activity> activityList = dataAccess.getAllActivitiesBefore(employeeTimePeriods.getEmployee(),
-				timePeriod);
-		if(!activityList.isEmpty()){
+		List<Activity> activityList = dataAccess.getAllActivitiesBefore(
+				employeeTimePeriods.getEmployee(), timePeriod);
+		if (!activityList.isEmpty()) {
 			Activity act = activityList.get(0);
-			LinkedList<Room> linkedList= new LinkedList<>(act.getRooms());
-			Location localLocation =  dataAccess.getOneLocation(linkedList.getLast());
+			LinkedList<Room> linkedList = new LinkedList<>(act.getRooms());
+			Location localLocation = dataAccess.getOneLocation(linkedList
+					.getLast());
 			Edge edge = travelTimeList.getEdge(location, localLocation);
-			if(edge != null) {
-				extendetTimePeriod.getStartTime().setMinutes(extendetTimePeriod.getStartTime().getMinutes() - edge.getDistance());
+			if (edge != null) {
+				extendetTimePeriod.getStartTime().setMinutes(
+						extendetTimePeriod.getStartTime().getMinutes()
+								- edge.getDistance());
 			}
-			
-		}
-		activityList = dataAccess.getAllActivitiesAfter(employeeTimePeriods.getEmployee(),
-				timePeriod);
 
-		if(!activityList.isEmpty()){
+		}
+		activityList = dataAccess.getAllActivitiesAfter(
+				employeeTimePeriods.getEmployee(), timePeriod);
+
+		if (!activityList.isEmpty()) {
 			Activity act = activityList.get(0);
-			LinkedList<Room> linkedList= new LinkedList<>(act.getRooms());
-			Location localLocation =  dataAccess.getOneLocation(linkedList.getFirst());
+			LinkedList<Room> linkedList = new LinkedList<>(act.getRooms());
+			Location localLocation = dataAccess.getOneLocation(linkedList
+					.getFirst());
 			Edge edge = travelTimeList.getEdge(location, localLocation);
-			if(edge != null) {
-				extendetTimePeriod.getEndTime().setMinutes(extendetTimePeriod.getEndTime().getMinutes() + edge.getDistance());
+			if (edge != null) {
+				extendetTimePeriod.getEndTime().setMinutes(
+						extendetTimePeriod.getEndTime().getMinutes()
+								+ edge.getDistance());
 			}
-			
+
 		}
 		return extendetTimePeriod;
 
@@ -178,12 +185,12 @@ public class ActivityValidator {
 		IStatus status = new SuccessStatus(
 				GenericSuccessMessage.VALIDATE_SUCCESS);
 
-			if ((activity.getEmployeeTimePeriods().size() > 0)
-					&& !validateEmployees(activity, timePeriod)) {
-				return new FailureStatus(
-						SpecificErrorMessage.VALIDATE_ACTIVITY_EXCEPTION,
-						Employee.class, FacesMessage.SEVERITY_ERROR);
-			}
+		if ((activity.getEmployeeTimePeriods().size() > 0)
+				&& !validateEmployees(activity, timePeriod)) {
+			return new FailureStatus(
+					SpecificErrorMessage.VALIDATE_ACTIVITY_EXCEPTION,
+					Employee.class, FacesMessage.SEVERITY_ERROR);
+		}
 
 		return status;
 	}
@@ -193,12 +200,12 @@ public class ActivityValidator {
 		IStatus status = new SuccessStatus(
 				GenericSuccessMessage.VALIDATE_SUCCESS);
 
-			if ((activity.getSchoolclasses().size() > 0)
-					&& !validateSchoolclasses(activity, timePeriod)) {
-				return new FailureStatus(
-						SpecificErrorMessage.VALIDATE_ACTIVITY_EXCEPTION,
-						Schoolclass.class, FacesMessage.SEVERITY_ERROR);
-			}
+		if ((activity.getSchoolclasses().size() > 0)
+				&& !validateSchoolclasses(activity, timePeriod)) {
+			return new FailureStatus(
+					SpecificErrorMessage.VALIDATE_ACTIVITY_EXCEPTION,
+					Schoolclass.class, FacesMessage.SEVERITY_ERROR);
+		}
 
 		return status;
 	}
@@ -208,12 +215,12 @@ public class ActivityValidator {
 		IStatus status = new SuccessStatus(
 				GenericSuccessMessage.VALIDATE_SUCCESS);
 
-			if ((activity.getRooms().size() > 0)
-					&& !validateRooms(activity, timePeriod)) {
-				return new FailureStatus(
-						SpecificErrorMessage.VALIDATE_ACTIVITY_EXCEPTION,
-						Employee.class, FacesMessage.SEVERITY_ERROR);
-			}
+		if ((activity.getRooms().size() > 0)
+				&& !validateRooms(activity, timePeriod)) {
+			return new FailureStatus(
+					SpecificErrorMessage.VALIDATE_ACTIVITY_EXCEPTION,
+					Employee.class, FacesMessage.SEVERITY_ERROR);
+		}
 
 		return status;
 	}

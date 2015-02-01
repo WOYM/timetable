@@ -22,6 +22,7 @@ import org.woym.common.objects.Location;
 import org.woym.common.objects.MeetingType;
 import org.woym.common.objects.Room;
 import org.woym.common.objects.spec.IMemento;
+import org.woym.controller.GUIController;
 import org.woym.logic.CommandHandler;
 import org.woym.logic.SuccessStatus;
 import org.woym.logic.command.AddCommand;
@@ -175,6 +176,13 @@ public class MeetingTypeController implements Serializable {
 		}
 
 		FacesContext.getCurrentInstance().addMessage(null, msg);
+	}
+
+	/**
+	 * @see GUIController#refresh(org.woym.common.objects.Entity)
+	 */
+	public void refresh() {
+		GUIController.refresh(meetingType);
 	}
 
 	public MeetingType getMeetingType() {

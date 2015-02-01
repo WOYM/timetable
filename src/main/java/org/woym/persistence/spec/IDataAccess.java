@@ -44,6 +44,15 @@ public interface IDataAccess extends IAcademicYearDAO, IActivityDAO,
 	public void delete(Entity object) throws DatasetException;
 
 	/**
+	 * Aktualisiert das übergebene Objekt im Cache aus der Datenbank.
+	 * 
+	 * @param entity
+	 *            - das zu aktualisierende Objekt
+	 * @throws DatasetException
+	 */
+	public void refresh(Entity entity) throws DatasetException;
+
+	/**
 	 * Sucht nach einem Objekt der übergebenen Klasse, welches den übergebenen
 	 * Long-Wert als Primärschlüssel besitzt. Exisitert kein solches Objekt,
 	 * wird {@code null} zurückgegeben. Tritt dabei ein Fehler auf, wird eine

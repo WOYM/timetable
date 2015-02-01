@@ -67,6 +67,12 @@
 						<p:column headerText="Kürzel">
 							<h:outputText value="#{teacher.symbol}" />
 						</p:column>
+						<p:column headerText="Wochenstunden">
+							<h:outputText value="#{teacher.hoursPerWeek}" />
+						</p:column>
+						<p:column headerText="Verteilte Stunden">
+							<h:outputText value="#{teacher.allocatedHours}" />
+						</p:column>
 					</p:dataTable>
 				</p:outputPanel>
 				<p:outputPanel rendered="#{not planningController.existTeachers}">
@@ -107,6 +113,12 @@
 						</p:column>
 						<p:column headerText="Kürzel">
 							<h:outputText value="#{pedagogicAssistant.symbol}" />
+						</p:column>
+						<p:column headerText="Wochenstunden">
+							<h:outputText value="#{pedagogicAssistant.hoursPerWeek}" />
+						</p:column>
+						<p:column headerText="Verteilte Stunden">
+							<h:outputText value="#{pedagogicAssistant.allocatedHours}" />
 						</p:column>
 					</p:dataTable>
 				</p:outputPanel>
@@ -474,7 +486,7 @@
 								value="#{meetingController.meeting.time.day}" required="true"
 								requiredMessage="Ein leerer Wochentag ist nicht gültig."
 								converter="WeekdayNameConverter">
-								<f:selectItems value="#{planningController.weekdays}" />
+								<f:selectItems value="#{planningController.validWeekdays}" />
 							</p:selectOneMenu>
 							<p:outputLabel value="Start- und Endzeit" for="meetingStartTime" />
 							<h:panelGrid columns="3">
@@ -575,7 +587,7 @@
 								value="#{pauseController.pause.time.day}" required="true"
 								requiredMessage="Ein leerer Wochentag ist nicht gültig."
 								converter="WeekdayNameConverter">
-								<f:selectItems value="#{planningController.weekdays}" />
+								<f:selectItems value="#{planningController.validWeekdays}" />
 							</p:selectOneMenu>
 							<p:outputLabel value="Start- und Endzeit" for="pauseStartTime" />
 							<h:panelGrid columns="3">
@@ -643,7 +655,7 @@
 								required="true"
 								requiredMessage="Ein leerer Wochentag ist nicht gültig."
 								converter="WeekdayNameConverter">
-								<f:selectItems value="#{planningController.weekdays}" />
+								<f:selectItems value="#{planningController.validWeekdays}" />
 							</p:selectOneMenu>
 							<p:outputLabel value="Start- und Endzeit"
 								for="compoundLessonStartTime" />
