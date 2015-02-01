@@ -1,7 +1,6 @@
 package org.woym.common.objects;
 
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -64,15 +63,15 @@ public abstract class Employee extends org.woym.common.objects.Entity implements
 	 * Anzahl der Wochenstunden. Darf nicht null sein. Intern immer in
 	 * Zeistunden.
 	 */
-	@Column(nullable = false)
-	private BigDecimal hoursPerWeek = new BigDecimal("0");
+	@Column(nullable = false, scale = SCALE, precision = 10, columnDefinition="DECIMAL(10, 2)")
+	private BigDecimal hoursPerWeek = new BigDecimal("0").setScale(SCALE);
 
 	/**
 	 * Anzahl der Stunden, die die Person des Personals auf Aktivitäten verteilt
 	 * ist. Bei Erzeugung sind dies null Stunden.
 	 */
-	@Column(nullable = false)
-	private BigDecimal allocatedHours = new BigDecimal("0");
+	@Column(nullable = false, scale = SCALE, precision = 10, columnDefinition="DECIMAL(10, 2)")
+	private BigDecimal allocatedHours = new BigDecimal("0").setScale(SCALE);
 
 	/**
 	 * Die anrechenbaren Ersatzleistungen des Lehrers.
@@ -126,20 +125,19 @@ public abstract class Employee extends org.woym.common.objects.Entity implements
 	}
 
 	public BigDecimal getHoursPerWeek() {
-		return hoursPerWeek;
+		return hoursPerWeek.setScale(SCALE);
 	}
 
 	public void setHoursPerWeek(BigDecimal hoursPerWeek) {
-		this.hoursPerWeek = hoursPerWeek.setScale(SCALE, RoundingMode.HALF_UP);
+		this.hoursPerWeek = hoursPerWeek.setScale(SCALE);
 	}
 
 	public BigDecimal getAllocatedHours() {
-		return allocatedHours;
+		return allocatedHours.setScale(SCALE);
 	}
 
 	public void setAllocatedHours(BigDecimal allocatedHours) {
-		this.allocatedHours = allocatedHours.setScale(SCALE,
-				RoundingMode.HALF_UP);
+		this.allocatedHours = allocatedHours.setScale(SCALE);
 	}
 
 	public List<ChargeableCompensation> getCompensations() {

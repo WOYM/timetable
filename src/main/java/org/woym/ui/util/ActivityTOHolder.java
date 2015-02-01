@@ -1,8 +1,8 @@
 package org.woym.ui.util;
 
-
 import java.io.Serializable;
 
+import org.woym.common.config.DefaultConfigEnum;
 import org.woym.common.objects.ActivityTO;
 import org.woym.controller.PlanningController;
 import org.woym.controller.planning.LessonController;
@@ -47,9 +47,11 @@ public class ActivityTOHolder implements Serializable {
 	}
 
 	/**
-	 * Erzeugt ein neues leeres {@link ActivityTO}, dessen Start- und Endzeit auf der
-	 * derzeitigen Uhrzeit des Benutzers steht und bereits im richtigen Zeitraum
-	 * der Anzeige positioniert ist.
+	 * Erzeugt ein neues leeres {@link ActivityTO}, dessen Startzeit auf
+	 * Startzeit eines Wochentages liegt und dessen Endzeit um den Property-Wert von
+	 * {@linkplain DefaultConfigEnum#TYPICAL_ACTIVITY_DURATION} nach der
+	 * Startzeit liegt und bereits im richtigen Zeitraum der Anzeige
+	 * positioniert ist.
 	 */
 	public void plainActivityTO() {
 		activityTO = new ActivityTO();

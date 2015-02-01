@@ -1,6 +1,7 @@
 package org.woym.controller.manage;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -9,6 +10,7 @@ import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
+import javax.faces.event.ValueChangeEvent;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -23,6 +25,7 @@ import org.woym.common.messages.MessageHelper;
 import org.woym.common.objects.ActivityType;
 import org.woym.common.objects.PedagogicAssistant;
 import org.woym.common.objects.spec.IMemento;
+import org.woym.controller.GUIController;
 import org.woym.logic.CommandHandler;
 import org.woym.logic.SuccessStatus;
 import org.woym.logic.command.AddCommand;
@@ -123,6 +126,33 @@ public class PedagogicAssistantController implements Serializable {
 	 */
 	public void onTransfer(TransferEvent event) {
 		pedagogicAssistant.setPossibleActivityTypes(activityTypes.getTarget());
+	}
+
+	/**
+	 * Prüft bei Veränderung der Wochenstunden im Dialog, ob diese kleiner als
+	 * die verteilten Stunden des päd. Mitarbeiters sind und fügt dem
+	 * FacesContext in diesem Falle eine Warn-Message hinzu.
+	 * 
+	 * @param event
+	 */
+	public void checkHoursPerWeek(ValueChangeEvent event) {
+		BigDecimal newValue = (BigDecimal) event.getNewValue();
+		if (newValue == null) {
+			return;
+		}
+		if (newValue.compareTo(pedagogicAssistant.getAllocatedHours()) < 0) {
+			FacesMessage msg = MessageHelper.generateMessage(
+					GenericErrorMessage.HOURS_PER_WEEK_EXCEEDED,
+					FacesMessage.SEVERITY_WARN);
+			FacesContext.getCurrentInstance().addMessage(null, msg);
+		}
+	}
+
+	/**
+	 * @see GUIController#refresh(org.woym.common.objects.Entity)
+	 */
+	public void refresh() {
+		GUIController.refresh(pedagogicAssistant);
 	}
 
 	/**

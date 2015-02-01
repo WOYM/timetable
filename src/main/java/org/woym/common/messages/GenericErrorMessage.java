@@ -116,7 +116,14 @@ public enum GenericErrorMessage {
 	 */
 	INVALID_WEEKDAY(
 			"Der Wochentag ist ungültig.",
-			"Der gewählte Wochentage wurde in den Systemeinstellungen nicht als zu verplanend angegeben.");
+			"Der gewählte Wochentage wurde in den Systemeinstellungen nicht als zu verplanend angegeben."),
+
+	/**
+	 * Diese Statusnachricht wird gewählt, wenn die Wochenstunden eines
+	 * Mitarbeiters überschritten werden.
+	 */
+	HOURS_PER_WEEK_EXCEEDED("Wochenstunden werden überschritten.",
+			"Die Wochenstunden des Mitarbeiters werden überschritten.");
 
 	/**
 	 * Zusammenfassung der Nachricht.

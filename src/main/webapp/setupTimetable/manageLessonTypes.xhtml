@@ -165,7 +165,8 @@
 				width="500" modal="true" draggable="true" resizable="false"
 				appendToBody="true" dynamic="true" showEffect="fade"
 				hideEffect="fade">
-				<p:ajax event="close" update="@form" />
+				<p:ajax event="close" update="@form"
+					listener="#{lessonTypeController.refresh}" />
 				<p:outputPanel id="editLessonTypePanel">
 					<b><h:outputText
 							value="Bearbeiten von #{lessonTypeController.lessonType.name}" /></b>

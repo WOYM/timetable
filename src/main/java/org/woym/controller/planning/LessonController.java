@@ -30,6 +30,8 @@ import org.woym.controller.PlanningController;
 import org.woym.logic.CommandHandler;
 import org.woym.logic.SuccessStatus;
 import org.woym.logic.command.AddCommand;
+import org.woym.logic.command.CommandCreator;
+import org.woym.logic.command.MacroCommand;
 import org.woym.logic.spec.IStatus;
 import org.woym.logic.util.ActivityValidator;
 import org.woym.persistence.DataAccess;
@@ -61,6 +63,8 @@ public class LessonController implements Serializable {
 	private static final long serialVersionUID = -3548148989241300086L;
 
 	private static Logger LOGGER = LogManager.getLogger(LessonController.class);
+	
+	private final CommandCreator commandCreator = CommandCreator.getInstance();
 
 	private DataAccess dataAccess = DataAccess.getInstance();
 	private ActivityValidator activityValidator = ActivityValidator
@@ -144,8 +148,10 @@ public class LessonController implements Serializable {
 				lesson.getTime());
 
 		if (status instanceof SuccessStatus) {
-			AddCommand<Lesson> command = new AddCommand<Lesson>(lesson);
-			status = CommandHandler.getInstance().execute(command);
+			MacroCommand macro = commandCreator
+					.createEmployeeUpdateAddWorkingHours(lesson);
+			macro.add(new AddCommand<Lesson>(lesson));
+			status = CommandHandler.getInstance().execute(macro);
 
 			if (status instanceof SuccessStatus) {
 				init();

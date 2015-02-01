@@ -1,7 +1,13 @@
 package org.woym.common.objects;
 
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
 
+import org.woym.common.config.Config;
+import org.woym.common.config.DefaultConfigEnum;
 import org.woym.controller.PlanningController;
 
 /**
@@ -38,8 +44,25 @@ public class ActivityTO {
 		calendar.set(Calendar.DAY_OF_MONTH, PlanningController.CALENDAR_DAY);
 
 		period = new TimePeriod();
-		period.setDay(Weekday.MONDAY);
-		period.setStartTime(calendar.getTime());
+		List<Weekday> weekdays = Config.getValidWeekdays();
+		if (!weekdays.isEmpty()) {
+			period.setDay(weekdays.get(0));
+		}
+		SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
+		Date startTime = calendar.getTime();
+		Date endTime = calendar.getTime();
+		try {
+			startTime = sdf.parse(Config
+					.getSingleStringValue(DefaultConfigEnum.WEEKDAY_STARTTIME));
+			endTime.setTime(startTime.getTime()
+					+ TimeUnit.MINUTES.toMillis(Config
+							.getSingleIntValue(DefaultConfigEnum.TYPICAL_ACTIVITY_DURATION)));
+		} catch (Exception e) {
+			startTime = calendar.getTime();
+			endTime.setTime(startTime.getTime() + TimeUnit.MINUTES.toMillis(45));
+		}
+
+		period.setStartTime(startTime);
 		period.setEndTime(calendar.getTime());
 
 		activityTypeEnum = ActivityTypeEnum.LESSON;

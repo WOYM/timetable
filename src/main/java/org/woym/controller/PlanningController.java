@@ -36,6 +36,7 @@ import org.woym.common.objects.Lesson;
 import org.woym.common.objects.LessonType;
 import org.woym.common.objects.Location;
 import org.woym.common.objects.Meeting;
+import org.woym.common.objects.Pause;
 import org.woym.common.objects.PedagogicAssistant;
 import org.woym.common.objects.Room;
 import org.woym.common.objects.Schoolclass;
@@ -45,6 +46,8 @@ import org.woym.common.objects.Weekday;
 import org.woym.common.objects.spec.IMemento;
 import org.woym.logic.CommandHandler;
 import org.woym.logic.SuccessStatus;
+import org.woym.logic.command.CommandCreator;
+import org.woym.logic.command.MacroCommand;
 import org.woym.logic.command.UpdateCommand;
 import org.woym.logic.spec.IStatus;
 import org.woym.logic.util.ActivityValidator;
@@ -76,6 +79,8 @@ public class PlanningController implements Serializable {
 	public static final int CALENDAR_DAY = 5;
 
 	private DataAccess dataAccess = DataAccess.getInstance();
+	private final CommandCreator commandCreator = CommandCreator.getInstance();
+
 	private ActivityValidator activityValidator = ActivityValidator
 			.getInstance();
 	private CommandHandler commandHandler = CommandHandler.getInstance();
@@ -296,8 +301,11 @@ public class PlanningController implements Serializable {
 	 */
 	public void onDateSelect(SelectEvent selectEvent) {
 		Date date = (Date) selectEvent.getObject();
-
 		activityTOHolder.plainActivityTO();
+
+		if (!validWeekdays.contains(Weekday.getByDate(date))) {
+			return;
+		}
 
 		TimePeriod timePeriod = activityTOHolder.getActivityTO()
 				.getTimePeriod();
@@ -344,7 +352,7 @@ public class PlanningController implements Serializable {
 		if (status instanceof SuccessStatus) {
 
 			activity.setTime(time);
-
+			MacroCommand macro = commandCreator.createEmployeeUpdateSubstractWorkingHours(activity);
 			for (EmployeeTimePeriods timePeriods : activity
 					.getEmployeeTimePeriods()) {
 				for (TimePeriod timePeriod : timePeriods.getTimePeriods()) {
@@ -354,11 +362,11 @@ public class PlanningController implements Serializable {
 					timePeriod.setEndTime(endTime);
 				}
 			}
+			macro.addAll(commandCreator.createEmployeeUpdateAddWorkingHours(activity));
+			macro.add(new UpdateCommand<Activity>(
+					activity, activityMemento));
 
-			UpdateCommand<Activity> command = new UpdateCommand<Activity>(
-					activity, activityMemento);
-
-			status = commandHandler.execute(command);
+			status = commandHandler.execute(macro);
 		} else {
 			activity.setMemento(activityMemento);
 		}
@@ -401,28 +409,7 @@ public class PlanningController implements Serializable {
 	 */
 	public List<Weekday> getValidWeekdays() {
 		if (validWeekdays == null) {
-			validWeekdays = new ArrayList<Weekday>();
-			if (Config.getBooleanValue(DefaultConfigEnum.WEEKDAY_MONDAY)) {
-				validWeekdays.add(Weekday.MONDAY);
-			}
-			if (Config.getBooleanValue(DefaultConfigEnum.WEEKDAY_TUESDAY)) {
-				validWeekdays.add(Weekday.TUESDAY);
-			}
-			if (Config.getBooleanValue(DefaultConfigEnum.WEEKDAY_WEDNESDAY)) {
-				validWeekdays.add(Weekday.WEDNESDAY);
-			}
-			if (Config.getBooleanValue(DefaultConfigEnum.WEEKDAY_THURSDAY)) {
-				validWeekdays.add(Weekday.THURSDAY);
-			}
-			if (Config.getBooleanValue(DefaultConfigEnum.WEEKDAY_FRIDAY)) {
-				validWeekdays.add(Weekday.FRIDAY);
-			}
-			if (Config.getBooleanValue(DefaultConfigEnum.WEEKDAY_SATURDAY)) {
-				validWeekdays.add(Weekday.SATURDAY);
-			}
-			if (Config.getBooleanValue(DefaultConfigEnum.WEEKDAY_SUNDAY)) {
-				validWeekdays.add(Weekday.SUNDAY);
-			}
+			validWeekdays = Config.getValidWeekdays();
 		}
 		return validWeekdays;
 	}
@@ -720,7 +707,7 @@ public class PlanningController implements Serializable {
 		return activityTOHolder.getActivityTO().getActivityTypeEnum()
 				.equals(ActivityTypeEnum.MEETING);
 	}
-	
+
 	/**
 	 * Diese Methode gibt an, ob es sich bei der derzeitigen {@link Activity} um
 	 * eine {@link Pause} handelt.
