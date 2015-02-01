@@ -94,7 +94,7 @@ public class PedagogicAssistantController implements Serializable {
 			possibleActivityTypes = pedagogicAssistant
 					.getPossibleActivityTypes();
 
-			for (ActivityType activityType : dataAccess.getAllActivityTypes()) {
+			for (ActivityType activityType : dataAccess.getAllLessonTypes()) {
 				if (!possibleActivityTypes.contains(activityType)) {
 					allActivityTypes.add(activityType);
 				}
