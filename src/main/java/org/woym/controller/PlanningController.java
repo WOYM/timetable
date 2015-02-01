@@ -198,6 +198,20 @@ public class PlanningController implements Serializable {
 	}
 
 	/**
+	 * Diese Methode liefert einen Wahrheitswert zurück, der Aussage darüber
+	 * macht, ob Samstag und Sonntag in der GUI gezeigt werden sollen.
+	 * 
+	 * @return Wahrheitswert, ob Samstag und Sonntag dargestellt werden sollen
+	 */
+	public Boolean getHasWeekend() {
+		if (getValidWeekdays().contains(Weekday.SATURDAY)
+				&& getValidWeekdays().contains(Weekday.SUNDAY)) {
+			return true;
+		}
+		return false;
+	}
+
+	/**
 	 * Wird aufgerufen, wenn in der Darstellung eine Aktivität selektiert wird.
 	 * <p>
 	 * Setzt die lokale Aktivität entsprechend der Angeklickten.
@@ -210,6 +224,25 @@ public class PlanningController implements Serializable {
 				.getObject();
 
 		setActivity((Activity) event.getData());
+	}
+
+	/**
+	 * Diese Methode löscht die momentan in der Bean bekannte {@link Activity}
+	 */
+	public void deleteActivity() {
+		if (activity == null) {
+			return;
+		}
+
+		MacroCommand command = commandCreator.createDeleteCommand(activity);
+		IStatus status = commandHandler.execute(command);
+
+		if (status instanceof SuccessStatus) {
+			activity = null;
+		}
+
+		FacesMessage msg = status.report();
+		FacesContext.getCurrentInstance().addMessage(null, msg);
 	}
 
 	/**
@@ -352,7 +385,8 @@ public class PlanningController implements Serializable {
 		if (status instanceof SuccessStatus) {
 
 			activity.setTime(time);
-			MacroCommand macro = commandCreator.createEmployeeUpdateSubstractWorkingHours(activity);
+			MacroCommand macro = commandCreator
+					.createEmployeeUpdateSubstractWorkingHours(activity);
 			for (EmployeeTimePeriods timePeriods : activity
 					.getEmployeeTimePeriods()) {
 				for (TimePeriod timePeriod : timePeriods.getTimePeriods()) {
@@ -362,9 +396,9 @@ public class PlanningController implements Serializable {
 					timePeriod.setEndTime(endTime);
 				}
 			}
-			macro.addAll(commandCreator.createEmployeeUpdateAddWorkingHours(activity));
-			macro.add(new UpdateCommand<Activity>(
-					activity, activityMemento));
+			macro.addAll(commandCreator
+					.createEmployeeUpdateAddWorkingHours(activity));
+			macro.add(new UpdateCommand<Activity>(activity, activityMemento));
 
 			status = commandHandler.execute(macro);
 		} else {
