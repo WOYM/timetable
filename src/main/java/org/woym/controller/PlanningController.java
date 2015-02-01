@@ -213,6 +213,25 @@ public class PlanningController implements Serializable {
 	}
 
 	/**
+	 * Diese Methode löscht die momentan in der Bean bekannte {@link Activity}
+	 */
+	public void deleteActivity() {
+		if (activity == null) {
+			return;
+		}
+
+		MacroCommand command = commandCreator.createDeleteCommand(activity);
+		IStatus status = commandHandler.execute(command);
+
+		if (status instanceof SuccessStatus) {
+			activity = null;
+		}
+
+		FacesMessage msg = status.report();
+		FacesContext.getCurrentInstance().addMessage(null, msg);
+	}
+
+	/**
 	 * Diese Methode wird aufgerufen, wenn ein Element in der Darstellung bewegt
 	 * wird.
 	 * <p>
@@ -352,7 +371,8 @@ public class PlanningController implements Serializable {
 		if (status instanceof SuccessStatus) {
 
 			activity.setTime(time);
-			MacroCommand macro = commandCreator.createEmployeeUpdateSubstractWorkingHours(activity);
+			MacroCommand macro = commandCreator
+					.createEmployeeUpdateSubstractWorkingHours(activity);
 			for (EmployeeTimePeriods timePeriods : activity
 					.getEmployeeTimePeriods()) {
 				for (TimePeriod timePeriod : timePeriods.getTimePeriods()) {
@@ -362,9 +382,9 @@ public class PlanningController implements Serializable {
 					timePeriod.setEndTime(endTime);
 				}
 			}
-			macro.addAll(commandCreator.createEmployeeUpdateAddWorkingHours(activity));
-			macro.add(new UpdateCommand<Activity>(
-					activity, activityMemento));
+			macro.addAll(commandCreator
+					.createEmployeeUpdateAddWorkingHours(activity));
+			macro.add(new UpdateCommand<Activity>(activity, activityMemento));
 
 			status = commandHandler.execute(macro);
 		} else {
