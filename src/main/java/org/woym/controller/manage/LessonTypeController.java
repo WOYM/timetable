@@ -24,6 +24,7 @@ import org.woym.common.objects.LessonType;
 import org.woym.common.objects.Location;
 import org.woym.common.objects.Room;
 import org.woym.common.objects.spec.IMemento;
+import org.woym.controller.GUIController;
 import org.woym.logic.CommandHandler;
 import org.woym.logic.SuccessStatus;
 import org.woym.logic.command.AddCommand;
@@ -182,6 +183,13 @@ public class LessonTypeController implements Serializable {
 		}
 
 		FacesContext.getCurrentInstance().addMessage(null, msg);
+	}
+	
+	/**
+	 * @see GUIController#refresh(org.woym.common.objects.Entity)
+	 */
+	public void refresh(){
+		GUIController.refresh(lessonType);
 	}
 
 	public LessonType getLessonType() {

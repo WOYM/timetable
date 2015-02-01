@@ -2,6 +2,7 @@ package org.woym.controller;
 
 import java.io.Serializable;
 
+import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
 import javax.faces.context.FacesContext;
@@ -9,6 +10,9 @@ import javax.faces.context.FacesContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.woym.common.exceptions.DatasetException;
+import org.woym.common.messages.GenericErrorMessage;
+import org.woym.common.messages.MessageHelper;
+import org.woym.common.objects.Entity;
 import org.woym.common.objects.Location;
 import org.woym.logic.CommandHandler;
 import org.woym.logic.spec.IStatus;
@@ -34,7 +38,8 @@ public class GUIController implements Serializable {
 	private static Logger LOGGER = LogManager.getLogger(GUIController.class);
 
 	private DataAccess dataAccess = DataAccess.getInstance();
-	private ScheduleModelHolder scheduleModelHolder = ScheduleModelHolder.getInstance();
+	private ScheduleModelHolder scheduleModelHolder = ScheduleModelHolder
+			.getInstance();
 
 	/**
 	 * Diese Methode macht ein Command rückgängig.
@@ -132,5 +137,22 @@ public class GUIController implements Serializable {
 		}
 		return String.valueOf(size);
 	}
-
+	
+	/**
+	 * Versucht das übergebene {@linkplain Entity}-Objekt im Cache zu
+	 * aktualisieren.
+	 * 
+	 * @param entity
+	 *            - das zu aktualisierende {@linkplain Entity}-Objekt
+	 */
+	public static void refresh(Entity entity) {
+		try {
+			DataAccess.getInstance().refresh(entity);
+		} catch (DatasetException e) {
+			FacesMessage msg = MessageHelper.generateMessage(
+					GenericErrorMessage.DATABASE_COMMUNICATION_ERROR,
+					FacesMessage.SEVERITY_ERROR);
+			FacesContext.getCurrentInstance().addMessage(null, msg);
+		}
+	}
 }

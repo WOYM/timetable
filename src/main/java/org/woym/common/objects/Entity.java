@@ -51,4 +51,14 @@ public abstract class Entity implements Serializable, IMementoObject {
 		DataAccess.getInstance().delete(this);
 	}
 
+	/**
+	 * Aktualisiert dieses Objekt auf den Zustand aus der Datenbank. Tritt dabei
+	 * ein Fehler auf, wird eine {@linkplain DatasetException} geworfen.
+	 * 
+	 * @throws DatasetException
+	 */
+	public void refresh() throws DatasetException {
+		DataAccess.getInstance().refresh(this);
+	}
+
 }

@@ -133,6 +133,25 @@ public class DataAccess implements IDataAccess, Observer {
 	 * {@inheritDoc}
 	 */
 	@Override
+	public void refresh(Entity entity) throws DatasetException {
+		if (entity == null) {
+			throw new IllegalArgumentException("Parameter was null.");
+		}
+		try {
+			em.refresh(entity);
+			LOGGER.debug(entity + " refreshed.");
+		} catch (Exception e) {
+			LOGGER.error("Exception while refreshing " + entity, e);
+			throw new DatasetException("Error while refreshing " + entity
+					+ ": " + e.getMessage());
+		}
+
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
 	public void delete(Entity object) throws DatasetException {
 		if (object == null) {
 			throw new IllegalArgumentException("Parameter is null.");
