@@ -365,7 +365,7 @@
 								<p:calendar id="lessonStartTime" binding="#{lessonStartTime}"
 									value="#{lessonController.lesson.time.startTime}" size="5"
 									pattern="HH:mm" locale="de" timeOnly="true" title="Startzeit"
-									required="true"
+									required="true" stepMinute="#{planningController.slotMinutes}"
 									requiredMessage="Angabe der Startzeit wird benötigt."
 									maxHour="#{planningController.maxHour}"
 									minHour="#{planningController.minHour}">
@@ -375,7 +375,7 @@
 								<p:calendar id="lessonEndTime"
 									value="#{lessonController.lesson.time.endTime}" size="5"
 									pattern="HH:mm" locale="de" timeOnly="true" title="Endzeit"
-									required="true"
+									required="true" stepMinute="#{planningController.slotMinutes}"
 									requiredMessage="Angabe der Endzeit wird benötigt."
 									maxHour="#{planningController.maxHour}"
 									minHour="#{planningController.minHour}">
@@ -499,7 +499,7 @@
 								<p:calendar id="meetingStartTime" binding="#{meetingStartTime}"
 									value="#{meetingController.meeting.time.startTime}" size="5"
 									pattern="HH:mm" locale="de" timeOnly="true" title="Startzeit"
-									required="true"
+									required="true" stepMinute="#{planningController.slotMinutes}"
 									requiredMessage="Angabe der Startzeit wird benötigt."
 									maxHour="#{planningController.maxHour}"
 									minHour="#{planningController.minHour}">
@@ -509,7 +509,7 @@
 								<p:calendar id="meetingEndTime"
 									value="#{meetingController.meeting.time.endTime}" size="5"
 									pattern="HH:mm" locale="de" timeOnly="true" title="Endzeit"
-									required="true"
+									required="true" stepMinute="#{planningController.slotMinutes}"
 									requiredMessage="Angabe der Endzeit wird benötigt."
 									maxHour="#{planningController.maxHour}"
 									minHour="#{planningController.minHour}">
@@ -600,7 +600,7 @@
 								<p:calendar id="pauseStartTime" binding="#{pauseStartTime}"
 									value="#{pauseController.pause.time.startTime}" size="5"
 									pattern="HH:mm" locale="de" timeOnly="true" title="Startzeit"
-									required="true"
+									required="true" stepMinute="#{planningController.slotMinutes}"
 									requiredMessage="Angabe der Startzeit wird benötigt."
 									maxHour="#{planningController.maxHour}"
 									minHour="#{planningController.minHour}">
@@ -610,7 +610,7 @@
 								<p:calendar id="pauseEndTime"
 									value="#{pauseController.pause.time.endTime}" size="5"
 									pattern="HH:mm" locale="de" timeOnly="true" title="Endzeit"
-									required="true"
+									required="true" stepMinute="#{planningController.slotMinutes}"
 									requiredMessage="Angabe der Endzeit wird benötigt."
 									maxHour="#{planningController.maxHour}"
 									minHour="#{planningController.minHour}">
@@ -657,7 +657,8 @@
 								value="Unterrichtsinhalte" />
 							<p:selectCheckboxMenu id="addCompoundLessonType"
 								value="#{compoundLessonController.compoundLesson.lessonTypes}"
-								required="true" label="Inhalte" filter="true" filterMatchMode="contains"
+								required="true" label="Inhalte" filter="true"
+								filterMatchMode="contains"
 								requiredMessage="Ein leerer Unterrichtsinhalt ist nicht gültig."
 								converter="LessonTypeNameConverter">
 								<f:selectItems value="#{lessonController.allLessonTypes}"
@@ -681,6 +682,7 @@
 									value="#{compoundLessonController.compoundLesson.time.startTime}"
 									size="5" pattern="HH:mm" locale="de" timeOnly="true"
 									title="Startzeit" required="true"
+									stepMinute="#{planningController.slotMinutes}"
 									requiredMessage="Angabe der Startzeit wird benötigt."
 									maxHour="#{planningController.maxHour}"
 									minHour="#{planningController.minHour}">
@@ -691,6 +693,7 @@
 									value="#{compoundLessonController.compoundLesson.time.endTime}"
 									size="5" pattern="HH:mm" locale="de" timeOnly="true"
 									title="Endzeit" required="true"
+									stepMinute="#{planningController.slotMinutes}"
 									requiredMessage="Angabe der Endzeit wird benötigt."
 									maxHour="#{planningController.maxHour}"
 									minHour="#{planningController.minHour}">
@@ -748,8 +751,7 @@
 							<p:selectCheckboxMenu id="compoundLessonRooms"
 								value="#{compoundLessonController.compoundLesson.rooms}"
 								filter="true" filterMatchMode="contains"
-								converter="RoomNameConverter" label="Räume"
-								required="true"
+								converter="RoomNameConverter" label="Räume" required="true"
 								rendered="#{compoundLessonController.location != null}"
 								requiredMessage="Wählen Sie mindestens einen Raum aus.">
 								<f:selectItems
