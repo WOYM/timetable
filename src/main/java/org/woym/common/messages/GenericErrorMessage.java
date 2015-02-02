@@ -125,6 +125,10 @@ public enum GenericErrorMessage {
 	HOURS_PER_WEEK_EXCEEDED("Wochenstunden werden überschritten.",
 			"Die Wochenstunden des Mitarbeiters werden überschritten."),
 
+	/**
+	 * Diese Statusnachricht wird gewählt, wenn ein Zeitraum außerhalb der in
+	 * den Einstellungen definierten Zeitgrenzen liegt.
+	 */
 	TIME_OUTSIDE_LIMIT("Zeitpunkt außerhalb der Grenzen.",
 			"Der gewünschte Zeitpunkt befindet sich außerhalb"
 					+ " der in den Einstellungen festgelegten Grenzen.");

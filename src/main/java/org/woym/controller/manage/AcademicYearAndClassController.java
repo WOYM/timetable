@@ -97,6 +97,9 @@ public class AcademicYearAndClassController implements Serializable {
 		}
 	}
 
+	/**
+	 * Wird vor dem Hinzufügen einer Schulklasse ausgeführt.
+	 */
 	public void doBeforeAdd() {
 		location = null;
 		schoolclass = new Schoolclass();
@@ -168,6 +171,9 @@ public class AcademicYearAndClassController implements Serializable {
 
 	/**
 	 * Erzeugt einen neuen Jahrgang und persistiert diesen.
+	 * 
+	 * @deprecated Abgelöst durch
+	 *             {@linkplain AcademicYearAndClassController#generateAcademicYears()}
 	 */
 	public void addAcademicYear() {
 		FacesMessage msg;
@@ -249,6 +255,9 @@ public class AcademicYearAndClassController implements Serializable {
 		FacesContext.getCurrentInstance().addMessage(null, msg);
 	}
 
+	/**
+	 * Führt die benötigten Operationen vor dem Editieren einer Schulklasse aus.
+	 */
 	public void doBeforeEdit() {
 		schoolclassMemento = schoolclass.createMemento();
 
@@ -266,6 +275,9 @@ public class AcademicYearAndClassController implements Serializable {
 		}
 	}
 
+	/**
+	 * Aktualisiert den Zustand der gewählten Schulklasse in der Datenbank.
+	 */
 	public void editSchoolclass() {
 		UpdateCommand<Schoolclass> command = new UpdateCommand<Schoolclass>(
 				schoolclass, schoolclassMemento);

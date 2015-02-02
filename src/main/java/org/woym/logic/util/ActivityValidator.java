@@ -74,7 +74,8 @@ public class ActivityValidator {
 	 * Diese Methode validiert eine übergebene Aktivität.
 	 * <p>
 	 * Es wird überprüft, ob es Überschneidungen mit anderen in der Datenbank
-	 * vorhandenen Objekten gibt und ein entsprechendes Status-Objekt
+	 * vorhandenen Objekten gibt (dabei werden Wegzeiten zwischen verschiedenen
+	 * Standorten berücksichtigt) und ein entsprechendes Status-Objekt
 	 * zurückgegeben.
 	 * <p>
 	 * Bei einem Datenbankfehler wird ebenfalls ein {@link FailureStatus}
@@ -106,6 +107,7 @@ public class ActivityValidator {
 				return status;
 			}
 
+			// Räume haben keine Wegzeiten
 			status = validateActivityRooms(activity, timePeriod);
 			if (status instanceof FailureStatus) {
 				return status;
@@ -121,6 +123,18 @@ public class ActivityValidator {
 		return status;
 	}
 
+	/**
+	 * Erweitert das übergebene {@linkplain TimePeriod}-Objekt so, dass
+	 * Wegzeiten zu anderen Standorten berücksichtigt werden und gibt das
+	 * erweiterte {@linkplain TimePeriod}-Objekt zurück.
+	 * 
+	 * @param activity
+	 *            - hinzuzufügende Aktivität
+	 * @param timePeriod
+	 *            - (neuer) Zeitraum für die Aktivität
+	 * @return das um die Wegzeiten erweiterte {@linkplain TimePeriod}-Objekt
+	 * @throws DatasetException
+	 */
 	@SuppressWarnings("deprecation")
 	public TimePeriod expandTimPeriodWhithTravelTime(final Activity activity,
 			final TimePeriod timePeriod) throws DatasetException {
@@ -179,6 +193,22 @@ public class ActivityValidator {
 
 	}
 
+	/**
+	 * Prüft, ob die an der übergebenen Aktivität teilnehmenden
+	 * {@linkplain Employee}s in dem Zeitraum, der dem übergebenen
+	 * {@linkplain TimePeriod}-Objekt entspricht, bereits eine Aktivität
+	 * besitzen. Ist dies der Fall, wird ein {@linkplain FailureStatus}
+	 * zurückgegeben, ansonsten ein {@linkplain SuccessStatus}.
+	 * 
+	 * @param activity
+	 *            - Aktivität
+	 * @param timePeriod
+	 *            - (neuer) Zeitraum
+	 * @return {@linkplain SuccessStatus}, wenn alle Teilnehmer des Personals
+	 *         der Aktivität im übergebenen Zeitraum noch keine Aktivität haben,
+	 *         ansonsten {@linkplain FailureStatus}
+	 * @throws DatasetException
+	 */
 	public IStatus validateActivityEmployees(final Activity activity,
 			final TimePeriod timePeriod) throws DatasetException {
 		IStatus status = new SuccessStatus(
@@ -196,6 +226,22 @@ public class ActivityValidator {
 		return status;
 	}
 
+	/**
+	 * Prüft, ob die an der übergebenen Aktivität teilnehmenden
+	 * {@linkplain Schoolclass}es in dem Zeitraum, der dem übergebenen
+	 * {@linkplain TimePeriod}-Objekt entspricht, bereits eine Aktivität
+	 * besitzen. Ist dies der Fall, wird ein {@linkplain FailureStatus}
+	 * zurückgegeben, ansonsten ein {@linkplain SuccessStatus}.
+	 * 
+	 * @param activity
+	 *            - Aktivität
+	 * @param timePeriod
+	 *            - (neuer) Zeitraum
+	 * @return {@linkplain SuccessStatus}, wenn alle teilnehmenden Schulklassen
+	 *         der Aktivität im übergebenen Zeitraum noch keine Aktivität haben,
+	 *         ansonsten {@linkplain FailureStatus}
+	 * @throws DatasetException
+	 */
 	public IStatus validateActivitySchoolclasses(final Activity activity,
 			final TimePeriod timePeriod) throws DatasetException {
 		IStatus status = new SuccessStatus(
@@ -213,6 +259,22 @@ public class ActivityValidator {
 		return status;
 	}
 
+	/**
+	 * Prüft, ob in denen in der übergebenen Aktivität enthaltenen
+	 * {@linkplain Room}s in dem Zeitraum, der dem übergebenen
+	 * {@linkplain TimePeriod}-Objekt entspricht, bereits eine Aktivität
+	 * stattfindet. Ist dies der Fall, wird ein {@linkplain FailureStatus}
+	 * zurückgegeben, ansonsten ein {@linkplain SuccessStatus}.
+	 * 
+	 * @param activity
+	 *            - Aktivität
+	 * @param timePeriod
+	 *            - (neuer) Zeitraum
+	 * @return {@linkplain SuccessStatus}, wenn in allen in der Aktivität
+	 *         enthaltenen Räumen zum übergebenen Zeitraum noch keine Aktivität
+	 *         stattfindet, ansonsten {@linkplain FailureStatus}
+	 * @throws DatasetException
+	 */
 	public IStatus validateActivityRooms(final Activity activity,
 			final TimePeriod timePeriod) throws DatasetException {
 		IStatus status = new SuccessStatus(

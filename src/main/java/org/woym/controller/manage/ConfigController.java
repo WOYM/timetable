@@ -86,6 +86,10 @@ public class ConfigController implements Serializable {
 
 	private int selectedDayValue = 1;
 
+	/**
+	 * Initialisiert diese Bean. Lädt alle benötigten Werte aus der
+	 * Konfiguration.
+	 */
 	@PostConstruct
 	public void init() {
 		try {
@@ -137,15 +141,16 @@ public class ConfigController implements Serializable {
 				DefaultConfigEnum.WEEKDAY_STARTTIME.getPropKey(),
 				sdf.format(weekdayStartTime))
 				&& works;
-		
+
 		works = Config.updateProperty(
 				DefaultConfigEnum.WEEKDAY_ENDTIME.getPropKey(),
 				sdf.format(weekdayEndTime))
 				&& works;
-		
+
 		works = Config.updateProperty(
 				DefaultConfigEnum.WEEKDAY_ENDTIME.getPropKey(),
-				sdf.format(weekdayEndTime)) && works;
+				sdf.format(weekdayEndTime))
+				&& works;
 
 		works = Config.updateProperty(
 				DefaultConfigEnum.TIMETABLE_GRID.getPropKey(),
