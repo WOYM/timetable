@@ -128,7 +128,6 @@ public class MeetingController implements Serializable {
 		init();
 	}
 
-
 	/**
 	 * Diese Methode fügt mit Hilfe des {@link CommandHandler}s ein neues
 	 * {@link Activity}-Objekt des Types {@link Meeting} der Persistenz hinzu.
@@ -178,7 +177,6 @@ public class MeetingController implements Serializable {
 	public List<Room> getRoomsForLocation() {
 		return location.getRooms();
 	}
-
 
 	/**
 	 * Diese Methode setzt eine Liste von {@link Employee}-Objekten an dem
@@ -246,15 +244,21 @@ public class MeetingController implements Serializable {
 		Date endTime = calendar.getTime();
 		try {
 			SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
-			Date configEndTime = sdf.parse(Config
-					.getSingleStringValue(DefaultConfigEnum.WEEKDAY_ENDTIME));
-			if (endTime.compareTo(configEndTime) > 0) {
-				endTime = configEndTime;
+			Calendar calendar2 = Calendar.getInstance();
+			calendar2.setTime(sdf.parse(Config
+					.getSingleStringValue(DefaultConfigEnum.WEEKDAY_ENDTIME)));
+			if (calendar2.get(Calendar.HOUR_OF_DAY) < calendar
+					.get(Calendar.HOUR_OF_DAY)
+					|| calendar2.get(Calendar.HOUR_OF_DAY) == calendar
+							.get(Calendar.HOUR_OF_DAY)
+					&& calendar2.get(Calendar.MINUTE) < calendar
+							.get(Calendar.MINUTE)) {
+				endTime = calendar2.getTime();
 			}
 		} catch (ParseException e) {
 			LOGGER.error(e);
 		}
-		
+
 		TimePeriod timePeriod = meeting.getTime();
 		timePeriod.setEndTime(endTime);
 		meeting.setTime(timePeriod);

@@ -232,10 +232,16 @@ public class LessonController implements Serializable {
 		Date endTime = calendar.getTime();
 		try {
 			SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
-			Date configEndTime = sdf.parse(Config
-					.getSingleStringValue(DefaultConfigEnum.WEEKDAY_ENDTIME));
-			if (endTime.compareTo(configEndTime) > 0) {
-				endTime = configEndTime;
+			Calendar calendar2 = Calendar.getInstance();
+			calendar2.setTime(sdf.parse(Config
+					.getSingleStringValue(DefaultConfigEnum.WEEKDAY_ENDTIME)));
+			if (calendar2.get(Calendar.HOUR_OF_DAY) < calendar
+					.get(Calendar.HOUR_OF_DAY)
+					|| calendar2.get(Calendar.HOUR_OF_DAY) == calendar
+							.get(Calendar.HOUR_OF_DAY)
+					&& calendar2.get(Calendar.MINUTE) < calendar
+							.get(Calendar.MINUTE)) {
+				endTime = calendar2.getTime();
 			}
 		} catch (ParseException e) {
 			LOGGER.error(e);
