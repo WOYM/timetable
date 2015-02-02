@@ -11,7 +11,7 @@ package org.woym.common.objects;
 public enum ActivityTypeEnum {
 	LESSON("Unterricht"), 
 	COMPOUND_LESSON("Bandunterricht"), 
-	MEETING("Teamsitzung"), 
+	MEETING("Personalsitzung"), 
 	PAUSE("Pause");
 
 	private String name;
