@@ -28,6 +28,7 @@ public class TeacherListValidator implements Validator {
 			throw new ValidatorException(msg);
 		}
 		
+		@SuppressWarnings("unchecked")
 		List<Employee> employees = (ArrayList<Employee>) value;
 		
 		Boolean valid = false;

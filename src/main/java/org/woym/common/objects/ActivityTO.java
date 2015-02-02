@@ -8,7 +8,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.woym.common.config.Config;
 import org.woym.common.config.DefaultConfigEnum;
-import org.woym.controller.PlanningController;
+import org.woym.controller.planning.PlanningController;
 
 /**
  * <h1>ActivityTO</h1>

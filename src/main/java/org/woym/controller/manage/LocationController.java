@@ -175,12 +175,16 @@ public class LocationController implements Serializable {
 		} else {
 			IStatus status = commandHandler.execute(new UpdateCommand<Entity>(
 					TravelTimeList.getInstance(), memento));
+			FacesMessage msg = status.report();
 			if (status instanceof SuccessStatus) {
 				travelTimeValue = null;
 				firstLocation = null;
 				secondLocation = null;
+				msg = new FacesMessage(FacesMessage.SEVERITY_INFO,
+						"Wegzeit hinzugefügt.",
+						"Die Wegzeit wurde erfolgreich hinzugefügt.");
 			}
-			FacesContext.getCurrentInstance().addMessage(null, status.report());
+			FacesContext.getCurrentInstance().addMessage(null, msg);
 		}
 	}
 
@@ -192,10 +196,14 @@ public class LocationController implements Serializable {
 		TravelTimeList.getInstance().remove(selectedTravelTimeEdge);
 		IStatus status = commandHandler.execute(new UpdateCommand<Entity>(
 				TravelTimeList.getInstance(), memento));
+		FacesMessage msg = status.report();
 		if (status instanceof SuccessStatus) {
 			selectedTravelTimeEdge = null;
+			msg = new FacesMessage(FacesMessage.SEVERITY_INFO,
+					"Wegzeit gelöscht.",
+					"Die Wegzeit wurde erfolgreich gelöscht.");
 		}
-		FacesContext.getCurrentInstance().addMessage(null, status.report());
+		FacesContext.getCurrentInstance().addMessage(null, msg);
 	}
 
 	public Location getLocation() {
