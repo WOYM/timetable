@@ -1,8 +1,11 @@
 package org.woym.controller.planning;
 
 import java.io.Serializable;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
@@ -14,6 +17,8 @@ import javax.faces.event.ComponentSystemEvent;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.woym.common.config.Config;
+import org.woym.common.config.DefaultConfigEnum;
 import org.woym.common.exceptions.DatasetException;
 import org.woym.common.objects.Activity;
 import org.woym.common.objects.ActivityTO;
@@ -238,8 +243,20 @@ public class MeetingController implements Serializable {
 				(calendar.get(Calendar.MINUTE) + meetingType
 						.getTypicalDuration()));
 
+		Date endTime = calendar.getTime();
+		try {
+			SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
+			Date configEndTime = sdf.parse(Config
+					.getSingleStringValue(DefaultConfigEnum.WEEKDAY_ENDTIME));
+			if (endTime.compareTo(configEndTime) > 0) {
+				endTime = configEndTime;
+			}
+		} catch (ParseException e) {
+			LOGGER.error(e);
+		}
+		
 		TimePeriod timePeriod = meeting.getTime();
-		timePeriod.setEndTime(calendar.getTime());
+		timePeriod.setEndTime(endTime);
 		meeting.setTime(timePeriod);
 	}
 
