@@ -1,4 +1,4 @@
-package org.woym.controller;
+package org.woym.controller.planning;
 
 import java.io.Serializable;
 import java.text.ParseException;

@@ -29,7 +29,6 @@ import org.woym.common.objects.Meeting;
 import org.woym.common.objects.MeetingType;
 import org.woym.common.objects.Room;
 import org.woym.common.objects.TimePeriod;
-import org.woym.controller.PlanningController;
 import org.woym.logic.CommandHandler;
 import org.woym.logic.SuccessStatus;
 import org.woym.logic.command.AddCommand;

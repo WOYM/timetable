@@ -158,13 +158,13 @@ public abstract class MessageHelper {
 		} else if (clazz == Location.class) {
 			return !success ? "des Standortes" : "Standort";
 		} else if (clazz == MeetingType.class) {
-			return !success ? "der Team-Sitzung" : "Team-Sitzung";
+			return !success ? "der Personalsitzung" : "Personalsitzung";
 		} else if (clazz == ProjectType.class) {
 			return !success ? "des Projektes" : "Projekt";
 		} else if (clazz == Room.class) {
 			return !success ? "des Raumes" : "Raum";
 		} else if (clazz == TravelTimeList.class) {
-			return !success ? "der Wegzeiten-Liste" : "";
+			return !success ? "der Wegzeiten-Liste" : "Wegzeiten-Liste";
 		}
 		return null;
 	}

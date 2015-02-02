@@ -98,7 +98,7 @@ public class TravelTimeList extends org.woym.common.objects.Entity implements
 	
 	@Override
 	public String toString(){
-		return "Wegzeiten-Liste";
+		return "";
 	}
 
 	/**
