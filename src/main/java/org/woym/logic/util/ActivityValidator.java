@@ -12,14 +12,13 @@ import org.apache.logging.log4j.Logger;
 import org.woym.common.exceptions.DatasetException;
 import org.woym.common.messages.GenericErrorMessage;
 import org.woym.common.messages.GenericSuccessMessage;
-import org.woym.common.messages.SpecificErrorMessage;
 import org.woym.common.objects.Activity;
 import org.woym.common.objects.Employee;
 import org.woym.common.objects.EmployeeTimePeriods;
 import org.woym.common.objects.Location;
 import org.woym.common.objects.Pause;
-import org.woym.common.objects.Schoolclass;
 import org.woym.common.objects.Room;
+import org.woym.common.objects.Schoolclass;
 import org.woym.common.objects.TimePeriod;
 import org.woym.common.objects.TravelTimeList;
 import org.woym.common.objects.TravelTimeList.Edge;
@@ -188,8 +187,10 @@ public class ActivityValidator {
 		if ((activity.getEmployeeTimePeriods().size() > 0)
 				&& !validateEmployees(activity, timePeriod)) {
 			return new FailureStatus(
-					SpecificErrorMessage.VALIDATE_ACTIVITY_EXCEPTION,
-					Employee.class, FacesMessage.SEVERITY_ERROR);
+					"Validierung fehlgeschlagen.",
+					"Es wurde eine Überschneidung dieser Aktivität mit einer vorhandenen"
+							+ " von einem der gewählten Mitarbeiter festgestellt.",
+					FacesMessage.SEVERITY_ERROR);
 		}
 
 		return status;
@@ -203,8 +204,10 @@ public class ActivityValidator {
 		if ((activity.getSchoolclasses().size() > 0)
 				&& !validateSchoolclasses(activity, timePeriod)) {
 			return new FailureStatus(
-					SpecificErrorMessage.VALIDATE_ACTIVITY_EXCEPTION,
-					Schoolclass.class, FacesMessage.SEVERITY_ERROR);
+					"Validierung fehlgeschlagen.",
+					"Es wurde ein Überschneidung dieser Aktivität mit einer vorhandenen"
+							+ " von einer der gewählten Schulklassen festgestellt.",
+					FacesMessage.SEVERITY_ERROR);
 		}
 
 		return status;
@@ -217,9 +220,10 @@ public class ActivityValidator {
 
 		if ((activity.getRooms().size() > 0)
 				&& !validateRooms(activity, timePeriod)) {
-			return new FailureStatus(
-					SpecificErrorMessage.VALIDATE_ACTIVITY_EXCEPTION,
-					Employee.class, FacesMessage.SEVERITY_ERROR);
+			return new FailureStatus("Validierung fehlgeschlagen.",
+					"Es wurde einer Überschneidung mit einer vorhandenen Aktivität"
+							+ " in einem der gewählten Räume festgestellt.",
+					FacesMessage.SEVERITY_ERROR);
 		}
 
 		return status;
