@@ -1,8 +1,11 @@
 package org.woym.controller.planning;
 
 import java.io.Serializable;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
@@ -14,6 +17,8 @@ import javax.faces.event.ComponentSystemEvent;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.woym.common.config.Config;
+import org.woym.common.config.DefaultConfigEnum;
 import org.woym.common.exceptions.DatasetException;
 import org.woym.common.objects.AcademicYear;
 import org.woym.common.objects.Activity;
@@ -63,7 +68,7 @@ public class LessonController implements Serializable {
 	private static final long serialVersionUID = -3548148989241300086L;
 
 	private static Logger LOGGER = LogManager.getLogger(LessonController.class);
-	
+
 	private final CommandCreator commandCreator = CommandCreator.getInstance();
 
 	private DataAccess dataAccess = DataAccess.getInstance();
@@ -224,8 +229,20 @@ public class LessonController implements Serializable {
 				(calendar.get(Calendar.MINUTE) + lessonType
 						.getTypicalDuration()));
 
+		Date endTime = calendar.getTime();
+		try {
+			SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
+			Date configEndTime = sdf.parse(Config
+					.getSingleStringValue(DefaultConfigEnum.WEEKDAY_ENDTIME));
+			if (endTime.compareTo(configEndTime) > 0) {
+				endTime = configEndTime;
+			}
+		} catch (ParseException e) {
+			LOGGER.error(e);
+		}
+
 		TimePeriod timePeriod = lesson.getTime();
-		timePeriod.setEndTime(calendar.getTime());
+		timePeriod.setEndTime(endTime);
 		lesson.setTime(timePeriod);
 	}
 
@@ -244,7 +261,7 @@ public class LessonController implements Serializable {
 	/**
 	 * Diese Methode setzt eine einzelne {@link Schoolclass}.
 	 * <p>
-	 * Da eine Liste im Objekt vorgegeben ist, wird hier das Hinzufügen eines 
+	 * Da eine Liste im Objekt vorgegeben ist, wird hier das Hinzufügen eines
 	 * einzelnen Objektes erzwungen.
 	 * 
 	 * @param schoolclass
