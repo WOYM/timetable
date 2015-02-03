@@ -116,7 +116,7 @@ public class TestCommandCreator extends PowerMockTestCase {
 
 		Mockito.when(
 				DataAccess.getInstance().getAllActivities(
-						Mockito.any(IActivityObject.class))).thenReturn(
+						Mockito.any(IActivityObject.class), Mockito.anyBoolean())).thenReturn(
 				activities);
 	}
 
