@@ -204,7 +204,7 @@ public class CommandCreator {
 		if (entity instanceof Activity) {
 			// Beim Löschen einer Aktivität müssen die verteilten Stunden der
 			// beteiligten Lehrer aktualisiert werden
-			macro = createEmployeeUpdateSubstractWorkingHours((Activity) entity);
+			macro.addAll(createEmployeeUpdateSubstractWorkingHours((Activity) entity));
 
 			macro.add(new DeleteCommand<Entity>(entity));
 		} else {
