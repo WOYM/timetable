@@ -18,6 +18,7 @@ import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
 
+import org.eclipse.persistence.annotations.Cache;
 import org.eclipse.persistence.annotations.PrivateOwned;
 import org.woym.common.objects.spec.IActivityObject;
 import org.woym.common.objects.spec.IMemento;
@@ -32,6 +33,7 @@ import org.woym.common.objects.spec.IMementoObject;
 @Entity
 @Inheritance
 @DiscriminatorColumn(name = "TYPE", discriminatorType = DiscriminatorType.STRING, length = 20)
+@Cache(alwaysRefresh=true)
 public abstract class Activity extends org.woym.common.objects.Entity implements
 		IMementoObject {
 
