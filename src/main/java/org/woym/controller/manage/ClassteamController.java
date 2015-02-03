@@ -131,10 +131,11 @@ public class ClassteamController implements Serializable {
 	 * führt es aus.
 	 */
 	public void deleteClassteam() {
-		if (hide != hideDeletionDialog) {
+		if (hideDeletionDialog) {
 			Config.updateProperty(
 					DefaultConfigEnum.HIDE_CLASSTEAM_DELETION_DIALOG
 							.getPropKey(), String.valueOf(hideDeletionDialog));
+			hide = hideDeletionDialog;
 		}
 		MacroCommand macro = CommandCreator.getInstance().createDeleteCommand(
 				selectedClassteam);
@@ -335,5 +336,9 @@ public class ClassteamController implements Serializable {
 
 	public void setHideDeletionDialog(boolean hideDeletionDialog) {
 		this.hideDeletionDialog = hideDeletionDialog;
+	}
+	
+	public boolean isHide(){
+		return hide;
 	}
 }
