@@ -56,13 +56,16 @@ public class CommandCreator {
 	}
 
 	/**
-	 * Fügt allen Mitarbeiter der {@link Activty} in der
-	 * {@link EmployeeTimePeriods} die berechnete dauer aller {@link TimePeriod}
-	 * hinzu.
+	 * Erzeugt ein {@linkplain MacroCommand}, welches allen an der
+	 * {@linkplain Activty} teilnehmenden Mitarbeitern die summierte Dauer der
+	 * {@linkplain TimePeriod}-Objekte ihres {@linkplain EmployeeTimePeriods}
+	 * -Objektes zu den verteilten Wochenstunden hinzufügt und ihren
+	 * Datenbankzustand aktualisiert, und gibt dieses zurück.
 	 * 
 	 * @param activity
 	 *            Activity, welches verarbeitet wird
-	 * @return {@link MacroCommand} mit dem bearbeiteten Mitarbeitern.
+	 * @return {@linkplain MacroCommand} mit den UpdateCommands für die
+	 *         Mitarbeiter
 	 */
 	public MacroCommand createEmployeeUpdateAddWorkingHours(
 			final Activity activity) {
@@ -100,13 +103,16 @@ public class CommandCreator {
 	}
 
 	/**
-	 * Zieht allen Mitarbeiter der {@link Activty} in der
-	 * {@link EmployeeTimePeriods} die berechnete dauer aller {@link TimePeriod}
-	 * ab.
+	 * Erzeugt ein {@linkplain MacroCommand}, welches allen an der
+	 * {@linkplain Activty} teilnehmenden Mitarbeitern die summierte Dauer der
+	 * {@linkplain TimePeriod}-Objekte ihres {@linkplain EmployeeTimePeriods}
+	 * -Objektes von den verteilten Wochenstunden abzieht und ihren
+	 * Datenbankzustand aktualisiert, und gibt dieses zurück.
 	 * 
 	 * @param activity
 	 *            Activity, welches verarbeitet wird
-	 * @return {@link MacroCommand} mit dem bearbeiteten Mitarbeitern.
+	 * @return {@linkplain MacroCommand} mit den UpdateCommands für die
+	 *         Mitarbeiter
 	 */
 	public MacroCommand createEmployeeUpdateSubstractWorkingHours(
 			final Activity activity) {

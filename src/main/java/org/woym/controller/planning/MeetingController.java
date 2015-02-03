@@ -1,8 +1,11 @@
 package org.woym.controller.planning;
 
 import java.io.Serializable;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
@@ -14,6 +17,8 @@ import javax.faces.event.ComponentSystemEvent;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.woym.common.config.Config;
+import org.woym.common.config.DefaultConfigEnum;
 import org.woym.common.exceptions.DatasetException;
 import org.woym.common.objects.Activity;
 import org.woym.common.objects.ActivityTO;
@@ -24,7 +29,6 @@ import org.woym.common.objects.Meeting;
 import org.woym.common.objects.MeetingType;
 import org.woym.common.objects.Room;
 import org.woym.common.objects.TimePeriod;
-import org.woym.controller.PlanningController;
 import org.woym.logic.CommandHandler;
 import org.woym.logic.SuccessStatus;
 import org.woym.logic.command.AddCommand;
@@ -123,7 +127,6 @@ public class MeetingController implements Serializable {
 		init();
 	}
 
-
 	/**
 	 * Diese Methode fügt mit Hilfe des {@link CommandHandler}s ein neues
 	 * {@link Activity}-Objekt des Types {@link Meeting} der Persistenz hinzu.
@@ -173,7 +176,6 @@ public class MeetingController implements Serializable {
 	public List<Room> getRoomsForLocation() {
 		return location.getRooms();
 	}
-
 
 	/**
 	 * Diese Methode setzt eine Liste von {@link Employee}-Objekten an dem
@@ -238,8 +240,26 @@ public class MeetingController implements Serializable {
 				(calendar.get(Calendar.MINUTE) + meetingType
 						.getTypicalDuration()));
 
+		Date endTime = calendar.getTime();
+		try {
+			SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
+			Calendar calendar2 = Calendar.getInstance();
+			calendar2.setTime(sdf.parse(Config
+					.getSingleStringValue(DefaultConfigEnum.WEEKDAY_ENDTIME)));
+			if (calendar2.get(Calendar.HOUR_OF_DAY) < calendar
+					.get(Calendar.HOUR_OF_DAY)
+					|| calendar2.get(Calendar.HOUR_OF_DAY) == calendar
+							.get(Calendar.HOUR_OF_DAY)
+					&& calendar2.get(Calendar.MINUTE) < calendar
+							.get(Calendar.MINUTE)) {
+				endTime = calendar2.getTime();
+			}
+		} catch (ParseException e) {
+			LOGGER.error(e);
+		}
+
 		TimePeriod timePeriod = meeting.getTime();
-		timePeriod.setEndTime(calendar.getTime());
+		timePeriod.setEndTime(endTime);
 		meeting.setTime(timePeriod);
 	}
 

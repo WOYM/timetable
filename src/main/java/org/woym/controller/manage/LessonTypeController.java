@@ -2,7 +2,6 @@ package org.woym.controller.manage;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
@@ -19,7 +18,6 @@ import org.woym.common.config.DefaultConfigEnum;
 import org.woym.common.exceptions.DatasetException;
 import org.woym.common.messages.GenericErrorMessage;
 import org.woym.common.messages.MessageHelper;
-import org.woym.common.objects.ColorEnum;
 import org.woym.common.objects.LessonType;
 import org.woym.common.objects.Location;
 import org.woym.common.objects.Room;
@@ -60,9 +58,6 @@ public class LessonTypeController implements Serializable {
 	private IMemento lessonTypeMemento;
 
 	private List<Room> rooms;
-
-	private ColorEnum color = ColorEnum.DEFAULT;
-	private List<ColorEnum> colors = Arrays.asList(ColorEnum.values());
 
 	private boolean hideDeletionDialog;
 	private boolean hide;
@@ -184,11 +179,11 @@ public class LessonTypeController implements Serializable {
 
 		FacesContext.getCurrentInstance().addMessage(null, msg);
 	}
-	
+
 	/**
 	 * @see GUIController#refresh(org.woym.common.objects.Entity)
 	 */
-	public void refresh(){
+	public void refresh() {
 		GUIController.refresh(lessonType);
 	}
 
@@ -208,22 +203,6 @@ public class LessonTypeController implements Serializable {
 		return rooms;
 	}
 
-	public ColorEnum getColor() {
-		return color;
-	}
-
-	public void setColor(ColorEnum color) {
-		this.color = color;
-	}
-
-	public List<ColorEnum> getColors() {
-		return colors;
-	}
-
-	public void setColors(List<ColorEnum> colors) {
-		this.colors = colors;
-	}
-
 	public boolean isHideDeletionDialog() {
 		return hideDeletionDialog;
 	}
@@ -235,17 +214,10 @@ public class LessonTypeController implements Serializable {
 	private int getTypicalDuration() {
 		int typicalDuration = 0;
 
-		// Get prop-value
-		String[] typicalDurationString = Config
-				.getPropValue(DefaultConfigEnum.TYPICAL_ACTIVITY_DURATION
-						.getPropKey());
-		// Check for exactly one valid entry in configuration
-		if (typicalDurationString.length == 1) {
-			try {
-				typicalDuration = Integer.parseInt(typicalDurationString[0]);
-			} catch (NumberFormatException e) {
-				// Do nothing
-			}
+		try {
+			typicalDuration = Config
+					.getSingleIntValue(DefaultConfigEnum.TYPICAL_ACTIVITY_DURATION);
+		} catch (Exception e) {
 		}
 
 		return typicalDuration;

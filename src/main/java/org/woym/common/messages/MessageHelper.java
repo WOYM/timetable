@@ -5,6 +5,7 @@ import javax.faces.application.FacesMessage;
 import org.woym.common.objects.AcademicYear;
 import org.woym.common.objects.Activity;
 import org.woym.common.objects.Classteam;
+import org.woym.common.objects.Employee;
 import org.woym.common.objects.Entity;
 import org.woym.common.objects.LessonType;
 import org.woym.common.objects.Location;
@@ -142,6 +143,14 @@ public abstract class MessageHelper {
 		} else if (clazz == Activity.class
 				|| clazz.getSuperclass() == Activity.class) {
 			return !success ? "der Aktivität" : "Aktivität";
+		} else if (clazz == Employee.class) {
+			return !success ? "des Mitarbeiters" : "Mitarbeiter";
+		} else if (clazz == Schoolclass.class) {
+			return !success ? "der Schulklasse" : "Schulklasse";
+		} else if (clazz == PedagogicAssistant.class) {
+			return !success ? "des päd. Mitarbeiters" : "Päd. Mitarbeiter";
+		} else if (clazz == Teacher.class) {
+			return !success ? "der Lehrkraft" : "Lehrkraft";
 		} else if (clazz == Classteam.class) {
 			return !success ? "des Klassenteams" : "Klassenteam";
 		} else if (clazz == LessonType.class) {
@@ -149,19 +158,13 @@ public abstract class MessageHelper {
 		} else if (clazz == Location.class) {
 			return !success ? "des Standortes" : "Standort";
 		} else if (clazz == MeetingType.class) {
-			return !success ? "der Team-Sitzung" : "Team-Sitzung";
-		} else if (clazz == PedagogicAssistant.class) {
-			return !success ? "des päd. Mitarbeiters" : "Päd. Mitarbeiter";
+			return !success ? "der Personalsitzung" : "Personalsitzung";
 		} else if (clazz == ProjectType.class) {
 			return !success ? "des Projektes" : "Projekt";
 		} else if (clazz == Room.class) {
 			return !success ? "des Raumes" : "Raum";
-		} else if (clazz == Schoolclass.class) {
-			return !success ? "der Schulklasse" : "Schulklasse";
-		} else if (clazz == Teacher.class) {
-			return !success ? "der Lehrkraft" : "Lehrkraft";
-		} else if(clazz == TravelTimeList.class){
-			return !success ? "der Wegzeiten-Liste" : "";
+		} else if (clazz == TravelTimeList.class) {
+			return !success ? "der Wegzeiten-Liste" : "Wegzeiten-Liste";
 		}
 		return null;
 	}

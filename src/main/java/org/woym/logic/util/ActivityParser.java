@@ -19,7 +19,7 @@ import org.woym.common.objects.PedagogicAssistant;
 import org.woym.common.objects.Room;
 import org.woym.common.objects.Schoolclass;
 import org.woym.common.objects.Teacher;
-import org.woym.controller.PlanningController;
+import org.woym.controller.planning.PlanningController;
 import org.woym.persistence.DataAccess;
 
 /**
