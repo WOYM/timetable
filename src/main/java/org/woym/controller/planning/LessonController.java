@@ -17,6 +17,7 @@ import javax.faces.event.ComponentSystemEvent;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.primefaces.context.RequestContext;
 import org.woym.common.config.Config;
 import org.woym.common.config.DefaultConfigEnum;
 import org.woym.common.exceptions.DatasetException;
@@ -159,6 +160,7 @@ public class LessonController implements Serializable {
 
 			if (status instanceof SuccessStatus) {
 				init();
+				RequestContext.getCurrentInstance().execute("PF('wAddActivityDialog').hide()");
 			}
 		}
 

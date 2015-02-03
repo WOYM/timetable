@@ -131,10 +131,11 @@ public class RoomController implements Serializable {
 	 * Löscht einen Raum aus der Datenbank.
 	 */
 	public void deleteRoom() {
-		if (hide != hideDeletionDialog) {
+		if (hideDeletionDialog) {
 			Config.updateProperty(
 					DefaultConfigEnum.HIDE_ROOM_DELETION_DIALOG.getPropKey(),
 					String.valueOf(hideDeletionDialog));
+			hide = hideDeletionDialog;
 		}
 		MacroCommand macroCommand = commandCreator.createDeleteCommand(room);
 		IStatus status = commandHandler.execute(macroCommand);
@@ -174,4 +175,7 @@ public class RoomController implements Serializable {
 		this.hideDeletionDialog = hideDeletionDialog;
 	}
 
+	public boolean isHide() {
+		return hide;
+	}
 }

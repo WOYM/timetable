@@ -50,10 +50,10 @@
 						actionListener="#{roomController.generateRoomMemento}"
 						oncomplete="PF('wEditRoomDialog').show();" icon="ui-icon-pencil" />
 					<p:menuitem value="Löschen" update="@form" icon="ui-icon-close"
-						rendered="#{not roomController.hideDeletionDialog}"
+						rendered="#{not roomController.hide}"
 						oncomplete="PF('wConfirmRoomDelete').show();" />
 					<p:menuitem value="Löschen" update="@form" icon="ui-icon-close"
-						rendered="#{roomController.hideDeletionDialog}"
+						rendered="#{roomController.hide}"
 						action="#{roomController.deleteRoom}" />
 				</p:contextMenu>
 				<p:outputPanel id="roomTablePanel">

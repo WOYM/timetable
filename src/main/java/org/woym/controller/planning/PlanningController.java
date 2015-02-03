@@ -12,6 +12,7 @@ import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
+import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
 
@@ -102,6 +103,18 @@ public class PlanningController implements Serializable {
 
 	private List<Weekday> validWeekdays;
 
+	@ManagedProperty(value = "#{lessonController}")
+	private LessonController lessonController;
+	
+	@ManagedProperty(value = "#{meetingController}")
+	private MeetingController meetingController;
+	
+	@ManagedProperty(value = "#{pauseController}")
+	private PauseController pauseController;
+	
+	@ManagedProperty(value = "#{compoundLessonController}")
+	private CompoundLessonController compoundLessonController;
+
 	/**
 	 * Erzwingt die Erzeugung einer neuen User-Session vor dem Rendern des
 	 * Views, sofern noch keine existiert. Wichtig für die Serialisierung aller
@@ -113,6 +126,17 @@ public class PlanningController implements Serializable {
 
 		searchTerm = "";
 		validWeekdays = getValidWeekdays();
+	}
+
+	/**
+	 * Diese Methode initialisiert vor dem Öffnen des Dialoges die einzelnen
+	 * Controller.
+	 */
+	public void dialogInit() {
+		lessonController.init();
+		meetingController.init();
+		compoundLessonController.init();
+		pauseController.init();
 	}
 
 	/**
@@ -401,6 +425,8 @@ public class PlanningController implements Serializable {
 		timePeriod.setDay(Weekday.getByDate(date));
 
 		activityTOHolder.getActivityTO().setTimePeriod(timePeriod);
+		
+		dialogInit();
 	}
 
 	/**
@@ -594,6 +620,7 @@ public class PlanningController implements Serializable {
 	 */
 	public void doBeforeAdd() {
 		activityTOHolder.plainActivityTO();
+		dialogInit();
 	}
 
 	/**
@@ -887,7 +914,7 @@ public class PlanningController implements Serializable {
 		}
 
 		String readableTime = activity.getTime().getDay().toString() + ", "
-				+ calendar.get(Calendar.HOUR) + ":" + readableMinutes;
+				+ calendar.get(Calendar.HOUR_OF_DAY) + ":" + readableMinutes;
 
 		return readableTime;
 	}
@@ -1028,6 +1055,39 @@ public class PlanningController implements Serializable {
 
 	public void setActivity(Activity activity) {
 		this.activity = activity;
+	}
+
+	public LessonController getLessonController() {
+		return lessonController;
+	}
+
+	public void setLessonController(LessonController lessonController) {
+		this.lessonController = lessonController;
+	}
+
+	public MeetingController getMeetingController() {
+		return meetingController;
+	}
+
+	public void setMeetingController(MeetingController meetingController) {
+		this.meetingController = meetingController;
+	}
+
+	public PauseController getPauseController() {
+		return pauseController;
+	}
+
+	public void setPauseController(PauseController pauseController) {
+		this.pauseController = pauseController;
+	}
+
+	public CompoundLessonController getCompoundLessonController() {
+		return compoundLessonController;
+	}
+
+	public void setCompoundLessonController(
+			CompoundLessonController compoundLessonController) {
+		this.compoundLessonController = compoundLessonController;
 	}
 
 }
