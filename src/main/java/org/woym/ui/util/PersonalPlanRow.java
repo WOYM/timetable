@@ -1,4 +1,4 @@
-package org.woym.ui.plans.util;
+package org.woym.ui.util;
 
 import java.math.BigDecimal;
 import java.util.HashMap;

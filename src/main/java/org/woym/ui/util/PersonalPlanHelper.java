@@ -1,4 +1,4 @@
-package org.woym.ui.plans;
+package org.woym.ui.util;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -13,9 +13,8 @@ import org.woym.common.objects.Activity;
 import org.woym.common.objects.EmployeeTimePeriods;
 import org.woym.common.objects.Lesson;
 import org.woym.common.objects.Teacher;
-import org.woym.controller.PlanningController;
+import org.woym.controller.planning.PlanningController;
 import org.woym.persistence.DataAccess;
-import org.woym.ui.plans.util.PersonalPlanRow;
 
 /**
  * <h1>PersonalPlanHelper</h1>

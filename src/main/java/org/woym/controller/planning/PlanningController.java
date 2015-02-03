@@ -56,6 +56,8 @@ import org.woym.logic.util.ActivityValidator;
 import org.woym.persistence.DataAccess;
 import org.woym.ui.util.ActivityTOHolder;
 import org.woym.ui.util.EntityHelper;
+import org.woym.ui.util.PersonalPlanHelper;
+import org.woym.ui.util.PersonalPlanRow;
 import org.woym.ui.util.ScheduleModelHolder;
 
 /**
@@ -214,6 +216,18 @@ public class PlanningController implements Serializable {
 	}
 
 	/**
+	 * Diese Methode liefert mit Hilfe des {@link PersonalPlanHelper}s eine
+	 * Liste von {@link PersonalPlanRow}-Objekten zurück
+	 * 
+	 * @return Eine Liste von {@link PersonalPlanRow}-Objekten
+	 */
+	public List<PersonalPlanRow> getPersonalPlanRows() {
+		PersonalPlanHelper personalPlanHelper = PersonalPlanHelper
+				.getInstance();
+		return personalPlanHelper.getPersonalPlanRows();
+	}
+
+	/**
 	 * Wird aufgerufen, wenn in der Darstellung eine Aktivität selektiert wird.
 	 * <p>
 	 * Setzt die lokale Aktivität entsprechend der Angeklickten.
@@ -279,12 +293,13 @@ public class PlanningController implements Serializable {
 		Date startingTimeLimit = startTime;
 		Date endingTimeLimit = endTime;
 		try {
-			startingTimeLimit = timeLimit.parse(Config.getSingleStringValue(DefaultConfigEnum.WEEKDAY_STARTTIME));
-			endingTimeLimit = timeLimit.parse(Config.getSingleStringValue(DefaultConfigEnum.WEEKDAY_ENDTIME));
+			startingTimeLimit = timeLimit.parse(Config
+					.getSingleStringValue(DefaultConfigEnum.WEEKDAY_STARTTIME));
+			endingTimeLimit = timeLimit.parse(Config
+					.getSingleStringValue(DefaultConfigEnum.WEEKDAY_ENDTIME));
 		} catch (ParseException e) {
 			LOGGER.warn("Parse Error on: " + e.getMessage());
 		}
-		
 
 		int localDayDelta = activity.getTime().getDay().getOrdinal()
 				+ event.getDayDelta();
@@ -297,11 +312,12 @@ public class PlanningController implements Serializable {
 			msg = MessageHelper.generateMessage(
 					GenericErrorMessage.INVALID_WEEKDAY,
 					FacesMessage.SEVERITY_ERROR);
-		} else if (startTime.before(startingTimeLimit) || endTime.after(endingTimeLimit)) {
+		} else if (startTime.before(startingTimeLimit)
+				|| endTime.after(endingTimeLimit)) {
 			msg = MessageHelper.generateMessage(
 					GenericErrorMessage.TIME_OUTSIDE_LIMIT,
 					FacesMessage.SEVERITY_ERROR);
-		}else {
+		} else {
 			// TODO Zeit Validieren
 			TimePeriod time = new TimePeriod();
 			time.setStartTime(startTime);
@@ -652,8 +668,6 @@ public class PlanningController implements Serializable {
 	public List<Weekday> getWeekdays() {
 		return weekdays;
 	}
-	
-	
 
 	/**
 	 * Diese Methode gibt alle bekannten {@link ActivityType}s zurück, die eine
