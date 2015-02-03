@@ -114,10 +114,11 @@ public class MeetingTypeController implements Serializable {
 	 * Löscht die selektierte Personalsitzung.
 	 */
 	public void deleteMeetingType() {
-		if (hide != hideDeletionDialog) {
+		if (hideDeletionDialog) {
 			Config.updateProperty(
 					DefaultConfigEnum.HIDE_ACTIVITYTYPE_DELETION_DIALOG
 							.getPropKey(), String.valueOf(hideDeletionDialog));
+			hide = hideDeletionDialog;
 		}
 		MacroCommand macroCommand = commandCreator
 				.createDeleteCommand(meetingType);
@@ -209,15 +210,14 @@ public class MeetingTypeController implements Serializable {
 		this.hideDeletionDialog = hideDeletionDialog;
 	}
 
+	public boolean isHide() {
+		return hide;
+	}
+
 	private int getTypicalDuration() {
 		int typicalDuration = 0;
-
-		try {
-			typicalDuration = Config
-					.getSingleIntValue(DefaultConfigEnum.TYPICAL_ACTIVITY_DURATION);
-		} catch (Exception e) {
-		}
-
+		typicalDuration = Config
+				.getSingleIntValue(DefaultConfigEnum.TYPICAL_ACTIVITY_DURATION);
 		return typicalDuration;
 	}
 }
