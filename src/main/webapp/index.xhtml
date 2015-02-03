@@ -255,10 +255,10 @@
 						oncomplete="PF('wActivityInfoDialog').show();" />
 					<p:ajax event="eventMove"
 						listener="#{planningController.onEventMove}"
-						update="commandGrowl,@this" />
+						update="commandGrowl,searchTabs,@this" />
 					<p:ajax event="eventResize"
 						listener="#{planningController.onEventResize}"
-						update="commandGrowl,@this" />
+						update="commandGrowl,searchTabs,@this" />
 				</p:schedule>
 				<p:spacer style="height:50px;" />
 			</p:outputPanel>
@@ -317,7 +317,7 @@
 		<p:dialog header="Hinzufügen von Aktivitäten" id="addActivityDialog"
 			widgetVar="wAddActivityDialog" width="600" modal="true"
 			draggable="true" resizable="false" dynamic="true">
-			<p:ajax event="close" update="commandGrowl,scheduleMain" />
+			<p:ajax event="close" update="commandGrowl" />
 			<p:outputPanel id="addActivityPanel">
 				<b><h:outputText value="Neue Aktivität" /></b>
 				<h:panelGrid columns="2" columnClasses="half-column"
@@ -460,7 +460,7 @@
 								<p:commandButton id="LessonAddButton" value="Hinzufügen"
 									actionListener="#{lessonController.addLesson}"
 									process="addLessonType,lessonWeekday,lessonStartTime,lessonEndTime,lessonTeachers,lessonSchoolclassPanel,lessonRoomPanel,@this"
-									update="activityMessages,addActivityPanel,scheduleMain" />
+									update="activityMessages,addActivityPanel,searchTabs,scheduleMain" />
 							</p:outputPanel>
 						</h:panelGrid>
 					</p:outputPanel>
@@ -571,7 +571,7 @@
 								<p:commandButton value="Hinzufügen"
 									actionListener="#{meetingController.addMeeting}"
 									process="addMeetingType,meetingWeekday,meetingStartTime,meetingEndTime,meetingEmployees,meetingRoomPanel,@this"
-									update="activityMessages,addActivityPanel,scheduleMain" />
+									update="activityMessages,addActivityPanel,searchTabs,scheduleMain" />
 							</p:outputPanel>
 						</h:panelGrid>
 					</p:outputPanel>
@@ -637,7 +637,7 @@
 								<p:commandButton value="Hinzufügen"
 									actionListener="#{pauseController.addPause}"
 									process="pauseWeekday,pauseStartTime,pauseEndTime,pauseSchoolclasses,@this"
-									update="activityMessages,addActivityPanel,scheduleMain" />
+									update="activityMessages,addActivityPanel,searchTabs,scheduleMain" />
 							</p:outputPanel>
 						</h:panelGrid>
 
@@ -767,7 +767,7 @@
 								<p:commandButton value="Hinzufügen"
 									actionListener="#{compoundLessonController.addCompoundLesson}"
 									process="compoundLessonWeekday,compoundLessonStartTime,compoundLessonEndTime,compoundLessonEmployees,compoundLessonSchoolclasses,compoundLessonRoomPanel,@this"
-									update="activityMessages,addActivityPanel,scheduleMain" />
+									update="activityMessages,addActivityPanel,searchTabs,scheduleMain" />
 							</p:outputPanel>
 						</h:panelGrid>
 
