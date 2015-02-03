@@ -103,8 +103,9 @@ public class CommandCreator {
 				FacesMessage msg = new FacesMessage();
 				msg.setSummary("Zeitüberschreitung");
 				msg.setDetail("Mitarbeiter " + employee.getSymbol()
-								+ "haut seine Wochenstundenzahl von "
-								+ employee.getHoursPerWeek().toString());
+						+ " hat seine Wochenstundenzahl von "
+						+ employee.getHoursPerWeek().toString()
+						+ " überschritten");
 				msg.setSeverity(FacesMessage.SEVERITY_WARN);
 
 				FacesContext.getCurrentInstance().addMessage(null, msg);
