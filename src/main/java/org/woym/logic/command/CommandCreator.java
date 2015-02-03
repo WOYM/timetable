@@ -5,6 +5,9 @@ import java.math.RoundingMode;
 import java.util.LinkedList;
 import java.util.List;
 
+import javax.faces.application.FacesMessage;
+import javax.faces.context.FacesContext;
+
 import org.woym.common.config.Config;
 import org.woym.common.config.DefaultConfigEnum;
 import org.woym.common.exceptions.DatasetException;
@@ -94,8 +97,22 @@ public class CommandCreator {
 							hourlySettlement), Employee.SCALE,
 							RoundingMode.HALF_UP));
 			employee.setAllocatedHours(newAllocatedHours);
+
+			if (employee.getHoursPerWeek().compareTo(
+					employee.getAllocatedHours()) == -1) {
+				FacesMessage msg = new FacesMessage();
+				msg.setSummary("Zeitüberschreitung");
+				msg.setDetail("Mitarbeiter " + employee.getSymbol()
+								+ "haut seine Wochenstundenzahl von "
+								+ employee.getHoursPerWeek().toString());
+				msg.setSeverity(FacesMessage.SEVERITY_WARN);
+
+				FacesContext.getCurrentInstance().addMessage(null, msg);
+			}
+
 			macro.add(new UpdateCommand<Entity>(employee, memento));
 		}
+
 		return macro;
 	}
 
