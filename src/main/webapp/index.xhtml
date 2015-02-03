@@ -268,7 +268,7 @@
 		<!-- ActivityInfo-Dialog -->
 		<p:dialog id="activityInfoDialog" widgetVar="wActivityInfoDialog"
 			header="Aktivitätsinformation" closable="true" draggable="true"
-			resizable="false">
+			resizable="false" width="500">
 			<p:ajax event="close" update="activityInfoDialog" />
 			<p:outputPanel id="activityInfoPanel">
 				<p:outputPanel style="margin-bottom:5px;">
@@ -299,40 +299,43 @@
 					</h:panelGrid>
 				</p:outputPanel>
 				<p:outputPanel>
-				<p:dataList value="#{planningController.activity.rooms}" var="room"
-					type="ordered" style="padding:5px;" emptyMessage="Keine Räume">
-					<f:facet name="header">
+					<p:dataList value="#{planningController.activity.rooms}" var="room"
+						type="ordered" style="padding:5px;" emptyMessage="Keine Räume">
+						<f:facet name="header">
                         Räume
                     </f:facet>
                      #{room.name} <br /> #{room.locationName}
                 </p:dataList>
-                </p:outputPanel>
-                <p:outputPanel style="margin-top:10px;">
-				<p:dataList
-					value="#{planningController.activity.employeeTimePeriods}" emptyMessage="Keine Mitarbeiter"
-					var="employeeTimePeriods" type="ordered" style="padding:5px;">
-					<f:facet name="header">
+				</p:outputPanel>
+				<p:outputPanel style="margin-top:10px;">
+					<p:dataList
+						value="#{planningController.activity.employeeTimePeriods}"
+						emptyMessage="Keine Mitarbeiter" var="employeeTimePeriods"
+						type="ordered" style="padding:5px;">
+						<f:facet name="header">
                         Mitarbeiter
                     </f:facet>
                      #{employeeTimePeriods.employee.name}
 				</p:dataList>
 				</p:outputPanel>
-				<p:outputPanel rendered="#{not planningController.isCurrentActivityMeeting}" style="margin-top:10px;">
-				<p:dataList value="#{planningController.activity.schoolclasses}" emptyMessage="Keine Klassen"
-					var="schoolclass" type="ordered" style="padding:5px;">
-					<f:facet name="header">
+				<p:outputPanel
+					rendered="#{not planningController.isCurrentActivityMeeting}"
+					style="margin-top:10px;">
+					<p:dataList value="#{planningController.activity.schoolclasses}"
+						emptyMessage="Keine Klassen" var="schoolclass" type="ordered"
+						style="padding:5px;">
+						<f:facet name="header">
                         Schulklassen
                     </f:facet>
                      Klasse #{schoolclass.name}
 				</p:dataList>
 				</p:outputPanel>
-				<h:panelGrid columns="2" columnClasses="half-column"
-					style="width:100%;">
+				<p:outputPanel style="float:right;height:60px;margin-top:10px;">
 					<p:commandButton value="Löschen" process="@this"
 						actionListener="#{planningController.deleteActivity}"
 						update="commandGrowl,searchTabs,scheduleMain"
 						oncomplete="PF('wActivityInfoDialog').hide()" />
-				</h:panelGrid>
+				</p:outputPanel>
 			</p:outputPanel>
 		</p:dialog>
 

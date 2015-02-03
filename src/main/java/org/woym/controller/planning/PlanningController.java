@@ -894,7 +894,7 @@ public class PlanningController implements Serializable {
 		}
 
 		String readableTime = activity.getTime().getDay().toString() + ", "
-				+ calendar.get(Calendar.HOUR) + ":" + readableMinutes;
+				+ calendar.get(Calendar.HOUR_OF_DAY) + ":" + readableMinutes;
 
 		return readableTime;
 	}
