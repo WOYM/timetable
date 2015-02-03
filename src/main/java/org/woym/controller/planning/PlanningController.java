@@ -277,7 +277,6 @@ public class PlanningController implements Serializable {
 	 * @param event
 	 *            Das Event
 	 */
-	@SuppressWarnings("deprecation")
 	public void onEventMove(ScheduleEntryMoveEvent event) {
 
 		FacesMessage msg;
@@ -288,22 +287,6 @@ public class PlanningController implements Serializable {
 				event.getDayDelta(), event.getMinuteDelta());
 		Date endTime = changeDateByDelta(activity.getTime().getEndTime(),
 				event.getDayDelta(), event.getMinuteDelta());
-		SimpleDateFormat timeLimit = new SimpleDateFormat("HH:mm");
-		Date startingTimeLimit = new Date();
-		startingTimeLimit.setTime(startTime.getTime());
-		Date endingTimeLimit = new Date();
-		endingTimeLimit.setTime(endTime.getTime());
-		try {
-			Date localDate = timeLimit.parse(Config.getSingleStringValue(DefaultConfigEnum.WEEKDAY_STARTTIME));
-			startingTimeLimit.setMinutes(localDate.getMinutes());
-			startingTimeLimit.setHours(localDate.getHours());
-			
-			localDate = timeLimit.parse(Config.getSingleStringValue(DefaultConfigEnum.WEEKDAY_ENDTIME));
-			endingTimeLimit.setMinutes(localDate.getMinutes());
-			endingTimeLimit.setHours(localDate.getHours());
-		} catch (ParseException e) {
-			LOGGER.warn("Parse Error on: " + e.getMessage());
-		}
 
 		int localDayDelta = activity.getTime().getDay().getOrdinal()
 				+ event.getDayDelta();
@@ -316,8 +299,7 @@ public class PlanningController implements Serializable {
 			msg = MessageHelper.generateMessage(
 					GenericErrorMessage.INVALID_WEEKDAY,
 					FacesMessage.SEVERITY_ERROR);
-		} else if (startTime.before(startingTimeLimit)
-				|| endTime.after(endingTimeLimit)) {
+		} else if (isTimeInRange(startTime, endTime)) {
 			msg = MessageHelper.generateMessage(
 					GenericErrorMessage.TIME_OUTSIDE_LIMIT,
 					FacesMessage.SEVERITY_ERROR);
@@ -357,6 +339,41 @@ public class PlanningController implements Serializable {
 
 		scheduleModelHolder.updateScheduleModel();
 		FacesContext.getCurrentInstance().addMessage(null, msg);
+	}
+
+	/**
+	 * Bestimmt ob die übergebenen Zeiter auserhalb, der durch die Einstellungen
+	 * festgelegten, Grenzen liegen.
+	 * 
+	 * @param startTime
+	 *            Startzeit
+	 * @param endTime
+	 *            Endzeit
+	 * @return Wahrheitswert ob sie ausserhalb der Grenzen sind.
+	 */
+	@SuppressWarnings("deprecation")
+	private boolean isTimeInRange(final Date startTime, final Date endTime) {
+		SimpleDateFormat timeLimit = new SimpleDateFormat("HH:mm");
+		Date startingTimeLimit = new Date();
+		startingTimeLimit.setTime(startTime.getTime());
+		Date endingTimeLimit = new Date();
+		endingTimeLimit.setTime(endTime.getTime());
+		try {
+			Date localDate = timeLimit.parse(Config
+					.getSingleStringValue(DefaultConfigEnum.WEEKDAY_STARTTIME));
+			startingTimeLimit.setMinutes(localDate.getMinutes());
+			startingTimeLimit.setHours(localDate.getHours());
+
+			localDate = timeLimit.parse(Config
+					.getSingleStringValue(DefaultConfigEnum.WEEKDAY_ENDTIME));
+			endingTimeLimit.setMinutes(localDate.getMinutes());
+			endingTimeLimit.setHours(localDate.getHours());
+		} catch (ParseException e) {
+			LOGGER.warn("Parse Error on: " + e.getMessage());
+		}
+		return startTime.before(startingTimeLimit)
+				|| endTime.after(endingTimeLimit);
+
 	}
 
 	/**
@@ -408,41 +425,46 @@ public class PlanningController implements Serializable {
 
 		IMemento activityMemento = activity.createMemento();
 
+		Date startTime = activity.getTime().getStartTime();
 		Date endTime = changeDateByDelta(activity.getTime().getEndTime(),
 				event.getDayDelta(), event.getMinuteDelta());
 
 		// TODO Zeit Validieren
 		TimePeriod time = new TimePeriod();
-		time.setStartTime(activity.getTime().getStartTime());
+		time.setStartTime(startTime);
 		time.setEndTime(endTime);
 		time.setDay(activity.getTime().getDay());
 
 		IStatus status = activityValidator.validateActivity(activity, time);
-
-		if (status instanceof SuccessStatus) {
-
-			MacroCommand macro = commandCreator
-					.createEmployeeUpdateSubstractWorkingHours(activity);
-			activity.setTime(time);
-			for (EmployeeTimePeriods timePeriods : activity
-					.getEmployeeTimePeriods()) {
-				for (TimePeriod timePeriod : timePeriods.getTimePeriods()) {
-					// TODO Would not work with multiple-teacher-periods
-					timePeriod.setDay(time.getDay());
-					timePeriod.setStartTime(activity.getTime().getStartTime());
-					timePeriod.setEndTime(endTime);
-				}
-			}
-			macro.addAll(commandCreator
-					.createEmployeeUpdateAddWorkingHours(activity));
-			macro.add(new UpdateCommand<Activity>(activity, activityMemento));
-
-			status = commandHandler.execute(macro);
+		if (isTimeInRange(startTime, endTime)) {
+			msg = MessageHelper.generateMessage(
+					GenericErrorMessage.TIME_OUTSIDE_LIMIT,
+					FacesMessage.SEVERITY_ERROR);
 		} else {
-			activity.setMemento(activityMemento);
-		}
-		msg = status.report();
 
+			if (status instanceof SuccessStatus) {
+
+				MacroCommand macro = commandCreator
+						.createEmployeeUpdateSubstractWorkingHours(activity);
+				activity.setTime(time);
+				for (EmployeeTimePeriods timePeriods : activity
+						.getEmployeeTimePeriods()) {
+					for (TimePeriod timePeriod : timePeriods.getTimePeriods()) {
+						// TODO Would not work with multiple-teacher-periods
+						timePeriod.setDay(time.getDay());
+						timePeriod.setStartTime(activity.getTime()
+								.getStartTime());
+						timePeriod.setEndTime(endTime);
+					}
+				}
+				macro.addAll(commandCreator
+						.createEmployeeUpdateAddWorkingHours(activity));
+				macro.add(new UpdateCommand<Activity>(activity, activityMemento));
+
+				status = commandHandler.execute(macro);
+			}
+			msg = status.report();
+		}
 		scheduleModelHolder.updateScheduleModel();
 		FacesContext.getCurrentInstance().addMessage(null, msg);
 	}
