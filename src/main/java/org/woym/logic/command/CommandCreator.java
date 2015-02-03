@@ -316,6 +316,7 @@ public class CommandCreator {
 			if (size == 0) {
 				a.setMemento(memento);
 				a.update();
+				macro.addAll(createEmployeeUpdateSubstractWorkingHours(a).getCommands());
 				macro.add(new DeleteCommand<Entity>(a));
 			} else if (size > 0) {
 				macro.add(new UpdateCommand<Entity>(a, memento));
