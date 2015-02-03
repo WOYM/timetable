@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+<h:head>
+	<title>Timetable - Alternative Anzeigen</title>
+	<h:outputStylesheet name="style.css" library="css" />
+</h:head>
+
+<h:body>
+	<h:form>
+		<p:toolbar id="alternativeViewToolbar">
+			<f:facet name="left">
+				<p:commandButton process="@this" title="Planungsansicht"
+					value="Planungsansicht" icon="ui-icon-calendar" action="/index" />
+			</f:facet>
+			<f:facet name="right">
+				<p:commandButton title="Rückgängig"
+					icon="ui-icon-arrowreturnthick-1-w"
+					actionListener="#{GUIController.undo}" process="@this"
+					update="@form" />
+				<p:commandButton title="Wiederholen"
+					icon="ui-icon-arrowreturnthick-1-e"
+					actionListener="#{GUIController.redo}" process="@this"
+					update="@form" />
+			</f:facet>
+		</p:toolbar>
+
+		<p:spacer style="height:20px" />
+		<p:tabView id="alternativeViewTabs">
+			<p:ajax event="tabChange" update="alternativeViewTabs" />
+			<p:tab title="Lehrerkrafteinsatzplan" id="alternativeViewTeacherTab">
+				<p:dataTable id="teacherAllocationPlan"
+					value="#{planningController.personalPlanRows}"
+					var="personalPlanRow" rowKey="#{personalPlanRow.teacherName}">
+					<p:column headerText="" style="text-align:center;">
+						<b><h:outputText
+								rendered="#{personalPlanRow.hasRemainingHours}"
+								value="- #{personalPlanRow.freeHours}" /></b>
+						<br />
+						<b><h:outputText value="#{personalPlanRow.teacherName}" /></b>
+					</p:column>
+					<p:column headerText="" style="text-align:center;">
+						<h:outputText rendered="#{personalPlanRow.hasOverflow}"
+							value="- #{personalPlanRow.overflowHours}" />
+						<br />
+						<b><h:outputText value="#{personalPlanRow.totalHours}" /></b>
+					</p:column>
+					<p:columns var="lessonType"
+						value="#{lessonTypeController.lessonTypes}"
+						headerText="#{lessonType.name}" style="text-align:center;">
+						<table style="color: #FFF">
+							<ui:repeat var="schoolclass"
+								value="#{personalPlanRow.getSchoolclasses(lessonType)}">
+								<tr>
+									<td><h:outputText style="color:#4F4F4F;"
+											value="#{schoolclass.name}" /></td>
+									<td><h:outputText style="color:#4F4F4F;"
+											value="#{personalPlanRow.getTotalDuration(lessonType, schoolclass)}" /></td>
+								</tr>
+							</ui:repeat>
+						</table>
+					</p:columns>
+				</p:dataTable>
+			</p:tab>
+			<p:tab title="Tagesplan" id="alternativeViewDayTab">
+			</p:tab>
+		</p:tabView>
+	</h:form>
+</h:body>
+
+</html>
