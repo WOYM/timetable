@@ -56,6 +56,8 @@ import org.woym.logic.util.ActivityValidator;
 import org.woym.persistence.DataAccess;
 import org.woym.ui.util.ActivityTOHolder;
 import org.woym.ui.util.EntityHelper;
+import org.woym.ui.util.PersonalPlanHelper;
+import org.woym.ui.util.PersonalPlanRow;
 import org.woym.ui.util.ScheduleModelHolder;
 
 /**
@@ -110,8 +112,6 @@ public class PlanningController implements Serializable {
 		FacesContext.getCurrentInstance().getExternalContext().getSession(true);
 
 		searchTerm = "";
-		scheduleModelHolder.setScheduleModel(scheduleModelHolder
-				.emptyScheduleModel());
 		validWeekdays = getValidWeekdays();
 	}
 
@@ -214,6 +214,18 @@ public class PlanningController implements Serializable {
 	}
 
 	/**
+	 * Diese Methode liefert mit Hilfe des {@link PersonalPlanHelper}s eine
+	 * Liste von {@link PersonalPlanRow}-Objekten zurück
+	 * 
+	 * @return Eine Liste von {@link PersonalPlanRow}-Objekten
+	 */
+	public List<PersonalPlanRow> getPersonalPlanRows() {
+		PersonalPlanHelper personalPlanHelper = PersonalPlanHelper
+				.getInstance();
+		return personalPlanHelper.getPersonalPlanRows();
+	}
+
+	/**
 	 * Wird aufgerufen, wenn in der Darstellung eine Aktivität selektiert wird.
 	 * <p>
 	 * Setzt die lokale Aktivität entsprechend der Angeklickten.
@@ -265,6 +277,7 @@ public class PlanningController implements Serializable {
 	 * @param event
 	 *            Das Event
 	 */
+	@SuppressWarnings("deprecation")
 	public void onEventMove(ScheduleEntryMoveEvent event) {
 
 		FacesMessage msg;
@@ -276,15 +289,21 @@ public class PlanningController implements Serializable {
 		Date endTime = changeDateByDelta(activity.getTime().getEndTime(),
 				event.getDayDelta(), event.getMinuteDelta());
 		SimpleDateFormat timeLimit = new SimpleDateFormat("HH:mm");
-		Date startingTimeLimit = startTime;
-		Date endingTimeLimit = endTime;
+		Date startingTimeLimit = new Date();
+		startingTimeLimit.setTime(startTime.getTime());
+		Date endingTimeLimit = new Date();
+		endingTimeLimit.setTime(endTime.getTime());
 		try {
-			startingTimeLimit = timeLimit.parse(Config.getSingleStringValue(DefaultConfigEnum.WEEKDAY_STARTTIME));
-			endingTimeLimit = timeLimit.parse(Config.getSingleStringValue(DefaultConfigEnum.WEEKDAY_ENDTIME));
+			Date localDate = timeLimit.parse(Config.getSingleStringValue(DefaultConfigEnum.WEEKDAY_STARTTIME));
+			startingTimeLimit.setMinutes(localDate.getMinutes());
+			startingTimeLimit.setHours(localDate.getHours());
+			
+			localDate = timeLimit.parse(Config.getSingleStringValue(DefaultConfigEnum.WEEKDAY_ENDTIME));
+			endingTimeLimit.setMinutes(localDate.getMinutes());
+			endingTimeLimit.setHours(localDate.getHours());
 		} catch (ParseException e) {
 			LOGGER.warn("Parse Error on: " + e.getMessage());
 		}
-		
 
 		int localDayDelta = activity.getTime().getDay().getOrdinal()
 				+ event.getDayDelta();
@@ -297,11 +316,12 @@ public class PlanningController implements Serializable {
 			msg = MessageHelper.generateMessage(
 					GenericErrorMessage.INVALID_WEEKDAY,
 					FacesMessage.SEVERITY_ERROR);
-		} else if (startTime.before(startingTimeLimit) || endTime.after(endingTimeLimit)) {
+		} else if (startTime.before(startingTimeLimit)
+				|| endTime.after(endingTimeLimit)) {
 			msg = MessageHelper.generateMessage(
 					GenericErrorMessage.TIME_OUTSIDE_LIMIT,
 					FacesMessage.SEVERITY_ERROR);
-		}else {
+		} else {
 			// TODO Zeit Validieren
 			TimePeriod time = new TimePeriod();
 			time.setStartTime(startTime);
