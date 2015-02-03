@@ -764,6 +764,7 @@ public class DataAccess implements IDataAccess, Observer {
 					.createQuery("SELECT DISTINCT a from Activity a INNER JOIN a.employeeTimePeriods e "
 							+ "WHERE e.employee.id = ?1 ORDER BY a.time.day, a.time.startTime");
 			query.setParameter(1, employee.getId());
+			query.setHint("javax.persistence.cache.storeMode", "REFRESH");
 			return (List<Activity>) query.getResultList();
 		} catch (Exception e) {
 			LOGGER.error("Exception while getting all activities for "
@@ -802,6 +803,7 @@ public class DataAccess implements IDataAccess, Observer {
 					.createQuery("SELECT a FROM Activity a "
 							+ "WHERE ?1 MEMBER OF a.schoolclasses ORDER BY a.time.day, a.time.startTime");
 			query.setParameter(1, schoolclass);
+			query.setHint("javax.persistence.cache.storeMode", "REFRESH");
 			return (List<Activity>) query.getResultList();
 		} catch (Exception e) {
 			LOGGER.error(
@@ -828,6 +830,7 @@ public class DataAccess implements IDataAccess, Observer {
 					.createQuery("SELECT a FROM Activity a "
 							+ "WHERE ?1 MEMBER OF a.rooms ORDER BY a.time.day, a.time.startTime");
 			query.setParameter(1, room);
+			query.setHint("javax.persistence.cache.storeMode", "REFRESH");
 			return (List<Activity>) query.getResultList();
 		} catch (Exception e) {
 			LOGGER.error("Exception while getting all activities for room "
