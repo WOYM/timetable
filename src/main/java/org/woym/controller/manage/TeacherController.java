@@ -207,10 +207,11 @@ public class TeacherController implements Serializable {
 	 * Löscht den selektierten Lehrer.
 	 */
 	public void deleteTeacher() {
-		if (hide != hideDeletionDialog) {
+		if (hideDeletionDialog) {
 			Config.updateProperty(
 					DefaultConfigEnum.HIDE_TEACHER_DELETION_DIALOG.getPropKey(),
 					String.valueOf(hideDeletionDialog));
+			hide = hideDeletionDialog;
 		}
 		MacroCommand macroCommand = commandCreator.createDeleteCommand(teacher);
 		IStatus status = commandHandler.execute(macroCommand);
@@ -251,6 +252,10 @@ public class TeacherController implements Serializable {
 
 	public void setHideDeletionDialog(boolean hideDeletionDialog) {
 		this.hideDeletionDialog = hideDeletionDialog;
+	}
+
+	public boolean isHide() {
+		return hide;
 	}
 
 	public int getHourlySettlement() {

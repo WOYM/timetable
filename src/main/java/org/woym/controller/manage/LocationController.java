@@ -133,10 +133,11 @@ public class LocationController implements Serializable {
 	 * Löscht einen Standort aus der Datenbank.
 	 */
 	public void deleteLocation() {
-		if (hideDeletionDialog != hide) {
+		if (hideDeletionDialog) {
 			Config.updateProperty(
 					DefaultConfigEnum.HIDE_LOCATION_DELETION_DIALOG
 							.getPropKey(), String.valueOf(hideDeletionDialog));
+			hide = hideDeletionDialog;
 		}
 		MacroCommand macroCommand = commandCreator
 				.createDeleteCommand(location);
@@ -220,6 +221,10 @@ public class LocationController implements Serializable {
 
 	public void setHideDeletionDialog(boolean hideDeletionDialog) {
 		this.hideDeletionDialog = hideDeletionDialog;
+	}
+
+	public boolean isHide() {
+		return hide;
 	}
 
 	public Location getFirstLocation() {

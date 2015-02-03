@@ -39,10 +39,10 @@
 						oncomplete="PF('wEditPedagogicAssistantDialog').show();"
 						icon="ui-icon-pencil" />
 					<p:menuitem value="Löschen" update="@form" icon="ui-icon-close"
-						rendered="#{not pedagogicAssistantController.hideDeletionDialog}"
+						rendered="#{not pedagogicAssistantController.hide}"
 						oncomplete="PF('wConfirmPedagogicAssistantDelete').show();" />
 					<p:menuitem value="Löschen" update="@form" icon="ui-icon-close"
-						rendered="#{pedagogicAssistantController.hideDeletionDialog}"
+						rendered="#{pedagogicAssistantController.hide}"
 						action="#{pedagogicAssistantController.deletePedagogicAssistant}" />
 				</p:contextMenu>
 				<p:dataTable emptyMessage="Keine Mitarbeiter vorhanden"
