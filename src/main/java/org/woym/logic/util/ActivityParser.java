@@ -70,7 +70,7 @@ public class ActivityParser {
 		List<Activity> activities;
 
 		try {
-			activities = dataAccess.getAllActivities(teacher);
+			activities = dataAccess.getAllActivities(teacher, true);
 		} catch (DatasetException e) {
 			LOGGER.error(e);
 			activities = new ArrayList<>();
@@ -95,7 +95,7 @@ public class ActivityParser {
 		List<Activity> activities;
 
 		try {
-			activities = dataAccess.getAllActivities(schoolclass);
+			activities = dataAccess.getAllActivities(schoolclass, true);
 		} catch (DatasetException e) {
 			LOGGER.error(e);
 			activities = new ArrayList<>();
@@ -121,7 +121,7 @@ public class ActivityParser {
 		List<Activity> activities;
 
 		try {
-			activities = dataAccess.getAllActivities(pedagogicAssistant);
+			activities = dataAccess.getAllActivities(pedagogicAssistant, true);
 		} catch (DatasetException e) {
 			LOGGER.error(e);
 			activities = new ArrayList<>();
@@ -145,7 +145,7 @@ public class ActivityParser {
 		List<Activity> activities;
 
 		try {
-			activities = dataAccess.getAllActivities(room);
+			activities = dataAccess.getAllActivities(room, true);
 		} catch (DatasetException e) {
 			LOGGER.error(e);
 			activities = new ArrayList<>();

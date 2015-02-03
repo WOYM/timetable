@@ -33,32 +33,32 @@ import org.woym.persistence.DataAccess;
 public class ActivityParserTest extends PowerMockTestCase {
 
 	List<Activity> activities;
-	
+
 	@Mock
 	DataAccess dataAccess;
-	
+
 	@InjectMocks
 	ActivityParser activityParser;
-	
+
 	@BeforeTest
 	public void makeActivities() {
 		activities = new ArrayList<>();
-		
+
 		Date startDate = new Date();
 		Date endDate = new Date();
 		Weekday weekday = Weekday.MONDAY;
-		
+
 		TimePeriod time = new TimePeriod();
 		time.setStartTime(startDate);
 		time.setEndTime(endDate);
 		time.setDay(weekday);
-		
+
 		LessonType lessonType = new LessonType();
 		MeetingType meetingType = new MeetingType();
-		
+
 		lessonType.setColor(ColorEnum.ORANGE);
 		meetingType.setColor(ColorEnum.BLUE_DARK);
-		
+
 		Lesson activity1 = new Lesson();
 		activity1.setTime(time);
 		activity1.setLessonType(lessonType);
@@ -67,98 +67,144 @@ public class ActivityParserTest extends PowerMockTestCase {
 		Meeting activity3 = new Meeting();
 		activity3.setMeetingType(meetingType);
 		activity3.setTime(time);
-		
+
 		activities.add(activity1);
 		activities.add(activity2);
 		activities.add(activity3);
-		
+
 	}
-	
-	
+
 	@Test
 	public void testGetInstance() {
 		AssertJUnit.assertNotNull(ActivityParser.getInstance());
 	}
-	
+
 	@Test
 	public void getActivityModelTeacherTest() throws DatasetException {
 		Teacher teacher = Mockito.mock(Teacher.class);
-		PowerMockito.when(dataAccess.getAllActivities(teacher)).thenReturn(activities);
-		
+		PowerMockito.when(
+				dataAccess.getAllActivities(teacher, true))
+				.thenReturn(activities);
+
 		ScheduleModel scheduleModel = activityParser.getActivityModel(teacher);
-		
-		AssertJUnit.assertEquals("The ActivityParser is meant to return as many events as activities are given", activities.size(), scheduleModel.getEvents().size());
+
+		AssertJUnit
+				.assertEquals(
+						"The ActivityParser is meant to return as many events as activities are given",
+						activities.size(), scheduleModel.getEvents().size());
 	}
-	
+
 	@Test
 	public void getActivityModelTeacherExceptionTest() throws DatasetException {
 		Teacher teacher = Mockito.mock(Teacher.class);
-		PowerMockito.when(dataAccess.getAllActivities(teacher)).thenThrow(new DatasetException(""));
-		
+		PowerMockito.when(
+				dataAccess.getAllActivities(teacher, true))
+				.thenThrow(new DatasetException(""));
+
 		ScheduleModel scheduleModel = activityParser.getActivityModel(teacher);
-		
-		AssertJUnit.assertEquals("The ActivityParser is meant to return an empty list in case of DatasetException", 0, scheduleModel.getEvents().size());
+
+		AssertJUnit
+				.assertEquals(
+						"The ActivityParser is meant to return an empty list in case of DatasetException",
+						0, scheduleModel.getEvents().size());
 	}
-	
+
 	@Test
 	public void getActivityModelSchoolclassTest() throws DatasetException {
 		Schoolclass schoolclass = Mockito.mock(Schoolclass.class);
-		PowerMockito.when(dataAccess.getAllActivities(schoolclass)).thenReturn(activities);
-		
-		ScheduleModel scheduleModel = activityParser.getActivityModel(schoolclass);
-		
-		AssertJUnit.assertEquals("The ActivityParser is meant to return as many events as activities are given", activities.size(), scheduleModel.getEvents().size());
+		PowerMockito.when(
+				dataAccess.getAllActivities(schoolclass, true))
+				.thenReturn(activities);
+
+		ScheduleModel scheduleModel = activityParser
+				.getActivityModel(schoolclass);
+
+		AssertJUnit
+				.assertEquals(
+						"The ActivityParser is meant to return as many events as activities are given",
+						activities.size(), scheduleModel.getEvents().size());
 	}
-	
+
 	@Test
-	public void getActivityModelSchoolclassExceptionTest() throws DatasetException {
+	public void getActivityModelSchoolclassExceptionTest()
+			throws DatasetException {
 		Schoolclass schoolclass = Mockito.mock(Schoolclass.class);
-		PowerMockito.when(dataAccess.getAllActivities(schoolclass)).thenThrow(new DatasetException(""));
-		
-		ScheduleModel scheduleModel = activityParser.getActivityModel(schoolclass);
-		
-		AssertJUnit.assertEquals("The ActivityParser is meant to return an empty list in case of DatasetException", 0, scheduleModel.getEvents().size());
+		PowerMockito.when(
+				dataAccess.getAllActivities(schoolclass, true))
+				.thenThrow(new DatasetException(""));
+
+		ScheduleModel scheduleModel = activityParser
+				.getActivityModel(schoolclass);
+
+		AssertJUnit
+				.assertEquals(
+						"The ActivityParser is meant to return an empty list in case of DatasetException",
+						0, scheduleModel.getEvents().size());
 	}
-	
+
 	@Test
 	public void getActivityModelPATest() throws DatasetException {
-		PedagogicAssistant pedagogicAssistant = Mockito.mock(PedagogicAssistant.class);
-		PowerMockito.when(dataAccess.getAllActivities(pedagogicAssistant)).thenReturn(activities);
-		
-		ScheduleModel scheduleModel = activityParser.getActivityModel(pedagogicAssistant);
-		
-		AssertJUnit.assertEquals("The ActivityParser is meant to return as many events as activities are given", activities.size(), scheduleModel.getEvents().size());
+		PedagogicAssistant pedagogicAssistant = Mockito
+				.mock(PedagogicAssistant.class);
+		PowerMockito.when(
+				dataAccess.getAllActivities(pedagogicAssistant,
+						true)).thenReturn(activities);
+
+		ScheduleModel scheduleModel = activityParser
+				.getActivityModel(pedagogicAssistant);
+
+		AssertJUnit
+				.assertEquals(
+						"The ActivityParser is meant to return as many events as activities are given",
+						activities.size(), scheduleModel.getEvents().size());
 	}
-	
+
 	@Test
 	public void getActivityModelPAExceptionTest() throws DatasetException {
-		PedagogicAssistant pedagogicAssistant = Mockito.mock(PedagogicAssistant.class);
-		PowerMockito.when(dataAccess.getAllActivities(pedagogicAssistant)).thenThrow(new DatasetException(""));
-		
-		ScheduleModel scheduleModel = activityParser.getActivityModel(pedagogicAssistant);
-		
-		AssertJUnit.assertEquals("The ActivityParser is meant to return an empty list in case of DatasetException", 0, scheduleModel.getEvents().size());
+		PedagogicAssistant pedagogicAssistant = Mockito
+				.mock(PedagogicAssistant.class);
+		PowerMockito.when(
+				dataAccess.getAllActivities(pedagogicAssistant,
+						true)).thenThrow(
+				new DatasetException(""));
+
+		ScheduleModel scheduleModel = activityParser
+				.getActivityModel(pedagogicAssistant);
+
+		AssertJUnit
+				.assertEquals(
+						"The ActivityParser is meant to return an empty list in case of DatasetException",
+						0, scheduleModel.getEvents().size());
 	}
-	
-	
+
 	@Test
 	public void getActivityModelRoomTest() throws DatasetException {
 		Room room = Mockito.mock(Room.class);
-		PowerMockito.when(dataAccess.getAllActivities(room)).thenReturn(activities);
-		
+		PowerMockito.when(
+				dataAccess.getAllActivities(room, true))
+				.thenReturn(activities);
+
 		ScheduleModel scheduleModel = activityParser.getActivityModel(room);
-		
-		AssertJUnit.assertEquals("The ActivityParser is meant to return as many events as activities are given", activities.size(), scheduleModel.getEvents().size());
+
+		AssertJUnit
+				.assertEquals(
+						"The ActivityParser is meant to return as many events as activities are given",
+						activities.size(), scheduleModel.getEvents().size());
 	}
-	
+
 	@Test
 	public void getActivityModelRoomExceptionTest() throws DatasetException {
 		Room room = Mockito.mock(Room.class);
-		PowerMockito.when(dataAccess.getAllActivities(room)).thenThrow(new DatasetException(""));
-		
+		PowerMockito.when(
+				dataAccess.getAllActivities(room, true))
+				.thenThrow(new DatasetException(""));
+
 		ScheduleModel scheduleModel = activityParser.getActivityModel(room);
-		
-		AssertJUnit.assertEquals("The ActivityParser is meant to return an empty list in case of DatasetException", 0, scheduleModel.getEvents().size());
+
+		AssertJUnit
+				.assertEquals(
+						"The ActivityParser is meant to return an empty list in case of DatasetException",
+						0, scheduleModel.getEvents().size());
 	}
 
 }

@@ -33,7 +33,7 @@
 		<p:spacer style="height:20px" />
 		<p:tabView id="alternativeViewTabs">
 			<p:ajax event="tabChange" update="alternativeViewTabs" />
-			<p:tab title="Lehrerkrafteinsatzplan" id="alternativeViewTeacherTab">
+			<p:tab title="Lehrkrafteinsatzplan" id="alternativeViewTeacherTab">
 				<p:dataTable id="teacherAllocationPlan"
 					value="#{planningController.personalPlanRows}"
 					var="personalPlanRow" rowKey="#{personalPlanRow.teacherName}">
