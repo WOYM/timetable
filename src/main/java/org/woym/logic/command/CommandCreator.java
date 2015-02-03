@@ -308,7 +308,7 @@ public class CommandCreator {
 		LinkedList<ICommand> macro = new LinkedList<ICommand>();
 
 		List<Activity> list = DataAccess.getInstance().getAllActivities(
-				(IActivityObject) entity);
+				(IActivityObject) entity, false);
 
 		for (Activity a : list) {
 			IMemento memento = a.createMemento();

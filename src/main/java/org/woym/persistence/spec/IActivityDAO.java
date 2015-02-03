@@ -72,12 +72,15 @@ public interface IActivityDAO {
 	 * 
 	 * @param employee
 	 *            - Mitarbeiter, für den alle Aktivitäten gesucht werden sollen
+	 * @param refreshCache
+	 *            - {@code true}, wenn die Objekte im Cache aktualisiert werden
+	 *            sollen
 	 * @return Liste aller Aktivitäten des übergebenen Mitarbeiters, kann auch
 	 *         leer sein, wenn der Mitarbeiter an keiner Aktivität teilnimmt
 	 * @throws DatasetException
 	 */
-	public List<Activity> getAllActivities(Employee employee)
-			throws DatasetException;
+	public List<Activity> getAllActivities(Employee employee,
+			boolean refreshCache) throws DatasetException;
 
 	/**
 	 * Wird {@code null} übergeben, wird eine
@@ -88,12 +91,15 @@ public interface IActivityDAO {
 	 * 
 	 * @param schoolclass
 	 *            - Schulklasse, für die alle Aktivitäten gesucht werden sollen
+	 * @param refreshCache
+	 *            - {@code true}, wenn die Objekte im Cache aktualisiert werden
+	 *            sollen
 	 * @return Liste aller Aktivitäten der übergebenen Schulklasse, kann auch
 	 *         leer sein, wenn die Schulklasse an keiner Aktivität teilnimmt.
 	 * @throws DatasetException
 	 */
-	public List<Activity> getAllActivities(Schoolclass schoolclass)
-			throws DatasetException;
+	public List<Activity> getAllActivities(Schoolclass schoolclass,
+			boolean refreshCache) throws DatasetException;
 
 	/**
 	 * Wird {@code null} übergeben, wird eine
@@ -104,11 +110,14 @@ public interface IActivityDAO {
 	 * 
 	 * @param room
 	 *            - Raum, für welchen alle Aktivitäten gesucht werden sollen
+	 * @param refreshCache
+	 *            - {@code true}, wenn die Objekte im Cache aktualisiert werden
+	 *            sollen
 	 * @return Liste aller Aktivitäten, die im übergebenen Raum stattfinden,
 	 *         kann auch leer sein
 	 * @throws DatasetException
 	 */
-	public List<Activity> getAllActivities(Room room) throws DatasetException;
+	public List<Activity> getAllActivities(Room room, boolean refreshCache) throws DatasetException;
 
 	/**
 	 * Wird für einen Parameter{@code null} übergeben, wird eine
