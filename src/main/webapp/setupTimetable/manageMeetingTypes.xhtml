@@ -40,10 +40,10 @@
 						oncomplete="PF('wEditMeetingTypeDialog').show();"
 						icon="ui-icon-pencil" />
 					<p:menuitem value="Löschen" icon="ui-icon-close" update="@form"
-						rendered="#{not meetingTypeController.hideDeletionDialog}"
+						rendered="#{not meetingTypeController.hide}"
 						oncomplete="PF('wConfirmMeetingTypeDelete').show();" />
 					<p:menuitem value="Löschen" icon="ui-icon-close" update="@form"
-						rendered="#{meetingTypeController.hideDeletionDialog}"
+						rendered="#{meetingTypeController.hide}"
 						action="#{meetingTypeController.deleteMeetingType}" />
 				</p:contextMenu>
 				<p:dataTable emptyMessage="Keine Personalsitzungen vorhanden"

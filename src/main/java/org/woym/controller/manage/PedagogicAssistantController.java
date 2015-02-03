@@ -207,10 +207,11 @@ public class PedagogicAssistantController implements Serializable {
 	 * Löscht den selektierten Mitarbeiter.
 	 */
 	public void deletePedagogicAssistant() {
-		if (hide != hideDeletionDialog) {
+		if (hideDeletionDialog) {
 			Config.updateProperty(
 					DefaultConfigEnum.HIDE_PA_DELETION_DIALOG.getPropKey(),
 					String.valueOf(hideDeletionDialog));
+			hide = hideDeletionDialog;
 		}
 		MacroCommand macroCommand = commandCreator
 				.createDeleteCommand(pedagogicAssistant);
@@ -251,6 +252,10 @@ public class PedagogicAssistantController implements Serializable {
 
 	public void setHideDeletionDialog(boolean hideDeletionDialog) {
 		this.hideDeletionDialog = hideDeletionDialog;
+	}
+
+	public boolean isHide() {
+		return hide;
 	}
 
 	public int getHourlySettlement() {
