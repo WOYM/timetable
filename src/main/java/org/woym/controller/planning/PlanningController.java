@@ -112,8 +112,6 @@ public class PlanningController implements Serializable {
 		FacesContext.getCurrentInstance().getExternalContext().getSession(true);
 
 		searchTerm = "";
-		scheduleModelHolder.setScheduleModel(scheduleModelHolder
-				.emptyScheduleModel());
 		validWeekdays = getValidWeekdays();
 	}
 
