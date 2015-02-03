@@ -39,10 +39,10 @@
 						oncomplete="PF('wEditTeacherDialog').show();"
 						icon="ui-icon-pencil" />
 					<p:menuitem value="Löschen" update="@form" icon="ui-icon-close"
-						rendered="#{not teacherController.hideDeletionDialog}"
+						rendered="#{not teacherController.hide}"
 						oncomplete="PF('wConfirmTeacherDelete').show();" />
 					<p:menuitem value="Löschen" update="@form" icon="ui-icon-close"
-						rendered="#{teacherController.hideDeletionDialog}"
+						rendered="#{teacherController.hide}"
 						action="#{teacherController.deleteTeacher}" />
 				</p:contextMenu>
 				<p:dataTable emptyMessage="Keine Lehrer vorhanden" id="teacherTable"

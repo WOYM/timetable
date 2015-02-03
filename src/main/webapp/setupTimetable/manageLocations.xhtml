@@ -40,12 +40,12 @@
 						oncomplete="PF('wEditLocationDialog').show();"
 						process="locationTable,@this" icon="ui-icon-pencil" />
 					<p:menuitem value="Löschen"
-						rendered="#{not locationController.hideDeletionDialog}"
+						rendered="#{not locationController.hide}"
 						update="@form" icon="ui-icon-close" process="locationTable,@this"
 						oncomplete="PF('wConfirmLocationDelete').show();">
 					</p:menuitem>
 					<p:menuitem value="Löschen"
-						rendered="#{locationController.hideDeletionDialog}" update="@form"
+						rendered="#{locationController.hide}" update="@form"
 						process="locationTable,@this" icon="ui-icon-close"
 						action="#{locationController.deleteLocation}">
 					</p:menuitem>

@@ -40,11 +40,11 @@
 						oncomplete="PF('wEditClassteamDialog').show();"
 						icon="ui-icon-pencil" />
 					<p:menuitem value="Löschen" icon="ui-icon-close" update="@form"
-						rendered="#{not classteamController.hideDeletionDialog}"
+						rendered="#{not classteamController.hide}"
 						oncomplete="PF('wConfirmClassteamDelete').show();"
 						process="classteamTable,@this" />
 					<p:menuitem value="Löschen" icon="ui-icon-close" update="@form"
-						rendered="#{classteamController.hideDeletionDialog}"
+						rendered="#{classteamController.hide}"
 						action="#{classteamController.deleteClassteam}"
 						process="classteamTable,@this" />
 				</p:contextMenu>

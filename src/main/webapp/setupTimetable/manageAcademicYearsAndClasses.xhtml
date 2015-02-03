@@ -74,10 +74,10 @@
 								icon="ui-icon-pencil" process="@this"
 								update="editSchoolclassPanel" />
 							<p:menuitem value="Löschen" icon="ui-icon-close" update="@form"
-								rendered="#{not academicYearAndClassController.hideDeletionDialog}"
+								rendered="#{not academicYearAndClassController.hide}"
 								oncomplete="PF('wConfirmClassDelete').show();" process="@this" />
 							<p:menuitem value="Löschen" icon="ui-icon-close" update="@form"
-								rendered="#{academicYearAndClassController.hideDeletionDialog}"
+								rendered="#{academicYearAndClassController.hide}"
 								action="#{academicYearAndClassController.deleteSchoolclass}"
 								process="@this" />
 						</p:contextMenu>
