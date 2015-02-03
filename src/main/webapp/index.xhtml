@@ -25,8 +25,9 @@
 			<f:facet name="left">
 				<p:commandButton value="Systemeinrichtung" icon="ui-icon-gear"
 					process="@this" action="/setupTimetable/index" />
-				<p:commandButton value="Alternative Anzeigen" icon="ui-icon-calendar"
-					process="@this" action="/alternativeViews/index" />
+				<p:commandButton value="Alternative Anzeigen"
+					icon="ui-icon-calendar" process="@this"
+					action="/alternativeViews/index" />
 			</f:facet>
 			<f:facet name="right">
 				<p:commandButton title="Rückgängig"
@@ -297,18 +298,40 @@
 							value="#{planningController.activityDescriptionEndTime}" />
 					</h:panelGrid>
 				</p:outputPanel>
+				<p:outputPanel>
 				<p:dataList value="#{planningController.activity.rooms}" var="room"
-					type="ordered" style="padding:5px;">
+					type="ordered" style="padding:5px;" emptyMessage="Keine Räume">
 					<f:facet name="header">
                         Räume
                     </f:facet>
                      #{room.name} <br /> #{room.locationName}
                 </p:dataList>
+                </p:outputPanel>
+                <p:outputPanel style="margin-top:10px;">
+				<p:dataList
+					value="#{planningController.activity.employeeTimePeriods}" emptyMessage="Keine Mitarbeiter"
+					var="employeeTimePeriods" type="ordered" style="padding:5px;">
+					<f:facet name="header">
+                        Mitarbeiter
+                    </f:facet>
+                     #{employeeTimePeriods.employee.name}
+				</p:dataList>
+				</p:outputPanel>
+				<p:outputPanel rendered="#{not planningController.isCurrentActivityMeeting}" style="margin-top:10px;">
+				<p:dataList value="#{planningController.activity.schoolclasses}" emptyMessage="Keine Klassen"
+					var="schoolclass" type="ordered" style="padding:5px;">
+					<f:facet name="header">
+                        Schulklassen
+                    </f:facet>
+                     Klasse #{schoolclass.name}
+				</p:dataList>
+				</p:outputPanel>
 				<h:panelGrid columns="2" columnClasses="half-column"
 					style="width:100%;">
 					<p:commandButton value="Löschen" process="@this"
 						actionListener="#{planningController.deleteActivity}"
-						update="commandGrowl,searchTabs,scheduleMain" oncomplete="PF('wActivityInfoDialog').hide()" />
+						update="commandGrowl,searchTabs,scheduleMain"
+						oncomplete="PF('wActivityInfoDialog').hide()" />
 				</h:panelGrid>
 			</p:outputPanel>
 		</p:dialog>
@@ -336,9 +359,6 @@
 				<p:outputPanel
 					rendered="#{planningController.isCurrentActivityLesson}"
 					style="width:100%;" id="addLessonPanel">
-
-					<f:event listener="#{lessonController.doPreRender}"
-						type="preRenderView" />
 
 					<p:outputPanel id="innerAddLessonPanel">
 
@@ -471,9 +491,6 @@
 					rendered="#{planningController.isCurrentActivityMeeting}"
 					style="width:100%;" id="addMeetingPanel">
 
-					<f:event listener="#{meetingController.doPreRender}"
-						type="preRenderView" />
-
 					<p:outputPanel id="innerAddMeetingPanel">
 
 						<h:panelGrid columns="2" columnClasses="half-column"
@@ -582,9 +599,6 @@
 					rendered="#{planningController.isCurrentActivityPause}"
 					style="width:100%;" id="addPausePanel">
 
-					<f:event listener="#{meetingController.doPreRender}"
-						type="preRenderView" />
-
 					<p:outputPanel id="innerAddPausePanel">
 
 						<h:panelGrid columns="2" columnClasses="half-column"
@@ -648,9 +662,6 @@
 				<p:outputPanel
 					rendered="#{planningController.isCurrentActivityCompoundLesson}"
 					style="width:100%;" id="addCompoundLessonPanel">
-
-					<f:event listener="#{compoundLessonController.doPreRender}"
-						type="preRenderView" />
 
 					<p:outputPanel id="innerAddCompoundLessonPanel">
 
