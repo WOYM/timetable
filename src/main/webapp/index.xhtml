@@ -308,7 +308,7 @@
 					style="width:100%;">
 					<p:commandButton value="Löschen" process="@this"
 						actionListener="#{planningController.deleteActivity}"
-						update="commandGrowl,scheduleMain" />
+						update="commandGrowl,searchTabs,scheduleMain" oncomplete="PF('wActivityInfoDialog').hide()" />
 				</h:panelGrid>
 			</p:outputPanel>
 		</p:dialog>
