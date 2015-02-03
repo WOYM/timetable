@@ -212,17 +212,10 @@ public class MeetingTypeController implements Serializable {
 	private int getTypicalDuration() {
 		int typicalDuration = 0;
 
-		// Get prop-value
-		String[] typicalDurationString = Config
-				.getPropValue(DefaultConfigEnum.TYPICAL_ACTIVITY_DURATION
-						.getPropKey());
-		// Check for exactly one valid entry in configuration
-		if (typicalDurationString.length == 1) {
-			try {
-				typicalDuration = Integer.parseInt(typicalDurationString[0]);
-			} catch (NumberFormatException e) {
-				// Do nothing
-			}
+		try {
+			typicalDuration = Config
+					.getSingleIntValue(DefaultConfigEnum.TYPICAL_ACTIVITY_DURATION);
+		} catch (Exception e) {
 		}
 
 		return typicalDuration;

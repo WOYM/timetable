@@ -1,6 +1,8 @@
-package org.woym.controller;
+package org.woym.controller.planning;
 
 import java.io.Serializable;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -273,6 +275,16 @@ public class PlanningController implements Serializable {
 				event.getDayDelta(), event.getMinuteDelta());
 		Date endTime = changeDateByDelta(activity.getTime().getEndTime(),
 				event.getDayDelta(), event.getMinuteDelta());
+		SimpleDateFormat timeLimit = new SimpleDateFormat("HH:mm");
+		Date startingTimeLimit = startTime;
+		Date endingTimeLimit = endTime;
+		try {
+			startingTimeLimit = timeLimit.parse(Config.getSingleStringValue(DefaultConfigEnum.WEEKDAY_STARTTIME));
+			endingTimeLimit = timeLimit.parse(Config.getSingleStringValue(DefaultConfigEnum.WEEKDAY_ENDTIME));
+		} catch (ParseException e) {
+			LOGGER.warn("Parse Error on: " + e.getMessage());
+		}
+		
 
 		int localDayDelta = activity.getTime().getDay().getOrdinal()
 				+ event.getDayDelta();
@@ -285,7 +297,11 @@ public class PlanningController implements Serializable {
 			msg = MessageHelper.generateMessage(
 					GenericErrorMessage.INVALID_WEEKDAY,
 					FacesMessage.SEVERITY_ERROR);
-		} else {
+		} else if (startTime.before(startingTimeLimit) || endTime.after(endingTimeLimit)) {
+			msg = MessageHelper.generateMessage(
+					GenericErrorMessage.TIME_OUTSIDE_LIMIT,
+					FacesMessage.SEVERITY_ERROR);
+		}else {
 			// TODO Zeit Validieren
 			TimePeriod time = new TimePeriod();
 			time.setStartTime(startTime);

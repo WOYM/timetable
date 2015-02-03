@@ -48,6 +48,11 @@ public final class Config {
 	 */
 	public static final String IDENTIFIER_BOTH_CASES = "both";
 
+	/**
+	 * String anhand dessen sich die Einträge in der Properties-Datei
+	 * identifizieren lassen, welche das Verstecken von Löschen-Dialogen
+	 * betreffen.
+	 */
 	public static final String RESET_DIALOGS_IDENTFIER_STRING = "dialog";
 
 	/**

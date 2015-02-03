@@ -5,6 +5,9 @@ import java.math.RoundingMode;
 import java.util.LinkedList;
 import java.util.List;
 
+import javax.faces.application.FacesMessage;
+import javax.faces.context.FacesContext;
+
 import org.woym.common.config.Config;
 import org.woym.common.config.DefaultConfigEnum;
 import org.woym.common.exceptions.DatasetException;
@@ -56,13 +59,16 @@ public class CommandCreator {
 	}
 
 	/**
-	 * Fügt allen Mitarbeiter der {@link Activty} in der
-	 * {@link EmployeeTimePeriods} die berechnete dauer aller {@link TimePeriod}
-	 * hinzu.
+	 * Erzeugt ein {@linkplain MacroCommand}, welches allen an der
+	 * {@linkplain Activty} teilnehmenden Mitarbeitern die summierte Dauer der
+	 * {@linkplain TimePeriod}-Objekte ihres {@linkplain EmployeeTimePeriods}
+	 * -Objektes zu den verteilten Wochenstunden hinzufügt und ihren
+	 * Datenbankzustand aktualisiert, und gibt dieses zurück.
 	 * 
 	 * @param activity
 	 *            Activity, welches verarbeitet wird
-	 * @return {@link MacroCommand} mit dem bearbeiteten Mitarbeitern.
+	 * @return {@linkplain MacroCommand} mit den UpdateCommands für die
+	 *         Mitarbeiter
 	 */
 	public MacroCommand createEmployeeUpdateAddWorkingHours(
 			final Activity activity) {
@@ -94,19 +100,37 @@ public class CommandCreator {
 							hourlySettlement), Employee.SCALE,
 							RoundingMode.HALF_UP));
 			employee.setAllocatedHours(newAllocatedHours);
+
+			if (employee.getHoursPerWeek().compareTo(
+					employee.getAllocatedHours()) == -1) {
+				FacesMessage msg = new FacesMessage();
+				msg.setSummary("Zeitüberschreitung");
+				msg.setDetail("Mitarbeiter " + employee.getSymbol()
+						+ " hat seine Wochenstundenzahl von "
+						+ employee.getHoursPerWeek().toString()
+						+ " überschritten");
+				msg.setSeverity(FacesMessage.SEVERITY_WARN);
+
+				FacesContext.getCurrentInstance().addMessage(null, msg);
+			}
+
 			macro.add(new UpdateCommand<Entity>(employee, memento));
 		}
+
 		return macro;
 	}
 
 	/**
-	 * Zieht allen Mitarbeiter der {@link Activty} in der
-	 * {@link EmployeeTimePeriods} die berechnete dauer aller {@link TimePeriod}
-	 * ab.
+	 * Erzeugt ein {@linkplain MacroCommand}, welches allen an der
+	 * {@linkplain Activty} teilnehmenden Mitarbeitern die summierte Dauer der
+	 * {@linkplain TimePeriod}-Objekte ihres {@linkplain EmployeeTimePeriods}
+	 * -Objektes von den verteilten Wochenstunden abzieht und ihren
+	 * Datenbankzustand aktualisiert, und gibt dieses zurück.
 	 * 
 	 * @param activity
 	 *            Activity, welches verarbeitet wird
-	 * @return {@link MacroCommand} mit dem bearbeiteten Mitarbeitern.
+	 * @return {@linkplain MacroCommand} mit den UpdateCommands für die
+	 *         Mitarbeiter
 	 */
 	public MacroCommand createEmployeeUpdateSubstractWorkingHours(
 			final Activity activity) {

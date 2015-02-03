@@ -12,14 +12,13 @@ import org.apache.logging.log4j.Logger;
 import org.woym.common.exceptions.DatasetException;
 import org.woym.common.messages.GenericErrorMessage;
 import org.woym.common.messages.GenericSuccessMessage;
-import org.woym.common.messages.SpecificErrorMessage;
 import org.woym.common.objects.Activity;
 import org.woym.common.objects.Employee;
 import org.woym.common.objects.EmployeeTimePeriods;
 import org.woym.common.objects.Location;
 import org.woym.common.objects.Pause;
-import org.woym.common.objects.Schoolclass;
 import org.woym.common.objects.Room;
+import org.woym.common.objects.Schoolclass;
 import org.woym.common.objects.TimePeriod;
 import org.woym.common.objects.TravelTimeList;
 import org.woym.common.objects.TravelTimeList.Edge;
@@ -75,7 +74,8 @@ public class ActivityValidator {
 	 * Diese Methode validiert eine übergebene Aktivität.
 	 * <p>
 	 * Es wird überprüft, ob es Überschneidungen mit anderen in der Datenbank
-	 * vorhandenen Objekten gibt und ein entsprechendes Status-Objekt
+	 * vorhandenen Objekten gibt (dabei werden Wegzeiten zwischen verschiedenen
+	 * Standorten berücksichtigt) und ein entsprechendes Status-Objekt
 	 * zurückgegeben.
 	 * <p>
 	 * Bei einem Datenbankfehler wird ebenfalls ein {@link FailureStatus}
@@ -107,6 +107,7 @@ public class ActivityValidator {
 				return status;
 			}
 
+			// Räume haben keine Wegzeiten
 			status = validateActivityRooms(activity, timePeriod);
 			if (status instanceof FailureStatus) {
 				return status;
@@ -122,6 +123,18 @@ public class ActivityValidator {
 		return status;
 	}
 
+	/**
+	 * Erweitert das übergebene {@linkplain TimePeriod}-Objekt so, dass
+	 * Wegzeiten zu anderen Standorten berücksichtigt werden und gibt das
+	 * erweiterte {@linkplain TimePeriod}-Objekt zurück.
+	 * 
+	 * @param activity
+	 *            - hinzuzufügende Aktivität
+	 * @param timePeriod
+	 *            - (neuer) Zeitraum für die Aktivität
+	 * @return das um die Wegzeiten erweiterte {@linkplain TimePeriod}-Objekt
+	 * @throws DatasetException
+	 */
 	@SuppressWarnings("deprecation")
 	public TimePeriod expandTimPeriodWhithTravelTime(final Activity activity,
 			final TimePeriod timePeriod) throws DatasetException {
@@ -180,6 +193,22 @@ public class ActivityValidator {
 
 	}
 
+	/**
+	 * Prüft, ob die an der übergebenen Aktivität teilnehmenden
+	 * {@linkplain Employee}s in dem Zeitraum, der dem übergebenen
+	 * {@linkplain TimePeriod}-Objekt entspricht, bereits eine Aktivität
+	 * besitzen. Ist dies der Fall, wird ein {@linkplain FailureStatus}
+	 * zurückgegeben, ansonsten ein {@linkplain SuccessStatus}.
+	 * 
+	 * @param activity
+	 *            - Aktivität
+	 * @param timePeriod
+	 *            - (neuer) Zeitraum
+	 * @return {@linkplain SuccessStatus}, wenn alle Teilnehmer des Personals
+	 *         der Aktivität im übergebenen Zeitraum noch keine Aktivität haben,
+	 *         ansonsten {@linkplain FailureStatus}
+	 * @throws DatasetException
+	 */
 	public IStatus validateActivityEmployees(final Activity activity,
 			final TimePeriod timePeriod) throws DatasetException {
 		IStatus status = new SuccessStatus(
@@ -188,13 +217,31 @@ public class ActivityValidator {
 		if ((activity.getEmployeeTimePeriods().size() > 0)
 				&& !validateEmployees(activity, timePeriod)) {
 			return new FailureStatus(
-					SpecificErrorMessage.VALIDATE_ACTIVITY_EXCEPTION,
-					Employee.class, FacesMessage.SEVERITY_ERROR);
+					"Validierung fehlgeschlagen.",
+					"Es wurde eine Überschneidung dieser Aktivität mit einer vorhandenen"
+							+ " von einem der gewählten Mitarbeiter festgestellt.",
+					FacesMessage.SEVERITY_ERROR);
 		}
 
 		return status;
 	}
 
+	/**
+	 * Prüft, ob die an der übergebenen Aktivität teilnehmenden
+	 * {@linkplain Schoolclass}es in dem Zeitraum, der dem übergebenen
+	 * {@linkplain TimePeriod}-Objekt entspricht, bereits eine Aktivität
+	 * besitzen. Ist dies der Fall, wird ein {@linkplain FailureStatus}
+	 * zurückgegeben, ansonsten ein {@linkplain SuccessStatus}.
+	 * 
+	 * @param activity
+	 *            - Aktivität
+	 * @param timePeriod
+	 *            - (neuer) Zeitraum
+	 * @return {@linkplain SuccessStatus}, wenn alle teilnehmenden Schulklassen
+	 *         der Aktivität im übergebenen Zeitraum noch keine Aktivität haben,
+	 *         ansonsten {@linkplain FailureStatus}
+	 * @throws DatasetException
+	 */
 	public IStatus validateActivitySchoolclasses(final Activity activity,
 			final TimePeriod timePeriod) throws DatasetException {
 		IStatus status = new SuccessStatus(
@@ -203,13 +250,31 @@ public class ActivityValidator {
 		if ((activity.getSchoolclasses().size() > 0)
 				&& !validateSchoolclasses(activity, timePeriod)) {
 			return new FailureStatus(
-					SpecificErrorMessage.VALIDATE_ACTIVITY_EXCEPTION,
-					Schoolclass.class, FacesMessage.SEVERITY_ERROR);
+					"Validierung fehlgeschlagen.",
+					"Es wurde ein Überschneidung dieser Aktivität mit einer vorhandenen"
+							+ " von einer der gewählten Schulklassen festgestellt.",
+					FacesMessage.SEVERITY_ERROR);
 		}
 
 		return status;
 	}
 
+	/**
+	 * Prüft, ob in denen in der übergebenen Aktivität enthaltenen
+	 * {@linkplain Room}s in dem Zeitraum, der dem übergebenen
+	 * {@linkplain TimePeriod}-Objekt entspricht, bereits eine Aktivität
+	 * stattfindet. Ist dies der Fall, wird ein {@linkplain FailureStatus}
+	 * zurückgegeben, ansonsten ein {@linkplain SuccessStatus}.
+	 * 
+	 * @param activity
+	 *            - Aktivität
+	 * @param timePeriod
+	 *            - (neuer) Zeitraum
+	 * @return {@linkplain SuccessStatus}, wenn in allen in der Aktivität
+	 *         enthaltenen Räumen zum übergebenen Zeitraum noch keine Aktivität
+	 *         stattfindet, ansonsten {@linkplain FailureStatus}
+	 * @throws DatasetException
+	 */
 	public IStatus validateActivityRooms(final Activity activity,
 			final TimePeriod timePeriod) throws DatasetException {
 		IStatus status = new SuccessStatus(
@@ -217,9 +282,10 @@ public class ActivityValidator {
 
 		if ((activity.getRooms().size() > 0)
 				&& !validateRooms(activity, timePeriod)) {
-			return new FailureStatus(
-					SpecificErrorMessage.VALIDATE_ACTIVITY_EXCEPTION,
-					Employee.class, FacesMessage.SEVERITY_ERROR);
+			return new FailureStatus("Validierung fehlgeschlagen.",
+					"Es wurde einer Überschneidung mit einer vorhandenen Aktivität"
+							+ " in einem der gewählten Räume festgestellt.",
+					FacesMessage.SEVERITY_ERROR);
 		}
 
 		return status;

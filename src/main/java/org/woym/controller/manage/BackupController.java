@@ -21,6 +21,9 @@ public class BackupController implements Serializable {
 
 	private static final long serialVersionUID = 1386396038643221783L;
 
+	/**
+	 * Die gewählte Backup-Datei.
+	 */
 	private File backup;
 
 	private Boolean hasName = true;
@@ -30,8 +33,11 @@ public class BackupController implements Serializable {
 		return BackupRestoreHandler.getAllBackups();
 	}
 
+	/**
+	 * Führt ein Backup aus.
+	 */
 	public void doBackup() {
-		if ("".equals(backupName)) {
+		if ("".equals(backupName.trim())) {
 			backupName = null;
 		}
 
@@ -40,6 +46,9 @@ public class BackupController implements Serializable {
 		FacesContext.getCurrentInstance().addMessage(null, msg);
 	}
 
+	/**
+	 * Führt eine Backup-Wiederherstellung für das ausgewählte Backup aus.
+	 */
 	public void doRestore() {
 		IStatus status = BackupRestoreHandler.restore(backup.getAbsolutePath());
 		FacesMessage msg = status.report();
@@ -83,6 +92,13 @@ public class BackupController implements Serializable {
 		}
 	}
 
+	/**
+	 * Gibt {@code true} zurück, wenn bereits ein Backup mit dem Wert von
+	 * {@linkplain BackupController#backupName} als Namen existiert.
+	 * 
+	 * @return {@code true}, wenn Backup mit gewähltem Backup-Namen bereits
+	 *         existiert
+	 */
 	public boolean getFileExists() {
 		File file = new File(DataBase.DB_BACKUP_LOCATION + backupName + ".zip");
 		return file.exists();

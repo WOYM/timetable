@@ -30,14 +30,7 @@ public enum SpecificErrorMessage {
 	 * Datenbank eine {@linkplain DatasetException} auftritt.
 	 */
 	DELETE_OBJECT_DATASET_EXCEPTION("Datenbankfehler",
-			"Beim Löschen %s ist ein Datenbankfehler aufgetreten."),
-
-	/**
-	 * Diese Nachricht wird gewählt, wenn beim Validieren einer Aktivität eine
-	 * Überschneidung auftritt.
-	 */
-	VALIDATE_ACTIVITY_EXCEPTION("Validierungsfehler",
-			"Beim Validieren %s ist eine Überschneidung aufgetreten.");
+			"Beim Löschen %s ist ein Datenbankfehler aufgetreten.");
 
 	/**
 	 * Zusammenfassung der Nachricht.

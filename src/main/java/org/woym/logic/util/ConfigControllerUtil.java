@@ -41,14 +41,21 @@ public abstract class ConfigControllerUtil {
 	 * Löscht alle vorhandenen Aktivitäten und gibt ein entsprechendes
 	 * IStatus-Objekt zurück.
 	 * 
-	 * @return
+	 * @return {@linkplain SuccessStatus}, wenn alle Aktivitäten erfolgreich
+	 *         gelöscht wurden, {@linkplain FailureStatus}, wenn keine zu
+	 *         löschenden Aktivitäten vorhanden oder eine
+	 *         {@linkplain DatasetException} auftritt oder bei der Ausführung
+	 *         des {@linkplain MacroCommand}s zum Löschen der Aktivitäten ein
+	 *         {@linkplain FailureStatus} zurückgegeben wird
 	 */
 	public static IStatus deleteAllActivities() {
 		try {
 			List<Activity> activities = DataAccess.getInstance()
 					.getAllActivities();
 			if (activities.isEmpty()) {
-				return new FailureStatus(GenericErrorMessage.NO_ACTIVITIES_TO_DELETE, FacesMessage.SEVERITY_INFO);
+				return new FailureStatus(
+						GenericErrorMessage.NO_ACTIVITIES_TO_DELETE,
+						FacesMessage.SEVERITY_INFO);
 			}
 			MacroCommand macro = new MacroCommand();
 			for (Activity a : activities) {
@@ -172,7 +179,7 @@ public abstract class ConfigControllerUtil {
 						day.format(nextDate))
 						&& works;
 			}
-			
+
 			if (updated) {
 				BackupRestoreHandler.restartScheduler();
 			}
