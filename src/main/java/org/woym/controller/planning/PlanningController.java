@@ -265,6 +265,7 @@ public class PlanningController implements Serializable {
 	 * @param event
 	 *            Das Event
 	 */
+	@SuppressWarnings("deprecation")
 	public void onEventMove(ScheduleEntryMoveEvent event) {
 
 		FacesMessage msg;
@@ -276,11 +277,18 @@ public class PlanningController implements Serializable {
 		Date endTime = changeDateByDelta(activity.getTime().getEndTime(),
 				event.getDayDelta(), event.getMinuteDelta());
 		SimpleDateFormat timeLimit = new SimpleDateFormat("HH:mm");
-		Date startingTimeLimit = startTime;
-		Date endingTimeLimit = endTime;
+		Date startingTimeLimit = new Date();
+		startingTimeLimit.setTime(startTime.getTime());
+		Date endingTimeLimit = new Date();
+		endingTimeLimit.setTime(endTime.getTime());
 		try {
-			startingTimeLimit = timeLimit.parse(Config.getSingleStringValue(DefaultConfigEnum.WEEKDAY_STARTTIME));
-			endingTimeLimit = timeLimit.parse(Config.getSingleStringValue(DefaultConfigEnum.WEEKDAY_ENDTIME));
+			Date localDate = timeLimit.parse(Config.getSingleStringValue(DefaultConfigEnum.WEEKDAY_STARTTIME));
+			startingTimeLimit.setMinutes(localDate.getMinutes());
+			startingTimeLimit.setHours(localDate.getHours());
+			
+			localDate = timeLimit.parse(Config.getSingleStringValue(DefaultConfigEnum.WEEKDAY_ENDTIME));
+			endingTimeLimit.setMinutes(localDate.getMinutes());
+			endingTimeLimit.setHours(localDate.getHours());
 		} catch (ParseException e) {
 			LOGGER.warn("Parse Error on: " + e.getMessage());
 		}
