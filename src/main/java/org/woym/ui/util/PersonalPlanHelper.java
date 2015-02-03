@@ -42,8 +42,6 @@ public class PersonalPlanHelper {
 
 	private DataAccess dataAccess = DataAccess.getInstance();
 
-	private Map<Teacher, PersonalPlanRow> teacherMap = new HashMap<>();
-
 	private PersonalPlanHelper() {
 
 	}
@@ -76,6 +74,8 @@ public class PersonalPlanHelper {
 		List<PersonalPlanRow> personalPlanRows = new ArrayList<>();
 
 		try {
+			Map<Teacher, PersonalPlanRow> teacherMap = produceTeacherMap();
+
 			List<Activity> activities = dataAccess.getAllActivities();
 
 			// Filter for Lessons
@@ -96,7 +96,7 @@ public class PersonalPlanHelper {
 						Teacher teacher = (Teacher) employeeTimePeriods
 								.getEmployee();
 
-						fillMap(teacher, lesson);
+						teacherMap.get(teacher).insertCellValue(lesson);
 
 					}
 				}
@@ -114,27 +114,30 @@ public class PersonalPlanHelper {
 	}
 
 	/**
-	 * Diese Methode befüllt die lokale Map, da die dann die Zuordnung der
-	 * {@link Teacher}-Objekte zu den {@link PersonalPlanRow}-Abbildungen nicht
-	 * mehr notwendig ist
+	 * Erzeugt eine neue {@link Map} mit {@link Teacher}-Objekten.
 	 * 
-	 * @param teacher
-	 *            Der Lehrer
-	 * @param lesson
-	 *            Die Unterrichtseinheit
+	 * @return {@link Map} mit {@link Teacher}-Objekten
 	 */
-	private void fillMap(Teacher teacher, Lesson lesson) {
+	private Map<Teacher, PersonalPlanRow> produceTeacherMap() {
+		Map<Teacher, PersonalPlanRow> teacherMap = new HashMap<>();
 
-		if (!teacherMap.containsKey(teacher)) {
-			BigDecimal freeHours = teacher.getHoursPerWeek().subtract(
-					teacher.getAllocatedHours());
+		try {
+			List<Teacher> teachers = dataAccess.getAllTeachers();
 
-			PersonalPlanRow personalPlanRow = new PersonalPlanRow(
-					teacher.getSymbol(), teacher.getHoursPerWeek(), freeHours);
+			for (Teacher teacher : teachers) {
+				BigDecimal freeHours = teacher.getHoursPerWeek().subtract(
+						teacher.getAllocatedHours());
 
-			teacherMap.put(teacher, personalPlanRow);
+				PersonalPlanRow personalPlanRow = new PersonalPlanRow(
+						teacher.getSymbol(), teacher.getHoursPerWeek(),
+						freeHours);
+
+				teacherMap.put(teacher, personalPlanRow);
+			}
+		} catch (DatasetException e) {
+			LOGGER.error(e);
 		}
 
-		teacherMap.get(teacher).insertCellValue(lesson);
+		return teacherMap;
 	}
 }
