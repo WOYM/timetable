@@ -636,6 +636,8 @@ public class PlanningController implements Serializable {
 	public List<Weekday> getWeekdays() {
 		return weekdays;
 	}
+	
+	
 
 	/**
 	 * Diese Methode gibt alle bekannten {@link ActivityType}s zurück, die eine
