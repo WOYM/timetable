@@ -25,6 +25,8 @@
 			<f:facet name="left">
 				<p:commandButton value="Systemeinrichtung" icon="ui-icon-gear"
 					process="@this" action="/setupTimetable/index" />
+				<p:commandButton value="Alternative Anzeigen" icon="ui-icon-calendar"
+					process="@this" action="/alternativeViews/index" />
 			</f:facet>
 			<f:facet name="right">
 				<p:commandButton title="Rückgängig"
@@ -239,7 +241,8 @@
 					slotMinutes="#{planningController.slotMinutes}"
 					columnFormat="week: 'ddd'" locale="de" timeZone="GMT+1"
 					initialDate="#{planningController.initalDate}" tooltip="true"
-					timeFormat="HH:mm{ - HH:mm}" showWeekends="#{planningController.hasWeekend}"
+					timeFormat="HH:mm{ - HH:mm}"
+					showWeekends="#{planningController.hasWeekend}"
 					minTime="#{planningController.minTime}"
 					maxTime="#{planningController.maxTime}">
 					<p:ajax event="dateSelect"

@@ -61,31 +61,32 @@ div[id$="searchTeacherTable"]>div>table>thead {
 	color: white;
 }
 
-.cyan .fc-event, .cyan .a, .cyan .fc-event-inner{
+.cyan .fc-event, .cyan .a, .cyan .fc-event-inner {
 	background-color: #02d0bf;
 	border-color: #02d0bf;
 	color: black;
 }
 
-.default-color .fc-event, .default-color .a, .default-color .fc-event-inner{
+.default-color .fc-event, .default-color .a, .default-color .fc-event-inner
+	{
 	background-color: #6ba5c2;
 	border-color: #6ba5c2;
 	color: white;
 }
 
-.dark-red .fc-event, .dark-red .a, .dark-red .fc-event-inner{
+.dark-red .fc-event, .dark-red .a, .dark-red .fc-event-inner {
 	background-color: #a60101;
 	border-color: #a60101;
 	color: white;
 }
 
-.light-red .fc-event, .light-red .a, .light-red .fc-event-inner{
+.light-red .fc-event, .light-red .a, .light-red .fc-event-inner {
 	background-color: #ff2323;
 	border-color: #ff2323;
 	color: black;
 }
 
-.purple .fc-event, .purple .a, .purple .fc-event-inner{
+.purple .fc-event, .purple .a, .purple .fc-event-inner {
 	background-color: #6c08d8;
 	border-color: #6c08d8;
 	color: white;
