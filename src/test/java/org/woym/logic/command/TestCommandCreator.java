@@ -21,6 +21,7 @@ import org.woym.common.objects.ActivityType;
 import org.woym.common.objects.Classteam;
 import org.woym.common.objects.CompoundLesson;
 import org.woym.common.objects.Employee;
+import org.woym.common.objects.Entity;
 import org.woym.common.objects.Lesson;
 import org.woym.common.objects.LessonType;
 import org.woym.common.objects.Location;
@@ -30,6 +31,7 @@ import org.woym.common.objects.Schoolclass;
 import org.woym.common.objects.Teacher;
 import org.woym.common.objects.TravelTimeList;
 import org.woym.common.objects.Location.Memento;
+import org.woym.common.objects.TravelTimeList.Edge;
 import org.woym.common.objects.spec.IActivityObject;
 import org.woym.common.objects.spec.IMemento;
 import org.woym.persistence.DataAccess;
@@ -88,6 +90,9 @@ public class TestCommandCreator extends PowerMockTestCase {
 	@Mock
 	private Employee employee;
 
+	@Mock
+	private TravelTimeList travelTimeList;
+
 	@InjectMocks
 	private CommandCreator creator;
 
@@ -95,9 +100,11 @@ public class TestCommandCreator extends PowerMockTestCase {
 
 	@BeforeMethod
 	public void init() throws DatasetException {
-		PowerMockito.suppress(PowerMockito.constructor(DataAccess.class));
 		PowerMockito.mockStatic(DataAccess.class);
 		PowerMockito.when(DataAccess.getInstance()).thenReturn(dataAccess);
+		PowerMockito.mockStatic(TravelTimeList.class);
+		PowerMockito.when(TravelTimeList.getInstance()).thenReturn(
+				travelTimeList);
 
 		Mockito.when(activity1.remove(Mockito.any(IActivityObject.class)))
 				.thenReturn(1);
@@ -109,7 +116,7 @@ public class TestCommandCreator extends PowerMockTestCase {
 
 		Mockito.when(
 				DataAccess.getInstance().getAllActivities(
-						Mockito.any(IActivityObject.class))).thenReturn(
+						Mockito.any(IActivityObject.class), Mockito.anyBoolean())).thenReturn(
 				activities);
 	}
 
@@ -191,13 +198,15 @@ public class TestCommandCreator extends PowerMockTestCase {
 
 		Mockito.when(DataAccess.getInstance().getOneSchoolclass(room))
 				.thenReturn(schoolclass);
-		Mockito.when(schoolclass.createMemento()).thenReturn(
-				(org.woym.common.objects.Schoolclass.Memento) menentoSchoolclass);
+		Mockito.when(schoolclass.createMemento())
+				.thenReturn(
+						(org.woym.common.objects.Schoolclass.Memento) menentoSchoolclass);
 
 		Mockito.when(DataAccess.getInstance().getAllActivityTypes(room))
 				.thenReturn(activityTypes);
-		Mockito.when(type1.createMemento()).thenReturn(
-				(org.woym.common.objects.ActivityType.Memento) mementoActivityType);
+		Mockito.when(type1.createMemento())
+				.thenReturn(
+						(org.woym.common.objects.ActivityType.Memento) mementoActivityType);
 
 		MacroCommand macro = CommandCreator.getInstance().createDeleteCommand(
 				room);
@@ -230,6 +239,11 @@ public class TestCommandCreator extends PowerMockTestCase {
 				.mock(org.woym.common.objects.ActivityType.Memento.class);
 		IMemento mementoRoom = Mockito
 				.mock(org.woym.common.objects.Room.Memento.class);
+		IMemento mementoTravelTimeList = Mockito
+				.mock(TravelTimeList.Memento.class);
+		Edge edge = Mockito.mock(Edge.class);
+
+		List<Edge> edgeList = Arrays.asList(edge);
 		List<ActivityType> activityTypes = Arrays.asList(type1, type1);
 
 		Mockito.when(location.getRooms()).thenReturn(rooms);
@@ -238,13 +252,20 @@ public class TestCommandCreator extends PowerMockTestCase {
 
 		Mockito.when(DataAccess.getInstance().getOneSchoolclass(room))
 				.thenReturn(schoolclass);
-		Mockito.when(schoolclass.createMemento()).thenReturn(
-				(org.woym.common.objects.Schoolclass.Memento) menentoSchoolclass);
+		Mockito.when(schoolclass.createMemento())
+				.thenReturn(
+						(org.woym.common.objects.Schoolclass.Memento) menentoSchoolclass);
 
 		Mockito.when(DataAccess.getInstance().getAllActivityTypes(room))
 				.thenReturn(activityTypes);
-		Mockito.when(type1.createMemento()).thenReturn(
-				(org.woym.common.objects.ActivityType.Memento) mementoActivityType);
+		Mockito.when(type1.createMemento())
+				.thenReturn(
+						(org.woym.common.objects.ActivityType.Memento) mementoActivityType);
+		Mockito.when(travelTimeList.createMemento())
+				.thenReturn(
+						(org.woym.common.objects.TravelTimeList.Memento) mementoTravelTimeList);
+		Mockito.when(travelTimeList.getTravelTimes(location)).thenReturn(
+				edgeList);
 
 		MacroCommand macro = CommandCreator.getInstance().createDeleteCommand(
 				location);
@@ -253,6 +274,7 @@ public class TestCommandCreator extends PowerMockTestCase {
 
 		AssertJUnit
 				.assertTrue(macro.getCommands().get(11) instanceof DeleteCommand);
+		Mockito.verify(travelTimeList).remove(edge);
 
 	}
 
@@ -325,8 +347,9 @@ public class TestCommandCreator extends PowerMockTestCase {
 
 		Mockito.when(DataAccess.getInstance().getAllSchoolclasses(teacher))
 				.thenReturn(schoolclasses);
-		Mockito.when(schoolclass.createMemento()).thenReturn(
-				(org.woym.common.objects.Schoolclass.Memento) menentoSchoolclass);
+		Mockito.when(schoolclass.createMemento())
+				.thenReturn(
+						(org.woym.common.objects.Schoolclass.Memento) menentoSchoolclass);
 
 		MacroCommand macro = CommandCreator.getInstance().createDeleteCommand(
 				teacher);
@@ -386,6 +409,23 @@ public class TestCommandCreator extends PowerMockTestCase {
 				.assertTrue(macro.getCommands().get(6) instanceof DeleteCommand);
 	}
 
+	@Test(expectedExceptions = DatasetException.class)
+	public void testDatasetException() throws Exception {
+		IMemento memento = Mockito
+				.mock(org.woym.common.objects.Classteam.Memento.class);
+		List<Schoolclass> schoolclasses = Arrays.asList(schoolclass,
+				schoolclass);
+
+		Mockito.when(year.getSchoolclasses()).thenReturn(schoolclasses);
+		Mockito.when(dataAccess.getOneClassteam(Mockito.any(Schoolclass.class)))
+				.thenThrow(new DatasetException("test"));
+
+		Mockito.when(DataAccess.getInstance().getOneClassteam(schoolclass))
+				.thenReturn(team1);
+		Mockito.when(team1.createMemento()).thenReturn(memento);
+		CommandCreator.getInstance().createDeleteCommand(year);
+	}
+
 	@Test
 	public void testActivityTypeLessondType() throws Exception {
 		LessonType lessonType = Mockito.mock(LessonType.class);
@@ -428,8 +468,9 @@ public class TestCommandCreator extends PowerMockTestCase {
 
 		Mockito.when(DataAccess.getInstance().getAllSchoolclasses())
 				.thenReturn(schoolClasses);
-		Mockito.when(schoolclass.createMemento()).thenReturn(
-				(org.woym.common.objects.Schoolclass.Memento) mementoSchoolClass);
+		Mockito.when(schoolclass.createMemento())
+				.thenReturn(
+						(org.woym.common.objects.Schoolclass.Memento) mementoSchoolClass);
 
 		Mockito.when(DataAccess.getInstance().getAllAcademicYears())
 				.thenReturn(years);
@@ -480,6 +521,28 @@ public class TestCommandCreator extends PowerMockTestCase {
 
 		AssertJUnit
 				.assertTrue(macro.getCommands().get(12) instanceof DeleteCommand);
+
+	}
+
+	@Test
+	public void testClassTeam() throws Exception {
+		Classteam classteam = Mockito.mock(Classteam.class);
+
+		MacroCommand macro = CommandCreator.getInstance().createDeleteCommand(
+				classteam);
+
+		AssertJUnit.assertTrue(macro.getCommands().size() == 1);
+
+		AssertJUnit
+				.assertTrue(macro.getCommands().get(0) instanceof DeleteCommand);
+	}
+
+	@Test(expectedExceptions = UnsupportedOperationException.class)
+	public void testEntity() throws Exception {
+		Entity entity = Mockito.mock(Entity.class);
+
+		MacroCommand macro = CommandCreator.getInstance().createDeleteCommand(
+				entity);
 
 	}
 

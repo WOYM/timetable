@@ -202,16 +202,16 @@ public class CommandsDataAccessIT {
 				room);
 		assertTrue(macro.execute() instanceof SuccessStatus);
 		assertNull(dataAccess.getOneRoom("Hauptstandort", "Raum 100"));
-		assertTrue(dataAccess.getAllActivities(room).isEmpty());
+		assertTrue(dataAccess.getAllActivities(room, false).isEmpty());
 		assertEquals(1, dataAccess.getAllActivities().size());
 
 		assertTrue(macro.undo() instanceof SuccessStatus);
 		assertEquals(room, dataAccess.getOneRoom("Hauptstandort", "Raum 100"));
-		assertEquals(3, dataAccess.getAllActivities(room).size());
+		assertEquals(3, dataAccess.getAllActivities(room, false).size());
 
 		assertTrue(macro.redo() instanceof SuccessStatus);
 		assertNull(dataAccess.getOneRoom("Hauptstandort", "Raum 100"));
-		assertTrue(dataAccess.getAllActivities(room).isEmpty());
+		assertTrue(dataAccess.getAllActivities(room, false).isEmpty());
 
 		macro.undo();
 	}
@@ -252,7 +252,7 @@ public class CommandsDataAccessIT {
 		for (Schoolclass s : dataAccess.getAllSchoolclasses()) {
 			assertEquals(teacher, s.getTeacher());
 		}
-		assertEquals(3, dataAccess.getAllActivities(teacher).size());
+		assertEquals(3, dataAccess.getAllActivities(teacher, false).size());
 		assertEquals(2, dataAccess.getAllClassteams().size());
 
 		assertTrue(macro.redo() instanceof SuccessStatus);
@@ -272,7 +272,7 @@ public class CommandsDataAccessIT {
 
 		assertTrue(macro.undo() instanceof SuccessStatus);
 		assertEquals(pa, dataAccess.getOneEmployee("MUS"));
-		assertEquals(2, dataAccess.getAllActivities(pa).size());
+		assertEquals(2, dataAccess.getAllActivities(pa, false).size());
 		assertEquals(1, dataAccess.getAllClassteams(pa).size());
 
 		assertTrue(macro.redo() instanceof SuccessStatus);
@@ -321,7 +321,7 @@ public class CommandsDataAccessIT {
 		assertEquals(
 				2,
 				dataAccess.getAllActivities(
-						dataAccess.getOneSchoolclass(1, 'a')).size());
+						dataAccess.getOneSchoolclass(1, 'a'), false).size());
 
 		assertTrue(macro.redo() instanceof SuccessStatus);
 		assertNull(dataAccess.getOneSchoolclass(1, 'a'));

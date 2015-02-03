@@ -77,13 +77,13 @@ public class DataAccessObjectsIT2 {
 	public void getAllActivitiesEmployeeSuccess() throws Exception {
 
 		List<Activity> list = dataAccess.getAllActivities(dataAccess
-				.getOneEmployee("MEY"));
+				.getOneEmployee("MEY"), false);
 		assertEquals(3, list.size());
 		assertTrue(list.contains(l));
 		assertTrue(list.contains(m));
 		assertTrue(list.contains(c));
 
-		list = dataAccess.getAllActivities(dataAccess.getOneEmployee("MUS"));
+		list = dataAccess.getAllActivities(dataAccess.getOneEmployee("MUS"), false);
 		assertEquals(2, list.size());
 		assertTrue(list.contains(m));
 		assertTrue(list.contains(c));
@@ -116,13 +116,13 @@ public class DataAccessObjectsIT2 {
 	@Test(priority = 2, groups = "DataAccessActivity")
 	public void getAllActivitiesSchoolclassSuccess() throws DatasetException {
 		List<Activity> list = dataAccess.getAllActivities(dataAccess
-				.getOneSchoolclass(1, 'a'));
+				.getOneSchoolclass(1, 'a'), false);
 		assertEquals(2, list.size());
 		assertTrue(list.contains(l));
 		assertTrue(list.contains(c));
 
 		list = dataAccess
-				.getAllActivities(dataAccess.getOneSchoolclass(2, 'a'));
+				.getAllActivities(dataAccess.getOneSchoolclass(2, 'a'), false);
 		assertEquals(1, list.size());
 		assertTrue(list.contains(c));
 	}
@@ -130,14 +130,14 @@ public class DataAccessObjectsIT2 {
 	@Test(priority = 2, groups = "DataAccessActivity")
 	public void getAllActivitiesRoomSuccess() throws DatasetException {
 		List<Activity> list = dataAccess.getAllActivities(dataAccess
-				.getOneRoom("Hauptstandort", "Raum 100"));
+				.getOneRoom("Hauptstandort", "Raum 100"), false);
 		assertEquals(3, list.size());
 		assertTrue(list.contains(l));
 		assertTrue(list.contains(m));
 		assertTrue(list.contains(c));
 
 		list = dataAccess.getAllActivities(dataAccess.getOneRoom("Zweigstelle",
-				"Raum 101"));
+				"Raum 101"), false);
 		assertEquals(1, list.size());
 		assertTrue(list.contains(c));
 	}
@@ -371,27 +371,27 @@ public class DataAccessObjectsIT2 {
 			throws DatasetException {
 		IActivityObject a = dataAccess.getOneEmployee("MEY");
 
-		List<Activity> list = dataAccess.getAllActivities(a);
+		List<Activity> list = dataAccess.getAllActivities(a, false);
 		assertEquals(3, list.size());
 		assertTrue(list.contains(l));
 		assertTrue(list.contains(m));
 		assertTrue(list.contains(c));
 
 		a = dataAccess.getOneSchoolclass(1, 'a');
-		list = dataAccess.getAllActivities(a);
+		list = dataAccess.getAllActivities(a, false);
 		assertEquals(2, list.size());
 		assertTrue(list.contains(l));
 		assertTrue(list.contains(c));
 
 		a = dataAccess.getOneRoom("Hauptstandort", "Raum 100");
-		list = dataAccess.getAllActivities(a);
+		list = dataAccess.getAllActivities(a, false);
 		assertEquals(3, list.size());
 		assertTrue(list.contains(l));
 		assertTrue(list.contains(m));
 		assertTrue(list.contains(c));
 
 		a = new LessonType();
-		list = dataAccess.getAllActivities(a);
+		list = dataAccess.getAllActivities(a, false);
 		assertTrue(list.isEmpty());
 	}
 

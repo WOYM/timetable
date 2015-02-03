@@ -204,7 +204,7 @@ public class CommandCreator {
 		if (entity instanceof Activity) {
 			// Beim Löschen einer Aktivität müssen die verteilten Stunden der
 			// beteiligten Lehrer aktualisiert werden
-			macro = createEmployeeUpdateSubstractWorkingHours((Activity) entity);
+			macro.addAll(createEmployeeUpdateSubstractWorkingHours((Activity) entity));
 
 			macro.add(new DeleteCommand<Entity>(entity));
 		} else {
@@ -308,7 +308,7 @@ public class CommandCreator {
 		LinkedList<ICommand> macro = new LinkedList<ICommand>();
 
 		List<Activity> list = DataAccess.getInstance().getAllActivities(
-				(IActivityObject) entity);
+				(IActivityObject) entity, false);
 
 		for (Activity a : list) {
 			IMemento memento = a.createMemento();
