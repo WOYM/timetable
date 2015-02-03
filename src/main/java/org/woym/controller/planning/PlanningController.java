@@ -342,14 +342,14 @@ public class PlanningController implements Serializable {
 	}
 
 	/**
-	 * Bestimmt ob die übergebenen Zeiter auserhalb, der durch die Einstellungen
+	 * Bestimmt ob die übergebenen Zeiter außerhalb , der durch die Einstellungen
 	 * festgelegten, Grenzen liegen.
 	 * 
 	 * @param startTime
 	 *            Startzeit
 	 * @param endTime
 	 *            Endzeit
-	 * @return Wahrheitswert ob sie ausserhalb der Grenzen sind.
+	 * @return Wahrheitswert ob sie außerhalb  der Grenzen sind.
 	 */
 	@SuppressWarnings("deprecation")
 	private boolean isTimeInRange(final Date startTime, final Date endTime) {
