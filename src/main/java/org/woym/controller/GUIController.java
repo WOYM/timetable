@@ -33,9 +33,9 @@ public class GUIController implements Serializable {
 
 	private static final long serialVersionUID = 8156760488563380338L;
 
-	private CommandHandler commandHandler = CommandHandler.getInstance();
-
 	private static Logger LOGGER = LogManager.getLogger(GUIController.class);
+
+	private CommandHandler commandHandler = CommandHandler.getInstance();
 
 	private DataAccess dataAccess = DataAccess.getInstance();
 	private ScheduleModelHolder scheduleModelHolder = ScheduleModelHolder
@@ -137,10 +137,10 @@ public class GUIController implements Serializable {
 		}
 		return String.valueOf(size);
 	}
-	
+
 	/**
-	 * Versucht das übergebene {@linkplain Entity}-Objekt im Cache zu
-	 * aktualisieren.
+	 * Versucht das übergebene {@linkplain Entity}-Objekt durch den
+	 * Datenbankzustand dieses Objektes zu überschreiben.
 	 * 
 	 * @param entity
 	 *            - das zu aktualisierende {@linkplain Entity}-Objekt

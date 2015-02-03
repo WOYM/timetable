@@ -13,13 +13,10 @@ import javax.faces.context.FacesContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.woym.common.exceptions.DatasetException;
-
 import org.woym.common.objects.Activity;
 import org.woym.common.objects.ActivityTO;
-
 import org.woym.common.objects.Pause;
 import org.woym.common.objects.Schoolclass;
-import org.woym.controller.PlanningController;
 import org.woym.logic.CommandHandler;
 import org.woym.logic.SuccessStatus;
 import org.woym.logic.command.AddCommand;

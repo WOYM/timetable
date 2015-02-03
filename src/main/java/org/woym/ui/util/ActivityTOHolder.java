@@ -4,8 +4,8 @@ import java.io.Serializable;
 
 import org.woym.common.config.DefaultConfigEnum;
 import org.woym.common.objects.ActivityTO;
-import org.woym.controller.PlanningController;
 import org.woym.controller.planning.LessonController;
+import org.woym.controller.planning.PlanningController;
 
 /**
  * <h1>ActivityHolder</h1>
