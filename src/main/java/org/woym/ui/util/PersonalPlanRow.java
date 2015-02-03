@@ -1,6 +1,7 @@
 package org.woym.ui.util;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -9,6 +10,7 @@ import java.util.Map;
 import org.testng.util.Strings;
 import org.woym.common.config.Config;
 import org.woym.common.config.DefaultConfigEnum;
+import org.woym.common.objects.Employee;
 import org.woym.common.objects.Lesson;
 import org.woym.common.objects.LessonType;
 import org.woym.common.objects.Schoolclass;
@@ -111,8 +113,10 @@ public class PersonalPlanRow {
 	 * Liefert die Gesamtdauer für eine {@link Schoolclass} und einen
 	 * {@link LessonType} zurück
 	 * 
-	 * @param lessonType Der {@link LessonType}
-	 * @param schoolclass DIe {@link Schoolclass}
+	 * @param lessonType
+	 *            Der {@link LessonType}
+	 * @param schoolclass
+	 *            DIe {@link Schoolclass}
 	 * @return Die Gesamtdauer als String
 	 */
 	public String getTotalDuration(LessonType lessonType,
@@ -131,8 +135,9 @@ public class PersonalPlanRow {
 
 				BigDecimal minutes = new BigDecimal(cellMap.get(lessonType)
 						.get(schoolclass));
-				
-				string = minutes.divide(hourlySettlement).toPlainString();
+
+				string = minutes.divide(hourlySettlement, Employee.SCALE,
+						RoundingMode.HALF_UP).toPlainString();
 			}
 		}
 
