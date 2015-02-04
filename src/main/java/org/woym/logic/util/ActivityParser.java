@@ -76,7 +76,7 @@ public class ActivityParser {
 			activities = new ArrayList<>();
 		}
 
-		return getActivityModel(activities);
+		return getActivityModel(activities, true);
 	}
 
 	/**
@@ -101,7 +101,7 @@ public class ActivityParser {
 			activities = new ArrayList<>();
 		}
 
-		return getActivityModel(activities);
+		return getActivityModel(activities, true);
 	}
 
 	/**
@@ -127,7 +127,7 @@ public class ActivityParser {
 			activities = new ArrayList<>();
 		}
 
-		return getActivityModel(activities);
+		return getActivityModel(activities, true);
 	}
 
 	/**
@@ -151,7 +151,7 @@ public class ActivityParser {
 			activities = new ArrayList<>();
 		}
 
-		return getActivityModel(activities);
+		return getActivityModel(activities, true);
 	}
 
 	/**
@@ -162,7 +162,7 @@ public class ActivityParser {
 	 * @throws IllegalArgumentException
 	 *             Wenn eine ungültige Entity übergeben wird
 	 */
-	public ScheduleModel getActivityModel(List<Activity> activities) {
+	public ScheduleModel getActivityModel(List<Activity> activities, Boolean editable) {
 
 		ScheduleModel activityModel = new DefaultScheduleModel();
 
@@ -175,7 +175,7 @@ public class ActivityParser {
 
 			event.setData(activity);
 
-			event.setEditable(false);
+			event.setEditable(editable);
 			
 			event = getEvent(event, activity);
 

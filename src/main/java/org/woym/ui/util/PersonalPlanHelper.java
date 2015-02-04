@@ -85,7 +85,7 @@ public class PersonalPlanHelper {
 						employee, weekday);
 
 				ScheduleModel scheduleModel = activityParser
-						.getActivityModel(activities);
+						.getActivityModel(activities, false);
 				EmployeeDailyViewHelper dailyViewHelper = new EmployeeDailyViewHelper(
 						employee, scheduleModel);
 				dailyViewHelpers.add(dailyViewHelper);
