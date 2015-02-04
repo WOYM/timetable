@@ -362,9 +362,6 @@ public class CommandCreator {
 			macro.addAll(relationEmployee((Employee) entity));
 		} else if (entity instanceof ActivityType) {
 			macro.addAll(relationActivityType((ActivityType) entity));
-		} else {
-			throw new UnsupportedOperationException(
-					"This IActivityObject implementing class is not supported.");
 		}
 		return macro;
 	}

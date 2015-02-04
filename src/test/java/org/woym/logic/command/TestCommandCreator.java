@@ -1,26 +1,36 @@
 package org.woym.logic.command;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import javax.faces.application.FacesMessage;
+import javax.faces.context.FacesContext;
+
+import org.h2.command.ddl.Analyze;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.core.transformers.MockTransformer;
 import org.powermock.modules.testng.PowerMockTestCase;
 import org.testng.AssertJUnit;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
+import org.woym.common.config.Config;
+import org.woym.common.config.DefaultConfigEnum;
 import org.woym.common.exceptions.DatasetException;
+import org.woym.common.messages.GenericErrorMessage;
 import org.woym.common.objects.AcademicYear;
 import org.woym.common.objects.Activity;
 import org.woym.common.objects.ActivityType;
 import org.woym.common.objects.Classteam;
 import org.woym.common.objects.CompoundLesson;
 import org.woym.common.objects.Employee;
+import org.woym.common.objects.EmployeeTimePeriods;
 import org.woym.common.objects.Entity;
 import org.woym.common.objects.Lesson;
 import org.woym.common.objects.LessonType;
@@ -29,6 +39,7 @@ import org.woym.common.objects.PedagogicAssistant;
 import org.woym.common.objects.Room;
 import org.woym.common.objects.Schoolclass;
 import org.woym.common.objects.Teacher;
+import org.woym.common.objects.TimePeriod;
 import org.woym.common.objects.TravelTimeList;
 import org.woym.common.objects.Location.Memento;
 import org.woym.common.objects.TravelTimeList.Edge;
@@ -42,7 +53,7 @@ import org.woym.persistence.DataAccess;
  */
 @Test(groups = "unit")
 @PowerMockIgnore("javax.management.*")
-@PrepareForTest({ DataAccess.class, TravelTimeList.class })
+@PrepareForTest({ DataAccess.class, TravelTimeList.class, Config.class, FacesContext.class})
 public class TestCommandCreator extends PowerMockTestCase {
 
 	@Mock
@@ -116,8 +127,8 @@ public class TestCommandCreator extends PowerMockTestCase {
 
 		Mockito.when(
 				DataAccess.getInstance().getAllActivities(
-						Mockito.any(IActivityObject.class), Mockito.anyBoolean())).thenReturn(
-				activities);
+						Mockito.any(IActivityObject.class),
+						Mockito.anyBoolean())).thenReturn(activities);
 	}
 
 	@Test(expectedExceptions = IllegalArgumentException.class)
@@ -161,23 +172,22 @@ public class TestCommandCreator extends PowerMockTestCase {
 				.mock(org.woym.common.objects.AcademicYear.Memento.class);
 		Mockito.when(year.createMemento()).thenReturn(
 				(org.woym.common.objects.AcademicYear.Memento) yearMemento);
+		Mockito.when(activity2.remove(Mockito.any(IActivityObject.class)))
+				.thenReturn(-1);
 
 		MacroCommand macro = CommandCreator.getInstance().createDeleteCommand(
 				schoolclass);
 
-		AssertJUnit.assertEquals(5, macro.getCommands().size());
+		AssertJUnit.assertEquals(4, macro.getCommands().size());
 
 		AssertJUnit
 				.assertTrue(macro.getCommands().get(0) instanceof UpdateCommand);
 		AssertJUnit
-				.assertTrue(macro.getCommands().get(1) instanceof DeleteCommand);
-
+				.assertTrue(macro.getCommands().get(1) instanceof UpdateCommand);
 		AssertJUnit
 				.assertTrue(macro.getCommands().get(2) instanceof UpdateCommand);
 		AssertJUnit
-				.assertTrue(macro.getCommands().get(3) instanceof UpdateCommand);
-		AssertJUnit
-				.assertTrue(macro.getCommands().get(4) instanceof DeleteCommand);
+				.assertTrue(macro.getCommands().get(3) instanceof DeleteCommand);
 
 	}
 
@@ -322,9 +332,12 @@ public class TestCommandCreator extends PowerMockTestCase {
 				.mock(org.woym.common.objects.Employee.Memento.class);
 		IMemento menentoSchoolclass = Mockito
 				.mock(org.woym.common.objects.Schoolclass.Memento.class);
+		EmployeeTimePeriods period = Mockito.mock(EmployeeTimePeriods.class);
 		List<Classteam> classteams = Arrays.asList(team1, team2);
 		List<Schoolclass> schoolclasses = Arrays.asList(schoolclass,
 				schoolclass);
+		List<EmployeeTimePeriods> employeeTimePeriodList = Arrays
+				.asList(period);
 		Teacher otherTeatcher = Mockito.mock(Teacher.class);
 
 		List<Employee> teacher1 = new ArrayList<Employee>();
@@ -340,6 +353,9 @@ public class TestCommandCreator extends PowerMockTestCase {
 				(org.woym.common.objects.Employee.Memento) teamMemento);
 		Mockito.when(team2.createMemento()).thenReturn(
 				(org.woym.common.objects.Employee.Memento) teamMemento);
+		Mockito.when(
+				dataAccess.getEmployeeTimePeriods(Mockito.any(Employee.class)))
+				.thenReturn(employeeTimePeriodList);
 		Mockito.when(team1.getEmployees()).thenReturn(teacher2);
 		Mockito.when(team2.getEmployees()).thenReturn(teacher1);
 		Mockito.when(team1.teacherLeft()).thenReturn(true);
@@ -356,7 +372,7 @@ public class TestCommandCreator extends PowerMockTestCase {
 
 		Mockito.verify(schoolclass, Mockito.times(2)).setTeacher(null);
 
-		AssertJUnit.assertEquals(7, macro.getCommands().size());
+		AssertJUnit.assertEquals(8, macro.getCommands().size());
 
 		AssertJUnit
 				.assertTrue(macro.getCommands().get(0) instanceof UpdateCommand);
@@ -364,15 +380,17 @@ public class TestCommandCreator extends PowerMockTestCase {
 				.assertTrue(macro.getCommands().get(1) instanceof DeleteCommand);
 
 		AssertJUnit
-				.assertTrue(macro.getCommands().get(2) instanceof UpdateCommand);
+				.assertTrue(macro.getCommands().get(2) instanceof DeleteCommand);
 		AssertJUnit
-				.assertTrue(macro.getCommands().get(3) instanceof DeleteCommand);
+				.assertTrue(macro.getCommands().get(3) instanceof UpdateCommand);
 		AssertJUnit
-				.assertTrue(macro.getCommands().get(4) instanceof UpdateCommand);
+				.assertTrue(macro.getCommands().get(4) instanceof DeleteCommand);
 		AssertJUnit
 				.assertTrue(macro.getCommands().get(5) instanceof UpdateCommand);
 		AssertJUnit
-				.assertTrue(macro.getCommands().get(6) instanceof DeleteCommand);
+				.assertTrue(macro.getCommands().get(6) instanceof UpdateCommand);
+		AssertJUnit
+				.assertTrue(macro.getCommands().get(7) instanceof DeleteCommand);
 	}
 
 	@Test
@@ -409,21 +427,15 @@ public class TestCommandCreator extends PowerMockTestCase {
 				.assertTrue(macro.getCommands().get(6) instanceof DeleteCommand);
 	}
 
-	@Test(expectedExceptions = DatasetException.class)
+	@Test
 	public void testDatasetException() throws Exception {
-		IMemento memento = Mockito
-				.mock(org.woym.common.objects.Classteam.Memento.class);
-		List<Schoolclass> schoolclasses = Arrays.asList(schoolclass,
-				schoolclass);
-
-		Mockito.when(year.getSchoolclasses()).thenReturn(schoolclasses);
-		Mockito.when(dataAccess.getOneClassteam(Mockito.any(Schoolclass.class)))
+		Mockito.when(DataAccess.getInstance().getOneClassteam(schoolclass))
 				.thenThrow(new DatasetException("test"));
 
-		Mockito.when(DataAccess.getInstance().getOneClassteam(schoolclass))
-				.thenReturn(team1);
-		Mockito.when(team1.createMemento()).thenReturn(memento);
-		CommandCreator.getInstance().createDeleteCommand(year);
+		MacroCommand macro = CommandCreator.getInstance().createDeleteCommand(
+				schoolclass);
+
+		AssertJUnit.assertEquals(0, macro.getCommands().size());
 	}
 
 	@Test
@@ -541,9 +553,224 @@ public class TestCommandCreator extends PowerMockTestCase {
 	public void testEntity() throws Exception {
 		Entity entity = Mockito.mock(Entity.class);
 
-		MacroCommand macro = CommandCreator.getInstance().createDeleteCommand(
-				entity);
+		CommandCreator.getInstance().createDeleteCommand(entity);
 
+	}
+
+	@Test(expectedExceptions = IllegalArgumentException.class)
+	public void testCreateEmployeeUpdateSubstractWorkingHours() {
+		CommandCreator.getInstance().createEmployeeUpdateSubstractWorkingHours(
+				null);
+	}
+
+	@Test
+	public void testCreateEmployeeUpdateSubstractWorkingHoursTeacher()
+			throws Exception {
+		EmployeeTimePeriods employeePeriod = Mockito
+				.mock(EmployeeTimePeriods.class);
+		TimePeriod period = Mockito.mock(TimePeriod.class);
+		IMemento memento = Mockito.mock(Employee.Memento.class);
+		PowerMockito.mockStatic(Config.class);
+
+		List<EmployeeTimePeriods> employeeTimePeriodList = Arrays
+				.asList(employeePeriod);
+		List<TimePeriod> timePeriodList = Arrays.asList(period);
+
+		Mockito.when(activity.getEmployeeTimePeriods()).thenReturn(
+				employeeTimePeriodList);
+
+		Mockito.when(employeePeriod.getEmployee()).thenReturn(teacher);
+		Mockito.when(employeePeriod.getTimePeriods())
+				.thenReturn(timePeriodList);
+		PowerMockito.when(
+				Config.getSingleIntValue(Mockito.any(DefaultConfigEnum.class)))
+				.thenReturn(45);
+		Mockito.when(period.getDuration()).thenReturn(45);
+		Mockito.when(teacher.createMemento()).thenReturn(
+				(org.woym.common.objects.Employee.Memento) memento);
+		Mockito.when(teacher.getAllocatedHours()).thenReturn(BigDecimal.ONE);
+
+		MacroCommand macro = CommandCreator.getInstance()
+				.createEmployeeUpdateSubstractWorkingHours(activity);
+
+		AssertJUnit.assertEquals(1, macro.getCommands().size());
+		AssertJUnit
+				.assertTrue(macro.getCommands().get(0) instanceof UpdateCommand);
+
+		Mockito.verify(teacher).setAllocatedHours(BigDecimal.valueOf(0, 2));
+	}
+
+	@Test
+	public void testCreateEmployeeUpdateSubstractWorkingHoursPedagogicAssistant()
+			throws Exception {
+		EmployeeTimePeriods employeePeriod = Mockito
+				.mock(EmployeeTimePeriods.class);
+		TimePeriod period = Mockito.mock(TimePeriod.class);
+		IMemento memento = Mockito.mock(Employee.Memento.class);
+		PowerMockito.mockStatic(Config.class);
+
+		List<EmployeeTimePeriods> employeeTimePeriodList = Arrays
+				.asList(employeePeriod);
+		List<TimePeriod> timePeriodList = Arrays.asList(period);
+
+		Mockito.when(activity.getEmployeeTimePeriods()).thenReturn(
+				employeeTimePeriodList);
+
+		Mockito.when(employeePeriod.getEmployee()).thenReturn(
+				pedagogicAssistant);
+		Mockito.when(employeePeriod.getTimePeriods())
+				.thenReturn(timePeriodList);
+		PowerMockito.when(
+				Config.getSingleIntValue(Mockito.any(DefaultConfigEnum.class)))
+				.thenReturn(60);
+		Mockito.when(period.getDuration()).thenReturn(60);
+		Mockito.when(pedagogicAssistant.createMemento()).thenReturn(
+				(org.woym.common.objects.Employee.Memento) memento);
+		Mockito.when(pedagogicAssistant.getAllocatedHours()).thenReturn(
+				BigDecimal.ONE);
+
+		MacroCommand macro = CommandCreator.getInstance()
+				.createEmployeeUpdateSubstractWorkingHours(activity);
+
+		AssertJUnit.assertEquals(1, macro.getCommands().size());
+		AssertJUnit
+				.assertTrue(macro.getCommands().get(0) instanceof UpdateCommand);
+
+		Mockito.verify(pedagogicAssistant).setAllocatedHours(
+				BigDecimal.valueOf(0, 2));
+	}
+
+	@Test(expectedExceptions = IllegalArgumentException.class)
+	public void testCreateEmployeeUpdateAddWorkingHours() {
+		CommandCreator.getInstance().createEmployeeUpdateAddWorkingHours(null);
+	}
+
+	@Test
+	public void testCreateEmployeeUpdateAddWorkingHoursTeacher()
+			throws Exception {
+		EmployeeTimePeriods employeePeriod = Mockito
+				.mock(EmployeeTimePeriods.class);
+		TimePeriod period = Mockito.mock(TimePeriod.class);
+		IMemento memento = Mockito.mock(Employee.Memento.class);
+		PowerMockito.mockStatic(Config.class);
+
+		List<EmployeeTimePeriods> employeeTimePeriodList = Arrays
+				.asList(employeePeriod);
+		List<TimePeriod> timePeriodList = Arrays.asList(period);
+
+		Mockito.when(activity.getEmployeeTimePeriods()).thenReturn(
+				employeeTimePeriodList);
+
+		Mockito.when(employeePeriod.getEmployee()).thenReturn(teacher);
+		Mockito.when(employeePeriod.getTimePeriods())
+				.thenReturn(timePeriodList);
+		PowerMockito.when(
+				Config.getSingleIntValue(Mockito.any(DefaultConfigEnum.class)))
+				.thenReturn(45);
+		Mockito.when(period.getDuration()).thenReturn(45);
+		Mockito.when(teacher.createMemento()).thenReturn(
+				(org.woym.common.objects.Employee.Memento) memento);
+		Mockito.when(teacher.getAllocatedHours()).thenReturn(BigDecimal.ZERO);
+		Mockito.when(teacher.getHoursPerWeek()).thenReturn(BigDecimal.ONE);
+
+		MacroCommand macro = CommandCreator.getInstance()
+				.createEmployeeUpdateAddWorkingHours(activity);
+
+		AssertJUnit.assertEquals(1, macro.getCommands().size());
+		AssertJUnit
+				.assertTrue(macro.getCommands().get(0) instanceof UpdateCommand);
+
+		BigDecimal bD = new BigDecimal(1).setScale(2);
+
+		Mockito.verify(teacher).setAllocatedHours(bD);
+	}
+
+	@Test
+	public void testCreateEmployeeUpdateAddWorkingHoursPedagogicAssistant()
+			throws Exception {
+		EmployeeTimePeriods employeePeriod = Mockito
+				.mock(EmployeeTimePeriods.class);
+		TimePeriod period = Mockito.mock(TimePeriod.class);
+		IMemento memento = Mockito.mock(Employee.Memento.class);
+		PowerMockito.mockStatic(Config.class);
+
+		List<EmployeeTimePeriods> employeeTimePeriodList = Arrays
+				.asList(employeePeriod);
+		List<TimePeriod> timePeriodList = Arrays.asList(period);
+
+		Mockito.when(activity.getEmployeeTimePeriods()).thenReturn(
+				employeeTimePeriodList);
+
+		Mockito.when(employeePeriod.getEmployee()).thenReturn(
+				pedagogicAssistant);
+		Mockito.when(employeePeriod.getTimePeriods())
+				.thenReturn(timePeriodList);
+		PowerMockito.when(
+				Config.getSingleIntValue(Mockito.any(DefaultConfigEnum.class)))
+				.thenReturn(60);
+		Mockito.when(period.getDuration()).thenReturn(60);
+		Mockito.when(pedagogicAssistant.createMemento()).thenReturn(
+				(org.woym.common.objects.Employee.Memento) memento);
+		Mockito.when(pedagogicAssistant.getAllocatedHours()).thenReturn(
+				BigDecimal.ZERO);
+		Mockito.when(pedagogicAssistant.getHoursPerWeek()).thenReturn(BigDecimal.ONE);
+
+		MacroCommand macro = CommandCreator.getInstance()
+				.createEmployeeUpdateAddWorkingHours(activity);
+
+		AssertJUnit.assertEquals(1, macro.getCommands().size());
+		AssertJUnit
+				.assertTrue(macro.getCommands().get(0) instanceof UpdateCommand);
+
+		BigDecimal bD = new BigDecimal(1).setScale(2);
+
+		Mockito.verify(pedagogicAssistant).setAllocatedHours(bD);
+	}
+	
+	@Test
+	public void testCreateEmployeeUpdateAddWorkingHoursTimeLimit()
+			throws Exception {
+		EmployeeTimePeriods employeePeriod = Mockito
+				.mock(EmployeeTimePeriods.class);
+		TimePeriod period = Mockito.mock(TimePeriod.class);
+		IMemento memento = Mockito.mock(Employee.Memento.class);
+		PowerMockito.mockStatic(Config.class);
+		PowerMockito.mockStatic(FacesContext.class);
+		FacesContext context = PowerMockito.mock(FacesContext.class);
+
+		List<EmployeeTimePeriods> employeeTimePeriodList = Arrays
+				.asList(employeePeriod);
+		List<TimePeriod> timePeriodList = Arrays.asList(period);
+
+		Mockito.when(activity.getEmployeeTimePeriods()).thenReturn(
+				employeeTimePeriodList);
+
+		Mockito.when(employeePeriod.getEmployee()).thenReturn(
+				pedagogicAssistant);
+		Mockito.when(employeePeriod.getTimePeriods())
+				.thenReturn(timePeriodList);
+		PowerMockito.when(
+				Config.getSingleIntValue(Mockito.any(DefaultConfigEnum.class)))
+				.thenReturn(60);
+		Mockito.when(period.getDuration()).thenReturn(60);
+		Mockito.when(pedagogicAssistant.createMemento()).thenReturn(
+				(org.woym.common.objects.Employee.Memento) memento);
+		Mockito.when(pedagogicAssistant.getAllocatedHours()).thenReturn(
+				new BigDecimal(2).setScale(2));
+		Mockito.when(pedagogicAssistant.getHoursPerWeek()).thenReturn(BigDecimal.ONE);
+		PowerMockito.when(FacesContext.getCurrentInstance()).thenReturn(context);
+
+		MacroCommand macro = CommandCreator.getInstance()
+				.createEmployeeUpdateAddWorkingHours(activity);
+
+		AssertJUnit.assertEquals(1, macro.getCommands().size());
+		AssertJUnit
+				.assertTrue(macro.getCommands().get(0) instanceof UpdateCommand);
+
+		BigDecimal bD = new BigDecimal(3).setScale(2);
+
+		Mockito.verify(pedagogicAssistant).setAllocatedHours(bD);
+		Mockito.verify(context).addMessage(Mockito.anyString(), Mockito.any(FacesMessage.class));
 	}
 
 }
