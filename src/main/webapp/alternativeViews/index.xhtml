@@ -76,7 +76,7 @@
 					</h:panelGrid>
 				</p:fieldset>
 			</p:tab>
-			<p:tab title="Tagesplan" id="alternativeViewDayTab">
+			<p:tab title="Tagesplan (Detailiert)" id="alternativeViewDayTab">
 				<h:panelGrid columns="2">
 					<p:outputLabel for="dailyViewWeekday" value="Wochentag:" />
 					<p:selectOneMenu id="dailyViewWeekday"
@@ -87,37 +87,71 @@
 							var="weekday" itemLabel="#{weekday.name}" />
 					</p:selectOneMenu>
 				</h:panelGrid>
-				<p:outputPanel id="dailyViewPanel">
-					<ui:repeat var="employeeDailyViewHelper"
-						value="#{planningController.employeeDailyViewHelpers}">
-						<p:outputPanel
-							style="width:50%;height:auto;margin:0px auto;margin-top:20px;">
-							<p:panel header="#{employeeDailyViewHelper.employee.name}">
-								<h:panelGrid columns="2">
-									<h:outputText value="Name:" />
-									<h:outputText value="#{employeeDailyViewHelper.employee.name}" />
-									<h:outputText value="Kürzel:" />
-									<h:outputText
-										value="#{employeeDailyViewHelper.employee.symbol}" />
-									<h:outputText value="Wochenstunden:" />
-									<h:outputText
-										value="#{employeeDailyViewHelper.employee.hoursPerWeek}" />
-								</h:panelGrid>
-								<!-- Schedule -->
-								<p:schedule style="margin-top:20px;" showHeader="false"
-									view="agendaDay" allDaySlot="false" axisFormat="HH:mm"
-									value="#{employeeDailyViewHelper.scheduleModel}"
-									slotMinutes="#{planningController.slotMinutes}"
-									columnFormat="day: 'dddd'" locale="de" timeZone="GMT+1"
-									initialDate="#{planningController.dailyViewDate}"
-									tooltip="true" timeFormat="HH:mm{ - HH:mm}"
-									minTime="#{planningController.minTime}"
-									maxTime="#{planningController.maxTime}">
-								</p:schedule>
-							</p:panel>
-						</p:outputPanel>
-
-					</ui:repeat>
+				<p:outputPanel id="dailyViewPanel" style="margin-top:50px;">
+					<p:scrollPanel mode="native" style="width:100%;height:auto;">
+						<table>
+							<tr>
+								<ui:repeat var="employeeDailyViewHelper"
+									value="#{planningController.employeeDailyViewHelpers}">
+									<td><p:panel
+											header="#{employeeDailyViewHelper.employee.name}"
+											style="height:100%;width:400px;">
+											<!-- Schedule -->
+											<p:schedule style="margin-top:20px;" showHeader="false"
+												view="agendaDay" allDaySlot="false" axisFormat="HH:mm"
+												value="#{employeeDailyViewHelper.scheduleModel}"
+												slotMinutes="#{planningController.slotMinutes}"
+												aspectRatio="0.01" columnFormat="day: 'dddd'" locale="de"
+												timeZone="GMT+1"
+												initialDate="#{planningController.dailyViewDate}"
+												tooltip="true" timeFormat="HH:mm{ - HH:mm}"
+												minTime="#{planningController.minTime}"
+												maxTime="#{planningController.maxTime}">
+											</p:schedule>
+										</p:panel></td>
+								</ui:repeat>
+							</tr>
+						</table>
+					</p:scrollPanel>
+				</p:outputPanel>
+			</p:tab>
+			<p:tab title="Tagesplan (Reduziert)" id="alternativeViewReducedTab">
+				<h:panelGrid columns="2">
+					<p:outputLabel for="reducedViewWeekday" value="Wochentag:" />
+					<p:selectOneMenu id="reducedViewWeekday"
+						value="#{planningController.dailyViewWeekday}"
+						converter="WeekdayNameConverter">
+						<p:ajax event="change" process="@this" update="reducedViewPanel" />
+						<f:selectItems value="#{planningController.validWeekdays}"
+							var="weekday" itemLabel="#{weekday.name}" />
+					</p:selectOneMenu>
+				</h:panelGrid>
+				<p:outputPanel id="reducedViewPanel" style="margin-top:50px;">
+					<p:scrollPanel mode="native" style="width:100%;height:auto;">
+						<table>
+							<tr>
+								<ui:repeat var="employeeDailyViewHelper"
+									value="#{planningController.employeeDailyViewHelpers}">
+									<td><p:panel
+											header="#{employeeDailyViewHelper.employee.name}"
+											style="height:100%;width:200px;">
+											<!-- Schedule -->
+											<p:schedule style="margin-top:20px;" showHeader="false"
+												view="basicDay" allDaySlot="false" axisFormat="HH:mm"
+												value="#{employeeDailyViewHelper.scheduleModel}"
+												slotMinutes="#{planningController.slotMinutes}"
+												aspectRatio="0.01" columnFormat="day: 'dddd'" locale="de"
+												timeZone="GMT+1"
+												initialDate="#{planningController.dailyViewDate}"
+												tooltip="true" timeFormat="HH:mm{ - HH:mm}"
+												minTime="#{planningController.minTime}"
+												maxTime="#{planningController.maxTime}">
+											</p:schedule>
+										</p:panel></td>
+								</ui:repeat>
+							</tr>
+						</table>
+					</p:scrollPanel>
 				</p:outputPanel>
 			</p:tab>
 		</p:tabView>
