@@ -19,7 +19,7 @@ import org.woym.logic.spec.ICommand;
  *
  */
 @Test(groups = "unit")
-public class TestCommandHandler extends PowerMockTestCase {
+public class TestCommandhandler extends PowerMockTestCase {
 
 	@Mock
 	private ICommand command1;
@@ -114,24 +114,6 @@ public class TestCommandHandler extends PowerMockTestCase {
 		handler.undo();
 
 		assertTrue(handler.redo() instanceof FailureStatus);
-		assertEquals((Integer) 0, handler.getUndoSize());
-		assertEquals((Integer) 0, handler.getRedoSize());
-	}
-
-	@Test(priority = 7)
-	public void testEmptyQueues() {
-		Mockito.when(command1.undo()).thenReturn(successStatus);
-		Mockito.when(command1.redo()).thenReturn(successStatus);
-
-		handler.execute(command1);
-		handler.execute(command1);
-
-		assertTrue(handler.undo() instanceof SuccessStatus);
-		assertEquals((Integer) 1, handler.getUndoSize());
-		assertEquals((Integer) 1, handler.getRedoSize());
-
-		handler.emptyQueues();
-
 		assertEquals((Integer) 0, handler.getUndoSize());
 		assertEquals((Integer) 0, handler.getRedoSize());
 	}
