@@ -501,7 +501,7 @@ public class PlanningController implements Serializable {
 			if (status instanceof SuccessStatus) {
 
 				MacroCommand macro = commandCreator
-						.createEmployeeUpdateSubstractWorkingHours(activity);
+						.createEmployeeUpdateSubtractWorkingHours(activity);
 				activity.setTime(time);
 				for (EmployeeTimePeriods timePeriods : activity
 						.getEmployeeTimePeriods()) {

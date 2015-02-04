@@ -132,7 +132,7 @@ public class CommandCreator {
 	 * @return {@linkplain MacroCommand} mit den UpdateCommands für die
 	 *         Mitarbeiter
 	 */
-	public MacroCommand createEmployeeUpdateSubstractWorkingHours(
+	public MacroCommand createEmployeeUpdateSubtractWorkingHours(
 			final Activity activity) {
 
 		if (activity == null) {
@@ -204,7 +204,7 @@ public class CommandCreator {
 		if (entity instanceof Activity) {
 			// Beim Löschen einer Aktivität müssen die verteilten Stunden der
 			// beteiligten Lehrer aktualisiert werden
-			macro.addAll(createEmployeeUpdateSubstractWorkingHours((Activity) entity));
+			macro.addAll(createEmployeeUpdateSubtractWorkingHours((Activity) entity));
 
 			macro.add(new DeleteCommand<Entity>(entity));
 		} else {
@@ -316,7 +316,7 @@ public class CommandCreator {
 			if (size == 0) {
 				a.setMemento(memento);
 				a.update();
-				macro.addAll(createEmployeeUpdateSubstractWorkingHours(a).getCommands());
+				macro.addAll(createEmployeeUpdateSubtractWorkingHours(a).getCommands());
 				macro.add(new DeleteCommand<Entity>(a));
 			} else if (size > 0) {
 				macro.add(new UpdateCommand<Entity>(a, memento));

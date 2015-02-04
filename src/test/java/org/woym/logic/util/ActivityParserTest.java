@@ -8,6 +8,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.powermock.api.mockito.PowerMockito;
+import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.testng.PowerMockTestCase;
 import org.primefaces.model.ScheduleModel;
@@ -33,6 +34,7 @@ import org.woym.common.objects.Weekday;
 import org.woym.persistence.DataAccess;
 
 @Test(groups = "unit")
+@PowerMockIgnore("javax.management.*")
 @PrepareForTest(Config.class)
 public class ActivityParserTest extends PowerMockTestCase {
 
