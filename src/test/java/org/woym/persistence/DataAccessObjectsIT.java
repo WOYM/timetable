@@ -31,6 +31,8 @@ import org.woym.common.objects.Room;
 import org.woym.common.objects.Schoolclass;
 import org.woym.common.objects.Teacher;
 import org.woym.common.objects.TravelTimeList;
+import org.woym.persistence.DataAccess;
+import org.woym.persistence.DataBase;
 
 @Test(groups = { "DataAccessObjectsIT", "integration" })
 public class DataAccessObjectsIT {
