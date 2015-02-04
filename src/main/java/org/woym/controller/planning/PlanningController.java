@@ -56,6 +56,7 @@ import org.woym.logic.spec.IStatus;
 import org.woym.logic.util.ActivityValidator;
 import org.woym.persistence.DataAccess;
 import org.woym.ui.util.ActivityTOHolder;
+import org.woym.ui.util.EmployeeDailyViewHelper;
 import org.woym.ui.util.EntityHelper;
 import org.woym.ui.util.PersonalPlanHelper;
 import org.woym.ui.util.PersonalPlanRow;
@@ -103,15 +104,17 @@ public class PlanningController implements Serializable {
 
 	private List<Weekday> validWeekdays;
 
+	private Weekday dailyViewWeekday;
+
 	@ManagedProperty(value = "#{lessonController}")
 	private LessonController lessonController;
-	
+
 	@ManagedProperty(value = "#{meetingController}")
 	private MeetingController meetingController;
-	
+
 	@ManagedProperty(value = "#{pauseController}")
 	private PauseController pauseController;
-	
+
 	@ManagedProperty(value = "#{compoundLessonController}")
 	private CompoundLessonController compoundLessonController;
 
@@ -126,6 +129,7 @@ public class PlanningController implements Serializable {
 
 		searchTerm = "";
 		validWeekdays = getValidWeekdays();
+		dailyViewWeekday = Weekday.MONDAY;
 	}
 
 	/**
@@ -239,7 +243,7 @@ public class PlanningController implements Serializable {
 
 	/**
 	 * Diese Methode liefert mit Hilfe des {@link PersonalPlanHelper}s eine
-	 * Liste von {@link PersonalPlanRow}-Objekten zurück
+	 * Liste von {@link PersonalPlanRow}-Objekten zurück.
 	 * 
 	 * @return Eine Liste von {@link PersonalPlanRow}-Objekten
 	 */
@@ -249,6 +253,32 @@ public class PlanningController implements Serializable {
 		return personalPlanHelper.getPersonalPlanRows();
 	}
 
+	/**
+	 * Diese Methode liefert mit Hilfe des {@link PersonalPlanHelper}s eine
+	 * Liste von {@link EmployeeDailyViewHelper}-Objekten zurück.
+	 * 
+	 * @return Eine Liste von {@link EmployeeDailyViewHelper}-Objekten
+	 */
+	public List<EmployeeDailyViewHelper> getEmployeeDailyViewHelpers() {
+		PersonalPlanHelper personalPlanHelper = PersonalPlanHelper
+				.getInstance();
+
+		return personalPlanHelper.getEmployeeDailyViews(dailyViewWeekday);
+	}
+
+	/**
+	 * Liefert das {@link Date} für die Tagesanzeige zurück
+	 * 
+	 * @return Das {@link Date} für die Tagesanzeige
+	 */
+	public Date getDailyViewDate() {
+		Date date = getInitalDate();
+		
+		date = changeDateByDelta(date, dailyViewWeekday.getOrdinal(), 0);
+		
+		return date;
+	}
+	
 	/**
 	 * Wird aufgerufen, wenn in der Darstellung eine Aktivität selektiert wird.
 	 * <p>
@@ -366,14 +396,14 @@ public class PlanningController implements Serializable {
 	}
 
 	/**
-	 * Bestimmt ob die übergebenen Zeiter außerhalb , der durch die Einstellungen
-	 * festgelegten, Grenzen liegen.
+	 * Bestimmt ob die übergebenen Zeiter außerhalb , der durch die
+	 * Einstellungen festgelegten, Grenzen liegen.
 	 * 
 	 * @param startTime
 	 *            Startzeit
 	 * @param endTime
 	 *            Endzeit
-	 * @return Wahrheitswert ob sie außerhalb  der Grenzen sind.
+	 * @return Wahrheitswert ob sie außerhalb der Grenzen sind.
 	 */
 	@SuppressWarnings("deprecation")
 	private boolean isTimeInRange(final Date startTime, final Date endTime) {
@@ -425,7 +455,7 @@ public class PlanningController implements Serializable {
 		timePeriod.setDay(Weekday.getByDate(date));
 
 		activityTOHolder.getActivityTO().setTimePeriod(timePeriod);
-		
+
 		dialogInit();
 	}
 
@@ -1090,4 +1120,11 @@ public class PlanningController implements Serializable {
 		this.compoundLessonController = compoundLessonController;
 	}
 
+	public Weekday getDailyViewWeekday() {
+		return dailyViewWeekday;
+	}
+
+	public void setDailyViewWeekday(Weekday weekday) {
+		this.dailyViewWeekday = weekday;
+	}
 }
