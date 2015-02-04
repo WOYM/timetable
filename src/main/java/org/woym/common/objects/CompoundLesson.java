@@ -119,6 +119,11 @@ public class CompoundLesson extends Activity {
 					"Only " + Memento.class + " as parameter allowed.");
 		}
 	}
+	
+	@Override
+	public String toString() {
+		return "Bandunterricht, " + super.toString();
+	}
 
 	/**
 	 * Die Memento-Klasse von {@linkplain CompoundLesson}. Erweitert die

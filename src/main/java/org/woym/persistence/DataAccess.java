@@ -754,8 +754,8 @@ public class DataAccess implements IDataAccess, Observer {
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<Activity> getAllActivities(Employee employee)
-			throws DatasetException {
+	public List<Activity> getAllActivities(Employee employee,
+			boolean refreshCache) throws DatasetException {
 		if (employee == null) {
 			throw new IllegalArgumentException("Parameter was null");
 		}
@@ -764,6 +764,9 @@ public class DataAccess implements IDataAccess, Observer {
 					.createQuery("SELECT DISTINCT a from Activity a INNER JOIN a.employeeTimePeriods e "
 							+ "WHERE e.employee.id = ?1 ORDER BY a.time.day, a.time.startTime");
 			query.setParameter(1, employee.getId());
+			if (refreshCache) {
+				query.setHint("javax.persistence.cache.storeMode", "REFRESH");
+			}
 			return (List<Activity>) query.getResultList();
 		} catch (Exception e) {
 			LOGGER.error("Exception while getting all activities for "
@@ -774,14 +777,14 @@ public class DataAccess implements IDataAccess, Observer {
 		}
 	}
 
-	public List<Activity> getAllActivities(final IActivityObject object)
-			throws DatasetException {
+	public List<Activity> getAllActivities(final IActivityObject object,
+			boolean refreshCache) throws DatasetException {
 		if (object instanceof Employee) {
-			return getAllActivities((Employee) object);
+			return getAllActivities((Employee) object, refreshCache);
 		} else if (object instanceof Schoolclass) {
-			return getAllActivities((Schoolclass) object);
+			return getAllActivities((Schoolclass) object, refreshCache);
 		} else if (object instanceof Room) {
-			return getAllActivities((Room) object);
+			return getAllActivities((Room) object, refreshCache);
 		} else {
 			return new ArrayList<Activity>();
 		}
@@ -792,8 +795,8 @@ public class DataAccess implements IDataAccess, Observer {
 	 */
 	@Override
 	@SuppressWarnings("unchecked")
-	public List<Activity> getAllActivities(Schoolclass schoolclass)
-			throws DatasetException {
+	public List<Activity> getAllActivities(Schoolclass schoolclass,
+			boolean refreshCache) throws DatasetException {
 		if (schoolclass == null) {
 			throw new IllegalArgumentException("Parameter was null");
 		}
@@ -802,6 +805,9 @@ public class DataAccess implements IDataAccess, Observer {
 					.createQuery("SELECT a FROM Activity a "
 							+ "WHERE ?1 MEMBER OF a.schoolclasses ORDER BY a.time.day, a.time.startTime");
 			query.setParameter(1, schoolclass);
+			if (refreshCache) {
+				query.setHint("javax.persistence.cache.storeMode", "REFRESH");
+			}
 			return (List<Activity>) query.getResultList();
 		} catch (Exception e) {
 			LOGGER.error(
@@ -819,7 +825,8 @@ public class DataAccess implements IDataAccess, Observer {
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<Activity> getAllActivities(Room room) throws DatasetException {
+	public List<Activity> getAllActivities(Room room, boolean refreshCache)
+			throws DatasetException {
 		if (room == null) {
 			throw new IllegalArgumentException("Parameter was null");
 		}
@@ -828,6 +835,9 @@ public class DataAccess implements IDataAccess, Observer {
 					.createQuery("SELECT a FROM Activity a "
 							+ "WHERE ?1 MEMBER OF a.rooms ORDER BY a.time.day, a.time.startTime");
 			query.setParameter(1, room);
+			if (refreshCache) {
+				query.setHint("javax.persistence.cache.storeMode", "REFRESH");
+			}
 			return (List<Activity>) query.getResultList();
 		} catch (Exception e) {
 			LOGGER.error("Exception while getting all activities for room "
