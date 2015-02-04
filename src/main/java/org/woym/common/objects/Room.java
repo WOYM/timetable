@@ -19,8 +19,8 @@ import org.woym.persistence.DataAccess;
  *
  */
 @Entity
-public class Room extends org.woym.common.objects.Entity implements IActivityObject,
-		IMementoObject {
+public class Room extends org.woym.common.objects.Entity implements
+		IActivityObject, IMementoObject {
 
 	/**
 	 * 
@@ -98,11 +98,17 @@ public class Room extends org.woym.common.objects.Entity implements IActivityObj
 	 *         keinem Standort gehört oder ein Fehler auftritt
 	 */
 	public String getLocationName() {
+
+		return getLocation() != null ? getLocation().getName() : "";
+
+	}
+
+	public Location getLocation() {
 		try {
 			Location location = DataAccess.getInstance().getOneLocation(this);
-			return location != null ? location.getName() : "";
+			return location;
 		} catch (DatasetException e) {
-			return "";
+			return null;
 		}
 	}
 

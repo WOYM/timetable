@@ -375,7 +375,7 @@
 								<f:selectItem value="#{null}" itemLabel="Bitte auswählen" />
 								<f:selectItems value="#{lessonController.allLessonTypes}"
 									var="lessonType" itemLabel="#{lessonType.name}" />
-								<p:ajax event="change" update="lessonEndTime" />
+								<p:ajax event="change" update="lessonEndTime,lessonRoomPanel" />
 							</p:selectOneMenu>
 							<p:spacer style="height:15px;" />
 							<p:spacer />
