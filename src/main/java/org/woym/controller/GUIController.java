@@ -137,7 +137,7 @@ public class GUIController implements Serializable {
 		}
 		return String.valueOf(size);
 	}
-
+	
 	/**
 	 * Versucht das übergebene {@linkplain Entity}-Objekt durch den
 	 * Datenbankzustand dieses Objektes zu überschreiben.
