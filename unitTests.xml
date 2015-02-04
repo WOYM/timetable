@@ -8,7 +8,7 @@
 			<class name="org.woym.logic.command.TestAddCommand" />
 			<class name="org.woym.logic.command.TestMacroCommand" />
 			<class name="org.woym.logic.command.TestCommandCreator" />
-			<class name="org.woym.logic.command.TestCommandhandler" />
+			<class name="org.woym.logic.command.TestCommandHandler" />
 			<class name="org.woym.logic.util.LimitedQueueBlackboxTest" />
 			<class name="org.woym.logic.util.ActivityValidatorTest" />
 			<class name="org.woym.logic.util.ActivityParserTest"></class>

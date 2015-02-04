@@ -88,6 +88,15 @@ public class EntityHelper {
 		}
 	}
 	
+	public void unsetAll() {
+		teacher = null;
+		pedagogicAssistant = null;
+		academicYear = null;
+		schoolclass = null;
+		location = null;
+		room = null;
+	}
+	
 	public Teacher getTeacher() {
 		return teacher;
 	}

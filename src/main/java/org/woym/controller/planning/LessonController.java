@@ -251,6 +251,19 @@ public class LessonController implements Serializable {
 		TimePeriod timePeriod = lesson.getTime();
 		timePeriod.setEndTime(endTime);
 		lesson.setTime(timePeriod);
+		
+		if(!lessonType.getRooms().isEmpty()) {
+			location = lessonType.getRooms().get(0).getLocation();
+			setLessonRoom(lessonType.getRooms().get(0));
+		} else {
+			for(Schoolclass schoolclass : lesson.getSchoolclasses()) {
+				if(schoolclass.getRoom() != null) {
+					location = schoolclass.getRoom().getLocation();
+					setLessonRoom(schoolclass.getRoom());
+					break;
+				}
+			}
+		}
 	}
 
 	public Schoolclass getLessonSchoolclass() {

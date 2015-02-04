@@ -1,6 +1,7 @@
 package org.woym.logic.util;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -25,6 +26,7 @@ import org.woym.common.objects.Lesson;
 import org.woym.common.objects.LessonType;
 import org.woym.common.objects.Meeting;
 import org.woym.common.objects.MeetingType;
+import org.woym.common.objects.Pause;
 import org.woym.common.objects.PedagogicAssistant;
 import org.woym.common.objects.Room;
 import org.woym.common.objects.Schoolclass;
@@ -45,6 +47,8 @@ public class ActivityParserTest extends PowerMockTestCase {
 
 	@InjectMocks
 	ActivityParser activityParser;
+	
+	TimePeriod time;
 
 	@BeforeTest
 	public void makeActivities() {
@@ -54,7 +58,7 @@ public class ActivityParserTest extends PowerMockTestCase {
 		Date endDate = new Date();
 		Weekday weekday = Weekday.MONDAY;
 
-		TimePeriod time = new TimePeriod();
+		time = new TimePeriod();
 		time.setStartTime(startDate);
 		time.setEndTime(endDate);
 		time.setDay(weekday);
@@ -73,15 +77,34 @@ public class ActivityParserTest extends PowerMockTestCase {
 		Meeting activity3 = new Meeting();
 		activity3.setMeetingType(meetingType);
 		activity3.setTime(time);
+		Pause activity4 = new Pause();
+		activity4.setTime(time);
 
 		activities.add(activity1);
 		activities.add(activity2);
 		activities.add(activity3);
+		activities.add(activity4);
 	}
 
 	@Test
 	public void testGetInstance() {
 		AssertJUnit.assertNotNull(ActivityParser.getInstance());
+	}
+	
+	@Test
+	public void testgetEventUnknowActivity() throws Exception {
+
+		Activity activity5 = Mockito.mock(Activity.class);
+		
+		List<Activity> act = Arrays.asList(activity5);
+		
+		Mockito.when(activity5.getTime()).thenReturn(time);
+		ScheduleModel scheduleModel = activityParser.getActivityModel(act, true);
+		
+		AssertJUnit
+		.assertEquals(
+				"The ActivityParser is meant to return as many events as activities are given",
+				act.size(), scheduleModel.getEvents().size());
 	}
 
 	@Test
