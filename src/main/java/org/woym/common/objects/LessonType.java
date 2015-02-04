@@ -7,12 +7,9 @@ import javax.persistence.Entity;
 @DiscriminatorValue("LessonType")
 public class LessonType extends ActivityType {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = -4953764389342004235L;
-
 	
 	public LessonType(){
-	}
+	}	
+	
 }

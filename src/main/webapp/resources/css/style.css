@@ -31,62 +31,62 @@ div[id$="searchTeacherTable"]>div>table>thead {
 	width: 50% !important;
 }
 
-.dark-green .fc-event, .dark-green .a, .dark-green .fc-event-inner {
+.dark-green .fc-event, .dark-green .a, .dark-green .fc-event-inner, .dark-green-choose {
 	background-color: #047c42;
 	border-color: #047c42;
 	color: white;
 }
 
-.light-green .fc-event, .light-green .a, .light-green .fc-event-inner {
+.light-green .fc-event, .light-green .a, .light-green .fc-event-inner, .light-green-choose  {
 	background-color: #28c401;
 	border-color: #28c401;
 	color: black;
 }
 
-.orange .fc-event, .orange .a, .orange .fc-event-inner {
+.orange .fc-event, .orange .a, .orange .fc-event-inner, .orange-choose  {
 	background-color: #ecb84f;
 	border-color: #ecb84f;
 	color: black;
 }
 
-.yellow .fc-event, .yellow .a, .yellow .fc-event-inner {
+.yellow .fc-event, .yellow .a, .yellow .fc-event-inner, .yellow-choose  {
 	background-color: #ecfd02;
 	border-color: #ecfd02;
 	color: black;
 }
 
-.dark-blue .fc-event, .dark-blue .a, .dark-blue .fc-event-inner {
+.dark-blue .fc-event, .dark-blue .a, .dark-blue .fc-event-inner, .dark-blue-choose {
 	background-color: #1e3bba;
 	border-color: #1e3bba;
 	color: white;
 }
 
-.cyan .fc-event, .cyan .a, .cyan .fc-event-inner {
+.cyan .fc-event, .cyan .a, .cyan .fc-event-inner, .cyan-choose {
 	background-color: #02d0bf;
 	border-color: #02d0bf;
 	color: black;
 }
 
-.default-color .fc-event, .default-color .a, .default-color .fc-event-inner
+.default-color .fc-event, .default-color .a, .default-color .fc-event-inner, .default-color-choose
 	{
 	background-color: #6ba5c2;
 	border-color: #6ba5c2;
 	color: white;
 }
 
-.dark-red .fc-event, .dark-red .a, .dark-red .fc-event-inner {
+.dark-red .fc-event, .dark-red .a, .dark-red .fc-event-inner, .dark-red-choose {
 	background-color: #a60101;
 	border-color: #a60101;
 	color: white;
 }
 
-.light-red .fc-event, .light-red .a, .light-red .fc-event-inner {
+.light-red .fc-event, .light-red .a, .light-red .fc-event-inner, .light-red-choose {
 	background-color: #ff2323;
 	border-color: #ff2323;
 	color: black;
 }
 
-.purple .fc-event, .purple .a, .purple .fc-event-inner {
+.purple .fc-event, .purple .a, .purple .fc-event-inner, .purple-choose {
 	background-color: #6c08d8;
 	border-color: #6c08d8;
 	color: white;

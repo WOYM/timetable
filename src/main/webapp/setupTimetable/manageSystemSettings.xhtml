@@ -192,6 +192,65 @@
 
 				<p:spacer height="40" />
 
+				<p:panel id="colorSettings" header="Farben">
+					<h:panelGrid columns="2" style="width:100%;"
+						columnClasses="half-column">
+						<p:outputLabel for="lessonStressingColor"
+							value="Anstrengende Inhalte" />
+						<p:selectOneMenu id="lessonStressingColor"
+							value="#{configController.lessonStressingColor}" var="color">
+							<f:selectItems value="#{configController.allColors}" var="color"
+								itemLabel="#{color.name}" itemValue="#{color}" />
+							<p:column>
+								<h:outputText styleClass="#{color.styleClass}-choose"
+									value="#{color.name}" />
+							</p:column>
+						</p:selectOneMenu>
+						<p:outputLabel for="lessonRelaxingColor" value="Belebende Inhalte" />
+						<p:selectOneMenu id="lessonRelaxingColor"
+							value="#{configController.lessonRelaxingColor}" var="color">
+							<f:selectItems value="#{configController.allColors}" var="color"
+								itemLabel="#{color.name}" itemValue="#{color}" />
+							<p:column>
+								<h:outputText styleClass="#{color.styleClass}-choose"
+									value="#{color.name}" />
+							</p:column>
+						</p:selectOneMenu>
+						<p:outputLabel for="meetingColor" value="Teamsitzungen" />
+						<p:selectOneMenu id="meetingColor"
+							value="#{configController.meetingColor}" var="color">
+							<f:selectItems value="#{configController.allColors}" var="color"
+								itemLabel="#{color.name}" itemValue="#{color}" />
+							<p:column>
+								<h:outputText styleClass="#{color.styleClass}-choose"
+									value="#{color.name}" />
+							</p:column>
+						</p:selectOneMenu>
+						<p:outputLabel for="compoundLessonColor" value="Bandunterrichte" />
+						<p:selectOneMenu id="compoundLessonColor"
+							value="#{configController.compoundLessonColor}" var="color">
+							<f:selectItems value="#{configController.allColors}" var="color"
+								itemLabel="#{color.name}" itemValue="#{color}" />
+							<p:column>
+								<h:outputText styleClass="#{color.styleClass}-choose"
+									value="#{color.name}" />
+							</p:column>
+						</p:selectOneMenu>
+						<p:outputLabel for="pauseColor" value="Pausen" />
+						<p:selectOneMenu id="pauseColor"
+							value="#{configController.pauseColor}" var="color">
+							<f:selectItems value="#{configController.allColors}" var="color"
+								itemLabel="#{color.name}" itemValue="#{color}" />
+							<p:column>
+								<h:outputText styleClass="#{color.styleClass}-choose"
+									value="#{color.name}" />
+							</p:column>
+						</p:selectOneMenu>
+					</h:panelGrid>
+				</p:panel>
+
+				<p:spacer height="40" />
+
 				<p:panel id="backupSettings" header="Backup-Einstellungen">
 					<h:outputText
 						value="Legen Sie hier das Intervall fest, in welchem automatische Backups stattfinden sollen. 
@@ -253,7 +312,7 @@
 				<p:outputPanel style="height:60px; float:right; margin-top:10px;">
 					<p:commandButton value="Übernehmen" icon="ui-icon-plusthick"
 						onclick="PF('wConfimSettings').show();"
-						process="generalSettings,backupSettings,@this">
+						process="generalSettings,colorSettings,backupSettings,@this">
 					</p:commandButton>
 				</p:outputPanel>
 			</p:outputPanel>

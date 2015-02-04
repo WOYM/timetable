@@ -130,6 +130,10 @@ public class PlanningController implements Serializable {
 		searchTerm = "";
 		validWeekdays = getValidWeekdays();
 		dailyViewWeekday = Weekday.MONDAY;
+
+		scheduleModelHolder.setScheduleModel(scheduleModelHolder
+				.emptyScheduleModel());
+		entityHelper.unsetAll();
 	}
 
 	/**
@@ -273,12 +277,12 @@ public class PlanningController implements Serializable {
 	 */
 	public Date getDailyViewDate() {
 		Date date = getInitalDate();
-		
+
 		date = changeDateByDelta(date, dailyViewWeekday.getOrdinal(), 0);
-		
+
 		return date;
 	}
-	
+
 	/**
 	 * Wird aufgerufen, wenn in der Darstellung eine Aktivität selektiert wird.
 	 * <p>
