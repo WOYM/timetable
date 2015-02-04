@@ -162,7 +162,7 @@ public class ActivityParser {
 	 * @throws IllegalArgumentException
 	 *             Wenn eine ungültige Entity übergeben wird
 	 */
-	private ScheduleModel getActivityModel(List<Activity> activities) {
+	public ScheduleModel getActivityModel(List<Activity> activities) {
 
 		ScheduleModel activityModel = new DefaultScheduleModel();
 
@@ -175,6 +175,8 @@ public class ActivityParser {
 
 			event.setData(activity);
 
+			event.setEditable(false);
+			
 			event = getEvent(event, activity);
 
 			activityModel.addEvent(event);

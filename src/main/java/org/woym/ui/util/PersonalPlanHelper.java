@@ -8,12 +8,16 @@ import java.util.Map;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.primefaces.model.ScheduleModel;
 import org.woym.common.exceptions.DatasetException;
 import org.woym.common.objects.Activity;
+import org.woym.common.objects.Employee;
 import org.woym.common.objects.EmployeeTimePeriods;
 import org.woym.common.objects.Lesson;
 import org.woym.common.objects.Teacher;
+import org.woym.common.objects.Weekday;
 import org.woym.controller.planning.PlanningController;
+import org.woym.logic.util.ActivityParser;
 import org.woym.persistence.DataAccess;
 
 /**
@@ -42,6 +46,8 @@ public class PersonalPlanHelper {
 
 	private DataAccess dataAccess = DataAccess.getInstance();
 
+	private ActivityParser activityParser = ActivityParser.getInstance();
+
 	private PersonalPlanHelper() {
 
 	}
@@ -53,6 +59,43 @@ public class PersonalPlanHelper {
 	 */
 	public static PersonalPlanHelper getInstance() {
 		return INSTANCE;
+	}
+
+	/**
+	 * Diese Methode erzeugt eine Liste von {@link EmployeeDailyViewHelper}
+	 * -Objekten, die zur Darstellung der Tagesansicht in der GUI verwendet
+	 * werden können.
+	 * 
+	 * @param weekday
+	 *            Der {@link Weekday}, für den der Plan dargestellt werden soll
+	 * @return Eine Liste von {@link EmployeeDailyViewHelper}-Objekten
+	 */
+	public List<EmployeeDailyViewHelper> getEmployeeDailyViews(Weekday weekday) {
+		List<EmployeeDailyViewHelper> dailyViewHelpers = new ArrayList<>();
+
+		try {
+			// Collect all Employees
+			List<Employee> employees = new ArrayList<Employee>(
+					dataAccess.getAllTeachers());
+			employees.addAll(new ArrayList<Employee>(dataAccess.getAllPAs()));
+
+			for (Employee employee : employees) {
+				// Produce model for each employee
+				List<Activity> activities = dataAccess.getAllActivities(
+						employee, weekday);
+
+				ScheduleModel scheduleModel = activityParser
+						.getActivityModel(activities);
+				EmployeeDailyViewHelper dailyViewHelper = new EmployeeDailyViewHelper(
+						employee, scheduleModel);
+				dailyViewHelpers.add(dailyViewHelper);
+			}
+
+		} catch (DatasetException e) {
+			LOGGER.error(e);
+		}
+
+		return dailyViewHelpers;
 	}
 
 	/**
@@ -117,25 +160,24 @@ public class PersonalPlanHelper {
 	 * Erzeugt eine neue {@link Map} mit {@link Teacher}-Objekten.
 	 * 
 	 * @return {@link Map} mit {@link Teacher}-Objekten
+	 * @throws DatasetException
+	 *             Wird von {@link PersonalPlanHelper#getPersonalPlanRows()
+	 *             gefangen}
 	 */
-	private Map<Teacher, PersonalPlanRow> produceTeacherMap() {
+	private Map<Teacher, PersonalPlanRow> produceTeacherMap()
+			throws DatasetException {
 		Map<Teacher, PersonalPlanRow> teacherMap = new HashMap<>();
 
-		try {
-			List<Teacher> teachers = dataAccess.getAllTeachers();
+		List<Teacher> teachers = dataAccess.getAllTeachers();
 
-			for (Teacher teacher : teachers) {
-				BigDecimal freeHours = teacher.getHoursPerWeek().subtract(
-						teacher.getAllocatedHours());
+		for (Teacher teacher : teachers) {
+			BigDecimal freeHours = teacher.getHoursPerWeek().subtract(
+					teacher.getAllocatedHours());
 
-				PersonalPlanRow personalPlanRow = new PersonalPlanRow(
-						teacher.getSymbol(), teacher.getHoursPerWeek(),
-						freeHours);
+			PersonalPlanRow personalPlanRow = new PersonalPlanRow(
+					teacher.getSymbol(), teacher.getHoursPerWeek(), freeHours);
 
-				teacherMap.put(teacher, personalPlanRow);
-			}
-		} catch (DatasetException e) {
-			LOGGER.error(e);
+			teacherMap.put(teacher, personalPlanRow);
 		}
 
 		return teacherMap;
