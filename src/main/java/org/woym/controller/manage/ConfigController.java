@@ -16,9 +16,11 @@ import javax.faces.context.FacesContext;
 
 import org.woym.common.config.Config;
 import org.woym.common.config.DefaultConfigEnum;
+import org.woym.common.objects.ColorEnum;
 import org.woym.common.objects.Weekday;
 import org.woym.logic.spec.IStatus;
 import org.woym.logic.util.ConfigControllerUtil;
+import org.woym.ui.util.ScheduleModelHolder;
 
 /**
  * <h1>AcademicYearAndClassController</h1>
@@ -86,6 +88,12 @@ public class ConfigController implements Serializable {
 
 	private int selectedDayValue = 1;
 
+	private ColorEnum lessonStressingColor;
+	private ColorEnum lessonRelaxingColor;
+	private ColorEnum meetingColor;
+	private ColorEnum compoundLessonColor;
+	private ColorEnum pauseColor;
+
 	/**
 	 * Initialisiert diese Bean. Lädt alle benötigten Werte aus der
 	 * Konfiguration.
@@ -115,7 +123,24 @@ public class ConfigController implements Serializable {
 			backupIntervalValue = Config
 					.getSingleIntValue(DefaultConfigEnum.BACKUP_INTERVAL);
 
+			lessonStressingColor = ColorEnum
+					.getByStyleClass(Config
+							.getSingleStringValue(DefaultConfigEnum.LESSON_STRESSING_COLOR));
+			lessonRelaxingColor = ColorEnum
+					.getByStyleClass(Config
+							.getSingleStringValue(DefaultConfigEnum.LESSON_RELAXING_COLOR));
+			meetingColor = ColorEnum.getByStyleClass(Config
+					.getSingleStringValue(DefaultConfigEnum.MEETING_COLOR));
+			compoundLessonColor = ColorEnum
+					.getByStyleClass(Config
+							.getSingleStringValue(DefaultConfigEnum.COMPOUND_LESSON_COLOR));
+			pauseColor = ColorEnum.getByStyleClass(Config
+					.getSingleStringValue(DefaultConfigEnum.PAUSE_COLOR));
+
 			selectBackupSettings();
+			
+			ScheduleModelHolder.getInstance().updateScheduleModel();
+			
 		} catch (Exception e) {
 			FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_WARN,
 					"Fehler beim Laden der Einstellungen",
@@ -176,6 +201,26 @@ public class ConfigController implements Serializable {
 				DefaultConfigEnum.SCHOOLCLASS_IDENTIFIER_CASE.getPropKey(),
 				identifierCase)
 				&& works;
+
+		works = Config.updateProperty(
+				DefaultConfigEnum.LESSON_STRESSING_COLOR.getPropKey(),
+				lessonStressingColor.getStyleClass()) && works;
+		
+		works = Config.updateProperty(
+				DefaultConfigEnum.LESSON_RELAXING_COLOR.getPropKey(),
+				lessonRelaxingColor.getStyleClass()) && works;
+		
+		works = Config.updateProperty(
+				DefaultConfigEnum.MEETING_COLOR.getPropKey(),
+				meetingColor.getStyleClass()) && works;
+		
+		works = Config.updateProperty(
+				DefaultConfigEnum.COMPOUND_LESSON_COLOR.getPropKey(),
+				compoundLessonColor.getStyleClass()) && works;
+		
+		works = Config.updateProperty(
+				DefaultConfigEnum.PAUSE_COLOR.getPropKey(),
+				pauseColor.getStyleClass()) && works;
 
 		works = updateBackupInterval() && works;
 
@@ -323,6 +368,10 @@ public class ConfigController implements Serializable {
 		return works;
 	}
 
+	public List<ColorEnum> getAllColors() {
+		return Arrays.asList(ColorEnum.values());
+	}
+	
 	public int getMaxSpinnerValue() {
 		return MAX_SPINNER_VALUE;
 	}
@@ -495,6 +544,46 @@ public class ConfigController implements Serializable {
 
 	public String getDailyBackups() {
 		return DAILY_BACKUPS;
+	}
+
+	public ColorEnum getLessonStressingColor() {
+		return lessonStressingColor;
+	}
+
+	public void setLessonStressingColor(ColorEnum lessonStressingColor) {
+		this.lessonStressingColor = lessonStressingColor;
+	}
+
+	public ColorEnum getLessonRelaxingColor() {
+		return lessonRelaxingColor;
+	}
+
+	public void setLessonRelaxingColor(ColorEnum lessonRelaxingColor) {
+		this.lessonRelaxingColor = lessonRelaxingColor;
+	}
+
+	public ColorEnum getMeetingColor() {
+		return meetingColor;
+	}
+
+	public void setMeetingColor(ColorEnum meetingColor) {
+		this.meetingColor = meetingColor;
+	}
+
+	public ColorEnum getCompoundLessonColor() {
+		return compoundLessonColor;
+	}
+
+	public void setCompoundLessonColor(ColorEnum compoundLessonColor) {
+		this.compoundLessonColor = compoundLessonColor;
+	}
+
+	public ColorEnum getPauseColor() {
+		return pauseColor;
+	}
+
+	public void setPauseColor(ColorEnum pauseColor) {
+		this.pauseColor = pauseColor;
 	}
 
 }

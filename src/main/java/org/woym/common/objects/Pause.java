@@ -19,6 +19,8 @@ public class Pause extends Activity {
 	 * 
 	 */
 	private static final long serialVersionUID = -917089197311092866L;
+	
+	public static final String VALID_DISPLAY_NAME = "Pause";
 
 	public Pause() {
 	}
