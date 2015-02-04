@@ -10,7 +10,6 @@ import org.apache.logging.log4j.Logger;
 import org.primefaces.model.DefaultScheduleEvent;
 import org.primefaces.model.DefaultScheduleModel;
 import org.primefaces.model.ScheduleModel;
-import org.woym.common.config.Config;
 import org.woym.common.exceptions.DatasetException;
 import org.woym.common.objects.Activity;
 import org.woym.common.objects.CompoundLesson;
@@ -20,7 +19,6 @@ import org.woym.common.objects.PedagogicAssistant;
 import org.woym.common.objects.Room;
 import org.woym.common.objects.Schoolclass;
 import org.woym.common.objects.Teacher;
-import org.woym.common.objects.Weekday;
 import org.woym.controller.planning.PlanningController;
 import org.woym.persistence.DataAccess;
 
@@ -167,19 +165,6 @@ public class ActivityParser {
 	private ScheduleModel getActivityModel(List<Activity> activities) {
 
 		ScheduleModel activityModel = new DefaultScheduleModel();
-		
-		for (Weekday weekday : Weekday.values()) {
-			if(!Config.getValidWeekdays().contains(weekday)) {
-				Calendar calendar = Calendar.getInstance();
-				calendar.set(PlanningController.CALENDAR_YEAR, PlanningController.CALENDAR_MONTH, PlanningController.CALENDAR_DAY);
-				int newDay = calendar.get(Calendar.DAY_OF_WEEK) + weekday.getOrdinal();
-				calendar.set(Calendar.DAY_OF_WEEK, newDay);
-				
-				DefaultScheduleEvent event = new DefaultScheduleEvent("Blockiert", calendar.getTime(), calendar.getTime(), true);
-				
-				activityModel.addEvent(event);
-			}
-		}
 
 		for (Activity activity : activities) {
 			Date startDate = getActivityStartDate(activity);

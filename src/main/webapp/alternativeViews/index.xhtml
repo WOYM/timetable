@@ -66,6 +66,15 @@
 						</table>
 					</p:columns>
 				</p:dataTable>
+
+				<p:fieldset legend="Information"
+					style="margin-bottom:20px; margin-top:20px;">
+					<h:panelGrid columns="2">
+						<h:outputText style="font-weight:bold;" value="Zeit:" />
+						<h:outputText
+							value="Eine Wochenstunde einer Lehrkraft entspricht #{teacherController.hourlySettlement} Minuten." />
+						</h:panelGrid>
+				</p:fieldset>
 			</p:tab>
 			<p:tab title="Tagesplan" id="alternativeViewDayTab">
 			</p:tab>
