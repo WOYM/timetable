@@ -5,7 +5,7 @@
 		<classes>
 			<class name="org.woym.persistence.DataAccessObjectsIT" />
 			<class name="org.woym.persistence.DataAccessObjectsIT2" />
-			<class name="org.woym.logic.command.CommandsDataAccessIT" />
+			<class name="org.woym.logic.command.integration.CommandsDataAccessIT" />
 		</classes>
 	</test>
 </suite>

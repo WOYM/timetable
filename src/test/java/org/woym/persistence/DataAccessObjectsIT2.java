@@ -22,6 +22,7 @@ import org.woym.common.objects.Schoolclass;
 import org.woym.common.objects.TimePeriod;
 import org.woym.common.objects.Weekday;
 import org.woym.common.objects.spec.IActivityObject;
+import org.woym.persistence.DataAccess;
 
 @Test(groups = { "DataAccessObjectsIT2", "integration" }, dependsOnGroups = "DataAccessObjectsIT")
 public class DataAccessObjectsIT2 {
