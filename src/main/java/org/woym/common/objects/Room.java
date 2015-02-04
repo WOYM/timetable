@@ -26,6 +26,9 @@ public class Room extends org.woym.common.objects.Entity implements
 	 * 
 	 */
 	private static final long serialVersionUID = 1530008000910481387L;
+
+	public static final String DEFAULT_PURPOSE = "Standardraum";
+
 	/**
 	 * Die automatisch generierte ID ist der Primärschlüssel für die Datenbank.
 	 */
@@ -42,7 +45,7 @@ public class Room extends org.woym.common.objects.Entity implements
 	/**
 	 * Funktion des Raumes.
 	 */
-	private String purpose = "Standardraum";
+	private String purpose = DEFAULT_PURPOSE;
 
 	/**
 	 * Zusätzliche Informationen zu dem Raum.

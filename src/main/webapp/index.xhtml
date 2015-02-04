@@ -443,7 +443,7 @@
 								rendered="#{lessonController.academicYear != null}"
 								required="true"
 								requiredMessage="Es muss eine Schulklasse ausgewählt werden.">
-								<p:ajax event="change" process="@this" />
+								<p:ajax event="change" process="@this" update="lessonRoomPanel" />
 								<f:selectItem value="#{null}" itemLabel="Klasse auswählen" />
 								<f:selectItems
 									value="#{lessonController.schoolclassesForAcademicYear}"

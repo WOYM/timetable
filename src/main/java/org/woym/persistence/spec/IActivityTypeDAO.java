@@ -91,4 +91,20 @@ public interface IActivityTypeDAO {
 	 */
 	public ActivityType getOneActivityType(String name) throws DatasetException;
 
+	/**
+	 * Gibt {@code true} zurück, wenn der übergebene Aktivitätstyp einen Raum
+	 * besitzt, der nicht Standardraum ist. Ansonsten wird {@code false}
+	 * zurückgegeben. Tritt dabei ein Fehler auf, wird eine
+	 * {@linkplain DatasetException} geworfen.
+	 * 
+	 * @param type
+	 *            - Aktivitätstyp, für welchen geprüft werden soll, ob er
+	 *            spezielle Räume enthält
+	 * @return {@code true}, wenn der Aktivitätstyp spezielle Räume enthält,
+	 *         ansonsten {@code false}
+	 * @throws DatasetException
+	 */
+	public boolean containsSpecialRooms(ActivityType type)
+			throws DatasetException;
+
 }
