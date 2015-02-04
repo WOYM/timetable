@@ -8,11 +8,14 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.powermock.api.mockito.PowerMockito;
+import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.testng.PowerMockTestCase;
 import org.primefaces.model.ScheduleModel;
 import org.testng.AssertJUnit;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
+import org.woym.common.config.Config;
+import org.woym.common.config.DefaultConfigEnum;
 import org.woym.common.exceptions.DatasetException;
 import org.woym.common.objects.Activity;
 import org.woym.common.objects.ColorEnum;
@@ -30,6 +33,7 @@ import org.woym.common.objects.Weekday;
 import org.woym.persistence.DataAccess;
 
 @Test(groups = "unit")
+@PrepareForTest(Config.class)
 public class ActivityParserTest extends PowerMockTestCase {
 
 	List<Activity> activities;
@@ -71,7 +75,6 @@ public class ActivityParserTest extends PowerMockTestCase {
 		activities.add(activity1);
 		activities.add(activity2);
 		activities.add(activity3);
-
 	}
 
 	@Test
@@ -81,9 +84,13 @@ public class ActivityParserTest extends PowerMockTestCase {
 
 	@Test
 	public void getActivityModelTeacherTest() throws DatasetException {
-		Teacher teacher = Mockito.mock(Teacher.class);
+		PowerMockito.mockStatic(Config.class);
 		PowerMockito.when(
-				dataAccess.getAllActivities(teacher, true))
+				Config.getSingleStringValue(Mockito
+						.any(DefaultConfigEnum.class))).thenReturn(
+				ColorEnum.DEFAULT.getStyleClass());
+		Teacher teacher = Mockito.mock(Teacher.class);
+		PowerMockito.when(dataAccess.getAllActivities(teacher, true))
 				.thenReturn(activities);
 
 		ScheduleModel scheduleModel = activityParser.getActivityModel(teacher);
@@ -97,8 +104,7 @@ public class ActivityParserTest extends PowerMockTestCase {
 	@Test
 	public void getActivityModelTeacherExceptionTest() throws DatasetException {
 		Teacher teacher = Mockito.mock(Teacher.class);
-		PowerMockito.when(
-				dataAccess.getAllActivities(teacher, true))
+		PowerMockito.when(dataAccess.getAllActivities(teacher, true))
 				.thenThrow(new DatasetException(""));
 
 		ScheduleModel scheduleModel = activityParser.getActivityModel(teacher);
@@ -111,9 +117,13 @@ public class ActivityParserTest extends PowerMockTestCase {
 
 	@Test
 	public void getActivityModelSchoolclassTest() throws DatasetException {
-		Schoolclass schoolclass = Mockito.mock(Schoolclass.class);
+		PowerMockito.mockStatic(Config.class);
 		PowerMockito.when(
-				dataAccess.getAllActivities(schoolclass, true))
+				Config.getSingleStringValue(Mockito
+						.any(DefaultConfigEnum.class))).thenReturn(
+				ColorEnum.DEFAULT.getStyleClass());
+		Schoolclass schoolclass = Mockito.mock(Schoolclass.class);
+		PowerMockito.when(dataAccess.getAllActivities(schoolclass, true))
 				.thenReturn(activities);
 
 		ScheduleModel scheduleModel = activityParser
@@ -129,8 +139,7 @@ public class ActivityParserTest extends PowerMockTestCase {
 	public void getActivityModelSchoolclassExceptionTest()
 			throws DatasetException {
 		Schoolclass schoolclass = Mockito.mock(Schoolclass.class);
-		PowerMockito.when(
-				dataAccess.getAllActivities(schoolclass, true))
+		PowerMockito.when(dataAccess.getAllActivities(schoolclass, true))
 				.thenThrow(new DatasetException(""));
 
 		ScheduleModel scheduleModel = activityParser
@@ -144,12 +153,16 @@ public class ActivityParserTest extends PowerMockTestCase {
 
 	@Test
 	public void getActivityModelPATest() throws DatasetException {
+		PowerMockito.mockStatic(Config.class);
+		PowerMockito.when(
+				Config.getSingleStringValue(Mockito
+						.any(DefaultConfigEnum.class))).thenReturn(
+				ColorEnum.DEFAULT.getStyleClass());
 		PedagogicAssistant pedagogicAssistant = Mockito
 				.mock(PedagogicAssistant.class);
-		PowerMockito.when(
-				dataAccess.getAllActivities(pedagogicAssistant,
-						true)).thenReturn(activities);
-
+		PowerMockito
+				.when(dataAccess.getAllActivities(pedagogicAssistant, true))
+				.thenReturn(activities);
 		ScheduleModel scheduleModel = activityParser
 				.getActivityModel(pedagogicAssistant);
 
@@ -163,10 +176,9 @@ public class ActivityParserTest extends PowerMockTestCase {
 	public void getActivityModelPAExceptionTest() throws DatasetException {
 		PedagogicAssistant pedagogicAssistant = Mockito
 				.mock(PedagogicAssistant.class);
-		PowerMockito.when(
-				dataAccess.getAllActivities(pedagogicAssistant,
-						true)).thenThrow(
-				new DatasetException(""));
+		PowerMockito
+				.when(dataAccess.getAllActivities(pedagogicAssistant, true))
+				.thenThrow(new DatasetException(""));
 
 		ScheduleModel scheduleModel = activityParser
 				.getActivityModel(pedagogicAssistant);
@@ -179,10 +191,14 @@ public class ActivityParserTest extends PowerMockTestCase {
 
 	@Test
 	public void getActivityModelRoomTest() throws DatasetException {
-		Room room = Mockito.mock(Room.class);
+		PowerMockito.mockStatic(Config.class);
 		PowerMockito.when(
-				dataAccess.getAllActivities(room, true))
-				.thenReturn(activities);
+				Config.getSingleStringValue(Mockito
+						.any(DefaultConfigEnum.class))).thenReturn(
+				ColorEnum.DEFAULT.getStyleClass());
+		Room room = Mockito.mock(Room.class);
+		PowerMockito.when(dataAccess.getAllActivities(room, true)).thenReturn(
+				activities);
 
 		ScheduleModel scheduleModel = activityParser.getActivityModel(room);
 
@@ -195,9 +211,8 @@ public class ActivityParserTest extends PowerMockTestCase {
 	@Test
 	public void getActivityModelRoomExceptionTest() throws DatasetException {
 		Room room = Mockito.mock(Room.class);
-		PowerMockito.when(
-				dataAccess.getAllActivities(room, true))
-				.thenThrow(new DatasetException(""));
+		PowerMockito.when(dataAccess.getAllActivities(room, true)).thenThrow(
+				new DatasetException(""));
 
 		ScheduleModel scheduleModel = activityParser.getActivityModel(room);
 

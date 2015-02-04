@@ -110,7 +110,7 @@ public class CommandHandler implements ICommandHandler, Serializable {
 	/**
 	 * Leert die Undo- und Redo-Queue.
 	 */
-	void emptyQueues(){
+	public void emptyQueues(){
 		undo.clear();
 		redo.clear();
 	}
