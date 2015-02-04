@@ -52,7 +52,7 @@ public class TimeRangeValidator implements Validator {
 		if(isTimeInRange(startTime, endTime)) {
 			throw new ValidatorException(new FacesMessage(
 					FacesMessage.SEVERITY_ERROR,
-					"Die Zeit lag außerhablb der Grenzen.",
+					"Die Zeit lag außerhalb der Grenzen.",
 					"Die Zeit muss innerhalb der Grenzen liegen."));
 		}
 	}
