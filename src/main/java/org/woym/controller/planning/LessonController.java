@@ -370,4 +370,13 @@ public class LessonController implements Serializable {
 		this.location = location;
 	}
 
+	public void setFirstSchoolclass() {
+		if (academicYear != null) {
+			List<Schoolclass> schoolclasses = getSchoolclassesForAcademicYear();
+			if (!schoolclasses.isEmpty()) {
+				setLessonSchoolclass(schoolclasses.get(0));
+			}
+		}
+	}
+
 }
