@@ -1,4 +1,4 @@
-package org.woym.logic.command;
+package org.woym.logic.command.integration;
 
 import static org.testng.AssertJUnit.assertEquals;
 import static org.testng.AssertJUnit.assertFalse;
@@ -29,6 +29,11 @@ import org.woym.common.objects.Teacher;
 import org.woym.common.objects.TravelTimeList;
 import org.woym.common.objects.spec.IMemento;
 import org.woym.logic.SuccessStatus;
+import org.woym.logic.command.AddCommand;
+import org.woym.logic.command.CommandCreator;
+import org.woym.logic.command.DeleteCommand;
+import org.woym.logic.command.MacroCommand;
+import org.woym.logic.command.UpdateCommand;
 import org.woym.persistence.DataAccess;
 
 @Test(groups = { "CommandsDataAccessIT", "integration" }, dependsOnGroups = {
