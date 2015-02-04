@@ -10,11 +10,14 @@ import org.apache.logging.log4j.Logger;
 import org.primefaces.model.DefaultScheduleEvent;
 import org.primefaces.model.DefaultScheduleModel;
 import org.primefaces.model.ScheduleModel;
+import org.woym.common.config.Config;
+import org.woym.common.config.DefaultConfigEnum;
 import org.woym.common.exceptions.DatasetException;
 import org.woym.common.objects.Activity;
 import org.woym.common.objects.CompoundLesson;
 import org.woym.common.objects.Lesson;
 import org.woym.common.objects.Meeting;
+import org.woym.common.objects.Pause;
 import org.woym.common.objects.PedagogicAssistant;
 import org.woym.common.objects.Room;
 import org.woym.common.objects.Schoolclass;
@@ -229,6 +232,8 @@ public class ActivityParser {
 			return getMeetingEvent(event, (Meeting) activity);
 		} else if (activity instanceof CompoundLesson) {
 			return getCompoundLessonEvent(event);
+		} else if (activity instanceof Pause) {
+			return getPauseEvent(event, (Pause) activity);
 		} else {
 			return event;
 		}
@@ -238,19 +243,27 @@ public class ActivityParser {
 	private DefaultScheduleEvent getLessonEvent(DefaultScheduleEvent event,
 			Lesson lesson) {
 		event.setTitle(lesson.getLessonType().getName());
-		event.setStyleClass(lesson.getLessonType().getColor().getStyleClass());
+		// FIXME Support both colors!
+		event.setStyleClass(Config.getSingleStringValue(DefaultConfigEnum.LESSON_RELAXING_COLOR));
 		return event;
 	}
 
 	private DefaultScheduleEvent getMeetingEvent(DefaultScheduleEvent event,
 			Meeting meeting) {
 		event.setTitle(meeting.getMeetingType().getName());
-		event.setStyleClass(meeting.getMeetingType().getColor().getStyleClass());
+		event.setStyleClass(Config.getSingleStringValue(DefaultConfigEnum.MEETING_COLOR));
 		return event;
 	}
 	
 	private DefaultScheduleEvent getCompoundLessonEvent(DefaultScheduleEvent event) {
 		event.setTitle(CompoundLesson.VALID_DISPLAY_NAME);
+		event.setStyleClass(Config.getSingleStringValue(DefaultConfigEnum.COMPOUND_LESSON_COLOR));
+		return event;
+	}
+	
+	private DefaultScheduleEvent getPauseEvent(DefaultScheduleEvent event, Pause pause) {
+		event.setTitle(Pause.VALID_DISPLAY_NAME);
+		event.setStyleClass(Config.getSingleStringValue(DefaultConfigEnum.PAUSE_COLOR));
 		return event;
 	}
 }
