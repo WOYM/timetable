@@ -128,6 +128,14 @@
 								value="#{lessonTypeController.lessonType}" />
 							<f:validateLength maximum="255" />
 						</p:inputText>
+						<p:outputLabel for="lessonTypeAddRelaxing"
+							value="Anstregungsgrad:" />
+						<p:selectBooleanButton id="lessonTypeAddRelaxing"
+							value="#{lessonTypeController.isRelaxing}" onLabel="Belebend"
+							offLabel="Anstrengend" onIcon="ui-icon-check"
+							offIcon="ui-icon-close">
+							<p:ajax event="change" process="@this" />
+						</p:selectBooleanButton>
 						<p:outputLabel for="addDuration" value="Typische Dauer (Minuten):" />
 						<p:spinner id="addDuration" min="0" max="1000"
 							value="#{lessonTypeController.lessonType.typicalDuration}">
@@ -180,6 +188,13 @@
 								value="#{lessonTypeController.lessonType}" />
 							<f:validateLength maximum="255" />
 						</p:inputText>
+						<p:outputLabel for="lessonTypeEditRelaxing" value="Anstregungsgrad:" />
+						<p:selectBooleanButton id="lessonTypeEditRelaxing"
+							value="#{lessonTypeController.isRelaxing}" onLabel="Belebend"
+							offLabel="Anstrengend" onIcon="ui-icon-check"
+							offIcon="ui-icon-close">
+							<p:ajax event="change" process="@this" />
+						</p:selectBooleanButton>
 						<p:outputLabel for="editDuration"
 							value="Typische Dauer (Minuten):" />
 						<p:spinner id="editDuration" min="0" max="1000"

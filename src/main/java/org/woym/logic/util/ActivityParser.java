@@ -243,8 +243,7 @@ public class ActivityParser {
 	private DefaultScheduleEvent getLessonEvent(DefaultScheduleEvent event,
 			Lesson lesson) {
 		event.setTitle(lesson.getLessonType().getName());
-		// FIXME Support both colors!
-		event.setStyleClass(Config.getSingleStringValue(DefaultConfigEnum.LESSON_RELAXING_COLOR));
+		event.setStyleClass(lesson.getLessonType().getColor().getStyleClass());
 		return event;
 	}
 

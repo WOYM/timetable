@@ -18,6 +18,7 @@ import org.woym.common.config.DefaultConfigEnum;
 import org.woym.common.exceptions.DatasetException;
 import org.woym.common.messages.GenericErrorMessage;
 import org.woym.common.messages.MessageHelper;
+import org.woym.common.objects.ColorEnum;
 import org.woym.common.objects.LessonType;
 import org.woym.common.objects.Location;
 import org.woym.common.objects.Room;
@@ -59,6 +60,8 @@ public class LessonTypeController implements Serializable {
 
 	private List<Room> rooms;
 
+	private Boolean isRelaxing;
+
 	private boolean hideDeletionDialog;
 	private boolean hide;
 
@@ -69,6 +72,7 @@ public class LessonTypeController implements Serializable {
 		hideDeletionDialog = Config
 				.getBooleanValue(DefaultConfigEnum.HIDE_ACTIVITYTYPE_DELETION_DIALOG);
 		hide = hideDeletionDialog;
+		isRelaxing = true;
 	}
 
 	/**
@@ -139,6 +143,11 @@ public class LessonTypeController implements Serializable {
 	public void doBeforeEdit() {
 		lessonTypeMemento = lessonType.createMemento();
 		rooms = lessonType.getRooms();
+		if(lessonType.getColor().equals(ColorEnum.getByStyleClass(Config.getSingleStringValue(DefaultConfigEnum.LESSON_RELAXING_COLOR)))) {
+			isRelaxing = true;
+		} else {
+			isRelaxing = false;
+		}
 	}
 
 	/**
@@ -146,6 +155,17 @@ public class LessonTypeController implements Serializable {
 	 */
 	public void editLessonType() {
 		lessonType.setRooms(rooms);
+
+		if (isRelaxing) {
+			lessonType
+					.setColor(ColorEnum.getByStyleClass(Config
+							.getSingleStringValue(DefaultConfigEnum.LESSON_RELAXING_COLOR)));
+		} else {
+			lessonType
+					.setColor(ColorEnum.getByStyleClass(Config
+							.getSingleStringValue(DefaultConfigEnum.LESSON_STRESSING_COLOR)));
+		}
+
 		UpdateCommand<LessonType> command = new UpdateCommand<>(lessonType,
 				lessonTypeMemento);
 		IStatus status = commandHandler.execute(command);
@@ -167,6 +187,15 @@ public class LessonTypeController implements Serializable {
 	 */
 	public void addLessonType() {
 		lessonType.setRooms(rooms);
+		if (isRelaxing) {
+			lessonType
+					.setColor(ColorEnum.getByStyleClass(Config
+							.getSingleStringValue(DefaultConfigEnum.LESSON_RELAXING_COLOR)));
+		} else {
+			lessonType
+					.setColor(ColorEnum.getByStyleClass(Config
+							.getSingleStringValue(DefaultConfigEnum.LESSON_STRESSING_COLOR)));
+		}
 
 		AddCommand<LessonType> command = new AddCommand<>(lessonType);
 		IStatus status = commandHandler.execute(command);
@@ -221,5 +250,13 @@ public class LessonTypeController implements Serializable {
 		typicalDuration = Config
 				.getSingleIntValue(DefaultConfigEnum.TYPICAL_ACTIVITY_DURATION);
 		return typicalDuration;
+	}
+
+	public Boolean getIsRelaxing() {
+		return isRelaxing;
+	}
+
+	public void setIsRelaxing(Boolean isRelaxing) {
+		this.isRelaxing = isRelaxing;
 	}
 }

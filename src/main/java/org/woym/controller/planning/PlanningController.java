@@ -202,7 +202,7 @@ public class PlanningController implements Serializable {
 		maxTime = maxTime.substring(0, 2);
 
 		try {
-			hours = (Integer.parseInt(maxTime) - 1);
+			hours = Integer.parseInt(maxTime);
 		} catch (NumberFormatException e) {
 			LOGGER.warn("Illegal input for hours. This is a config-problem.");
 		}
