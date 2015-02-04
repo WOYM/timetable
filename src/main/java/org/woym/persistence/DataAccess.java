@@ -9,6 +9,7 @@ import java.util.Observer;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
+import javax.persistence.TypedQuery;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -682,6 +683,32 @@ public class DataAccess implements IDataAccess, Observer {
 			throw new DatasetException(
 					"Error while getting ActivityType with name " + name + " "
 							+ e.getMessage());
+		}
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public boolean containsSpecialRooms(ActivityType type)
+			throws DatasetException {
+		if (type == null) {
+			throw new IllegalArgumentException("Parameter was null.");
+		}
+		try {
+			final TypedQuery<Integer> query = em
+					.createQuery(
+							"SELECT CASE WHEN (COUNT(r) > 0) THEN 1 ELSE 0 END"
+									+ " FROM ActivityType a INNER JOIN a.rooms r WHERE a = ?1 AND r.purpose <> ?2",
+							Integer.class);
+			query.setParameter(1, type);
+			query.setParameter(2, Room.DEFAULT_PURPOSE);
+			return query.getSingleResult() == 1 ? true : false;
+		} catch (Exception e) {
+			LOGGER.error("Exception while checking activity type " + type
+					+ " for special rooms.", e);
+			throw new DatasetException("Error while checking activity type "
+					+ type + " for special rooms: " + e.getMessage());
 		}
 	}
 

@@ -428,7 +428,8 @@
 								converter="AcademicYearNameConverter" required="true"
 								requiredMessage="Es muss ein Jahrgang ausgewählt werden.">
 								<p:ajax event="change" process="@this"
-									update="lessonSchoolclassPanel" />
+									listener="#{lessonController.setFirstSchoolclass}"
+									update="lessonSchoolclassPanel,lessonRoomPanel" />
 								<f:selectItem value="#{null}" itemLabel="Jahrgang auswählen" />
 								<f:selectItems
 									value="#{academicYearAndClassController.academicYears}"
@@ -443,7 +444,7 @@
 								rendered="#{lessonController.academicYear != null}"
 								required="true"
 								requiredMessage="Es muss eine Schulklasse ausgewählt werden.">
-								<p:ajax event="change" process="@this" />
+								<p:ajax event="change" process="@this" update="lessonRoomPanel" />
 								<f:selectItem value="#{null}" itemLabel="Klasse auswählen" />
 								<f:selectItems
 									value="#{lessonController.schoolclassesForAcademicYear}"
