@@ -1,4 +1,4 @@
-package org.woym.logic.util;
+package org.woym.ui.util;
 
 import java.util.ArrayList;
 import java.util.Calendar;
