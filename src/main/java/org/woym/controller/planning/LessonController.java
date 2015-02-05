@@ -160,7 +160,8 @@ public class LessonController implements Serializable {
 
 			if (status instanceof SuccessStatus) {
 				init();
-				RequestContext.getCurrentInstance().execute("PF('wAddActivityDialog').hide()");
+				RequestContext.getCurrentInstance().execute(
+						"PF('wAddActivityDialog').hide()");
 			}
 		}
 
@@ -251,19 +252,25 @@ public class LessonController implements Serializable {
 		TimePeriod timePeriod = lesson.getTime();
 		timePeriod.setEndTime(endTime);
 		lesson.setTime(timePeriod);
-		
-		if(!lessonType.getRooms().isEmpty()) {
-			location = lessonType.getRooms().get(0).getLocation();
-			setLessonRoom(lessonType.getRooms().get(0));
-		} else {
-			for(Schoolclass schoolclass : lesson.getSchoolclasses()) {
-				if(schoolclass.getRoom() != null) {
-					location = schoolclass.getRoom().getLocation();
-					setLessonRoom(schoolclass.getRoom());
-					break;
+
+		try {
+			if (!lessonType.getRooms().isEmpty()
+					&& dataAccess.containsSpecialRooms(lessonType)) {
+				location = lessonType.getRooms().get(0).getLocation();
+				setLessonRoom(lessonType.getRooms().get(0));
+			} else {
+				for (Schoolclass schoolclass : lesson.getSchoolclasses()) {
+					if (schoolclass.getRoom() != null) {
+						location = schoolclass.getRoom().getLocation();
+						setLessonRoom(schoolclass.getRoom());
+						break;
+					}
 				}
 			}
+		} catch (DatasetException e) {
+			LOGGER.error(e.getMessage());
 		}
+
 	}
 
 	public Schoolclass getLessonSchoolclass() {
@@ -291,6 +298,19 @@ public class LessonController implements Serializable {
 			List<Schoolclass> schoolclasses = new ArrayList<>();
 			schoolclasses.add(schoolclass);
 			lesson.setSchoolclasses(schoolclasses);
+			try {
+
+				if (lesson.getRooms().isEmpty()
+						|| !dataAccess.containsSpecialRooms(lesson
+								.getLessonType())) {
+					if (schoolclass.getRoom() != null) {
+						location = schoolclass.getRoom().getLocation();
+						setLessonRoom(schoolclass.getRoom());
+					}
+				}
+			} catch (DatasetException e) {
+				LOGGER.error(e.getMessage());
+			}
 		}
 	}
 
@@ -348,6 +368,15 @@ public class LessonController implements Serializable {
 
 	public void setLocation(Location location) {
 		this.location = location;
+	}
+
+	public void setFirstSchoolclass() {
+		if (academicYear != null) {
+			List<Schoolclass> schoolclasses = getSchoolclassesForAcademicYear();
+			if (!schoolclasses.isEmpty()) {
+				setLessonSchoolclass(schoolclasses.get(0));
+			}
+		}
 	}
 
 }

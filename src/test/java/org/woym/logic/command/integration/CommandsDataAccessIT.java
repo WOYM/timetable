@@ -22,6 +22,8 @@ import org.woym.common.objects.Employee;
 import org.woym.common.objects.Lesson;
 import org.woym.common.objects.LessonType;
 import org.woym.common.objects.Location;
+import org.woym.common.objects.Meeting;
+import org.woym.common.objects.MeetingType;
 import org.woym.common.objects.PedagogicAssistant;
 import org.woym.common.objects.Room;
 import org.woym.common.objects.Schoolclass;
@@ -51,7 +53,7 @@ public class CommandsDataAccessIT {
 	private DataAccess dataAccess = DataAccess.getInstance();
 
 	@BeforeClass
-	public void setUp() {
+	public void init() {
 		Config.init();
 		l = new LessonType();
 		l.setName("Erdkunde");
@@ -128,6 +130,38 @@ public class CommandsDataAccessIT {
 	}
 
 	@Test(groups = "CommandCreator", dependsOnGroups = "DeleteCommand")
+	public void commandCreatorCreateEmployeeUpdateAddWorkingHours()
+			throws Exception {
+		Meeting m = dataAccess.getAllMeetings(
+				(MeetingType) dataAccess.getOneActivityType("Teamsitzung"))
+				.get(0);
+
+		MacroCommand macro = CommandCreator.getInstance()
+				.createEmployeeUpdateAddWorkingHours(m);
+		assertTrue(macro.execute() instanceof SuccessStatus);
+		assertEquals(new BigDecimal(1).setScale(Employee.SCALE), dataAccess
+				.getOneEmployee("MEY").getAllocatedHours());
+		assertEquals(new BigDecimal("0.75").setScale(Employee.SCALE),
+				dataAccess.getOneEmployee("MUS").getAllocatedHours());
+	}
+
+	@Test(groups = "CommandCreator", dependsOnGroups = "DeleteCommand", dependsOnMethods = "commandCreatorCreateEmployeeUpdateAddWorkingHours")
+	public void commandCreatorCreateEmployeeUpdateSubtractWorkingHours()
+			throws Exception {
+		Meeting m = dataAccess.getAllMeetings(
+				(MeetingType) dataAccess.getOneActivityType("Teamsitzung"))
+				.get(0);
+
+		MacroCommand macro = CommandCreator.getInstance()
+				.createEmployeeUpdateSubtractWorkingHours(m);
+		assertTrue(macro.execute() instanceof SuccessStatus);
+		assertEquals(new BigDecimal(0).setScale(Employee.SCALE), dataAccess
+				.getOneEmployee("MEY").getAllocatedHours());
+		assertEquals(new BigDecimal(0).setScale(Employee.SCALE), dataAccess
+				.getOneEmployee("MUS").getAllocatedHours());
+	}
+
+	@Test(groups = "CommandCreator", dependsOnGroups = "DeleteCommand", dependsOnMethods = "commandCreatorCreateEmployeeUpdateSubtractWorkingHours")
 	public void commandCreatorDeleteActivitySuccess() throws Exception {
 		Lesson lesson = dataAccess.getAllLessons(
 				(LessonType) dataAccess.getOneActivityType("Mathe")).get(0);
@@ -158,7 +192,7 @@ public class CommandsDataAccessIT {
 		macro.undo();
 	}
 
-	@Test(groups = "CommandCreator", dependsOnGroups = "DeleteCommand")
+	@Test(groups = "CommandCreator", dependsOnGroups = "DeleteCommand", dependsOnMethods = "commandCreatorCreateEmployeeUpdateSubtractWorkingHours")
 	public void commandCreatorDeleteCompoundLessonSuccess() throws Exception {
 		CompoundLesson compoundLesson = dataAccess.getAllCompoundLessons(
 				(LessonType) dataAccess.getOneActivityType("Mathe")).get(0);
