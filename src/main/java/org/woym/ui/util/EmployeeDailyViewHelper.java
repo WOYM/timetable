@@ -3,7 +3,6 @@ package org.woym.ui.util;
 import org.primefaces.model.ScheduleModel;
 import org.woym.common.objects.Employee;
 import org.woym.controller.planning.PlanningController;
-import org.woym.logic.util.ActivityParser;
 
 /**
  * <h1>EmployeeDailyViewHelper</h1>
