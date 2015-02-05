@@ -19,8 +19,9 @@
 		<p:hotkey bind="ctrl+y" update="@form"
 			actionListener="#{GUIController.redo}" />
 
-
 		<p:growl id="commandGrowl" widgetVar="wCommandGrowl" showDetail="true" />
+		<p:growl id="activityGrowl" widgetVar="wActivityGrowl" showDetail="true" severity="info,warn" />
+		
 		<p:toolbar id="setupToolbar">
 			<f:facet name="left">
 				<p:commandButton value="Systemeinrichtung" icon="ui-icon-gear"
@@ -484,7 +485,7 @@
 								<p:commandButton id="LessonAddButton" value="Hinzufügen"
 									actionListener="#{lessonController.addLesson}"
 									process="addLessonType,lessonWeekday,lessonStartTime,lessonEndTime,lessonTeachers,lessonSchoolclassPanel,lessonRoomPanel,@this"
-									update="activityMessages,addActivityPanel,searchTabs,scheduleMain" />
+									update="activityMessages,activityGrowl,addActivityPanel,searchTabs,scheduleMain" validateClient="true" />
 							</p:outputPanel>
 						</h:panelGrid>
 					</p:outputPanel>
@@ -592,7 +593,7 @@
 								<p:commandButton value="Hinzufügen"
 									actionListener="#{meetingController.addMeeting}"
 									process="addMeetingType,meetingWeekday,meetingStartTime,meetingEndTime,meetingEmployees,meetingRoomPanel,@this"
-									update="activityMessages,addActivityPanel,searchTabs,scheduleMain" />
+									update="activityMessages,activityGrowl,addActivityPanel,searchTabs,scheduleMain" />
 							</p:outputPanel>
 						</h:panelGrid>
 					</p:outputPanel>
@@ -655,7 +656,7 @@
 								<p:commandButton value="Hinzufügen"
 									actionListener="#{pauseController.addPause}"
 									process="pauseWeekday,pauseStartTime,pauseEndTime,pauseSchoolclasses,@this"
-									update="activityMessages,addActivityPanel,searchTabs,scheduleMain" />
+									update="activityMessages,activityGrowl,addActivityPanel,searchTabs,scheduleMain" />
 							</p:outputPanel>
 						</h:panelGrid>
 
@@ -782,7 +783,7 @@
 								<p:commandButton value="Hinzufügen"
 									actionListener="#{compoundLessonController.addCompoundLesson}"
 									process="compoundLessonWeekday,compoundLessonStartTime,compoundLessonEndTime,compoundLessonEmployees,compoundLessonSchoolclasses,compoundLessonRoomPanel,@this"
-									update="activityMessages,addActivityPanel,searchTabs,scheduleMain" />
+									update="activityMessages,activityGrowl,addActivityPanel,searchTabs,scheduleMain" />
 							</p:outputPanel>
 						</h:panelGrid>
 
@@ -791,7 +792,7 @@
 
 				<p:outputPanel style="clear:right; margin-top:60px;">
 					<p:messages id="activityMessages" showDetail="true"
-						closable="false" />
+						closable="false" severity="error" />
 				</p:outputPanel>
 			</p:outputPanel>
 		</p:dialog>
