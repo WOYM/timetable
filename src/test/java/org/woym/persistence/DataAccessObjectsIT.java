@@ -31,8 +31,6 @@ import org.woym.common.objects.Room;
 import org.woym.common.objects.Schoolclass;
 import org.woym.common.objects.Teacher;
 import org.woym.common.objects.TravelTimeList;
-import org.woym.persistence.DataAccess;
-import org.woym.persistence.DataBase;
 
 @Test(groups = { "DataAccessObjectsIT", "integration" })
 public class DataAccessObjectsIT {
@@ -253,6 +251,15 @@ public class DataAccessObjectsIT {
 		assertEquals(2, result.size());
 		assertTrue(result.contains(dataAccess.getOneActivityType("Musik")));
 		assertTrue(result.contains(dataAccess.getOneActivityType("Mathe")));
+	}
+	
+	@Test(priority = 3, groups = "DataAccessActivityType", dependsOnGroups = "DataAccessRoom")
+	public void containsSpecialRoomSuccess() throws Exception{
+		ActivityType math = dataAccess.getOneActivityType("Mathe");
+		ActivityType music = dataAccess.getOneActivityType("Musik");
+		
+		assertFalse(dataAccess.containsSpecialRooms(math));
+		assertTrue(dataAccess.containsSpecialRooms(music));
 	}
 
 	// ////////////////////////////////////////////////////////////////////////////////////
