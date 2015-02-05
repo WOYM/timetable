@@ -556,7 +556,7 @@ public class TestCommandCreator extends PowerMockTestCase {
 
 	@Test(expectedExceptions = IllegalArgumentException.class)
 	public void testCreateEmployeeUpdateSubstractWorkingHours() {
-		CommandCreator.getInstance().createEmployeeUpdateSubstractWorkingHours(
+		CommandCreator.getInstance().createEmployeeUpdateSubtractWorkingHours(
 				null);
 	}
 
@@ -588,7 +588,7 @@ public class TestCommandCreator extends PowerMockTestCase {
 		Mockito.when(teacher.getAllocatedHours()).thenReturn(BigDecimal.ONE);
 
 		MacroCommand macro = CommandCreator.getInstance()
-				.createEmployeeUpdateSubstractWorkingHours(activity);
+				.createEmployeeUpdateSubtractWorkingHours(activity);
 
 		AssertJUnit.assertEquals(1, macro.getCommands().size());
 		AssertJUnit
@@ -627,7 +627,7 @@ public class TestCommandCreator extends PowerMockTestCase {
 				BigDecimal.ONE);
 
 		MacroCommand macro = CommandCreator.getInstance()
-				.createEmployeeUpdateSubstractWorkingHours(activity);
+				.createEmployeeUpdateSubtractWorkingHours(activity);
 
 		AssertJUnit.assertEquals(1, macro.getCommands().size());
 		AssertJUnit
