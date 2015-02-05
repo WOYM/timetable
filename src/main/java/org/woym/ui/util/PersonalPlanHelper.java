@@ -17,7 +17,6 @@ import org.woym.common.objects.Lesson;
 import org.woym.common.objects.Teacher;
 import org.woym.common.objects.Weekday;
 import org.woym.controller.planning.PlanningController;
-import org.woym.logic.util.ActivityParser;
 import org.woym.persistence.DataAccess;
 
 /**
