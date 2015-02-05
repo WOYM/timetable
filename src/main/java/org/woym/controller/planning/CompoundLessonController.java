@@ -9,7 +9,6 @@ import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
-import javax.faces.event.ComponentSystemEvent;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -117,16 +116,6 @@ public class CompoundLessonController implements Serializable {
 	}
 
 	/**
-	 * Diese Methode erzwingt eine Initialisierung der Bean bei jedem Rendern.
-	 * 
-	 * @param event
-	 *            Das Event
-	 */
-	public void doPreRender(ComponentSystemEvent event) {
-		init();
-	}
-
-	/**
 	 * Diese Methode fügt mit Hilfe des {@link CommandHandler}s ein neues
 	 * {@link Activity}-Objekt des Types {@link CompoundLesson} der Persistenz
 	 * hinzu.
@@ -143,7 +132,8 @@ public class CompoundLessonController implements Serializable {
 
 			if (status instanceof SuccessStatus) {
 				init();
-				RequestContext.getCurrentInstance().execute("PF('wAddActivityDialog').hide()");
+				RequestContext.getCurrentInstance().execute(
+						"PF('wAddActivityDialog').hide()");
 			}
 		}
 

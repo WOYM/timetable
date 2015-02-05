@@ -13,7 +13,6 @@ import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
-import javax.faces.event.ComponentSystemEvent;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -115,16 +114,6 @@ public class MeetingController implements Serializable {
 			location = entityHelper.getLocation();
 			setMeetingRoom(entityHelper.getRoom());
 		}
-	}
-
-	/**
-	 * Diese Methode erzwingt eine Initialisierung der Bean bei jedem Rendern.
-	 * 
-	 * @param event
-	 *            Das Event
-	 */
-	public void doPreRender(ComponentSystemEvent event) {
-		init();
 	}
 
 	/**
