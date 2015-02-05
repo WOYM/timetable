@@ -19,13 +19,16 @@ import org.woym.persistence.DataAccess;
  *
  */
 @Entity
-public class Room extends org.woym.common.objects.Entity implements IActivityObject,
-		IMementoObject {
+public class Room extends org.woym.common.objects.Entity implements
+		IActivityObject, IMementoObject {
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1530008000910481387L;
+
+	public static final String DEFAULT_PURPOSE = "Standardraum";
+
 	/**
 	 * Die automatisch generierte ID ist der Primärschlüssel für die Datenbank.
 	 */
@@ -42,7 +45,7 @@ public class Room extends org.woym.common.objects.Entity implements IActivityObj
 	/**
 	 * Funktion des Raumes.
 	 */
-	private String purpose = "Standardraum";
+	private String purpose = DEFAULT_PURPOSE;
 
 	/**
 	 * Zusätzliche Informationen zu dem Raum.
@@ -98,11 +101,17 @@ public class Room extends org.woym.common.objects.Entity implements IActivityObj
 	 *         keinem Standort gehört oder ein Fehler auftritt
 	 */
 	public String getLocationName() {
+
+		return getLocation() != null ? getLocation().getName() : "";
+
+	}
+
+	public Location getLocation() {
 		try {
 			Location location = DataAccess.getInstance().getOneLocation(this);
-			return location != null ? location.getName() : "";
+			return location;
 		} catch (DatasetException e) {
-			return "";
+			return null;
 		}
 	}
 
