@@ -16,6 +16,7 @@ import javax.faces.context.FacesContext;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.primefaces.context.RequestContext;
 import org.woym.common.config.Config;
 import org.woym.common.config.DefaultConfigEnum;
 import org.woym.common.exceptions.DatasetException;
@@ -96,7 +97,7 @@ public class MeetingController implements Serializable {
 		ActivityTO activityTO = activityTOHolder.getActivityTO();
 		meeting.setTime(activityTO.getTimePeriod());
 		if (getAllMeetingTypes().size() > 0) {
-			meeting.setMeetingType(getAllMeetingTypes().get(0));
+			setMeetingMeetingType(getAllMeetingTypes().get(0));
 		}
 
 		if (entityHelper.getTeacher() != null) {
@@ -132,10 +133,12 @@ public class MeetingController implements Serializable {
 
 			if (status instanceof SuccessStatus) {
 				init();
+				RequestContext.getCurrentInstance().execute(
+						"PF('wAddActivityDialog').hide()");
 			}
-		}
 
-		scheduleModelHolder.updateScheduleModel();
+			scheduleModelHolder.updateScheduleModel();
+		}
 
 		FacesMessage message = status.report();
 		FacesContext.getCurrentInstance().addMessage(null, message);
@@ -245,6 +248,11 @@ public class MeetingController implements Serializable {
 			}
 		} catch (ParseException e) {
 			LOGGER.error(e);
+		}
+		
+		if(!meetingType.getRooms().isEmpty()){
+			location = meetingType.getRooms().get(0).getLocation();
+			setMeetingRoom(meetingType.getRooms().get(0));
 		}
 
 		TimePeriod timePeriod = meeting.getTime();

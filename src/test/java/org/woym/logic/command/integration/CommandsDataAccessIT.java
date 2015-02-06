@@ -6,6 +6,7 @@ import static org.testng.AssertJUnit.assertNotNull;
 import static org.testng.AssertJUnit.assertNull;
 import static org.testng.AssertJUnit.assertTrue;
 
+import java.io.File;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 
@@ -54,6 +55,10 @@ public class CommandsDataAccessIT {
 
 	@BeforeClass
 	public void init() {
+		File file = new File(Config.PROPERTIES_FILE_PATH);
+		if (file.exists()) {
+			file.delete();
+		}
 		Config.init();
 		l = new LessonType();
 		l.setName("Erdkunde");

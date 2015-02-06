@@ -152,9 +152,9 @@ public class LessonController implements Serializable {
 				RequestContext.getCurrentInstance().execute(
 						"PF('wAddActivityDialog').hide()");
 			}
-		}
 
-		scheduleModelHolder.updateScheduleModel();
+			scheduleModelHolder.updateScheduleModel();
+		}
 
 		FacesMessage message = status.report();
 		FacesContext.getCurrentInstance().addMessage(null, message);
