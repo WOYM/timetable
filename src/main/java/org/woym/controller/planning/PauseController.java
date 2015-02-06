@@ -67,8 +67,6 @@ public class PauseController implements Serializable {
 	private EntityHelper entityHelper = EntityHelper.getInstance();
 
 	private Pause pause;
-	
-	private boolean allWeekdays;
 
 	/**
 	 * Diese Methode initialisiert die Bean und erzeugt eine neue {@link Pause},
@@ -136,14 +134,4 @@ public class PauseController implements Serializable {
 	public void setPause(Pause pause) {
 		this.pause = pause;
 	}
-
-	public boolean isAllWeekdays() {
-		return allWeekdays;
-	}
-
-	public void setAllWeekdays(boolean allWeekdays) {
-		this.allWeekdays = allWeekdays;
-	}
-	
-	
 }
