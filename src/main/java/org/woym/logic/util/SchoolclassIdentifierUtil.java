@@ -46,14 +46,13 @@ public abstract class SchoolclassIdentifierUtil {
 		List<Character> list = DataAccess.getInstance().getUsedChars(
 				academicYear);
 
-		String[] property = Config
-				.getPropValue(DefaultConfigEnum.SCHOOLCLASS_IDENTIFIER_CASE
-						.getPropKey());
+		String property = Config
+				.getSingleStringValue(DefaultConfigEnum.SCHOOLCLASS_IDENTIFIER_CASE);
 
 		List<Character> toReturn = new LinkedList<Character>();
 
-		if (property.length == 1) {
-			switch (property[0]) {
+		if (property != null) {
+			switch (property) {
 
 			case Config.IDENTIFIER_BOTH_CASES:
 				toReturn.addAll(lowerCase);

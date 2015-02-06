@@ -6,6 +6,7 @@
 			<class name="org.woym.persistence.DataAccessObjectsIT" />
 			<class name="org.woym.persistence.DataAccessObjectsIT2" />
 			<class name="org.woym.logic.command.integration.CommandsDataAccessIT" />
+			<class name="org.woym.logic.util.SchoolclassIdentifierUtilIT" />
 			<class name="org.woym.controller.planning.PlanningControllerIT" />
 		</classes>
 	</test>
