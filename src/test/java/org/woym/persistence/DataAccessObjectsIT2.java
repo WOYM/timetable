@@ -508,12 +508,12 @@ public class DataAccessObjectsIT2 {
 		timePeriod.setStartTime(sdf.parse("10:45"));
 		timePeriod.setEndTime(sdf.parse("11:30"));
 		assertEquals(l, dataAccess.getFirstActivityBefore(schoolclass,
-				timePeriod, location));
+				timePeriod, location, true));
 
 		timePeriod.setStartTime(sdf.parse("12:00"));
 		timePeriod.setEndTime(sdf.parse("12:45"));
 		assertEquals(null, dataAccess.getFirstActivityBefore(schoolclass,
-				timePeriod, location));
+				timePeriod, location, true));
 	}
 
 	@Test(priority = 2, groups = "DataAccessActivity")
@@ -525,7 +525,7 @@ public class DataAccessObjectsIT2 {
 		timePeriod.setEndTime(sdf.parse("09:45"));
 		timePeriod.setDay(Weekday.MONDAY);
 		assertEquals(l, dataAccess.getFirstActivityAfter(schoolclass,
-				timePeriod, location));
+				timePeriod, location, true));
 	}
 
 	private Lesson createLesson() throws Exception {
