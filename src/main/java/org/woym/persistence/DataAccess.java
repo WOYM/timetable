@@ -1279,7 +1279,7 @@ public class DataAccess implements IDataAccess, Observer {
 							+ " AND a.time.day = ?2"
 							+ " AND a.time.endTime <= ?3"
 							+ " AND NOT EXISTS (SELECT activity FROM Activity activity WHERE activity.time.endTime > a.time.endTime AND activity.time.endTime <= ?3)"
-							+ " AND r NOT IN ?4");
+							+ " AND r NOT IN ?4 AND TYPE(a) <> Pause");
 			query.setParameter(1, schoolclass);
 			query.setParameter(2, timePeriod.getDay());
 			query.setParameter(3, timePeriod.getStartTime());
@@ -1313,7 +1313,7 @@ public class DataAccess implements IDataAccess, Observer {
 							+ " AND a.time.day = ?2"
 							+ " AND a.time.startTime >= ?3"
 							+ " AND NOT EXISTS (SELECT activity FROM Activity activity WHERE activity.time.startTime < a.time.startTime AND activity.time.startTime >= ?3)"
-							+ " AND r NOT IN ?4");
+							+ " AND r NOT IN ?4 AND TYPE(a) <> Pause");
 			query.setParameter(1, schoolclass);
 			query.setParameter(2, timePeriod.getDay());
 			query.setParameter(3, timePeriod.getEndTime());
