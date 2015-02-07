@@ -13,7 +13,6 @@ import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
-import javax.faces.event.ComponentSystemEvent;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -118,16 +117,6 @@ public class LessonController implements Serializable {
 	}
 
 	/**
-	 * Diese Methode erzwingt eine Initialisierung der Bean bei jedem Rendern.
-	 * 
-	 * @param event
-	 *            Das Event
-	 */
-	public void doPreRender(ComponentSystemEvent event) {
-		init();
-	}
-
-	/**
 	 * Diese Methode gibt alle bekannten {@link LessonTypes} zurück
 	 * 
 	 * @return Liste mit allen bekannten {@link LessonTypes}
@@ -163,9 +152,9 @@ public class LessonController implements Serializable {
 				RequestContext.getCurrentInstance().execute(
 						"PF('wAddActivityDialog').hide()");
 			}
-		}
 
-		scheduleModelHolder.updateScheduleModel();
+			scheduleModelHolder.updateScheduleModel();
+		}
 
 		FacesMessage message = status.report();
 		FacesContext.getCurrentInstance().addMessage(null, message);

@@ -11,7 +11,6 @@ import org.woym.common.objects.Room;
 import org.woym.common.objects.Schoolclass;
 import org.woym.common.objects.Teacher;
 import org.woym.controller.planning.PlanningController;
-import org.woym.logic.util.ActivityParser;
 
 /**
  * <h1>ScheduleModelHolder</h1>

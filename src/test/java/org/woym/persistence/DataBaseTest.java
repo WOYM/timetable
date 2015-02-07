@@ -46,6 +46,7 @@ public class DataBaseTest extends PowerMockTestCase {
 		DataBase.getInstance().shutDown();
 		File folder = new File(DataBase.DB_BACKUP_LOCATION);
 		deleteFolder(folder);
+		System.out.println("Cleaned up database directory.");
 	}
 
 	private static void deleteFolder(File folder) {

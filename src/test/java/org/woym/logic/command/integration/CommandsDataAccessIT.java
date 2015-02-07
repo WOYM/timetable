@@ -6,6 +6,7 @@ import static org.testng.AssertJUnit.assertNotNull;
 import static org.testng.AssertJUnit.assertNull;
 import static org.testng.AssertJUnit.assertTrue;
 
+import java.io.File;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 
@@ -54,6 +55,10 @@ public class CommandsDataAccessIT {
 
 	@BeforeClass
 	public void init() {
+		File file = new File(Config.PROPERTIES_FILE_PATH);
+		if (file.exists()) {
+			file.delete();
+		}
 		Config.init();
 		l = new LessonType();
 		l.setName("Erdkunde");
@@ -257,20 +262,20 @@ public class CommandsDataAccessIT {
 
 	@Test(groups = "CommandCreator", dependsOnGroups = "DeleteCommand", dependsOnMethods = "commandCreatorDeleteRoomSuccess")
 	public void commandCreatorDeleteSchoolclassSuccess() throws Exception {
-		Schoolclass schoolclass = dataAccess.getOneSchoolclass(1, 'a');
+		Schoolclass schoolclass = dataAccess.getOneSchoolclass(1, 'A');
 
 		MacroCommand macro = CommandCreator.getInstance().createDeleteCommand(
 				schoolclass);
 		assertTrue(macro.execute() instanceof SuccessStatus);
-		assertNull(dataAccess.getOneSchoolclass(1, 'a'));
+		assertNull(dataAccess.getOneSchoolclass(1, 'A'));
 		assertEquals(2, dataAccess.getAllActivities().size());
 
 		assertTrue(macro.undo() instanceof SuccessStatus);
-		assertEquals(schoolclass, dataAccess.getOneSchoolclass(1, 'a'));
+		assertEquals(schoolclass, dataAccess.getOneSchoolclass(1, 'A'));
 		assertEquals(3, dataAccess.getAllActivities().size());
 
 		assertTrue(macro.redo() instanceof SuccessStatus);
-		assertNull(dataAccess.getOneSchoolclass(1, 'a'));
+		assertNull(dataAccess.getOneSchoolclass(1, 'A'));
 		assertEquals(2, dataAccess.getAllActivities().size());
 
 		macro.undo();
@@ -350,20 +355,20 @@ public class CommandsDataAccessIT {
 		MacroCommand macro = CommandCreator.getInstance()
 				.createDeleteCommand(a);
 		assertTrue(macro.execute() instanceof SuccessStatus);
-		assertNull(dataAccess.getOneSchoolclass(1, 'a'));
+		assertNull(dataAccess.getOneSchoolclass(1, 'A'));
 		assertEquals(2, dataAccess.getAllActivities().size());
 
 		assertTrue(macro.undo() instanceof SuccessStatus);
 		assertEquals(a, dataAccess.getOneAcademicYear(1));
-		assertNotNull(dataAccess.getOneSchoolclass(1, 'a'));
+		assertNotNull(dataAccess.getOneSchoolclass(1, 'A'));
 		assertEquals(3, dataAccess.getAllActivities().size());
 		assertEquals(
 				2,
 				dataAccess.getAllActivities(
-						dataAccess.getOneSchoolclass(1, 'a'), false).size());
+						dataAccess.getOneSchoolclass(1, 'A'), false).size());
 
 		assertTrue(macro.redo() instanceof SuccessStatus);
-		assertNull(dataAccess.getOneSchoolclass(1, 'a'));
+		assertNull(dataAccess.getOneSchoolclass(1, 'A'));
 		assertEquals(2, dataAccess.getAllActivities().size());
 
 		macro.undo();
@@ -378,7 +383,7 @@ public class CommandsDataAccessIT {
 		assertTrue(macro.execute() instanceof SuccessStatus);
 		assertNull(dataAccess.getOneLocation("Hauptstandort"));
 		assertEquals(1, dataAccess.getAllActivities().size());
-		assertEquals(2, dataAccess.getAllSchoolclasses().size());
+		assertEquals(3, dataAccess.getAllSchoolclasses().size());
 		assertTrue(TravelTimeList.getInstance().getEdges().isEmpty());
 
 		assertTrue(macro.undo() instanceof SuccessStatus);
@@ -397,21 +402,21 @@ public class CommandsDataAccessIT {
 	@Test(groups = "CommandCreator", dependsOnMethods = "commandCreatorDeleteLocationSuccess")
 	public void commandCreatorDeleteClassteamSuccess() throws Exception {
 		Classteam classteam = dataAccess.getOneClassteam(dataAccess
-				.getOneSchoolclass(1, 'a'));
+				.getOneSchoolclass(1, 'A'));
 
 		MacroCommand macro = CommandCreator.getInstance().createDeleteCommand(
 				classteam);
 		assertTrue(macro.execute() instanceof SuccessStatus);
 		assertNull(dataAccess.getOneClassteam(dataAccess.getOneSchoolclass(1,
-				'a')));
+				'A')));
 
 		assertTrue(macro.undo() instanceof SuccessStatus);
 		assertEquals(classteam, dataAccess.getOneClassteam(dataAccess
-				.getOneSchoolclass(1, 'a')));
+				.getOneSchoolclass(1, 'A')));
 
 		assertTrue(macro.redo() instanceof SuccessStatus);
 		assertNull(dataAccess.getOneClassteam(dataAccess.getOneSchoolclass(1,
-				'a')));
+				'A')));
 
 		macro.undo();
 	}

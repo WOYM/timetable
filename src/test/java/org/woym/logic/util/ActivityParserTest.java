@@ -34,6 +34,7 @@ import org.woym.common.objects.Teacher;
 import org.woym.common.objects.TimePeriod;
 import org.woym.common.objects.Weekday;
 import org.woym.persistence.DataAccess;
+import org.woym.ui.util.ActivityParser;
 
 @Test(groups = "unit")
 @PowerMockIgnore("javax.management.*")

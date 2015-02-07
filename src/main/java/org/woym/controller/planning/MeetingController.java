@@ -13,10 +13,10 @@ import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
-import javax.faces.event.ComponentSystemEvent;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.primefaces.context.RequestContext;
 import org.woym.common.config.Config;
 import org.woym.common.config.DefaultConfigEnum;
 import org.woym.common.exceptions.DatasetException;
@@ -97,7 +97,7 @@ public class MeetingController implements Serializable {
 		ActivityTO activityTO = activityTOHolder.getActivityTO();
 		meeting.setTime(activityTO.getTimePeriod());
 		if (getAllMeetingTypes().size() > 0) {
-			meeting.setMeetingType(getAllMeetingTypes().get(0));
+			setMeetingMeetingType(getAllMeetingTypes().get(0));
 		}
 
 		if (entityHelper.getTeacher() != null) {
@@ -118,16 +118,6 @@ public class MeetingController implements Serializable {
 	}
 
 	/**
-	 * Diese Methode erzwingt eine Initialisierung der Bean bei jedem Rendern.
-	 * 
-	 * @param event
-	 *            Das Event
-	 */
-	public void doPreRender(ComponentSystemEvent event) {
-		init();
-	}
-
-	/**
 	 * Diese Methode fügt mit Hilfe des {@link CommandHandler}s ein neues
 	 * {@link Activity}-Objekt des Types {@link Meeting} der Persistenz hinzu.
 	 */
@@ -143,10 +133,12 @@ public class MeetingController implements Serializable {
 
 			if (status instanceof SuccessStatus) {
 				init();
+				RequestContext.getCurrentInstance().execute(
+						"PF('wAddActivityDialog').hide()");
 			}
-		}
 
-		scheduleModelHolder.updateScheduleModel();
+			scheduleModelHolder.updateScheduleModel();
+		}
 
 		FacesMessage message = status.report();
 		FacesContext.getCurrentInstance().addMessage(null, message);
@@ -256,6 +248,11 @@ public class MeetingController implements Serializable {
 			}
 		} catch (ParseException e) {
 			LOGGER.error(e);
+		}
+		
+		if(!meetingType.getRooms().isEmpty()){
+			location = meetingType.getRooms().get(0).getLocation();
+			setMeetingRoom(meetingType.getRooms().get(0));
 		}
 
 		TimePeriod timePeriod = meeting.getTime();

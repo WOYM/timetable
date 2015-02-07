@@ -508,7 +508,7 @@
 								<f:selectItem value="#{null}" itemLabel="Bitte Inhalt auswählen" />
 								<f:selectItems value="#{meetingController.allMeetingTypes}"
 									var="meetingType" itemLabel="#{meetingType.name}" />
-								<p:ajax event="change" update="meetingEndTime" />
+								<p:ajax event="change" update="meetingEndTime,meetingRoomPanel" />
 							</p:selectOneMenu>
 							<p:spacer style="height:15px;" />
 							<p:spacer />
