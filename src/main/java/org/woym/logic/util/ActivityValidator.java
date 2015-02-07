@@ -155,40 +155,45 @@ public class ActivityValidator {
 		Location location = dataAccess.getOneLocation(activity.getRooms()
 				.get(0));
 
-		// Geordnete Zeitliche reinfolge.
-		EmployeeTimePeriods employeeTimePeriods = list.get(0);
+		LinkedList<Activity> activityList;
+		for(EmployeeTimePeriods employeeTimePeriods : list) {
 
-		List<Activity> activityList = dataAccess.getAllActivitiesBefore(
-				employeeTimePeriods.getEmployee(), timePeriod);
-		if (!activityList.isEmpty()) {
-			Activity act = activityList.get(0);
-			LinkedList<Room> linkedList = new LinkedList<>(act.getRooms());
-			Location localLocation = dataAccess.getOneLocation(linkedList
-					.getLast());
-			Edge edge = travelTimeList.getEdge(location, localLocation);
-			if (edge != null) {
-				extendetTimePeriod.getStartTime().setMinutes(
-						extendetTimePeriod.getStartTime().getMinutes()
-								- edge.getDistance());
+			activityList = new LinkedList<Activity>(dataAccess.getAllActivitiesBefore(
+					employeeTimePeriods.getEmployee(), timePeriod));
+			if (!activityList.isEmpty()) {
+				Activity act = activityList.getLast();
+				LinkedList<Room> linkedList = new LinkedList<>(act.getRooms());
+				Location localLocation = dataAccess.getOneLocation(linkedList
+						.getLast());
+				Edge edge = travelTimeList.getEdge(location, localLocation);
+				if (edge != null) {
+					extendetTimePeriod.getStartTime().setMinutes(
+							extendetTimePeriod.getStartTime().getMinutes()
+									- edge.getDistance());
+					break;
+				}
+	
 			}
-
 		}
-		activityList = dataAccess.getAllActivitiesAfter(
-				employeeTimePeriods.getEmployee(), timePeriod);
-
-		if (!activityList.isEmpty()) {
-			Activity act = activityList.get(0);
-			LinkedList<Room> linkedList = new LinkedList<>(act.getRooms());
-			Location localLocation = dataAccess.getOneLocation(linkedList
-					.getFirst());
-			Edge edge = travelTimeList.getEdge(location, localLocation);
-			if (edge != null) {
-				extendetTimePeriod.getEndTime().setMinutes(
-						extendetTimePeriod.getEndTime().getMinutes()
-								+ edge.getDistance());
+		for(EmployeeTimePeriods employeeTimePeriods : list) {
+			activityList = new LinkedList<Activity>(dataAccess.getAllActivitiesAfter(
+					employeeTimePeriods.getEmployee(), timePeriod));
+	
+			if (!activityList.isEmpty()) {
+				Activity act = activityList.getFirst();
+				LinkedList<Room> linkedList = new LinkedList<>(act.getRooms());
+				Location localLocation = dataAccess.getOneLocation(linkedList
+						.getFirst());
+				Edge edge = travelTimeList.getEdge(location, localLocation);
+				if (edge != null) {
+					extendetTimePeriod.getEndTime().setMinutes(
+							extendetTimePeriod.getEndTime().getMinutes()
+									+ edge.getDistance());
+					break;
+				}
 			}
-
 		}
+		
 		return extendetTimePeriod;
 
 	}
