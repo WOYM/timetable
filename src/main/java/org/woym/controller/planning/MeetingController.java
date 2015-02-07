@@ -192,6 +192,7 @@ public class MeetingController implements Serializable {
 
 			employeeTimePeriods.add(periods);
 		}
+		meeting.setEmployeeTimePeriods(employeeTimePeriods);
 	}
 
 	public List<Employee> getMeetingEmployees() {
