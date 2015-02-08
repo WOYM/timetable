@@ -176,10 +176,8 @@ public class TeacherController implements Serializable {
 	/**
 	 * Öffnet einen neuen Dialog, mit dem sich ein Lehrer hinzufügen lässt.
 	 */
-	public void addTeacherDialog() {
+	public void doBeforeAdd() {
 		teacher = new Teacher();
-		RequestContext context = RequestContext.getCurrentInstance();
-		context.execute("PF('wAddTeacherDialog').show();");
 	}
 
 	public void generateTeacherMemento() {

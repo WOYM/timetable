@@ -28,8 +28,8 @@
 
 				<p:outputPanel style="float:right">
 					<p:commandButton value="Hinzufügen" icon="ui-icon-plusthick"
-						onclick="PF('wAddMeetingTypeDialog').show();" process="@this"
-						update="addMeetingTypePanel">
+						oncomplete="PF('wAddMeetingTypeDialog').show();" process="@this"
+						update="addMeetingTypePanel" actionListener="#{meetingTypeController.init}">
 					</p:commandButton>
 				</p:outputPanel>
 
