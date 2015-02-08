@@ -165,7 +165,8 @@ public class ActivityParser {
 	 * @throws IllegalArgumentException
 	 *             Wenn eine ungültige Entity übergeben wird
 	 */
-	public ScheduleModel getActivityModel(List<Activity> activities, Boolean editable) {
+	public ScheduleModel getActivityModel(List<Activity> activities,
+			Boolean editable) {
 
 		ScheduleModel activityModel = new DefaultScheduleModel();
 
@@ -179,7 +180,7 @@ public class ActivityParser {
 			event.setData(activity);
 
 			event.setEditable(editable);
-			
+
 			event = getEvent(event, activity);
 
 			activityModel.addEvent(event);
@@ -231,7 +232,7 @@ public class ActivityParser {
 		} else if (activity instanceof Meeting) {
 			return getMeetingEvent(event, (Meeting) activity);
 		} else if (activity instanceof CompoundLesson) {
-			return getCompoundLessonEvent(event);
+			return getCompoundLessonEvent(event, (CompoundLesson) activity);
 		} else if (activity instanceof Pause) {
 			return getPauseEvent(event, (Pause) activity);
 		} else {
@@ -242,27 +243,41 @@ public class ActivityParser {
 
 	private DefaultScheduleEvent getLessonEvent(DefaultScheduleEvent event,
 			Lesson lesson) {
-		event.setTitle(lesson.getLessonType().getName());
+		String classname = lesson.getSchoolclasses().get(0).getName();
+		String room = lesson.getRooms().get(0).getName();
+		String location = lesson.getRooms().get(0).getLocationName();
+		event.setTitle(lesson.getLessonType().getName() + ", " + classname
+				+ "\n" + "Raum: " + room + " (" + location + ")");
 		event.setStyleClass(lesson.getLessonType().getColor().getStyleClass());
 		return event;
 	}
 
 	private DefaultScheduleEvent getMeetingEvent(DefaultScheduleEvent event,
 			Meeting meeting) {
-		event.setTitle(meeting.getMeetingType().getName());
-		event.setStyleClass(Config.getSingleStringValue(DefaultConfigEnum.MEETING_COLOR));
+		String room = meeting.getRooms().get(0).getName();
+		String location = meeting.getRooms().get(0).getLocationName();
+		event.setTitle(meeting.getMeetingType().getName() + "\n" + "Raum: "
+				+ room + " (" + location + ")");
+		event.setStyleClass(Config
+				.getSingleStringValue(DefaultConfigEnum.MEETING_COLOR));
 		return event;
 	}
-	
-	private DefaultScheduleEvent getCompoundLessonEvent(DefaultScheduleEvent event) {
-		event.setTitle(CompoundLesson.VALID_DISPLAY_NAME);
-		event.setStyleClass(Config.getSingleStringValue(DefaultConfigEnum.COMPOUND_LESSON_COLOR));
+
+	private DefaultScheduleEvent getCompoundLessonEvent(
+			DefaultScheduleEvent event, CompoundLesson compoundLesson) {
+		String location = compoundLesson.getRooms().get(0).getLocationName();
+		event.setTitle(CompoundLesson.VALID_DISPLAY_NAME + "\n" + "Standort: "
+				+ location);
+		event.setStyleClass(Config
+				.getSingleStringValue(DefaultConfigEnum.COMPOUND_LESSON_COLOR));
 		return event;
 	}
-	
-	private DefaultScheduleEvent getPauseEvent(DefaultScheduleEvent event, Pause pause) {
+
+	private DefaultScheduleEvent getPauseEvent(DefaultScheduleEvent event,
+			Pause pause) {
 		event.setTitle(Pause.VALID_DISPLAY_NAME);
-		event.setStyleClass(Config.getSingleStringValue(DefaultConfigEnum.PAUSE_COLOR));
+		event.setStyleClass(Config
+				.getSingleStringValue(DefaultConfigEnum.PAUSE_COLOR));
 		return event;
 	}
 }

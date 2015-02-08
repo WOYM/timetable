@@ -14,7 +14,6 @@ import org.testng.AssertJUnit;
 import org.testng.annotations.Test;
 import org.woym.common.exceptions.DatasetException;
 import org.woym.common.objects.Activity;
-import org.woym.common.objects.ActivityBlackboxTest;
 import org.woym.common.objects.Employee;
 import org.woym.common.objects.EmployeeTimePeriods;
 import org.woym.common.objects.Location;
@@ -23,7 +22,6 @@ import org.woym.common.objects.Room;
 import org.woym.common.objects.Schoolclass;
 import org.woym.common.objects.TimePeriod;
 import org.woym.common.objects.TravelTimeList;
-import org.woym.common.objects.TravelTimeList.Edge;
 import org.woym.common.objects.Weekday;
 import org.woym.logic.FailureStatus;
 import org.woym.logic.SuccessStatus;
@@ -39,7 +37,8 @@ public class ActivityValidatorTest extends PowerMockTestCase {
 	TravelTimeList travelTimeList;
 
 	@InjectMocks
-	ActivityValidator activityValidator = Mockito.spy(ActivityValidator.getInstance());
+	ActivityValidator activityValidator = Mockito.spy(ActivityValidator
+			.getInstance());
 
 	@Test
 	public void getInstanceTest() {
@@ -62,7 +61,6 @@ public class ActivityValidatorTest extends PowerMockTestCase {
 		List<Room> rooms = new ArrayList<Room>();
 		rooms.add(room);
 
-		
 		// When
 		PowerMockito.when(timePeriod.getDay()).thenReturn(Weekday.MONDAY);
 		PowerMockito.when(timePeriod.getStartTime()).thenReturn(new Date());
@@ -72,8 +70,8 @@ public class ActivityValidatorTest extends PowerMockTestCase {
 		PowerMockito.when(period.getTimePeriods()).thenReturn(timePeriods);
 
 		PowerMockito.when(activity.getRooms()).thenReturn(rooms);
-		PowerMockito.when(dataAccess.getOneLocation(room))
-				.thenThrow(new DatasetException("Exception"));
+		PowerMockito.when(dataAccess.getOneLocation(room)).thenThrow(
+				new DatasetException("Exception"));
 
 		// Then
 		AssertJUnit
@@ -92,7 +90,7 @@ public class ActivityValidatorTest extends PowerMockTestCase {
 		Schoolclass schoolclass = Mockito.mock(Schoolclass.class);
 		List<Schoolclass> schoolclasses = new ArrayList<>();
 		schoolclasses.add(schoolclass);
-		
+
 		Room room = Mockito.mock(Room.class);
 		List<Room> rooms = new ArrayList<Room>();
 		rooms.add(room);
@@ -104,8 +102,8 @@ public class ActivityValidatorTest extends PowerMockTestCase {
 		PowerMockito.when(activity.getSchoolclasses())
 				.thenReturn(schoolclasses);
 		PowerMockito.when(activity.getRooms()).thenReturn(rooms);
-		PowerMockito.when(dataAccess.getOneLocation(room))
-				.thenThrow(new DatasetException("Exception"));
+		PowerMockito.when(dataAccess.getOneLocation(room)).thenThrow(
+				new DatasetException("Exception"));
 
 		// Then
 		AssertJUnit
@@ -157,7 +155,23 @@ public class ActivityValidatorTest extends PowerMockTestCase {
 		fullList.addAll(beforeList);
 		fullList.addAll(afterList);
 
+		Room room = Mockito.mock(Room.class);
+		List<Room> rooms = new ArrayList<Room>();
+		rooms.add(room);
+
+		Location location = Mockito.mock(Location.class);
+
 		// When
+		PowerMockito.when(expectedTimePeriod.getDay()).thenReturn(
+				Weekday.MONDAY);
+		PowerMockito.when(expectedTimePeriod.getStartTime()).thenReturn(
+				new Date());
+		PowerMockito.when(expectedTimePeriod.getEndTime()).thenReturn(
+				new Date());
+		PowerMockito.when(activity.getRooms()).thenReturn(rooms);
+		PowerMockito.when(beforeActivity.getRooms()).thenReturn(rooms);
+		PowerMockito.when(afterActivity.getRooms()).thenReturn(rooms);
+		PowerMockito.when(dataAccess.getOneLocation(room)).thenReturn(location);
 		PowerMockito.when(activity.getEmployeeTimePeriods())
 				.thenReturn(periods);
 		PowerMockito.when(
@@ -197,17 +211,20 @@ public class ActivityValidatorTest extends PowerMockTestCase {
 		List<Activity> afterList = Arrays.asList(afterActivity);
 		List<Activity> fullList = Arrays.asList(beforeActivity,
 				anotherActivity, afterActivity);
-		
+
 		Room room = Mockito.mock(Room.class);
 		List<Room> rooms = new ArrayList<Room>();
 		rooms.add(room);
-		
+
 		Location location = Mockito.mock(Location.class);
 
 		// When
-		PowerMockito.when(expectedTimePeriod.getDay()).thenReturn(Weekday.MONDAY);
-		PowerMockito.when(expectedTimePeriod.getStartTime()).thenReturn(new Date());
-		PowerMockito.when(expectedTimePeriod.getEndTime()).thenReturn(new Date());
+		PowerMockito.when(expectedTimePeriod.getDay()).thenReturn(
+				Weekday.MONDAY);
+		PowerMockito.when(expectedTimePeriod.getStartTime()).thenReturn(
+				new Date());
+		PowerMockito.when(expectedTimePeriod.getEndTime()).thenReturn(
+				new Date());
 		PowerMockito.when(activity.getRooms()).thenReturn(rooms);
 		PowerMockito.when(dataAccess.getOneLocation(room)).thenReturn(location);
 		PowerMockito.when(beforeActivity.getRooms()).thenReturn(rooms);
@@ -237,8 +254,6 @@ public class ActivityValidatorTest extends PowerMockTestCase {
 								expectedTimePeriod) instanceof FailureStatus);
 	}
 
-	
-
 	@Test
 	public void validActivityEmployeeTestWithSameActivity()
 			throws DatasetException {
@@ -258,7 +273,25 @@ public class ActivityValidatorTest extends PowerMockTestCase {
 		List<Activity> fullList = Arrays.asList(beforeActivity, activity,
 				afterActivity);
 
+		Room room = Mockito.mock(Room.class);
+		List<Room> rooms = new ArrayList<Room>();
+		rooms.add(room);
+
+		Location location = Mockito.mock(Location.class);
+
 		// When
+		PowerMockito.when(expectedTimePeriod.getDay()).thenReturn(
+				Weekday.MONDAY);
+		PowerMockito.when(expectedTimePeriod.getStartTime()).thenReturn(
+				new Date());
+		PowerMockito.when(expectedTimePeriod.getEndTime()).thenReturn(
+				new Date());
+		PowerMockito.when(activity.getEmployeeTimePeriods())
+				.thenReturn(periods);
+		PowerMockito.when(activity.getRooms()).thenReturn(rooms);
+		PowerMockito.when(dataAccess.getOneLocation(room)).thenReturn(location);
+		PowerMockito.when(beforeActivity.getRooms()).thenReturn(rooms);
+		PowerMockito.when(afterActivity.getRooms()).thenReturn(rooms);
 		PowerMockito.when(activity.getEmployeeTimePeriods())
 				.thenReturn(periods);
 		PowerMockito.when(
@@ -283,18 +316,42 @@ public class ActivityValidatorTest extends PowerMockTestCase {
 	public void validActivitySchoolclassTest() throws DatasetException {
 		// Given
 		Activity activity = Mockito.mock(Activity.class);
+		Activity beforeActivity = Mockito.mock(Activity.class);
+		Activity afterActivity = Mockito.mock(Activity.class);
 		TimePeriod timePeriod = Mockito.mock(TimePeriod.class);
 
 		Schoolclass schoolclass = Mockito.mock(Schoolclass.class);
 		List<Schoolclass> schoolclasses = new ArrayList<>();
 		schoolclasses.add(schoolclass);
 
+		Room room = Mockito.mock(Room.class);
+		List<Room> rooms = new ArrayList<Room>();
+		rooms.add(room);
+
+		Location location = Mockito.mock(Location.class);
+
 		// When
 		PowerMockito.when(timePeriod.getDay()).thenReturn(Weekday.MONDAY);
 		PowerMockito.when(timePeriod.getStartTime()).thenReturn(new Date());
 		PowerMockito.when(timePeriod.getEndTime()).thenReturn(new Date());
+		PowerMockito.when(activity.getRooms()).thenReturn(rooms);
+		PowerMockito.when(beforeActivity.getRooms()).thenReturn(rooms);
+		PowerMockito.when(afterActivity.getRooms()).thenReturn(rooms);
+		PowerMockito.when(dataAccess.getOneLocation(room)).thenReturn(location);
 		PowerMockito.when(activity.getSchoolclasses())
 				.thenReturn(schoolclasses);
+		PowerMockito.when(
+				dataAccess.getFirstActivityBefore(
+						Mockito.any(Schoolclass.class),
+						Mockito.any(TimePeriod.class),
+						Mockito.any(Location.class), Mockito.anyBoolean()))
+				.thenReturn(beforeActivity);
+		PowerMockito.when(
+				dataAccess.getFirstActivityAfter(
+						Mockito.any(Schoolclass.class),
+						Mockito.any(TimePeriod.class),
+						Mockito.any(Location.class), Mockito.anyBoolean()))
+				.thenReturn(afterActivity);
 		PowerMockito.when(dataAccess.getAllActivities(schoolclass, timePeriod))
 				.thenReturn(new ArrayList<Activity>());
 
@@ -316,6 +373,8 @@ public class ActivityValidatorTest extends PowerMockTestCase {
 	public void invalidActivitySchoolclassTest() throws DatasetException {
 		// Given
 		Activity activity = Mockito.mock(Activity.class);
+		Activity beforeActivity = Mockito.mock(Activity.class);
+		Activity afterActivity = Mockito.mock(Activity.class);
 		TimePeriod timePeriod = Mockito.mock(TimePeriod.class);
 
 		Schoolclass schoolclass = Mockito.mock(Schoolclass.class);
@@ -325,21 +384,40 @@ public class ActivityValidatorTest extends PowerMockTestCase {
 		Activity activity2 = Mockito.mock(Activity.class);
 		List<Activity> activities = new ArrayList<>();
 		activities.add(activity2);
-		
+
 		Room room = Mockito.mock(Room.class);
 		List<Room> rooms = new ArrayList<Room>();
 		rooms.add(room);
-		
+
 		Location location = Mockito.mock(Location.class);
 
 		// When
 		PowerMockito.when(timePeriod.getDay()).thenReturn(Weekday.MONDAY);
 		PowerMockito.when(timePeriod.getStartTime()).thenReturn(new Date());
 		PowerMockito.when(timePeriod.getEndTime()).thenReturn(new Date());
+		PowerMockito.when(activity.getRooms()).thenReturn(rooms);
+		PowerMockito.when(beforeActivity.getRooms()).thenReturn(rooms);
+		PowerMockito.when(afterActivity.getRooms()).thenReturn(rooms);
+		PowerMockito.when(dataAccess.getOneLocation(room)).thenReturn(location);
 		PowerMockito.when(activity.getSchoolclasses())
 				.thenReturn(schoolclasses);
-		PowerMockito.when(dataAccess.getAllActivities(schoolclass, timePeriod))
-				.thenReturn(activities);
+		PowerMockito.when(
+				dataAccess.getFirstActivityBefore(
+						Mockito.any(Schoolclass.class),
+						Mockito.any(TimePeriod.class),
+						Mockito.any(Location.class), Mockito.anyBoolean()))
+				.thenReturn(beforeActivity);
+		PowerMockito.when(
+				dataAccess.getFirstActivityAfter(
+						Mockito.any(Schoolclass.class),
+						Mockito.any(TimePeriod.class),
+						Mockito.any(Location.class), Mockito.anyBoolean()))
+				.thenReturn(afterActivity);
+		PowerMockito.when(
+				dataAccess.getAllActivities(Mockito.any(Schoolclass.class),
+						Mockito.any(TimePeriod.class))).thenReturn(activities);
+		PowerMockito.when(beforeActivity.getRooms()).thenReturn(rooms);
+		PowerMockito.when(afterActivity.getRooms()).thenReturn(rooms);
 
 		// Then
 		AssertJUnit
@@ -347,11 +425,6 @@ public class ActivityValidatorTest extends PowerMockTestCase {
 						"A FailureStatus is expected if the database returned matching activities",
 						activityValidator
 								.validateActivity(activity, timePeriod) instanceof FailureStatus);
-		AssertJUnit
-				.assertTrue(
-						"A FailureStatus is expected if the database returned matching activities",
-						activityValidator.validateActivitySchoolclasses(
-								activity, timePeriod) instanceof FailureStatus);
 	}
 
 	@Test
@@ -359,6 +432,8 @@ public class ActivityValidatorTest extends PowerMockTestCase {
 			throws DatasetException {
 		// Given
 		Activity activity = Mockito.mock(Activity.class);
+		Activity beforeActivity = Mockito.mock(Activity.class);
+		Activity afterActivity = Mockito.mock(Activity.class);
 		TimePeriod timePeriod = Mockito.mock(TimePeriod.class);
 
 		Schoolclass schoolclass = Mockito.mock(Schoolclass.class);
@@ -368,10 +443,34 @@ public class ActivityValidatorTest extends PowerMockTestCase {
 		List<Activity> activities = new ArrayList<>();
 		activities.add(activity);
 
+		Room room = Mockito.mock(Room.class);
+		List<Room> rooms = new ArrayList<Room>();
+		rooms.add(room);
+
+		Location location = Mockito.mock(Location.class);
+
 		// When
 		PowerMockito.when(timePeriod.getDay()).thenReturn(Weekday.MONDAY);
 		PowerMockito.when(timePeriod.getStartTime()).thenReturn(new Date());
 		PowerMockito.when(timePeriod.getEndTime()).thenReturn(new Date());
+		PowerMockito.when(activity.getRooms()).thenReturn(rooms);
+		PowerMockito.when(beforeActivity.getRooms()).thenReturn(rooms);
+		PowerMockito.when(afterActivity.getRooms()).thenReturn(rooms);
+		PowerMockito.when(dataAccess.getOneLocation(room)).thenReturn(location);
+		PowerMockito.when(activity.getSchoolclasses())
+				.thenReturn(schoolclasses);
+		PowerMockito.when(
+				dataAccess.getFirstActivityBefore(
+						Mockito.any(Schoolclass.class),
+						Mockito.any(TimePeriod.class),
+						Mockito.any(Location.class), Mockito.anyBoolean()))
+				.thenReturn(beforeActivity);
+		PowerMockito.when(
+				dataAccess.getFirstActivityAfter(
+						Mockito.any(Schoolclass.class),
+						Mockito.any(TimePeriod.class),
+						Mockito.any(Location.class), Mockito.anyBoolean()))
+				.thenReturn(afterActivity);
 		PowerMockito.when(activity.getSchoolclasses())
 				.thenReturn(schoolclasses);
 		PowerMockito.when(dataAccess.getAllActivities(schoolclass, timePeriod))
@@ -383,11 +482,6 @@ public class ActivityValidatorTest extends PowerMockTestCase {
 						"A SuccessStatus is expected if the database returned matching activities but the only matching activity is the given activity",
 						activityValidator
 								.validateActivity(activity, timePeriod) instanceof SuccessStatus);
-		AssertJUnit
-				.assertTrue(
-						"A SuccessStatus is expected if the database returned matching activities but the only matching activity is the given activity",
-						activityValidator.validateActivitySchoolclasses(
-								activity, timePeriod) instanceof SuccessStatus);
 	}
 
 	@Test
@@ -482,162 +576,162 @@ public class ActivityValidatorTest extends PowerMockTestCase {
 								timePeriod) instanceof SuccessStatus);
 	}
 
-//	@Test
-//	public void validExpandTimPeriodWhithTravelTimeWithNoExpansionTest()
-//			throws Exception {
-//		// Given
-//		Activity activity = Mockito.mock(Activity.class);
-//		Date date = Mockito.mock(Date.class);
-//		Location location = Mockito.mock(Location.class);
-//
-//		Room room = Mockito.mock(Room.class);
-//		List<Room> rooms = new ArrayList<>();
-//		rooms.add(room);
-//
-//		EmployeeTimePeriods period = Mockito.mock(EmployeeTimePeriods.class);
-//		List<EmployeeTimePeriods> periods = new ArrayList<>();
-//		periods.add(period);
-//
-//		TimePeriod expectedTimePeriod = Mockito.mock(TimePeriod.class);
-//
-//		List<Activity> beforeList = new ArrayList<>();
-//		List<Activity> afterList = new ArrayList<>();
-//
-//		// When
-//		PowerMockito.when(activity.getEmployeeTimePeriods())
-//				.thenReturn(periods);
-//		PowerMockito.when(
-//				dataAccess.getAllActivitiesBefore(Mockito.any(Employee.class),
-//						Mockito.any(TimePeriod.class))).thenReturn(beforeList);
-//		PowerMockito.when(
-//				dataAccess.getAllActivitiesAfter(Mockito.any(Employee.class),
-//						Mockito.any(TimePeriod.class))).thenReturn(afterList);
-//		PowerMockito.when(expectedTimePeriod.getStartTime()).thenReturn(date);
-//		PowerMockito.when(expectedTimePeriod.getEndTime()).thenReturn(date);
-//		PowerMockito.when(activity.getRooms()).thenReturn(rooms);
-//
-//		PowerMockito.when(dataAccess.getOneLocation(Mockito.any(Room.class)))
-//				.thenReturn(location);
-//
-//		// Then
-//		activityValidator.expandTimPeriodWhithTravelTime(activity,
-//				expectedTimePeriod);
-//
-//		Mockito.verify(dataAccess, Mockito.times(1)).getOneLocation(
-//				Mockito.any(Room.class));
-//
-//	}
-//
-//	@Test
-//	public void validExpandTimPeriodWhithTravelTimeWithNoEdgesTest()
-//			throws Exception {
-//		// Given
-//		Activity activity = Mockito.mock(Activity.class);
-//		Activity beforeActivity = Mockito.mock(Activity.class);
-//		Activity afterActivity = Mockito.mock(Activity.class);
-//		Date date = Mockito.mock(Date.class);
-//		Location location = Mockito.mock(Location.class);
-//
-//		Room room = Mockito.mock(Room.class);
-//		List<Room> rooms = new ArrayList<>();
-//		rooms.add(room);
-//
-//		EmployeeTimePeriods period = Mockito.mock(EmployeeTimePeriods.class);
-//		List<EmployeeTimePeriods> periods = new ArrayList<>();
-//		periods.add(period);
-//
-//		TimePeriod expectedTimePeriod = Mockito.mock(TimePeriod.class);
-//
-//		List<Activity> beforeList = Arrays.asList(beforeActivity);
-//		List<Activity> afterList = Arrays.asList(afterActivity);
-//
-//		// When
-//		PowerMockito.when(activity.getEmployeeTimePeriods())
-//				.thenReturn(periods);
-//		PowerMockito.when(
-//				dataAccess.getAllActivitiesBefore(Mockito.any(Employee.class),
-//						Mockito.any(TimePeriod.class))).thenReturn(beforeList);
-//		PowerMockito.when(
-//				dataAccess.getAllActivitiesAfter(Mockito.any(Employee.class),
-//						Mockito.any(TimePeriod.class))).thenReturn(afterList);
-//		PowerMockito.when(expectedTimePeriod.getStartTime()).thenReturn(date);
-//		PowerMockito.when(expectedTimePeriod.getEndTime()).thenReturn(date);
-//		PowerMockito.when(activity.getRooms()).thenReturn(rooms);
-//		PowerMockito.when(beforeActivity.getRooms()).thenReturn(rooms);
-//		PowerMockito.when(afterActivity.getRooms()).thenReturn(rooms);
-//		PowerMockito.when(
-//				travelTimeList.getEdge(Mockito.any(Location.class),
-//						Mockito.any(Location.class))).thenReturn(null);
-//
-//		PowerMockito.when(dataAccess.getOneLocation(Mockito.any(Room.class)))
-//				.thenReturn(location);
-//
-//		// Then
-//		activityValidator.expandTimPeriodWhithTravelTime(activity,
-//				expectedTimePeriod);
-//
-//		Mockito.verify(dataAccess, Mockito.times(3)).getOneLocation(
-//				Mockito.any(Room.class));
-//		Mockito.verify(travelTimeList, Mockito.times(2)).getEdge(
-//				Mockito.any(Location.class), Mockito.any(Location.class));
-//	}
-//
-//	@Test
-//	public void validExpandTimPeriodWhithTravelTimeWithEdgesTest()
-//			throws Exception {
-//		// Given
-//		Activity activity = Mockito.mock(Activity.class);
-//		Activity beforeActivity = Mockito.mock(Activity.class);
-//		Activity afterActivity = Mockito.mock(Activity.class);
-//		Date date = Mockito.mock(Date.class);
-//		Location location = Mockito.mock(Location.class);
-//		Edge edge = Mockito.mock(Edge.class);
-//
-//		Room room = Mockito.mock(Room.class);
-//		List<Room> rooms = new ArrayList<>();
-//		rooms.add(room);
-//
-//		EmployeeTimePeriods period = Mockito.mock(EmployeeTimePeriods.class);
-//		List<EmployeeTimePeriods> periods = new ArrayList<>();
-//		periods.add(period);
-//
-//		TimePeriod expectedTimePeriod = Mockito.mock(TimePeriod.class);
-//
-//		List<Activity> beforeList = Arrays.asList(beforeActivity);
-//		List<Activity> afterList = Arrays.asList(afterActivity);
-//
-//		// When
-//		PowerMockito.when(activity.getEmployeeTimePeriods())
-//				.thenReturn(periods);
-//		PowerMockito.when(
-//				dataAccess.getAllActivitiesBefore(Mockito.any(Employee.class),
-//						Mockito.any(TimePeriod.class))).thenReturn(beforeList);
-//		PowerMockito.when(
-//				dataAccess.getAllActivitiesAfter(Mockito.any(Employee.class),
-//						Mockito.any(TimePeriod.class))).thenReturn(afterList);
-//		PowerMockito.when(expectedTimePeriod.getStartTime()).thenReturn(date);
-//		PowerMockito.when(expectedTimePeriod.getEndTime()).thenReturn(date);
-//		PowerMockito.when(activity.getRooms()).thenReturn(rooms);
-//		PowerMockito.when(beforeActivity.getRooms()).thenReturn(rooms);
-//		PowerMockito.when(afterActivity.getRooms()).thenReturn(rooms);
-//		PowerMockito.when(
-//				travelTimeList.getEdge(Mockito.any(Location.class),
-//						Mockito.any(Location.class))).thenReturn(edge);
-//		PowerMockito.when(edge.getDistance()).thenReturn(0);
-//
-//		PowerMockito.when(dataAccess.getOneLocation(Mockito.any(Room.class)))
-//				.thenReturn(location);
-//
-//		// Then
-//		activityValidator.expandTimPeriodWhithTravelTime(activity,
-//				expectedTimePeriod);
-//
-//		Mockito.verify(dataAccess, Mockito.times(3)).getOneLocation(
-//				Mockito.any(Room.class));
-//		Mockito.verify(travelTimeList, Mockito.times(2)).getEdge(
-//				Mockito.any(Location.class), Mockito.any(Location.class));
-//		Mockito.verify(edge, Mockito.times(2)).getDistance();
-//
-//	}
+	// @Test
+	// public void validExpandTimPeriodWhithTravelTimeWithNoExpansionTest()
+	// throws Exception {
+	// // Given
+	// Activity activity = Mockito.mock(Activity.class);
+	// Date date = Mockito.mock(Date.class);
+	// Location location = Mockito.mock(Location.class);
+	//
+	// Room room = Mockito.mock(Room.class);
+	// List<Room> rooms = new ArrayList<>();
+	// rooms.add(room);
+	//
+	// EmployeeTimePeriods period = Mockito.mock(EmployeeTimePeriods.class);
+	// List<EmployeeTimePeriods> periods = new ArrayList<>();
+	// periods.add(period);
+	//
+	// TimePeriod expectedTimePeriod = Mockito.mock(TimePeriod.class);
+	//
+	// List<Activity> beforeList = new ArrayList<>();
+	// List<Activity> afterList = new ArrayList<>();
+	//
+	// // When
+	// PowerMockito.when(activity.getEmployeeTimePeriods())
+	// .thenReturn(periods);
+	// PowerMockito.when(
+	// dataAccess.getAllActivitiesBefore(Mockito.any(Employee.class),
+	// Mockito.any(TimePeriod.class))).thenReturn(beforeList);
+	// PowerMockito.when(
+	// dataAccess.getAllActivitiesAfter(Mockito.any(Employee.class),
+	// Mockito.any(TimePeriod.class))).thenReturn(afterList);
+	// PowerMockito.when(expectedTimePeriod.getStartTime()).thenReturn(date);
+	// PowerMockito.when(expectedTimePeriod.getEndTime()).thenReturn(date);
+	// PowerMockito.when(activity.getRooms()).thenReturn(rooms);
+	//
+	// PowerMockito.when(dataAccess.getOneLocation(Mockito.any(Room.class)))
+	// .thenReturn(location);
+	//
+	// // Then
+	// activityValidator.expandTimPeriodWhithTravelTime(activity,
+	// expectedTimePeriod);
+	//
+	// Mockito.verify(dataAccess, Mockito.times(1)).getOneLocation(
+	// Mockito.any(Room.class));
+	//
+	// }
+	//
+	// @Test
+	// public void validExpandTimPeriodWhithTravelTimeWithNoEdgesTest()
+	// throws Exception {
+	// // Given
+	// Activity activity = Mockito.mock(Activity.class);
+	// Activity beforeActivity = Mockito.mock(Activity.class);
+	// Activity afterActivity = Mockito.mock(Activity.class);
+	// Date date = Mockito.mock(Date.class);
+	// Location location = Mockito.mock(Location.class);
+	//
+	// Room room = Mockito.mock(Room.class);
+	// List<Room> rooms = new ArrayList<>();
+	// rooms.add(room);
+	//
+	// EmployeeTimePeriods period = Mockito.mock(EmployeeTimePeriods.class);
+	// List<EmployeeTimePeriods> periods = new ArrayList<>();
+	// periods.add(period);
+	//
+	// TimePeriod expectedTimePeriod = Mockito.mock(TimePeriod.class);
+	//
+	// List<Activity> beforeList = Arrays.asList(beforeActivity);
+	// List<Activity> afterList = Arrays.asList(afterActivity);
+	//
+	// // When
+	// PowerMockito.when(activity.getEmployeeTimePeriods())
+	// .thenReturn(periods);
+	// PowerMockito.when(
+	// dataAccess.getAllActivitiesBefore(Mockito.any(Employee.class),
+	// Mockito.any(TimePeriod.class))).thenReturn(beforeList);
+	// PowerMockito.when(
+	// dataAccess.getAllActivitiesAfter(Mockito.any(Employee.class),
+	// Mockito.any(TimePeriod.class))).thenReturn(afterList);
+	// PowerMockito.when(expectedTimePeriod.getStartTime()).thenReturn(date);
+	// PowerMockito.when(expectedTimePeriod.getEndTime()).thenReturn(date);
+	// PowerMockito.when(activity.getRooms()).thenReturn(rooms);
+	// PowerMockito.when(beforeActivity.getRooms()).thenReturn(rooms);
+	// PowerMockito.when(afterActivity.getRooms()).thenReturn(rooms);
+	// PowerMockito.when(
+	// travelTimeList.getEdge(Mockito.any(Location.class),
+	// Mockito.any(Location.class))).thenReturn(null);
+	//
+	// PowerMockito.when(dataAccess.getOneLocation(Mockito.any(Room.class)))
+	// .thenReturn(location);
+	//
+	// // Then
+	// activityValidator.expandTimPeriodWhithTravelTime(activity,
+	// expectedTimePeriod);
+	//
+	// Mockito.verify(dataAccess, Mockito.times(3)).getOneLocation(
+	// Mockito.any(Room.class));
+	// Mockito.verify(travelTimeList, Mockito.times(2)).getEdge(
+	// Mockito.any(Location.class), Mockito.any(Location.class));
+	// }
+	//
+	// @Test
+	// public void validExpandTimPeriodWhithTravelTimeWithEdgesTest()
+	// throws Exception {
+	// // Given
+	// Activity activity = Mockito.mock(Activity.class);
+	// Activity beforeActivity = Mockito.mock(Activity.class);
+	// Activity afterActivity = Mockito.mock(Activity.class);
+	// Date date = Mockito.mock(Date.class);
+	// Location location = Mockito.mock(Location.class);
+	// Edge edge = Mockito.mock(Edge.class);
+	//
+	// Room room = Mockito.mock(Room.class);
+	// List<Room> rooms = new ArrayList<>();
+	// rooms.add(room);
+	//
+	// EmployeeTimePeriods period = Mockito.mock(EmployeeTimePeriods.class);
+	// List<EmployeeTimePeriods> periods = new ArrayList<>();
+	// periods.add(period);
+	//
+	// TimePeriod expectedTimePeriod = Mockito.mock(TimePeriod.class);
+	//
+	// List<Activity> beforeList = Arrays.asList(beforeActivity);
+	// List<Activity> afterList = Arrays.asList(afterActivity);
+	//
+	// // When
+	// PowerMockito.when(activity.getEmployeeTimePeriods())
+	// .thenReturn(periods);
+	// PowerMockito.when(
+	// dataAccess.getAllActivitiesBefore(Mockito.any(Employee.class),
+	// Mockito.any(TimePeriod.class))).thenReturn(beforeList);
+	// PowerMockito.when(
+	// dataAccess.getAllActivitiesAfter(Mockito.any(Employee.class),
+	// Mockito.any(TimePeriod.class))).thenReturn(afterList);
+	// PowerMockito.when(expectedTimePeriod.getStartTime()).thenReturn(date);
+	// PowerMockito.when(expectedTimePeriod.getEndTime()).thenReturn(date);
+	// PowerMockito.when(activity.getRooms()).thenReturn(rooms);
+	// PowerMockito.when(beforeActivity.getRooms()).thenReturn(rooms);
+	// PowerMockito.when(afterActivity.getRooms()).thenReturn(rooms);
+	// PowerMockito.when(
+	// travelTimeList.getEdge(Mockito.any(Location.class),
+	// Mockito.any(Location.class))).thenReturn(edge);
+	// PowerMockito.when(edge.getDistance()).thenReturn(0);
+	//
+	// PowerMockito.when(dataAccess.getOneLocation(Mockito.any(Room.class)))
+	// .thenReturn(location);
+	//
+	// // Then
+	// activityValidator.expandTimPeriodWhithTravelTime(activity,
+	// expectedTimePeriod);
+	//
+	// Mockito.verify(dataAccess, Mockito.times(3)).getOneLocation(
+	// Mockito.any(Room.class));
+	// Mockito.verify(travelTimeList, Mockito.times(2)).getEdge(
+	// Mockito.any(Location.class), Mockito.any(Location.class));
+	// Mockito.verify(edge, Mockito.times(2)).getDistance();
+	//
+	// }
 
 }
