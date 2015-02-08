@@ -362,6 +362,8 @@ public class PlanningController implements Serializable {
 					GenericErrorMessage.TIME_OUTSIDE_LIMIT,
 					FacesMessage.SEVERITY_ERROR);
 		} else {
+			IMemento activityMemento = activity.createMemento();
+
 			// TODO Zeit Validieren
 			TimePeriod time = new TimePeriod();
 			time.setStartTime(startTime);
@@ -383,9 +385,6 @@ public class PlanningController implements Serializable {
 						timePeriod.setEndTime(endTime);
 					}
 				}
-
-				IMemento activityMemento = activity.createMemento();
-
 				UpdateCommand<Activity> command = new UpdateCommand<Activity>(
 						activity, activityMemento);
 
@@ -998,7 +997,7 @@ public class PlanningController implements Serializable {
 	public Boolean getIsDialogActivityCompoundLesson() {
 		return activity instanceof CompoundLesson;
 	}
-	
+
 	/**
 	 * Liefert einen Wahrheitswert, ob die momentane Aktivität des Controllers
 	 * eine {@link CompoundLesson} ist.
