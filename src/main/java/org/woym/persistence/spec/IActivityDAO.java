@@ -117,7 +117,8 @@ public interface IActivityDAO {
 	 *         kann auch leer sein
 	 * @throws DatasetException
 	 */
-	public List<Activity> getAllActivities(Room room, boolean refreshCache) throws DatasetException;
+	public List<Activity> getAllActivities(Room room, boolean refreshCache)
+			throws DatasetException;
 
 	/**
 	 * Wird für einen Parameter{@code null} übergeben, wird eine
@@ -381,8 +382,8 @@ public interface IActivityDAO {
 	 * {@linkplain TimePeriod}-Objektes statt und die Endzeit der Aktivität
 	 * besitzt die geringste Differenz zur Startzeit des übergebenen
 	 * {@linkplain TimePeriod} -Objektes. Zudem findet die Aktivität an einem
-	 * Standort ungleich dem übergebenen {@linkplain Location}-Objekt statt.
-	 * Tritt bei der Datenbankanfrage ein Fehler auf, wird eine
+	 * Standort ungleich dem übergebenen {@linkplain Location}-Objekt
+	 * statt.Tritt bei der Datenbankanfrage ein Fehler auf, wird eine
 	 * {@linkplain DatasetException} geworfen.
 	 * 
 	 * @param schoolclass
@@ -391,12 +392,16 @@ public interface IActivityDAO {
 	 *            - der Zeitraum
 	 * @param location
 	 *            - der Standort
+	 * @param getPause
+	 *            - {@code true}, wenn die erste Aktivität vor dem übergebenen
+	 *            Zeitraum auch eine Pause sein darf
 	 * @return gibt eine Aktivität mit oben beschriebenen Eigenschaften oder
 	 *         {@code null} zurück, falls keine solche existiert
 	 * @throws DatasetException
 	 */
 	public Activity getFirstActivityBefore(Schoolclass schoolclass,
-			TimePeriod timePeriod, Location location) throws DatasetException;
+			TimePeriod timePeriod, Location location, boolean getPause)
+			throws DatasetException;
 
 	/**
 	 * Gibt eine Aktivitität zurück, an welcher die übergebene Schulklasse
@@ -414,11 +419,14 @@ public interface IActivityDAO {
 	 *            - der Zeitraum
 	 * @param location
 	 *            - der Standort
+	 * @param getPause
+	 *            - {@code true}, wenn die erste Aktivität vor dem übergebenen
+	 *            Zeitraum auch eine Pause sein darf
 	 * @return gibt eine Aktivität mit oben beschriebenen Eigenschaften oder
 	 *         {@code null} zurück, falls keine solche existiert
 	 * @throws DatasetException
 	 */
 	public Activity getFirstActivityAfter(Schoolclass schoolclass,
-			TimePeriod timePeriod, Location location) throws DatasetException;
+			TimePeriod timePeriod, Location location, boolean getPause) throws DatasetException;
 
 }
