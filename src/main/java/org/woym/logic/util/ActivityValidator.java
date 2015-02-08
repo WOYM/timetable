@@ -249,14 +249,14 @@ public class ActivityValidator {
 						.size() - 1);
 				Location otherLocation = dataAccess.getOneLocation(lastActivity
 						.getRooms().get(0));
-				
+
 				Edge edge = travelTimeList.getEdge(location, otherLocation);
 				if (edge != null) {
 					extendedTimePeriod.getStartTime().setMinutes(
 							extendedTimePeriod.getStartTime().getMinutes()
 									- edge.getDistance());
 				}
-		}
+			}
 
 			List<Activity> activitiesAfter = dataAccess.getAllActivitiesAfter(
 					employeeTimePeriods.getEmployee(), extendedTimePeriod);
@@ -312,75 +312,81 @@ public class ActivityValidator {
 
 			TimePeriod extendedTimePeriod = cloneTimePeriod(timePeriod);
 
-			Location location = dataAccess.getOneLocation(activity.getRooms()
-					.get(0));
+			if (!(activity instanceof Pause)) {
 
-			Activity activityBefore = dataAccess.getFirstActivityBefore(
-					schoolclass, extendedTimePeriod, location, true);
-			if (activityBefore != null) {
-				if (activityBefore instanceof Pause) {
-					// Aktivität davor, die keine Pause ist
-					Activity activityBeforePause = dataAccess
-							.getFirstActivityBefore(schoolclass,
-									extendedTimePeriod, location, false);
-					Location otherLocation = dataAccess
-							.getOneLocation(activityBeforePause.getRooms().get(
-									0));
-					Edge edge = travelTimeList.getEdge(location, otherLocation);
-					if (edge != null) {
-						if (edge.getDistance() > activityBefore.getTime()
-								.getDuration()
-								&& (edge.getDistance() > activity.getTime()
-										.getStartTime().getMinutes()
-										- activityBeforePause.getTime()
-												.getEndTime().getMinutes())) {
-							return false;
+				Location location = dataAccess.getOneLocation(activity
+						.getRooms().get(0));
+
+				Activity activityBefore = dataAccess.getFirstActivityBefore(
+						schoolclass, extendedTimePeriod, location, true);
+				if (activityBefore != null) {
+					if (activityBefore instanceof Pause) {
+						// Aktivität davor, die keine Pause ist
+						Activity activityBeforePause = dataAccess
+								.getFirstActivityBefore(schoolclass,
+										extendedTimePeriod, location, false);
+						Location otherLocation = dataAccess
+								.getOneLocation(activityBeforePause.getRooms()
+										.get(0));
+						Edge edge = travelTimeList.getEdge(location,
+								otherLocation);
+						if (edge != null) {
+							if (edge.getDistance() > activityBefore.getTime()
+									.getDuration()
+									&& (edge.getDistance() > activity.getTime()
+											.getStartTime().getMinutes()
+											- activityBeforePause.getTime()
+													.getEndTime().getMinutes())) {
+								return false;
+							}
 						}
 					}
-				}
-				Location otherLocation = dataAccess
-						.getOneLocation(activityBefore.getRooms().get(0));
-				Edge edge = travelTimeList.getEdge(location, otherLocation);
-				if (edge != null) {
-					extendedTimePeriod.getStartTime().setMinutes(
-							extendedTimePeriod.getStartTime().getMinutes()
-									- edge.getDistance());
-				}
-			}
-
-			Activity activityAfter = dataAccess.getFirstActivityAfter(
-					schoolclass, extendedTimePeriod, location, true);
-			if (activityAfter != null) {
-				if (activityAfter instanceof Pause) {
-					// Aktivität danach, die keine Pause ist
-					Activity activityAfterPause = dataAccess
-							.getFirstActivityAfter(schoolclass,
-									extendedTimePeriod, location, false);
 					Location otherLocation = dataAccess
-							.getOneLocation(activityAfterPause.getRooms().get(
-									0));
+							.getOneLocation(activityBefore.getRooms().get(0));
 					Edge edge = travelTimeList.getEdge(location, otherLocation);
 					if (edge != null) {
-						if (edge.getDistance() > activityAfter.getTime()
-								.getDuration()
-								&& (edge.getDistance() > activity.getTime()
-										.getEndTime().getMinutes()
-										- activityAfterPause.getTime()
-												.getStartTime().getMinutes())) {
-							return false;
-						}
+						extendedTimePeriod.getStartTime().setMinutes(
+								extendedTimePeriod.getStartTime().getMinutes()
+										- edge.getDistance());
 					}
 				}
-				Location otherLocation = dataAccess
-						.getOneLocation(activityBefore.getRooms().get(0));
-				Edge edge = travelTimeList.getEdge(location, otherLocation);
-				if (edge != null) {
-					extendedTimePeriod.getEndTime().setMinutes(
-							extendedTimePeriod.getEndTime().getMinutes()
-									+ edge.getDistance());
-				}
-			}
 
+				Activity activityAfter = dataAccess.getFirstActivityAfter(
+						schoolclass, extendedTimePeriod, location, true);
+				if (activityAfter != null) {
+					if (activityAfter instanceof Pause) {
+						// Aktivität danach, die keine Pause ist
+						Activity activityAfterPause = dataAccess
+								.getFirstActivityAfter(schoolclass,
+										extendedTimePeriod, location, false);
+						Location otherLocation = dataAccess
+								.getOneLocation(activityAfterPause.getRooms()
+										.get(0));
+						Edge edge = travelTimeList.getEdge(location,
+								otherLocation);
+						if (edge != null) {
+							if (edge.getDistance() > activityAfter.getTime()
+									.getDuration()
+									&& (edge.getDistance() > activity.getTime()
+											.getEndTime().getMinutes()
+											- activityAfterPause.getTime()
+													.getStartTime()
+													.getMinutes())) {
+								return false;
+							}
+						}
+					}
+					Location otherLocation = dataAccess
+							.getOneLocation(activityBefore.getRooms().get(0));
+					Edge edge = travelTimeList.getEdge(location, otherLocation);
+					if (edge != null) {
+						extendedTimePeriod.getEndTime().setMinutes(
+								extendedTimePeriod.getEndTime().getMinutes()
+										+ edge.getDistance());
+					}
+				}
+
+			}
 			List<Activity> activities = dataAccess.getAllActivities(
 					schoolclass, extendedTimePeriod);
 
