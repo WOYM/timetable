@@ -53,6 +53,9 @@ public class ActivityParserTest extends PowerMockTestCase {
 
 	@BeforeTest
 	public void makeActivities() {
+		Room room = PowerMockito.mock(Room.class);
+		Schoolclass schoolclass = PowerMockito.mock(Schoolclass.class);
+		
 		activities = new ArrayList<>();
 
 		Date startDate = new Date();
@@ -69,15 +72,21 @@ public class ActivityParserTest extends PowerMockTestCase {
 
 		lessonType.setColor(ColorEnum.ORANGE);
 		meetingType.setColor(ColorEnum.BLUE_DARK);
+	
 
 		Lesson activity1 = new Lesson();
 		activity1.setTime(time);
 		activity1.setLessonType(lessonType);
+		activity1.add(room);
+		activity1.add(schoolclass);
 		CompoundLesson activity2 = new CompoundLesson();
 		activity2.setTime(time);
+		activity2.add(room);
+		activity2.add(schoolclass);
 		Meeting activity3 = new Meeting();
 		activity3.setMeetingType(meetingType);
 		activity3.setTime(time);
+		activity3.add(room);
 		Pause activity4 = new Pause();
 		activity4.setTime(time);
 

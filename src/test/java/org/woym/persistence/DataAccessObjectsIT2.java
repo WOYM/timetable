@@ -53,13 +53,13 @@ public class DataAccessObjectsIT2 {
 		List<Schoolclass> list = dataAccess.getAllSchoolclasses(dataAccess
 				.getOneEmployee("MEY"));
 		assertEquals(2, list.size());
-		assertTrue(list.contains(dataAccess.getOneSchoolclass(1, 'a')));
-		assertTrue(list.contains(dataAccess.getOneSchoolclass(2, 'a')));
+		assertTrue(list.contains(dataAccess.getOneSchoolclass(1, 'A')));
+		assertTrue(list.contains(dataAccess.getOneSchoolclass(2, 'A')));
 
 		list = dataAccess.getAllSchoolclasses(dataAccess.getOneEmployee("MUS"));
 		assertEquals(2, list.size());
-		assertTrue(list.contains(dataAccess.getOneSchoolclass(1, 'a')));
-		assertTrue(list.contains(dataAccess.getOneSchoolclass(2, 'a')));
+		assertTrue(list.contains(dataAccess.getOneSchoolclass(1, 'A')));
+		assertTrue(list.contains(dataAccess.getOneSchoolclass(2, 'A')));
 	}
 
 	@Test(priority = 1, groups = "DataAccessActivity", dependsOnMethods = "getAllActivitiesSuccess")
@@ -117,13 +117,13 @@ public class DataAccessObjectsIT2 {
 	@Test(priority = 2, groups = "DataAccessActivity")
 	public void getAllActivitiesSchoolclassSuccess() throws DatasetException {
 		List<Activity> list = dataAccess.getAllActivities(dataAccess
-				.getOneSchoolclass(1, 'a'), false);
+				.getOneSchoolclass(1, 'A'), false);
 		assertEquals(2, list.size());
 		assertTrue(list.contains(l));
 		assertTrue(list.contains(c));
 
 		list = dataAccess
-				.getAllActivities(dataAccess.getOneSchoolclass(2, 'a'), false);
+				.getAllActivities(dataAccess.getOneSchoolclass(2, 'A'), false);
 		assertEquals(1, list.size());
 		assertTrue(list.contains(c));
 	}
@@ -329,21 +329,21 @@ public class DataAccessObjectsIT2 {
 		t.setEndTime(sdf.parse("11:00"));
 
 		List<Activity> list = dataAccess.getAllActivities(
-				dataAccess.getOneSchoolclass(1, 'a'), t);
+				dataAccess.getOneSchoolclass(1, 'A'), t);
 		assertEquals(1, list.size());
 		assertTrue(list.contains(c));
 
 		t.setStartTime(sdf.parse("10:30"));
 		t.setEndTime(sdf.parse("11:45"));
 		list = dataAccess.getAllActivities(
-				dataAccess.getOneSchoolclass(1, 'a'), t);
+				dataAccess.getOneSchoolclass(1, 'A'), t);
 		assertEquals(1, list.size());
 		assertTrue(list.contains(c));
 
 		t.setStartTime(sdf.parse("10:30"));
 		t.setEndTime(sdf.parse("11:00"));
 		list = dataAccess.getAllActivities(
-				dataAccess.getOneSchoolclass(1, 'a'), t);
+				dataAccess.getOneSchoolclass(1, 'A'), t);
 		assertEquals(1, list.size());
 		assertTrue(list.contains(c));
 	}
@@ -357,13 +357,13 @@ public class DataAccessObjectsIT2 {
 		t.setEndTime(sdf.parse("12:00"));
 
 		List<Activity> list = dataAccess.getAllActivities(
-				dataAccess.getOneSchoolclass(1, 'a'), t);
+				dataAccess.getOneSchoolclass(1, 'A'), t);
 		assertTrue(list.isEmpty());
 
 		t.setStartTime(sdf.parse("10:00"));
 		t.setEndTime(sdf.parse("10:45"));
 		list = dataAccess.getAllActivities(
-				dataAccess.getOneSchoolclass(1, 'a'), t);
+				dataAccess.getOneSchoolclass(1, 'A'), t);
 		assertTrue(list.isEmpty());
 	}
 
@@ -378,7 +378,7 @@ public class DataAccessObjectsIT2 {
 		assertTrue(list.contains(m));
 		assertTrue(list.contains(c));
 
-		a = dataAccess.getOneSchoolclass(1, 'a');
+		a = dataAccess.getOneSchoolclass(1, 'A');
 		list = dataAccess.getAllActivities(a, false);
 		assertEquals(2, list.size());
 		assertTrue(list.contains(l));
@@ -399,7 +399,7 @@ public class DataAccessObjectsIT2 {
 	@Test(priority = 2, groups = "DataAccessActivity")
 	public void sumLessonDurationSuccess() throws DatasetException {
 		Employee employee = dataAccess.getOneEmployee("MEY");
-		Schoolclass schoolclass = dataAccess.getOneSchoolclass(1, 'a');
+		Schoolclass schoolclass = dataAccess.getOneSchoolclass(1, 'A');
 		LessonType lessonType = (LessonType) dataAccess
 				.getOneActivityType("Mathe");
 		Long duration = dataAccess.sumLessonDuration(employee, schoolclass,
@@ -501,36 +501,36 @@ public class DataAccessObjectsIT2 {
 
 	@Test(priority = 2, groups = "DataAccessActivity")
 	public void getFirstActivityBeforeSchoolclassSuccess() throws Exception {
-		Schoolclass schoolclass = dataAccess.getOneSchoolclass(1, 'a');
+		Schoolclass schoolclass = dataAccess.getOneSchoolclass(1, 'A');
 		Location location = dataAccess.getOneLocation("Zweigstelle");
 		TimePeriod timePeriod = new TimePeriod();
 		timePeriod.setDay(Weekday.MONDAY);
 		timePeriod.setStartTime(sdf.parse("10:45"));
 		timePeriod.setEndTime(sdf.parse("11:30"));
 		assertEquals(l, dataAccess.getFirstActivityBefore(schoolclass,
-				timePeriod, location));
+				timePeriod, location, true));
 
 		timePeriod.setStartTime(sdf.parse("12:00"));
 		timePeriod.setEndTime(sdf.parse("12:45"));
 		assertEquals(null, dataAccess.getFirstActivityBefore(schoolclass,
-				timePeriod, location));
+				timePeriod, location, true));
 	}
 
 	@Test(priority = 2, groups = "DataAccessActivity")
 	public void getFirstActivityAfterSchoolclassSuccess() throws Exception {
-		Schoolclass schoolclass = dataAccess.getOneSchoolclass(1, 'a');
+		Schoolclass schoolclass = dataAccess.getOneSchoolclass(1, 'A');
 		Location location = dataAccess.getOneLocation("Zweigstelle");
 		TimePeriod timePeriod = new TimePeriod();
 		timePeriod.setStartTime(sdf.parse("09:00"));
 		timePeriod.setEndTime(sdf.parse("09:45"));
 		timePeriod.setDay(Weekday.MONDAY);
 		assertEquals(l, dataAccess.getFirstActivityAfter(schoolclass,
-				timePeriod, location));
+				timePeriod, location, true));
 	}
 
 	private Lesson createLesson() throws Exception {
 		Lesson l = new Lesson();
-		l.add(dataAccess.getOneSchoolclass(1, 'a'));
+		l.add(dataAccess.getOneSchoolclass(1, 'A'));
 
 		TimePeriod t = new TimePeriod();
 		t.setDay(Weekday.MONDAY);
@@ -614,8 +614,8 @@ public class DataAccessObjectsIT2 {
 
 		c.add(e);
 
-		c.add(dataAccess.getOneSchoolclass(1, 'a'));
-		c.add(dataAccess.getOneSchoolclass(2, 'a'));
+		c.add(dataAccess.getOneSchoolclass(1, 'A'));
+		c.add(dataAccess.getOneSchoolclass(2, 'A'));
 
 		c.add(dataAccess.getOneRoom("Hauptstandort", "Raum 100"));
 		c.add(dataAccess.getOneRoom("Hauptstandort", "Raum 102"));

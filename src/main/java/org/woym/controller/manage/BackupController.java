@@ -37,8 +37,10 @@ public class BackupController implements Serializable {
 	 * Führt ein Backup aus.
 	 */
 	public void doBackup() {
-		if ("".equals(backupName.trim())) {
-			backupName = null;
+		if (backupName != null) {
+			if ("".equals(backupName.trim())) {
+				backupName = null;
+			}
 		}
 
 		IStatus status = BackupRestoreHandler.backup(backupName);

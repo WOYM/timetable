@@ -31,8 +31,6 @@ import org.woym.common.objects.Room;
 import org.woym.common.objects.Schoolclass;
 import org.woym.common.objects.Teacher;
 import org.woym.common.objects.TravelTimeList;
-import org.woym.persistence.DataAccess;
-import org.woym.persistence.DataBase;
 
 @Test(groups = { "DataAccessObjectsIT", "integration" })
 public class DataAccessObjectsIT {
@@ -254,6 +252,15 @@ public class DataAccessObjectsIT {
 		assertTrue(result.contains(dataAccess.getOneActivityType("Musik")));
 		assertTrue(result.contains(dataAccess.getOneActivityType("Mathe")));
 	}
+	
+	@Test(priority = 3, groups = "DataAccessActivityType", dependsOnGroups = "DataAccessRoom")
+	public void containsSpecialRoomSuccess() throws Exception{
+		ActivityType math = dataAccess.getOneActivityType("Mathe");
+		ActivityType music = dataAccess.getOneActivityType("Musik");
+		
+		assertFalse(dataAccess.containsSpecialRooms(math));
+		assertTrue(dataAccess.containsSpecialRooms(music));
+	}
 
 	// ////////////////////////////////////////////////////////////////////////////////////
 	// Integration Employee
@@ -429,7 +436,7 @@ public class DataAccessObjectsIT {
 
 		// Schulklasse erstellen
 		Schoolclass s = new Schoolclass();
-		s.setIdentifier('a');
+		s.setIdentifier('A');
 		s.setRoom(dataAccess.getOneRoom("Hauptstandort", "Raum 100"));
 		s.setTeacher((Teacher) dataAccess.getOneEmployee("MEY"));
 		s.setLessonDemands(years.get(0).getLessonDemands());
@@ -440,13 +447,19 @@ public class DataAccessObjectsIT {
 
 		// Zweite Schulklasse erstellen
 		Schoolclass s1 = new Schoolclass();
-		s1.setIdentifier('a');
+		s1.setIdentifier('A');
 		s1.setRoom(dataAccess.getOneRoom("Zweigstelle", "Raum 101"));
 		s1.setTeacher((Teacher) dataAccess.getOneEmployee("MEY"));
 
 		// Dem anderen Jahrgang hinzufügen
 		years.get(1).add(s1);
 		dataAccess.update(years.get(1));
+		
+		//Dritte Schulklase erstellen
+		Schoolclass s2 = new Schoolclass();
+		s2.setIdentifier('B');
+		s2.setTeacher((Teacher) dataAccess.getOneEmployee("MEY"));
+		years.get(1).add(s2);
 
 		// Der eigentliche Test
 		s = dataAccess.getOneAcademicYear(1).getSchoolclasses().get(0);
@@ -469,18 +482,18 @@ public class DataAccessObjectsIT {
 	@Test(priority = 2, groups = "DataAccessSchoolclass", dependsOnGroups = "DataAccessAcademicYear")
 	public void getOneSchoolclassByYearAndIdentifierSuccess()
 			throws DatasetException {
-		Schoolclass s = dataAccess.getOneSchoolclass(1, 'a');
+		Schoolclass s = dataAccess.getOneSchoolclass(1, 'A');
 		assertNotNull(s);
 		assertEquals(dataAccess.getAllAcademicYears().get(0).getSchoolclasses()
 				.get(0), s);
-		assertEquals('a', s.getIdentifier());
+		assertEquals('A', s.getIdentifier());
 		assertEquals(2, s.getLessonDemands().size());
 
-		s = dataAccess.getOneSchoolclass(2, 'a');
+		s = dataAccess.getOneSchoolclass(2, 'A');
 		assertNotNull(s);
 		assertEquals(dataAccess.getAllAcademicYears().get(1).getSchoolclasses()
 				.get(0), s);
-		assertEquals('a', s.getIdentifier());
+		assertEquals('A', s.getIdentifier());
 		assertTrue(s.getLessonDemands().isEmpty());
 	}
 
@@ -496,7 +509,7 @@ public class DataAccessObjectsIT {
 		Schoolclass s = dataAccess.getOneSchoolclass(dataAccess.getOneRoom(
 				"Hauptstandort", "Raum 100"));
 		assertNotNull(s);
-		assertEquals(dataAccess.getOneSchoolclass(1, 'a'), s);
+		assertEquals(dataAccess.getOneSchoolclass(1, 'A'), s);
 	}
 
 	@Test(priority = 3, groups = "DataAccessSchoolclass", dependsOnGroups = "DataAccessAcademicYear")
@@ -511,16 +524,16 @@ public class DataAccessObjectsIT {
 		List<Schoolclass> list = dataAccess
 				.getAllSchoolclasses((Teacher) dataAccess.getOneEmployee("MEY"));
 		assertEquals(2, list.size());
-		assertTrue(list.contains(dataAccess.getOneSchoolclass(1, 'a')));
-		assertTrue(list.contains(dataAccess.getOneSchoolclass(2, 'a')));
+		assertTrue(list.contains(dataAccess.getOneSchoolclass(1, 'A')));
+		assertTrue(list.contains(dataAccess.getOneSchoolclass(2, 'A')));
 	}
 
 	@Test(priority = 3, groups = "DataAccessSchoolclass", dependsOnGroups = "DataAccessAcademicYear")
 	public void getAllSchoolclassesSuccess() throws DatasetException {
 		List<Schoolclass> list = dataAccess.getAllSchoolclasses();
 		assertEquals(2, list.size());
-		assertTrue(list.contains(dataAccess.getOneSchoolclass(1, 'a')));
-		assertTrue(list.contains(dataAccess.getOneSchoolclass(2, 'a')));
+		assertTrue(list.contains(dataAccess.getOneSchoolclass(1, 'A')));
+		assertTrue(list.contains(dataAccess.getOneSchoolclass(2, 'A')));
 	}
 
 	@Test(priority = 1, dependsOnGroups = "DataAccessSchoolclass")
@@ -528,7 +541,7 @@ public class DataAccessObjectsIT {
 		List<Character> list = dataAccess.getUsedChars(dataAccess
 				.getOneAcademicYear(1));
 		assertEquals(1, list.size());
-		assertEquals(new Character('a'), list.get(0));
+		assertEquals(new Character('A'), list.get(0));
 	}
 
 	// ////////////////////////////////////////////////////////////////////////////////////
@@ -543,7 +556,7 @@ public class DataAccessObjectsIT {
 		Classteam c = new Classteam();
 		c.addEmployee(t);
 		List<Schoolclass> schoolclasses = new ArrayList<Schoolclass>();
-		schoolclasses.add(dataAccess.getOneSchoolclass(1, 'a'));
+		schoolclasses.add(dataAccess.getOneSchoolclass(1, 'A'));
 		c.setSchoolclasses(schoolclasses);
 		dataAccess.persist(c);
 
@@ -551,7 +564,7 @@ public class DataAccessObjectsIT {
 		c1.addEmployee(t);
 		c1.addEmployee(dataAccess.getAllPAs().get(0));
 		schoolclasses = new ArrayList<Schoolclass>();
-		schoolclasses.add(dataAccess.getOneSchoolclass(2, 'a'));
+		schoolclasses.add(dataAccess.getOneSchoolclass(2, 'A'));
 		c1.setSchoolclasses(schoolclasses);
 		dataAccess.persist(c1);
 
@@ -574,20 +587,20 @@ public class DataAccessObjectsIT {
 
 		list = dataAccess.getAllClassteams(dataAccess.getOneEmployee("MUS"));
 		assertEquals(1, list.size());
-		assertEquals(dataAccess.getOneSchoolclass(2, 'a'), list.get(0)
+		assertEquals(dataAccess.getOneSchoolclass(2, 'A'), list.get(0)
 				.getSchoolclasses().get(0));
 	}
 
 	@Test(priority = 2, groups = "DataAccessClassteam", dependsOnGroups = "DataAccessSchoolclass")
 	public void getOneClassteamSchoolclassSuccess() throws DatasetException {
-		Schoolclass s = dataAccess.getOneSchoolclass(1, 'a');
+		Schoolclass s = dataAccess.getOneSchoolclass(1, 'A');
 		Classteam c = dataAccess.getOneClassteam(s);
 		assertNotNull(c);
 		assertEquals(1, c.getEmployees().size());
 		assertEquals(dataAccess.getOneEmployee("MEY"), c.getEmployees().get(0));
 		assertEquals(s, c.getSchoolclasses().get(0));
 
-		s = dataAccess.getOneSchoolclass(2, 'a');
+		s = dataAccess.getOneSchoolclass(2, 'A');
 		c = dataAccess.getOneClassteam(s);
 		assertNotNull(c);
 		assertEquals(2, c.getEmployees().size());
@@ -606,19 +619,10 @@ public class DataAccessObjectsIT {
 
 	@Test(priority = 2, groups = "DataAccessClassteam", dependsOnGroups = "DataAccessSchoolclass")
 	public void getAllSchoolclassesWithoutClassteamSuccess() throws Exception {
-		Schoolclass s = new Schoolclass();
-		s.setIdentifier('b');
-		AcademicYear year = dataAccess.getOneAcademicYear(1);
-		year.add(s);
-		year.update();
 		List<Schoolclass> list = dataAccess
 				.getAllSchoolclassesWithoutClassteam();
 		assertEquals(1, list.size());
-		assertEquals('b', list.get(0).getIdentifier());
-		s = dataAccess.getOneSchoolclass(1, 'b');
-		year.remove(s);
-		year.update();
-		s.delete();
+		assertEquals('B', list.get(0).getIdentifier());
 	}
 
 	// ////////////////////////////////////////////////////////////////////////////////////
