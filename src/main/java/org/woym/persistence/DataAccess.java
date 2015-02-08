@@ -1268,18 +1268,22 @@ public class DataAccess implements IDataAccess, Observer {
 	@SuppressWarnings("unchecked")
 	@Override
 	public Activity getFirstActivityBefore(Schoolclass schoolclass,
-			TimePeriod timePeriod, Location location) throws DatasetException {
+			TimePeriod timePeriod, Location location, boolean getPause)
+			throws DatasetException {
 		if (schoolclass == null || timePeriod == null || location == null) {
 			throw new IllegalArgumentException("Parameter was null.");
 		}
 		try {
-			final Query query = em
-					.createQuery("SELECT a FROM Activity a INNER JOIN a.rooms r WHERE"
-							+ " ?1 MEMBER OF a.schoolclasses"
-							+ " AND a.time.day = ?2"
-							+ " AND a.time.endTime <= ?3"
-							+ " AND NOT EXISTS (SELECT activity FROM Activity activity WHERE activity.time.endTime > a.time.endTime AND activity.time.endTime <= ?3)"
-							+ " AND r NOT IN ?4");
+			String queryString = "SELECT a FROM Activity a INNER JOIN a.rooms r WHERE"
+					+ " ?1 MEMBER OF a.schoolclasses"
+					+ " AND a.time.day = ?2"
+					+ " AND a.time.endTime <= ?3"
+					+ " AND NOT EXISTS (SELECT activity FROM Activity activity WHERE activity.time.endTime > a.time.endTime AND activity.time.endTime <= ?3)"
+					+ " AND r NOT IN ?4";
+			if (!getPause) {
+				queryString += " AND TYPE(a) <> Pause";
+			}
+			final Query query = em.createQuery(queryString);
 			query.setParameter(1, schoolclass);
 			query.setParameter(2, timePeriod.getDay());
 			query.setParameter(3, timePeriod.getStartTime());
@@ -1302,18 +1306,22 @@ public class DataAccess implements IDataAccess, Observer {
 	@SuppressWarnings("unchecked")
 	@Override
 	public Activity getFirstActivityAfter(Schoolclass schoolclass,
-			TimePeriod timePeriod, Location location) throws DatasetException {
+			TimePeriod timePeriod, Location location, boolean getPause)
+			throws DatasetException {
 		if (schoolclass == null || timePeriod == null || location == null) {
 			throw new IllegalArgumentException("Parameter was null.");
 		}
 		try {
-			final Query query = em
-					.createQuery("SELECT a FROM Activity a INNER JOIN a.rooms r WHERE"
-							+ " ?1 MEMBER OF a.schoolclasses"
-							+ " AND a.time.day = ?2"
-							+ " AND a.time.startTime >= ?3"
-							+ " AND NOT EXISTS (SELECT activity FROM Activity activity WHERE activity.time.startTime < a.time.startTime AND activity.time.startTime >= ?3)"
-							+ " AND r NOT IN ?4");
+			String queryString = "SELECT a FROM Activity a INNER JOIN a.rooms r WHERE"
+					+ " ?1 MEMBER OF a.schoolclasses"
+					+ " AND a.time.day = ?2"
+					+ " AND a.time.startTime >= ?3"
+					+ " AND NOT EXISTS (SELECT activity FROM Activity activity WHERE activity.time.startTime < a.time.startTime AND activity.time.startTime >= ?3)"
+					+ " AND r NOT IN ?4";
+			if (!getPause) {
+				queryString += " AND TYPE(a) <> Pause";
+			}
+			final Query query = em.createQuery(queryString);
 			query.setParameter(1, schoolclass);
 			query.setParameter(2, timePeriod.getDay());
 			query.setParameter(3, timePeriod.getEndTime());

@@ -2,7 +2,6 @@ package org.woym.logic.util;
 
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.LinkedList;
 import java.util.List;
 
 import javax.faces.application.FacesMessage;
@@ -94,15 +93,12 @@ public class ActivityValidator {
 				GenericSuccessMessage.VALIDATE_SUCCESS);
 
 		try {
-			TimePeriod extendetTimePeriod = expandTimPeriodWhithTravelTime(
-					activity, timePeriod);
-
-			status = validateActivityEmployees(activity, extendetTimePeriod);
+			status = validateActivityEmployees(activity, timePeriod);
 			if (status instanceof FailureStatus) {
 				return status;
 			}
 
-			status = validateActivitySchoolclasses(activity, extendetTimePeriod);
+			status = validateActivitySchoolclasses(activity, timePeriod);
 			if (status instanceof FailureStatus) {
 				return status;
 			}
@@ -121,76 +117,6 @@ public class ActivityValidator {
 		}
 
 		return status;
-	}
-
-	/**
-	 * Erweitert das übergebene {@linkplain TimePeriod}-Objekt so, dass
-	 * Wegzeiten zu anderen Standorten berücksichtigt werden und gibt das
-	 * erweiterte {@linkplain TimePeriod}-Objekt zurück.
-	 * 
-	 * @param activity
-	 *            - hinzuzufügende Aktivität
-	 * @param timePeriod
-	 *            - (neuer) Zeitraum für die Aktivität
-	 * @return das um die Wegzeiten erweiterte {@linkplain TimePeriod}-Objekt
-	 * @throws DatasetException
-	 */
-	@SuppressWarnings("deprecation")
-	public TimePeriod expandTimPeriodWhithTravelTime(final Activity activity,
-			final TimePeriod timePeriod) throws DatasetException {
-
-		List<EmployeeTimePeriods> list = activity.getEmployeeTimePeriods();
-		if (list.isEmpty() || activity instanceof Pause) {
-			return timePeriod;
-		}
-		TimePeriod extendetTimePeriod = new TimePeriod();
-		extendetTimePeriod.setDay(timePeriod.getDay());
-		Date statingTime = new Date();
-		statingTime.setTime(timePeriod.getStartTime().getTime());
-		extendetTimePeriod.setStartTime(statingTime);
-		Date endingTime = new Date();
-		endingTime.setTime(timePeriod.getEndTime().getTime());
-		extendetTimePeriod.setEndTime(endingTime);
-
-		Location location = dataAccess.getOneLocation(activity.getRooms()
-				.get(0));
-
-		// Geordnete Zeitliche reinfolge.
-		EmployeeTimePeriods employeeTimePeriods = list.get(0);
-
-		List<Activity> activityList = dataAccess.getAllActivitiesBefore(
-				employeeTimePeriods.getEmployee(), timePeriod);
-		if (!activityList.isEmpty()) {
-			Activity act = activityList.get(0);
-			LinkedList<Room> linkedList = new LinkedList<>(act.getRooms());
-			Location localLocation = dataAccess.getOneLocation(linkedList
-					.getLast());
-			Edge edge = travelTimeList.getEdge(location, localLocation);
-			if (edge != null) {
-				extendetTimePeriod.getStartTime().setMinutes(
-						extendetTimePeriod.getStartTime().getMinutes()
-								- edge.getDistance());
-			}
-
-		}
-		activityList = dataAccess.getAllActivitiesAfter(
-				employeeTimePeriods.getEmployee(), timePeriod);
-
-		if (!activityList.isEmpty()) {
-			Activity act = activityList.get(0);
-			LinkedList<Room> linkedList = new LinkedList<>(act.getRooms());
-			Location localLocation = dataAccess.getOneLocation(linkedList
-					.getFirst());
-			Edge edge = travelTimeList.getEdge(location, localLocation);
-			if (edge != null) {
-				extendetTimePeriod.getEndTime().setMinutes(
-						extendetTimePeriod.getEndTime().getMinutes()
-								+ edge.getDistance());
-			}
-
-		}
-		return extendetTimePeriod;
-
 	}
 
 	/**
@@ -304,10 +230,51 @@ public class ActivityValidator {
 	 * @throws DatasetException
 	 *             Bei Datenbankzugriffsfehler
 	 */
+	@SuppressWarnings("deprecation")
 	private Boolean validateEmployees(final Activity activity,
 			final TimePeriod timePeriod) throws DatasetException {
 		for (EmployeeTimePeriods employeeTimePeriods : activity
 				.getEmployeeTimePeriods()) {
+
+			TimePeriod extendedTimePeriod = cloneTimePeriod(timePeriod);
+
+			Location location = dataAccess.getOneLocation(activity.getRooms()
+					.get(0));
+
+			List<Activity> activitiesBefore = dataAccess
+					.getAllActivitiesBefore(employeeTimePeriods.getEmployee(),
+							extendedTimePeriod);
+			if (!activitiesBefore.isEmpty()) {
+				Activity lastActivity = activitiesBefore.get(activitiesBefore
+						.size() - 1);
+				Location otherLocation = dataAccess.getOneLocation(lastActivity
+						.getRooms().get(0));
+				if (!location.equals(otherLocation)) {
+					Edge edge = travelTimeList.getEdge(location, otherLocation);
+					if (edge != null) {
+						extendedTimePeriod.getStartTime().setMinutes(
+								extendedTimePeriod.getStartTime().getMinutes()
+										- edge.getDistance());
+					}
+				}
+			}
+
+			List<Activity> activitiesAfter = dataAccess.getAllActivitiesAfter(
+					employeeTimePeriods.getEmployee(), extendedTimePeriod);
+			if (!activitiesAfter.isEmpty()) {
+				Activity firstActivity = activitiesAfter.get(activitiesAfter
+						.size() - 1);
+				Location otherLocation = dataAccess
+						.getOneLocation(firstActivity.getRooms().get(0));
+				if (!location.equals(otherLocation)) {
+					Edge edge = travelTimeList.getEdge(location, otherLocation);
+					if (edge != null) {
+						extendedTimePeriod.getEndTime().setMinutes(
+								extendedTimePeriod.getEndTime().getMinutes()
+										+ edge.getDistance());
+					}
+				}
+			}
 
 			List<Activity> activitiesForWeekday = new ArrayList<>(
 					dataAccess.getAllActivities(
@@ -315,9 +282,9 @@ public class ActivityValidator {
 							timePeriod.getDay()));
 
 			activitiesForWeekday.removeAll(dataAccess.getAllActivitiesBefore(
-					employeeTimePeriods.getEmployee(), timePeriod));
+					employeeTimePeriods.getEmployee(), extendedTimePeriod));
 			activitiesForWeekday.removeAll(dataAccess.getAllActivitiesAfter(
-					employeeTimePeriods.getEmployee(), timePeriod));
+					employeeTimePeriods.getEmployee(), extendedTimePeriod));
 
 			if (!validateActivities(activity, activitiesForWeekday)) {
 				return false;
@@ -340,19 +307,103 @@ public class ActivityValidator {
 	 * @throws DatasetException
 	 *             Bei Datenbankzugriffsfehler
 	 */
+	@SuppressWarnings("deprecation")
 	private Boolean validateSchoolclasses(final Activity activity,
 			final TimePeriod timePeriod) throws DatasetException {
 
 		for (Schoolclass schoolclass : activity.getSchoolclasses()) {
 
+			TimePeriod extendedTimePeriod = cloneTimePeriod(timePeriod);
+
+			Location location = dataAccess.getOneLocation(activity.getRooms()
+					.get(0));
+
+			Activity activityBefore = dataAccess.getFirstActivityBefore(
+					schoolclass, extendedTimePeriod, location, true);
+			if (activityBefore != null) {
+				if (activityBefore instanceof Pause) {
+					// Aktivität davor, die keine Pause ist
+					Activity activityBeforePause = dataAccess
+							.getFirstActivityBefore(schoolclass,
+									extendedTimePeriod, location, false);
+					Location otherLocation = dataAccess
+							.getOneLocation(activityBeforePause.getRooms().get(
+									0));
+					Edge edge = travelTimeList.getEdge(location, otherLocation);
+					if (edge != null) {
+						if (edge.getDistance() > activityBefore.getTime()
+								.getDuration()
+								&& (edge.getDistance() > activity.getTime()
+										.getStartTime().getMinutes()
+										- activityBeforePause.getTime()
+												.getEndTime().getMinutes())) {
+							return false;
+						}
+					}
+				}
+				Location otherLocation = dataAccess
+						.getOneLocation(activityBefore.getRooms().get(0));
+				Edge edge = travelTimeList.getEdge(location, otherLocation);
+				if (edge != null) {
+					extendedTimePeriod.getStartTime().setMinutes(
+							extendedTimePeriod.getStartTime().getMinutes()
+									- edge.getDistance());
+				}
+			}
+
+			Activity activityAfter = dataAccess.getFirstActivityAfter(
+					schoolclass, extendedTimePeriod, location, true);
+			if (activityAfter != null) {
+				if (activityAfter instanceof Pause) {
+					// Aktivität danach, die keine Pause ist
+					Activity activityAfterPause = dataAccess
+							.getFirstActivityAfter(schoolclass,
+									extendedTimePeriod, location, false);
+					Location otherLocation = dataAccess
+							.getOneLocation(activityAfterPause.getRooms().get(
+									0));
+					Edge edge = travelTimeList.getEdge(location, otherLocation);
+					if (edge != null) {
+						if (edge.getDistance() > activityAfter.getTime()
+								.getDuration()
+								&& (edge.getDistance() > activity.getTime()
+										.getEndTime().getMinutes()
+										- activityAfterPause.getTime()
+												.getStartTime().getMinutes())) {
+							return false;
+						}
+					}
+				}
+				Location otherLocation = dataAccess
+						.getOneLocation(activityBefore.getRooms().get(0));
+				Edge edge = travelTimeList.getEdge(location, otherLocation);
+				if (edge != null) {
+					extendedTimePeriod.getEndTime().setMinutes(
+							extendedTimePeriod.getEndTime().getMinutes()
+									+ edge.getDistance());
+				}
+			}
+
 			List<Activity> activities = dataAccess.getAllActivities(
-					schoolclass, timePeriod);
+					schoolclass, extendedTimePeriod);
 
 			if (!validateActivities(activity, activities)) {
 				return false;
 			}
 		}
 		return true;
+	}
+
+	private TimePeriod cloneTimePeriod(TimePeriod timePeriod) {
+		TimePeriod extendedTimePeriod = new TimePeriod();
+		extendedTimePeriod.setDay(timePeriod.getDay());
+		Date statingTime = new Date();
+		statingTime.setTime(timePeriod.getStartTime().getTime());
+		extendedTimePeriod.setStartTime(statingTime);
+		Date endingTime = new Date();
+		endingTime.setTime(timePeriod.getEndTime().getTime());
+		extendedTimePeriod.setEndTime(endingTime);
+		return extendedTimePeriod;
 	}
 
 	/**
