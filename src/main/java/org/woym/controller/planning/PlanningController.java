@@ -995,6 +995,10 @@ public class PlanningController implements Serializable {
 		return names;
 	}
 
+	public Boolean getIsDialogActivityCompoundLesson() {
+		return activity instanceof CompoundLesson;
+	}
+	
 	/**
 	 * Liefert einen Wahrheitswert, ob die momentane Aktivität des Controllers
 	 * eine {@link CompoundLesson} ist.
