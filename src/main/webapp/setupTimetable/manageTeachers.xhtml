@@ -27,8 +27,8 @@
 
 				<p:outputPanel style="float:right">
 					<p:commandButton value="Hinzufügen" icon="ui-icon-plusthick"
-						actionListener="#{teacherController.addTeacherDialog}"
-						process="@this" update="addTeacherPanel">
+						actionListener="#{teacherController.doBeforeAdd}"
+						process="@this" update="addTeacherPanel" oncomplete="PF('wAddTeacherDialog').show();">
 					</p:commandButton>
 				</p:outputPanel>
 
