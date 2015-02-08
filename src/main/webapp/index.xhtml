@@ -274,17 +274,17 @@
 			<p:outputPanel id="activityInfoPanel">
 				<p:outputPanel style="margin-bottom:5px;">
 					<p:outputPanel
-						rendered="#{planningController.isCurrentActivityCompoundLesson}">
+						rendered="#{planningController.isDialogActivityCompoundLesson}">
 						<b><h:outputText value="Bandunterricht" /></b>
-						<ul>
-							<ui:repeat var="lessonTypeName"
-								value="#{planningController.compoundLessonDescriptionNames}">
-								<li><h:outputText value="#{lessonTypeName}" /></li>
-							</ui:repeat>
-						</ul>
+                        <ul>
+                            <ui:repeat var="lessonTypeName"
+                                value="#{planningController.compoundLessonDescriptionNames}">
+                                <li><h:outputText value="#{lessonTypeName}" /></li>
+                            </ui:repeat>
+                        </ul> 
 					</p:outputPanel>
 					<p:outputPanel
-						rendered="#{not planningController.isCurrentActivityCompoundLesson}">
+						rendered="#{not planningController.isDialogActivityCompoundLesson}">
 						<b><h:outputText
 								value="#{planningController.activityDescriptionName}" /></b>
 					</p:outputPanel>
@@ -782,7 +782,7 @@
 								style="float:right;margin-top:10px;">
 								<p:commandButton value="Hinzufügen"
 									actionListener="#{compoundLessonController.addCompoundLesson}"
-									process="compoundLessonWeekday,compoundLessonStartTime,compoundLessonEndTime,compoundLessonEmployees,compoundLessonSchoolclasses,compoundLessonRoomPanel,@this"
+									process="addCompoundLessonType,compoundLessonWeekday,compoundLessonStartTime,compoundLessonEndTime,compoundLessonEmployees,compoundLessonSchoolclasses,compoundLessonRoomPanel,@this"
 									update="activityMessages,activityGrowl,addActivityPanel,searchTabs,scheduleMain" />
 							</p:outputPanel>
 						</h:panelGrid>
