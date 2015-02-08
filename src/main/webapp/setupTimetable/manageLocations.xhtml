@@ -26,8 +26,8 @@
 						disabled="#{(locationController.locations.size()) lt 2}"
 						onclick="PF('wTravelTimeDialog').show();" process="@this" />
 					<p:commandButton value="Hinzufügen" icon="ui-icon-plusthick"
-						onclick="PF('wAddLocationDialog').show();" process="@this"
-						update="addLocationPanel">
+						oncomplete="PF('wAddLocationDialog').show();" process="@this"
+						update="addLocationPanel" actionListener="#{locationController.init}">
 					</p:commandButton>
 				</p:outputPanel>
 

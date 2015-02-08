@@ -174,12 +174,10 @@ public class PedagogicAssistantController implements Serializable {
 	}
 
 	/**
-	 * Öffnet einen neuen Dialog, mit dem sich ein Lehrer hinzufügen lässt.
+	 * Öffnet einen neuen Dialog, mit dem sich ein PA hinzufügen lässt.
 	 */
-	public void addPedagogicAssistantDialog() {
+	public void doBeforeAdd() {
 		pedagogicAssistant = new PedagogicAssistant();
-		RequestContext context = RequestContext.getCurrentInstance();
-		context.execute("PF('wAddPedagogicAssistantDialog').show();");
 	}
 
 	public void generatePedagogicAssistantMemento() {

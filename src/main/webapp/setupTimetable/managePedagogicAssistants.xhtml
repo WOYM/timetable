@@ -27,12 +27,12 @@
 
 				<p:outputPanel style="float:right">
 					<p:commandButton value="Hinzufügen" icon="ui-icon-plusthick"
-						actionListener="#{pedagogicAssistantController.addPedagogicAssistantDialog}"
-						process="@this" update="addPedagogicAssistantPanel">
+						actionListener="#{pedagogicAssistantController.doBeforeAdd}"
+						process="@this" update="addPedagogicAssistantPanel" oncomplete="PF('wAddPedagogicAssistantDialog').show();">
 					</p:commandButton>
 				</p:outputPanel>
 
-				<!-- Existierende Lehrkräfte -->
+				<!-- Existierende PAs -->
 				<p:contextMenu for="pedagogicAssistantsTable">
 					<p:menuitem value="Bearbeiten"
 						actionListener="#{pedagogicAssistantController.generatePedagogicAssistantMemento}"
