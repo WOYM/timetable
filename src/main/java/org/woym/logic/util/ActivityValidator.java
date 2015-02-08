@@ -249,15 +249,14 @@ public class ActivityValidator {
 						.size() - 1);
 				Location otherLocation = dataAccess.getOneLocation(lastActivity
 						.getRooms().get(0));
-				if (!location.equals(otherLocation)) {
-					Edge edge = travelTimeList.getEdge(location, otherLocation);
-					if (edge != null) {
-						extendedTimePeriod.getStartTime().setMinutes(
-								extendedTimePeriod.getStartTime().getMinutes()
-										- edge.getDistance());
-					}
+				
+				Edge edge = travelTimeList.getEdge(location, otherLocation);
+				if (edge != null) {
+					extendedTimePeriod.getStartTime().setMinutes(
+							extendedTimePeriod.getStartTime().getMinutes()
+									- edge.getDistance());
 				}
-			}
+		}
 
 			List<Activity> activitiesAfter = dataAccess.getAllActivitiesAfter(
 					employeeTimePeriods.getEmployee(), extendedTimePeriod);
@@ -266,13 +265,11 @@ public class ActivityValidator {
 						.size() - 1);
 				Location otherLocation = dataAccess
 						.getOneLocation(firstActivity.getRooms().get(0));
-				if (!location.equals(otherLocation)) {
-					Edge edge = travelTimeList.getEdge(location, otherLocation);
-					if (edge != null) {
-						extendedTimePeriod.getEndTime().setMinutes(
-								extendedTimePeriod.getEndTime().getMinutes()
-										+ edge.getDistance());
-					}
+				Edge edge = travelTimeList.getEdge(location, otherLocation);
+				if (edge != null) {
+					extendedTimePeriod.getEndTime().setMinutes(
+							extendedTimePeriod.getEndTime().getMinutes()
+									+ edge.getDistance());
 				}
 			}
 
